@@ -2,6 +2,7 @@
 libs/
 notebooks/
 ssh
+.vscode/
 
 # vim
 .*.swp
