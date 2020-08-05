@@ -66,7 +66,7 @@ class CTC_train(ctc_model.CTC):
         print(f"labels reshape preview: {y.reshape(8, -1)[:2]}")
 
         #blank_idx = out.size()[-1] - 1
-        loss_fn = torch.nn.CTCLoss(blank=self.blank, reduction='none')        # native ctc loss     
+        loss_fn = torch.nn.CTCLoss(blank=self.blank, reduction='sum')        # native ctc loss     
         loss = loss_fn(log_probs.permute(1,0,2), y.reshape(8, -1), x_lens, y_lens)
         print(f"output size: {out.size()}, loss size: {loss.size()}")
         print(f"loss value: {loss}")
