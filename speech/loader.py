@@ -94,7 +94,7 @@ class Preprocessor():
             # excluded in the output classes of a model.
             chars.extend([self.END, self.START])
         self.start_and_end = start_and_end
-        self.int_to_char = dict(enumerate(chars))
+        self.int_to_char = dict(enumerate(chars, 1))    # start at 1 so zero can be blank
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
     
     

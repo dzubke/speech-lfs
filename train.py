@@ -22,7 +22,7 @@ import yaml
 # project libraries
 import speech
 import speech.loader as loader
-from speech.models.ctc_model_train import CTC_train
+from speech.models.ctc_model_native_loss import CTC_train
 from speech.utils.io import read_pickle, write_pickle, load_from_trained, load_config
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
 from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
@@ -60,7 +60,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
         
         
-        loss = model.loss(temp_batch)
+        loss = model.native_loss(temp_batch)
         
         if use_log: logger.info(f"train: Loss calculated")
 
@@ -72,7 +72,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
                 log_param_grad_norms(model.named_parameters(), logger)
 
-        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200)
+        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
         loss = loss.item()
@@ -104,7 +104,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 model_time=model_t, data_time=data_t)
         
         if use_log: logger.info(f'train: loss is inf: {loss == float("inf")}')
-        if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss,3)}, grad_norm={round(grad_norm,3)}")
+        if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss, 3)}, grad_norm={round(grad_norm,3)}")
         inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
         
         if check_nan_params_grads(model.parameters()):
@@ -140,7 +140,7 @@ def eval_dev(model, ldr, preproc,  logger):
             if use_log: logger.info(f"eval_dev: batch converted")
             preds = model.infer(temp_batch)
             if use_log: logger.info(f"eval_dev: infer call")
-            loss = model.loss(temp_batch)
+            loss = model.native_loss(temp_batch)
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
             losses.append(loss.item())
@@ -324,7 +324,7 @@ def run(config):
 
         tbX_writer.add_scalars('dev/loss', dev_loss_dict, epoch)
         tbX_writer.add_scalars('dev/per', dev_per_dict, epoch)
-        tbX_writer.add_scalars('dev/per/diff', dev_per_dict, epoch)
+        tbX_writer.add_scalars('dev/per/diff', per_diff_dict, epoch)
         learning_rate = list(optimizer.param_groups)[0]["lr"]
         # save the current state of training
         train_state = {"start_epoch": epoch + 1, 
@@ -333,6 +333,20 @@ def run(config):
                        "learning_rate": learning_rate}
         write_pickle(os.path.join(config["save_path"], "train_state.pickle"), train_state)
 
+
+def calc_per_difference(dev_per_dict:dict) -> dict:
+    """
+    Calculates the differecence between the speak testset PER and the training-dev sets. This
+    difference is a measure of data mismatch.
+    """
+    per_diff_dict = dict()
+
+    for name, per in dev_per_dict.items():
+        if not name=='speak':
+            diff_name = name + "-speak"
+            per_diff_dict[diff_name] = dev_per_dict.get('speak', 0.0) - dev_per_dict.get(name, 0.0)
+
+    return per_diff_dict
 
 
 if __name__ == "__main__":

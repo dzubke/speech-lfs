@@ -20,7 +20,7 @@ class CTC_train(ctc_model.CTC):
         super().__init__(freq_dim, output_dim, config)
 
         # include the blank token
-        self.blank = output_dim
+        self.blank =  0 #output_dim
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
     def forward(self, x, rnn_args=None, softmax=False):
@@ -50,26 +50,25 @@ class CTC_train(ctc_model.CTC):
 
     def native_loss(self, batch):
         x, y, x_lens, y_lens = self.collate(*batch)
-        print(f"input size: {x.size()}, labels size: {y.size()}")
-        print(f"labels preview: {y[:278]}")
-        print(f"input lens size: {x_lens.size()}, label lens size: {y_lens.size()}")
-        print(f"input lens: {x_lens}, label lens: {y_lens}")
+        #print(f"input size: {x.size()}, labels size: {y.size()}")
+        #print(f"labels preview: {y[:278]}")
+        #print(f"input lens size: {x_lens.size()}, label lens size: {y_lens.size()}")
+        #print(f"input lens: {x_lens}, label lens: {y_lens}")
                
- 
         out, rnn_args = self.forward_impl(x, softmax=False)
         log_probs = nn.functional.log_softmax(out, dim=2)
 
         # reshaep the log_probs and labels y
-        print(f"original log_probs size: {log_probs.size()}")
-        print(f"permuted size: {log_probs.permute(1,0,2).size()}")
-        print(f"labels rehape: {y.reshape(8, -1).size()}")
-        print(f"labels reshape preview: {y.reshape(8, -1)[:2]}")
+        #print(f"original log_probs size: {log_probs.size()}")
+        #print(f"permuted size: {log_probs.permute(1,0,2).size()}")
+        #print(f"labels rehape: {y.reshape(8, -1).size()}")
+        #print(f"labels reshape preview: {y.reshape(8, -1)[:2]}")
 
         #blank_idx = out.size()[-1] - 1
-        loss_fn = torch.nn.CTCLoss(blank=self.blank, reduction='sum')        # native ctc loss     
-        loss = loss_fn(log_probs.permute(1,0,2), y.reshape(8, -1), x_lens, y_lens)
-        print(f"output size: {out.size()}, loss size: {loss.size()}")
-        print(f"loss value: {loss}")
+        loss_fn = torch.nn.CTCLoss(blank=self.blank, reduction='mean')        # native ctc loss     
+        loss = loss_fn(log_probs.permute(1,0,2), y, x_lens, y_lens)
+        #print(f"output size: {out.size()}, loss size: {loss.size()}")
+        #print(f"loss value: {loss.item()}, loss item type {type(loss.item())}")
         
         return loss
 

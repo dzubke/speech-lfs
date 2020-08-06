@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech/examples/librispeech/models/ctc_models/20200721/ph6/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200805/ph3/v100
 data: 
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
     dev_sets: 
@@ -8,11 +8,11 @@ data:
         libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
         ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
     dev_set_save_reference: cv
-    start_and_end: false
+    start_and_end: False
     num_workers: 4
 logger:
     use_log: true
-    log_file: logs/2020-07-21-07-27_ph6_no-augment-feature-normalize_lib-ted-cv.log
+    log_file: logs/2020-08-05-08-06_native-loss_v100.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 8
-    run_state: [210000, 95.09]
-    best_so_far: 0.4131
-    start_epoch: 2
+    run_state: [104829, 3.5]
+    best_so_far: 0.976550
+    start_epoch: 1
     epochs: 100
     learning_rate: 0.001
     momentum: 0.9 
@@ -51,10 +51,10 @@ optimizer:
     sched_step: 1
 model: 
     class: this value is no longer used as train.py is hardcorded to use CTC_train
-    multi_gpu: True
+    multi_gpu: False
     dropout: 0.4
-    load_trained: true
-    trained_path: examples/librispeech/models/ctc_models/20200721/ph6/20200723/best_model
+    load_trained: True
+    trained_path: examples/librispeech/models/ctc_models/20200805/ph3/v100/best_model
     remove_layers: []
     encoder: 
         conv:
@@ -64,5 +64,5 @@ model:
         rnn: 
             type: LSTM
             dim: 512
-            bidirectional: false
+            bidirectional: False
             layers: 5
