@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path: examples/librispeech/models/ctc_models/20200805/ph3/v100/best_model
+    trained_path: examples/librispeech/models/ctc_models/20200805/ph3/v100/best_model.pth
     remove_layers: []
     encoder: 
         conv:
