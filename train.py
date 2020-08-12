@@ -320,11 +320,9 @@ def run(config):
                     print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
                     logger.info(f"model saved based per on: {dev_name} dataset")
             
-        per_diff_dict = calc_per_difference(dev_per_dict) 
 
         tbX_writer.add_scalars('dev/loss', dev_loss_dict, epoch)
         tbX_writer.add_scalars('dev/per', dev_per_dict, epoch)
-        tbX_writer.add_scalars('dev/per/diff', dev_per_dict, epoch)
         learning_rate = list(optimizer.param_groups)[0]["lr"]
         # save the current state of training
         train_state = {"start_epoch": epoch + 1, 
