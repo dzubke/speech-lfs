@@ -110,7 +110,7 @@ class Preprocessor():
         feature_data = preprocessing_function(audio_data, samp_rate, self.window_size, self.step_size)
         
         # normalize
-        feature_data = self.normalize(feature_data, self.use_feature_normalize)
+        feature_data = self.normalize(feature_data)
         if self.use_log: self.logger.info(f"preproc: normalized")
         
         # apply feature_augmentations
@@ -186,8 +186,8 @@ class Preprocessor():
         return feature_data
 
 
-    def normalize(self, feature_array:np.ndarray, use_feature_normalize:bool)->np.ndarray:
-        if use_feature_normalize:
+    def normalize(self, feature_array:np.ndarray)->np.ndarray:
+        if self.use_feature_normalize:
             feature_array = feature_normalize(feature_array)
         feature_array = (feature_array - self.mean) / self.std
         assert feature_array.dtype == np.float32, "feature_array is not float32"

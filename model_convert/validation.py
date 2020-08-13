@@ -18,11 +18,12 @@ import torch.nn as nn
 #project libraries
 from get_paths import validation_paths
 from import_export import preproc_to_dict, preproc_to_json, export_state_dict
-from speech.loader import log_specgram_from_data, log_specgram_from_file
+from speech.loader import log_spectrogram_from_data, log_spectrogram_from_file
 from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models import ctc_model
 from speech.utils.compat import normalize
 from speech.utils.convert import to_numpy
+from speech.utils.io import load_config
 from speech.utils.stream_utils import make_full_window
 from speech.utils.wave import array_from_wave
 
@@ -43,9 +44,9 @@ def main(model_name, num_frames):
 
     model_fn, onnx_fn, coreml_fn, config_fn, preproc_fn, state_dict_path = validation_paths(model_name)
     
-    with open(config_fn, 'rb') as fid:
-        config = json.load(fid)
-        model_cfg = config["model"]
+    config = load_config(config_fn)
+    model_cfg = config["model"]
+    
     with open(preproc_fn, 'rb') as fid:
         preproc = pickle.load(fid)
 
@@ -132,7 +133,7 @@ def full_audio_infer(model, preproc, PARAMS:dict, audio_dir)->dict:
         assert PARAMS['sample_rate'] == samp_rate, "audio sample rate is not equal to default sample rate"
 
         audio_data = make_full_window(audio_data, PARAMS['feature_win_len'], PARAMS['feature_win_step'])
-        features = log_specgram_from_data(audio_data, samp_rate)
+        features = log_spectrogram_from_data(audio_data, samp_rate)
         norm_features = normalize(preproc, features)
         # adds the batch dimension (1, time, 257)
         norm_features = np.expand_dims(norm_features, axis=0) 
@@ -177,7 +178,7 @@ def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, 
         test_c = np.zeros((5, 1, 512)).astype(np.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
-        log_spec = log_specgram_from_file(audio_path)
+        log_spec = log_spectrogram_from_file(audio_path)
         features = normalize(preproc, log_spec)
         features = features[:num_frames,:]
         test_x = np.expand_dims(features, 0)
@@ -324,7 +325,7 @@ def load_audio(preproc, test_names, test_fns, base_path, test_h, test_c, num_fra
     dct = {}
     for test_name, test_fn in zip(test_names, test_fns):
 
-        audio_data = normalize(preproc, log_specgram_from_file(base_path+test_fn))
+        audio_data = normalize(preproc, log_spectrogram_from_file(base_path+test_fn))
         audio_data = audio_data[:num_frames,:]
         audio_data = np.expand_dims(audio_data, 0)
         dct.update({test_name : [audio_data, test_h, test_c]})

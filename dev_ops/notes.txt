@@ -129,4 +129,4 @@ original
 numpy                     1.18.1                    <pip>
 numpy                     1.13.3           py36hdbf6ddf_4 
 
-2020-08-05-08-10_native-loss_v100.
+2020-07-23-08-12_ph6_new-augmentation_lib-ted-cv.log
