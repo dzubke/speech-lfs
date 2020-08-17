@@ -7,6 +7,7 @@ import os
 import subprocess
 # third-party libaries
 import numpy as np
+import torch
 
 FFMPEG = "ffmpeg"
 AVCONV = "avconv"
@@ -74,9 +75,9 @@ def to_numpy(tensor):
     """
     return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
+
 # The two functions below pcm2float and float2pcm are taken from 
 # https://gist.github.com/HudsonHuang/fbdf8e9af7993fe2a91620d3fb86a182
-
 def pcm2float(sig, dtype='float64'):
     """Convert PCM signal to floating point with a range from -1 to 1.
     Use dtype='float64' for double precision.
@@ -141,6 +142,30 @@ def float2pcm(sig, dtype='int16'):
     abs_max = 2 ** (i.bits - 1)
     offset = i.min + abs_max
     return (sig * abs_max + offset).clip(i.min, i.max).astype(dtype)
+
+
+
+def convert_half_precision(model):
+    """
+    Converts a torch model to half precision. Keeps the batch normalization layers
+    at single precision
+    source: https://github.com/onnx/onnx-tensorrt/issues/235#issuecomment-523948414
+    """
+    
+    def bn_to_float(module):
+        """
+        BatchNorm layers need parameters in single precision. Find all layers and convert
+        them back to float.
+        """
+        if isinstance(module, torch.nn.modules.batchnorm._BatchNorm):
+            module.float()
+        for child in module.children():
+            bn_to_float(child)
+        return module
+    
+    return bn_to_float(model.half())
+    
+
 
 
 if __name__ == "__main__":

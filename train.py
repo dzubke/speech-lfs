@@ -340,6 +340,8 @@ def run(config):
                         logger.info(f"model saved based per on: {dev_name} dataset")
 
                     print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
+            
+
         
         per_diff_dict = calc_per_difference(dev_per_dict) 
 
