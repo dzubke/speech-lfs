@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200727/ph4/ --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200805/ph3/v100 --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -120,3 +120,13 @@ git config credential.helper 'cache --timeout 864000'
 # github password
 9!l2&YQCydRAkhr1f6%x
 
+gsutil -m cp -r ./ gs://phoneme-vm-backup/
+
+
+speech/examples/librispeech/models/ctc_models/20200803/ph4/
+
+original
+numpy                     1.18.1                    <pip>
+numpy                     1.13.3           py36hdbf6ddf_4 
+
+2020-07-23-08-12_ph6_new-augmentation_lib-ted-cv.log

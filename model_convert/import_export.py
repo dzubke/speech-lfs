@@ -28,7 +28,7 @@ def torch_onnx_export(torch_model, input_tensor, onnx_path,
                 opset_version=opset_version,          # the ONNX version to export the model to
                 do_constant_folding=do_constant_folding,  # whether to execute constant folding for opti
                 input_names = input_names,   # the model's input names
-                output_names = output_names, # the model's output names
+                output_names = output_names # the model's output names
                 #dynamic_axes=dynamic_axes)    # variable lenght axes
                 )
 
