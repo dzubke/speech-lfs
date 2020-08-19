@@ -8,6 +8,7 @@ model_name=$2
 num_frames=$3
 
 
+
 # creating the functions
 copy_files(){
     cp $1/best_model ./torch_models/$2_model.pth
@@ -17,8 +18,8 @@ copy_files(){
 
 convert_model(){
     sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
-    python torch_to_onnx.py $1 --num_frames $2 --use_state_dict --half-precision 
-    python onnx_to_coreml.py $1
+    python torch_to_onnx.py $1 --num_frames $2 --use_state_dict 
+    python onnx_to_coreml.py $1 --quarter-precision
     python validation.py $1 --num_frames $2
     sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
 }
