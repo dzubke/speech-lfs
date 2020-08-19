@@ -11,9 +11,9 @@ tqdm==4.19.4
 wget==1.19.5
 psutil==5.7.0
 ipython==7.11.1
-# separating pip (above) and conda (below)
+# separating pip (below) and conda (above)
 editdistance==0.4
-protobuf==3.4.0
+protobuf==3.8.0
 pytest==3.2.3
 SoundFile==0.10.2
 tensorflow==1.15.3 
@@ -24,3 +24,7 @@ librosa==0.7.2
 scipy==1.4.1
 numba==0.48.0
 tensorboardX==2.1
+onnx==1.6.0
+onnx-coreml==1.2
+onnxruntime==1.1.1
+coremltools==3.2
