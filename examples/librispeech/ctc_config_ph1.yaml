@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: True
-    log_file: logs/2020-07-17-08-05_ph1_no-augment_lib-ted-cv.log
+    log_file: logs/2020-07-17-08-17_ph1_no-augment_lib-ted-cv.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -40,21 +40,21 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 8
-    run_state: [1991846, 54.208]
-    best_so_far: 0.2909
-    start_epoch: 19
+    run_state: [2935352, 45.4567]
+    best_so_far: 0.225128
+    start_epoch: 28
     epochs: 100
-    learning_rate: 0.000166
-    momentum: 0.9 
-    dampening: 0.98
-    sched_gamma: 0.90 
+    learning_rate: 0.001
+    momentum: 0.0 
+    dampening: 0.0
+    sched_gamma: 1.0
     sched_step: 1
 model: 
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path: ./examples/librispeech/models/ctc_models/20200717/ph1/20200805/model
+    trained_path: ./examples/librispeech/models/ctc_models/20200717/ph1/20200816/model.pth
     remove_layers: []
     encoder: 
         conv:
