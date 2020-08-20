@@ -1,0 +1,30 @@
+# the commented out files are to installable via conda, so they are installed in a separate command via pip
+requests==2.23.0
+numpy==1.13.3
+cffi==1.11.2
+py==1.4.34
+pycparser==2.18
+yaml==0.1.7
+PyYAML==3.12
+six==1.11.0
+tqdm==4.19.4
+wget==1.19.5
+psutil==5.7.0
+ipython==7.11.1
+# separating pip (below) and conda (above)
+editdistance==0.4
+protobuf==3.8.0
+pytest==3.2.3
+SoundFile==0.10.2
+tensorflow==1.15.3 
+matplotlib==3.1.1
+python_speech_features==0.6
+graphviz==0.14
+librosa==0.7.2
+scipy==1.4.1
+numba==0.48.0
+tensorboardX==2.1
+onnx==1.6.0
+onnx-coreml==1.2
+onnxruntime==1.1.1
+coremltools==3.2

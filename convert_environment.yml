@@ -1,4 +1,4 @@
-name: awni_env37
+name: convert
 channels:
   - pytorch
   - defaults

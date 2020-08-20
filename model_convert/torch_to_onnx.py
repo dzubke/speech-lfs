@@ -35,7 +35,8 @@ def main(model_name, num_frames, use_state_dict, half_precision):
         ctc_model = CTC_model(freq_dim, 39, model_cfg) 
         state_dict_model = torch.load(torch_path, map_location=device)
         ctc_model.load_state_dict(state_dict_model.state_dict())
-    
+        ctc_model.to(device)
+        print("model on cuda: ", ctc_model.is_cuda)    
     else: 
         print(f'loaded entire model from: {torch_path}')
         ctc_model = torch.load(torch_path, map_location=torch.device(torch_device))
@@ -58,9 +59,9 @@ def main(model_name, num_frames, use_state_dict, half_precision):
 if __name__ == "__main__":
     # commmand format: python pytorch_to_onnx.py <model_name> --num_frames X --use_state_dict <True/False>
     parser = argparse.ArgumentParser(description="converts models in pytorch to onnx.")
-    parser.add_argument("model_name", help="name of the model.")
-    parser.add_argument("--num_frames", type=int, help="number of input frames in time dimension hard-coded in onnx model")
-    parser.add_argument("--use_state_dict", action='store_true', default=False, 
+    parser.add_argument("--model-name", help="name of the model.")
+    parser.add_argument("--num-frames", type=int, help="number of input frames in time dimension hard-coded in onnx model")
+    parser.add_argument("--use-state-dict", action='store_true', default=False, 
                         help="boolean whether to load model from state dict") 
     parser.add_argument("--half-precision", action='store_true', default=False, 
                         help="boolean whether to convert model to half precision") 
