@@ -21,7 +21,7 @@ def awni_loss():
 
 
 def get_saved_batch():
-    batch_path = "/home/dzubke/awni_speech/speech/saved_batch/2020-06-17_v2_ph2_withBatchNorm_ted_batch.pickle"
+    batch_path = "/home/dzubke/awni_speech/speech/saved_batch/current-batch_2020-06-17.pickle"
     return read_pickle(batch_path)
        
 

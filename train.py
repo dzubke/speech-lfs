@@ -22,7 +22,7 @@ import yaml
 # project libraries
 import speech
 import speech.loader as loader
-from speech.models.ctc_model_native_loss import CTC_train
+from speech.models.ctc_model_naren_loss import CTC_train
 from speech.utils.io import read_pickle, write_pickle, load_from_trained, load_config
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
 from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
@@ -60,7 +60,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
         
         
-        loss = model.native_loss(temp_batch)
+        loss = model.loss(temp_batch)
         
         if use_log: logger.info(f"train: Loss calculated")
 
@@ -140,7 +140,7 @@ def eval_dev(model, ldr, preproc,  logger):
             if use_log: logger.info(f"eval_dev: batch converted")
             preds = model.infer(temp_batch)
             if use_log: logger.info(f"eval_dev: infer call")
-            loss = model.native_loss(temp_batch)
+            loss = model.loss(temp_batch)
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
             losses.append(loss.item())

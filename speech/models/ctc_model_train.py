@@ -51,8 +51,11 @@ class CTC_train(ctc_model.CTC):
 
     def loss(self, batch):
         x, y, x_lens, y_lens = self.collate(*batch)
+
+        print(f"input shape: {x.size()}, label shape: {y.size()}")
+        print(f"input lens: {x_lens}, label lens: {y_lens}")
         out, rnn_args = self.forward_impl(x, softmax=False)
-        loss_fn = ctc.CTCLoss()         # awni's ctc loss call        
+        loss_fn = ctc.CTCLoss()         # awni's ctc loss call      
         loss = loss_fn(out, y, x_lens, y_lens)
         return loss
 
