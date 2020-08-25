@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200805/ph3/v100 --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200721/ph6/ --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -120,13 +120,11 @@ git config credential.helper 'cache --timeout 864000'
 # github password
 9!l2&YQCydRAkhr1f6%x
 
-gsutil -m cp -r ./ gs://phoneme-vm-backup/
 
 
-speech/examples/librispeech/models/ctc_models/20200803/ph4/
+2020-07-21-08-19_ph6_no-augment-feature-normalize_lib-ted-cv
 
-original
-numpy                     1.18.1                    <pip>
-numpy                     1.13.3           py36hdbf6ddf_4 
+/var/log/syslog:Aug 19 04:31:01 phoneme-2 bash[1208]:   File "/usr/local/lib/python2.7/dist-packages/google/api_core/grpc_helpers.py", line 59, in error_remapped_callable
+/var/log/syslog:Aug 19 04:31:01 phoneme-2 bash[1208]:     six.raise_from(exceptions.from_grpc_error(exc), exc)
+/var/log/syslog:Aug 19 04:31:02 phoneme-2 bash[16096]:     on_error=on_error,
 
-2020-07-23-08-12_ph6_new-augmentation_lib-ted-cv.log

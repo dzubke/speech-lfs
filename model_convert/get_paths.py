@@ -1,7 +1,7 @@
 # standard libraries
 import os
 
-ROOT = "/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech/model_convert"
+ROOT = os.getcwd()
 
 def onnx_coreml_paths(model_name):
     onnx_path = os.path.join(ROOT, "onnx_models", model_name+"_model.onnx")
