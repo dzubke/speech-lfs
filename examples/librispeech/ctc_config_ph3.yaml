@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200824/ph3/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200824/ph3/v2
 data:
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
     dev_sets:
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: True
-    log_file: logs/2020-08-24_naren-loss.log
+    log_file: logs/2020-08-25_naren-loss.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -39,7 +39,7 @@ preproc:
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2} 
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
-    batch_size: 8
+    batch_size: 16
     run_state: [0, 0]
     best_so_far: 999
     start_epoch: 0

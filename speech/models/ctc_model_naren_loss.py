@@ -61,6 +61,9 @@ class CTC_train(ctc_model.CTC):
         float_out = out.permute(1,0,2).float().requires_grad_(True).cpu() #permuation for sean ctc
         #print(f"out shape after permute: {float_out.size()}, sum: {torch.sum(float_out)}")
         loss = loss_fn(float_out, y, x_lens, y_lens)
+        if self.is_cuda:
+            loss = loss.cuda()
+
         return loss
 
     def collate(self, inputs, labels):
