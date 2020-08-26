@@ -8,7 +8,7 @@ import torch
 import torch.autograd as autograd
 import torch.nn as nn
 
-######import functions.ctc as ctc #awni hannun's ctc bindings
+import functions.ctc as ctc #awni hannun's ctc bindings
 from speech.models import ctc_model
 from speech.models import model
 from .ctc_decoder import decode
