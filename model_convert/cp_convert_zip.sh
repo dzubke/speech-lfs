@@ -8,6 +8,7 @@ model_name=$2
 num_frames=$3
 
 
+
 # creating the functions
 copy_files(){
     cp $1/best_model.pth ./torch_models/$2_model.pth

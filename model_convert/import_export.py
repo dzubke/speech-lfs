@@ -33,17 +33,6 @@ def torch_onnx_export(torch_model, input_tensor, onnx_path,
                 )
 
 
-def onnx_coreml_export(onnx_path, coreml_path):
-    onnx_model = onnx.load(onnx_path)
-    print("onnx_coreml_export: onnx_model loaded")    
-    coreml_model = convert(
-        model=onnx_model,
-        minimum_ios_deployment_target = '13'
-    )
-    print("onnx_coreml_export: model converted to coreml")
-    coreml_model.save(coreml_path)
-    print("onnx_coreml_export: coreml model saved")
-
 
 def preproc_to_dict(preproc_path_in, preproc_path_out=None, export=False):
     with open(preproc_path_in, 'rb') as fid:
