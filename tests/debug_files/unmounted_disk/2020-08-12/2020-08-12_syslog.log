@@ -1,0 +1,1201 @@
+Aug 12 02:29:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[5].points[0].interval.start_time had an invalid value of \"2020-08-12T01:29:10.764913-07:00\": The start time must be before the end time (2020-08-12T01:29:10.764913-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:29:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:29:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:29:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:30:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:30:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:30:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:30:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:30:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:30:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:31:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:31:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:31:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:31:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:31:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:31:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:31:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/io_octets; value time = 1597221070.546; last cache update = 1597221070.546;
+Aug 12 02:31:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_rss; value time = 1597221070.547; last cache update = 1597221070.548;
+Aug 12 02:31:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/io_octets; value time = 1597221070.547; last cache update = 1597221070.548;
+Aug 12 02:31:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[0].points[0].interval.start_time had an invalid value of \"2020-08-12T01:29:10.764913-07:00\": The start time must be before the end time (2020-08-12T01:29:10.764913-07:00) for the non-gauge metric 'agent.googleapis.com/agent/monitoring/point_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:31:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:31:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:31:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:32:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:32:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:32:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:32:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:32:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:32:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:32:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/io_octets; value time = 1597221130.634; last cache update = 1597221130.634;
+Aug 12 02:32:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_rss; value time = 1597221130.636; last cache update = 1597221130.636;
+Aug 12 02:32:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_vm; value time = 1597221130.636; last cache update = 1597221130.636;
+Aug 12 02:32:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[0].points[0].interval.start_time had an invalid value of \"2020-08-12T01:31:10.764848-07:00\": The start time must be before the end time (2020-08-12T01:31:10.764848-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:32:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:32:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:32:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:33:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:33:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:33:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:33:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:33:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:33:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:34:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:34:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:34:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:34:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:34:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:34:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:34:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_vm; value time = 1597221250.552; last cache update = 1597221250.552;
+Aug 12 02:35:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:35:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:35:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:35:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:35:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:35:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:35:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[4].points[0].interval.start_time had an invalid value of \"2020-08-12T01:35:10.764858-07:00\": The start time must be before the end time (2020-08-12T01:35:10.764858-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:35:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:35:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:35:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:36:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:36:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:36:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:36:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:36:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:36:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:36:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_rss; value time = 1597221370.562; last cache update = 1597221370.562;
+Aug 12 02:36:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[7].points[0].interval.start_time had an invalid value of \"2020-08-12T01:36:10.764849-07:00\": The start time must be before the end time (2020-08-12T01:36:10.764849-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:36:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:36:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:36:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:37:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:37:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:37:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:37:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:37:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:37:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:38:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:38:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:38:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:38:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:38:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:38:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:38:11 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:38:11 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:38:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[5].points[0].interval.start_time had an invalid value of \"2020-08-12T01:37:10.764853-07:00\": The start time must be before the end time (2020-08-12T01:37:10.764853-07:00) for the non-gauge metric 'agent.googleapis.com/agent/monitoring/point_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:38:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:38:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:38:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:39:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:39:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:39:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:39:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:39:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[0].points[0].interval.start_time had an invalid value of \"2020-08-12T01:38:10.764842-07:00\": The start time must be before the end time (2020-08-12T01:38:10.764842-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:39:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:39:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:39:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:40:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:40:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:40:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:40:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:40:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:40:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:40:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/disk_octets; value time = 1597221610.532; last cache update = 1597221610.532;
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[0].points[0].interval.start_time had an invalid value of \"2020-08-12T01:40:10.764863-07:00\": The start time must be before the end time (2020-08-12T01:40:10.764863-07:00) for the non-gauge metric 'agent.googleapis.com/agent/monitoring/point_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:40:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:41:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:41:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:41:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:41:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:41:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:41:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:41:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/disk_octets; value time = 1597221670.813; last cache update = 1597221670.813;
+Aug 12 02:41:12 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[0].points[0].interval.start_time had an invalid value of \"2020-08-12T01:41:10.764827-07:00\": The start time must be before the end time (2020-08-12T01:41:10.764827-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:41:12 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:41:12 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:41:12 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:42:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:42:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:42:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:42:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:42:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:42:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:42:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/disk_octets; value time = 1597221730.571; last cache update = 1597221730.571;
+Aug 12 02:42:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[4].points[0].interval.start_time had an invalid value of \"2020-08-12T01:42:10.764853-07:00\": The start time must be before the end time (2020-08-12T01:42:10.764853-07:00) for the non-gauge metric 'agent.googleapis.com/agent/monitoring/point_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:42:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:42:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:42:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:43:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:43:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:43:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:43:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:43:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:43:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:43:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[1].points[0].interval.start_time had an invalid value of \"2020-08-12T01:42:10.764853-07:00\": The start time must be before the end time (2020-08-12T01:42:10.764853-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:43:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:43:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:43:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:44:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:44:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:44:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:44:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:44:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:44:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:45:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:45:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:45:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:45:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:45:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:45:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:46:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:46:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:46:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:46:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:46:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:46:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:46:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_cputime; value time = 1597221970.522; last cache update = 1597221970.522;
+Aug 12 02:46:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/io_octets; value time = 1597221970.524; last cache update = 1597221970.524;
+Aug 12 02:47:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:47:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:47:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:47:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:47:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:47:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:47:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[1].points[0].interval.start_time had an invalid value of \"2020-08-12T01:46:10.764868-07:00\": The start time must be before the end time (2020-08-12T01:46:10.764868-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:47:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:47:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:47:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:48:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:48:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:48:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:48:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:48:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:48:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:48:10 phoneme-5 collectd[2114]: uc_update: Value too old: name = phoneme-5/processes-all/ps_cputime; value time = 1597222090.482; last cache update = 1597222090.482;
+Aug 12 02:48:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[1].points[0].interval.start_time had an invalid value of \"2020-08-12T01:47:10.764845-07:00\": The start time must be before the end time (2020-08-12T01:47:10.764845-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:48:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:48:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:48:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:49:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:49:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:49:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:49:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:49:10 phoneme-5 collectd[2114]: write_gcm: can not take infinite value
+Aug 12 02:49:10 phoneme-5 collectd[2114]: write_gcm: wg_typed_value_create_from_value_t_inline failed for swap/percent/value! Continuing.
+Aug 12 02:49:11 phoneme-5 collectd[2114]: write_gcm: Unsuccessful HTTP request 400: {#012  "error": {#012    "code": 400,#012    "message": "Field timeSeries[0].points[0].interval.start_time had an invalid value of \"2020-08-12T01:49:10.764847-07:00\": The start time must be before the end time (2020-08-12T01:49:10.764847-07:00) for the non-gauge metric 'agent.googleapis.com/agent/api_request_count'.",#012    "status": "INVALID_ARGUMENT"#012  }#012}
+Aug 12 02:49:11 phoneme-5 collectd[2114]: write_gcm: Error talking to the endpoint.
+Aug 12 02:49:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segment failed.
+Aug 12 02:49:11 phoneme-5 collectd[2114]: write_gcm: wg_transmit_unique_segments failed. Flushing.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping ACPI event daemon...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping User Manager for UID 1001...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped target Cloud-init target.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Execute cloud user/final scripts.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Unmounting /mnt/disks/data_disk...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Closed Load/Save RF Kill Switch Status /dev/rfkill Watch.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Session 2 of user dzubke.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped target Graphical Interface.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped target Multi-User System.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LSB: Start NTP daemon...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Deferred execution scheduler...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Avahi mDNS/DNS-SD Stack...
+Aug 12 02:49:27 phoneme-5 avahi-daemon[1090]: Got SIGTERM, quitting.
+Aug 12 02:49:27 phoneme-5 avahi-daemon[1090]: Leaving mDNS multicast group on interface ens4.IPv6 with address fe80::4001:aff:fe80:b.
+Aug 12 02:49:27 phoneme-5 avahi-daemon[1090]: Leaving mDNS multicast group on interface ens4.IPv4 with address 10.128.0.11.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LSB: automatic crash report generation...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LSB: Record successful boot for GRUB...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Google Compute Engine Accounts Daemon...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Regular background program processing daemon...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LSB: MD monitoring daemon...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Google Compute Engine Shutdown Scripts...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LXD - container startup/shutdown...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped target Login Prompts.
+Aug 12 02:49:27 phoneme-5 avahi-daemon[1090]: avahi-daemon 0.6.32-rc exiting.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Serial Getty on ttyS0...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Getty on tty1...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping FUSE filesystem for LXC...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Accounts Service...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LSB: Set the CPU Frequency Scaling governor to "ondemand"...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Authenticate and Authorize Users to Run Privileged Tasks...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping OpenBSD Secure Shell server...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Apply the settings specified in cloud-config.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped target Cloud-config availability.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Wait until snapd is fully seeded.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping NVIDIA Persistence Daemon...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping LSB: start and stop Stackdriver Agent...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped target Timers.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Daily apt upgrade and clean activities.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Message of the Day.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Daily apt download activities.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Daily Cleanup of Temporary Directories.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping GPU Utilization Metric Agent...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping Google Compute Engine Clock Skew Daemon...
+Aug 12 02:49:27 phoneme-5 nvidia-persistenced: Received signal 15
+Aug 12 02:49:27 phoneme-5 nvidia-persistenced: Socket closed.
+Aug 12 02:49:27 phoneme-5 nvidia-persistenced: PID file unlocked.
+Aug 12 02:49:27 phoneme-5 nvidia-persistenced: PID file closed.
+Aug 12 02:49:27 phoneme-5 nvidia-persistenced: Shutdown (16474)
+Aug 12 02:49:27 phoneme-5 systemd[1]: Unmounted /var/lib/lxcfs.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Avahi mDNS/DNS-SD Stack.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Stopped target Default.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Stopped target Basic System.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Stopped target Timers.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Regular background program processing daemon.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Stopped target Sockets.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Closed REST API socket for snapd user session agent.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Reached target Shutdown.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Deferred execution scheduler.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Starting Exit the Session...
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Stopped target Paths.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Authenticate and Authorize Users to Run Privileged Tasks.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Getty on tty1.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Serial Getty on ttyS0.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Google Compute Engine Accounts Daemon.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Google Compute Engine Clock Skew Daemon.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped OpenBSD Secure Shell server.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped GPU Utilization Metric Agent.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopping SSHGuard...
+Aug 12 02:49:27 phoneme-5 systemd[1]: Removed slice system-serial\x2dgetty.slice.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped /etc/rc.local Compatibility.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Removed slice system-getty.slice.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped Accounts Service.
+Aug 12 02:49:27 phoneme-5 systemd[3361]: Received SIGRTMIN+24 from PID 22397 (kill).
+Aug 12 02:49:27 phoneme-5 fusermount[22429]: /bin/fusermount: failed to unmount /var/lib/lxcfs: Invalid argument
+Aug 12 02:49:27 phoneme-5 systemd[1]: Stopped FUSE filesystem for LXC.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped ACPI event daemon.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped User Manager for UID 1001.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped LXD - container startup/shutdown.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped SSHGuard.
+Aug 12 02:49:28 phoneme-5 mdadm[22330]:  * Stopping MD monitoring service mdadm --monitor
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped LSB: Set the CPU Frequency Scaling governor to "ondemand".
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped LSB: Record successful boot for GRUB.
+Aug 12 02:49:28 phoneme-5 apport[22325]:  * Stopping automatic crash report generation: apport
+Aug 12 02:49:28 phoneme-5 mdadm[22330]:    ...done.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped LSB: MD monitoring daemon.
+Aug 12 02:49:28 phoneme-5 ntp[22324]:  * Stopping NTP server ntpd
+Aug 12 02:49:28 phoneme-5 ntpd[1805]: ntpd exiting on signal 15 (Terminated)
+Aug 12 02:49:28 phoneme-5 ntpd[1805]: 169.254.169.254 local addr 10.128.0.11 -> <null>
+Aug 12 02:49:28 phoneme-5 ntp[22324]:    ...done.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped LSB: Start NTP daemon.
+Aug 12 02:49:28 phoneme-5 apport[22325]:    ...done.
+Aug 12 02:49:28 phoneme-5 systemd[1]: Stopped LSB: automatic crash report generation.
+Aug 12 02:49:28 phoneme-5 stackdriver-agent[22352]: mesg: ttyname failed: Inappropriate ioctl for device
+Aug 12 02:49:28 phoneme-5 stackdriver-agent[22352]:  * Stopping Stackdriver metrics collection agent stackdriver-agent
+Aug 12 02:49:28 phoneme-5 collectd[2114]: Exiting normally.
+Aug 12 02:49:28 phoneme-5 collectd[2114]: collectd: Stopping 5 read threads.
+Aug 12 02:49:28 phoneme-5 collectd[2114]: collectd: Stopping 5 write threads.
+Aug 12 02:49:29 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:49:29 phoneme-5 systemd[1]: Unmounted /mnt/disks/data_disk.
+Aug 12 02:49:29 phoneme-5 systemd[1]: Stopped File System Check on /dev/disk/by-uuid/1bbeb6dc-649d-4726-863b-2d3e7b8a5550.
+Aug 12 02:49:29 phoneme-5 systemd[1]: Removed slice system-systemd\x2dfsck.slice.
+Aug 12 02:49:29 phoneme-5 stackdriver-collectd[2114]: write_gcm: Consumer thread unexpectedly exiting.
+Aug 12 02:49:29 phoneme-5 stackdriver-collectd[2114]: write_gcm: Consumer thread unexpectedly exiting.
+Aug 12 02:49:29 phoneme-5 stackdriver-agent[22352]:    ...done.
+Aug 12 02:49:29 phoneme-5 systemd[1]: Stopped LSB: start and stop Stackdriver Agent.
+Aug 12 02:49:29 phoneme-5 systemd[1]: Stopped target System Time Synchronized.
+Aug 12 02:49:30 phoneme-5 shutdown-script: INFO Starting shutdown scripts.
+Aug 12 02:49:30 phoneme-5 shutdown-script: INFO No shutdown scripts found in metadata.
+Aug 12 02:49:30 phoneme-5 shutdown-script: INFO Finished running shutdown scripts.
+Aug 12 02:49:30 phoneme-5 systemd[1]: Stopped Google Compute Engine Shutdown Scripts.
+Aug 12 02:49:30 phoneme-5 rsyslogd: [origin software="rsyslogd" swVersion="8.16.0" x-pid="1142" x-info="http://www.rsyslog.com"] exiting on signal 15.
+Aug 12 02:50:47 phoneme-5 rsyslogd: [origin software="rsyslogd" swVersion="8.16.0" x-pid="1159" x-info="http://www.rsyslog.com"] start
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Linux version 4.15.0-1080-gcp (buildd@lcy01-amd64-027) (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.12)) #90~16.04.1-Ubuntu SMP Fri Jul 10 19:11:10 UTC 2020 (Ubuntu 4.15.0-1080.90~16.04.1-gcp 4.15.18)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-4.15.0-1080-gcp root=PARTUUID=71fd92d1-0c88-4288-b2d8-a1564dd55043 ro scsi_mod.use_blk_mq=Y console=ttyS0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] KERNEL supported cpus:
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   Intel GenuineIntel
+Aug 12 02:50:46 phoneme-5 rsyslogd-2222: command 'KLogPermitNonKernelFacility' is currently not permitted - did you already set it via a RainerScript command (v6+ config)? [v8.16.0 try http://www.rsyslog.com/e/2222 ]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   AMD AuthenticAMD
+Aug 12 02:50:47 phoneme-5 rsyslogd: rsyslogd's groupid changed to 114
+Aug 12 02:50:47 phoneme-5 rsyslogd: rsyslogd's userid changed to 111
+Aug 12 02:50:47 phoneme-5 rsyslogd-2039: Could not open output pipe '/dev/xconsole':: No such file or directory [v8.16.0 try http://www.rsyslog.com/e/2039 ]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   Centaur CentaurHauls
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'standard' format.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] e820: BIOS-provided physical RAM map:
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000bfffcfff] usable
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x00000000bfffd000-0x00000000bfffffff] reserved
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x00000000fffbc000-0x00000000ffffffff] reserved
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BIOS-e820: [mem 0x0000000100000000-0x00000005dfffffff] usable
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] NX (Execute Disable) protection: active
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SMBIOS 2.4 present.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] DMI: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Hypervisor detected: KVM
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] e820: update [mem 0x00000000-0x00000fff] usable ==> reserved
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] e820: remove [mem 0x000a0000-0x000fffff] usable
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] e820: last_pfn = 0x5e0000 max_arch_pfn = 0x400000000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] MTRR default type: write-back
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] MTRR fixed ranges enabled:
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   00000-9FFFF write-back
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   A0000-BFFFF uncachable
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   C0000-FFFFF write-protect
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] MTRR variable ranges enabled:
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   0 base 0000C0000000 mask 3FFFC0000000 uncachable
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   1 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   2 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   3 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   4 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   5 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   6 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   7 disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT  
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] e820: last_pfn = 0xbfffd max_arch_pfn = 0x400000000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] found SMP MP-table at [mem 0x000f2360-0x000f236f]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Scanning 1 areas for low memory corruption
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Using GB pages for direct mapping
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da593000, 0x4da593fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da594000, 0x4da594fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da595000, 0x4da595fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da596000, 0x4da596fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da597000, 0x4da597fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da598000, 0x4da598fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] BRK [0x4da599000, 0x4da599fff] PGTABLE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] RAMDISK: [mem 0x34844000-0x36419fff]
+Aug 12 02:50:47 phoneme-5 systemd[342]: keyboard-setup.service: Failed at step EXEC spawning /usr/bin/loadkeys: No such file or directory
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: Early table checksum verification disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: RSDP 0x00000000000F2310 000014 (v00 Google)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: RSDT 0x00000000BFFFFCB0 000038 (v01 Google GOOGRSDT 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: FACP 0x00000000BFFFEE80 0000F4 (v02 Google GOOGFACP 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: DSDT 0x00000000BFFFD5C0 0018BA (v01 Google GOOGDSDT 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: FACS 0x00000000BFFFD580 000040
+Aug 12 02:50:47 phoneme-5 systemd-modules-load[339]: Inserted module 'iscsi_tcp'
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: FACS 0x00000000BFFFD580 000040
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: SRAT 0x00000000BFFFFB60 000108 (v03 Google GOOGSRAT 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: APIC 0x00000000BFFFFA90 000096 (v05 Google GOOGAPIC 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: SSDT 0x00000000BFFFEF80 000B04 (v01 Google GOOGSSDT 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 systemd-modules-load[339]: Inserted module 'ib_iser'
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: WAET 0x00000000BFFFFB30 000028 (v01 Google GOOGWAET 00000001 GOOG 00000001)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: Local APIC address 0xfee00000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SRAT: PXM 0 -> APIC 0x00 -> Node 0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SRAT: PXM 0 -> APIC 0x01 -> Node 0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SRAT: PXM 0 -> APIC 0x02 -> Node 0
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Load/Save Random Seed.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SRAT: PXM 0 -> APIC 0x03 -> Node 0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SRAT: PXM 0 -> APIC 0x04 -> Node 0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SRAT: PXM 0 -> APIC 0x05 -> Node 0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x0009ffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x00100000-0xbfffffff]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Apply Kernel Variables.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x100000000-0x5dfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] NUMA: Node 0 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0xbfffffff] -> [mem 0x00000000-0xbfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] NUMA: Node 0 [mem 0x00000000-0xbfffffff] + [mem 0x100000000-0x5dfffffff] -> [mem 0x00000000-0x5dfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] NODE_DATA(0) allocated [mem 0x5dffd5000-0x5dfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] kvm-clock: cpu 0, msr 5:dff54001, primary cpu clock
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] kvm-clock: using sched offset of 6837267018 cycles
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Flush Journal to Persistent Storage...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Zone ranges:
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started udev Coldplug all Devices.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   Normal   [mem 0x0000000100000000-0x00000005dfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   Device   empty
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Movable zone start for each node
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Create Static Device Nodes in /dev.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Early memory node ranges
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bfffcfff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   node   0: [mem 0x0000000100000000-0x00000005dfffffff]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting udev Kernel Device Manager...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Reserved but unavailable: 98 pages
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Initmem setup node 0 [mem 0x0000000000001000-0x00000005dfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] On node 0 totalpages: 5898139
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA zone: 64 pages used for memmap
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA zone: 21 pages reserved
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA zone: 3998 pages, LIFO batch:0
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Flush Journal to Persistent Storage.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA32 zone: 12224 pages used for memmap
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   DMA32 zone: 782333 pages, LIFO batch:31
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   Normal zone: 79872 pages used for memmap
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000]   Normal zone: 5111808 pages, LIFO batch:31
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: PM-Timer IO Port: 0xb008
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: Local APIC address 0xfee00000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Local File Systems (Pre).
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: IRQ5 used by override.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started udev Kernel Device Manager.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: IRQ9 used by override.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: IRQ10 used by override.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ACPI: IRQ11 used by override.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Using ACPI (MADT) for SMP configuration information
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] smpboot: Allowing 6 CPUs, 0 hotplug CPUs
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0x00000000-0x00000fff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0x0009f000-0x0009ffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0x000a0000-0x000effff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0x000f0000-0x000fffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0xbfffd000-0xbfffffff]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Found device /dev/ttyS0.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0xc0000000-0xfffbbfff]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Set console keymap...
+Aug 12 02:50:47 phoneme-5 systemd[408]: keyboard-setup.service: Failed at step EXEC spawning /usr/bin/loadkeys: No such file or directory
+Aug 12 02:50:47 phoneme-5 systemd[1]: keyboard-setup.service: Main process exited, code=exited, status=203/EXEC
+Aug 12 02:50:47 phoneme-5 systemd[1]: Failed to start Set console keymap.
+Aug 12 02:50:47 phoneme-5 systemd[1]: keyboard-setup.service: Unit entered failed state.
+Aug 12 02:50:47 phoneme-5 systemd[1]: keyboard-setup.service: Failed with result 'exit-code'.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[387]: Process 'console-setup-tty fbcon' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Listening on Load/Save RF Kill Switch Status /dev/rfkill Watch.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[387]: Process 'console-setup-tty /dev/tty1' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[387]: Process 'console-setup-tty /dev/tty2' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[387]: Process 'console-setup-tty /dev/tty4' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[396]: Process 'console-setup-tty /dev/tty3' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[398]: Process 'console-setup-tty /dev/tty5' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd-udevd[387]: Process 'console-setup-tty /dev/tty6' failed with exit code 2.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Found device Virtio network device.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PM: Registered nosave memory: [mem 0xfffbc000-0xffffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] e820: [mem 0xc0000000-0xfffbbfff] available for PCI devices
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Booting paravirtualized kernel on KVM
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645519600211568 ns
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] random: get_random_bytes called from start_kernel+0x9e/0x52d with crng_init=0
+Aug 12 02:50:47 phoneme-5 systemd[1]: Found device PersistentDisk cloudimg-rootfs.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:6 nr_cpu_ids:6 nr_node_ids:1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] percpu: Embedded 45 pages/cpu s147456 r8192 d28672 u262144
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting File System Check on /dev/disk/by-uuid/1bbeb6dc-649d-4726-863b-2d3e7b8a5550...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] pcpu-alloc: s147456 r8192 d28672 u262144 alloc=1*2097152
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] pcpu-alloc: [0] 0 1 2 3 4 5 - - 
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] PV qspinlock hash table entries: 256 (order: 0, 4096 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 5805958
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Policy zone: Normal
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-4.15.0-1080-gcp root=PARTUUID=71fd92d1-0c88-4288-b2d8-a1564dd55043 ro scsi_mod.use_blk_mq=Y console=ttyS0
+Aug 12 02:50:47 phoneme-5 systemd[1]: Found device PersistentDisk UEFI.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Calgary: detecting Calgary via BIOS EBDA area
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Calgary: Unable to locate Rio Grande table in EBDA - bailing!
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Memory: 23099260K/23592556K available (12300K kernel code, 2484K rwdata, 4132K rodata, 2440K init, 2704K bss, 493296K reserved, 0K cma-reserved)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=6, Nodes=1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] Kernel/User page tables isolation: enabled
+Aug 12 02:50:47 phoneme-5 systemd[1]: Mounting /boot/efi...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.000000] ftrace: allocating 39545 entries in 155 pages
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] Hierarchical RCU implementation.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] 	RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=6.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] 	Tasks RCU enabled.
+Aug 12 02:50:47 phoneme-5 mount[559]: mount: /dev/sdb15 is write-protected, mounting read-only
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=6
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] NR_IRQS: 524544, nr_irqs: 472, preallocated irqs: 16
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] Console: colour VGA+ 80x25
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] console [ttyS0] enabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] ACPI: Core revision 20170831
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] ACPI: 2 ACPI AML tables successfully acquired and loaded
+Aug 12 02:50:47 phoneme-5 systemd[1]: Mounted /boot/efi.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004009] APIC: Switch to symmetric I/O mode setup
+Aug 12 02:50:47 phoneme-5 kernel: [    0.005789] x2apic enabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.007335] Switched APIC routing to physical x2apic.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.010643] ..TIMER: vector=0x30 apic1=0 pin1=0 apic2=-1 pin2=-1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.011552] tsc: Detected 2300.000 MHz processor
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started File System Check Daemon to report status.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.012009] Calibrating delay loop (skipped) preset value.. 4600.00 BogoMIPS (lpj=9200000)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.013251] pid_max: default: 32768 minimum: 301
+Aug 12 02:50:47 phoneme-5 kernel: [    0.013935] Security Framework initialized
+Aug 12 02:50:47 phoneme-5 kernel: [    0.014637] Yama: becoming mindful.
+Aug 12 02:50:47 phoneme-5 systemd-fsck[549]: fsck.ext4: Read-only file system while trying to open /dev/sdb1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.016021] AppArmor: AppArmor initialized
+Aug 12 02:50:47 phoneme-5 kernel: [    0.021638] Dentry cache hash table entries: 4194304 (order: 13, 33554432 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.025417] Inode-cache hash table entries: 2097152 (order: 12, 16777216 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.026713] Mount-cache hash table entries: 65536 (order: 7, 524288 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.027947] Mountpoint-cache hash table entries: 65536 (order: 7, 524288 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.028359] Last level iTLB entries: 4KB 1024, 2MB 1024, 4MB 1024
+Aug 12 02:50:47 phoneme-5 kernel: [    0.029323] Last level dTLB entries: 4KB 1024, 2MB 1024, 4MB 1024, 1GB 4
+Aug 12 02:50:47 phoneme-5 kernel: [    0.030277] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+Aug 12 02:50:47 phoneme-5 systemd-fsck[549]: Disk write-protected; use the -n option to do a read-only
+Aug 12 02:50:47 phoneme-5 kernel: [    0.032002] Spectre V2 : Mitigation: Full generic retpoline
+Aug 12 02:50:47 phoneme-5 kernel: [    0.032907] Spectre V2 : Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch
+Aug 12 02:50:47 phoneme-5 kernel: [    0.034241] Spectre V2 : Enabling Restricted Speculation for firmware calls
+Aug 12 02:50:47 phoneme-5 kernel: [    0.036008] Spectre V2 : mitigation: Enabling conditional Indirect Branch Prediction Barrier
+Aug 12 02:50:47 phoneme-5 systemd-fsck[549]: check of the device.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.037232] Spectre V2 : User space: Mitigation: STIBP via seccomp and prctl
+Aug 12 02:50:47 phoneme-5 kernel: [    0.038313] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl and seccomp
+Aug 12 02:50:47 phoneme-5 kernel: [    0.040034] MDS: Mitigation: Clear CPU buffers
+Aug 12 02:50:47 phoneme-5 kernel: [    0.049230] Freeing SMP alternatives memory: 36K
+Aug 12 02:50:47 phoneme-5 systemd-fsck[549]: fsck failed with error code 8.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.160328] smpboot: CPU0: Intel(R) Xeon(R) CPU @ 2.30GHz (family: 0x6, model: 0x3f, stepping: 0x0)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.161981] Performance Events: unsupported p6 CPU model 63 no PMU driver, software events only.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.163505] Hierarchical SRCU implementation.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.164986] NMI watchdog: Perf event create on CPU 0 failed with -2
+Aug 12 02:50:47 phoneme-5 systemd-fsck[549]: Ignoring error.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.165954] NMI watchdog: Perf NMI watchdog permanently disabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.166902] smp: Bringing up secondary CPUs ...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.167657] x86: Booting SMP configuration:
+Aug 12 02:50:47 phoneme-5 kernel: [    0.168002] .... node  #0, CPUs:      #1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] kvm-clock: cpu 1, msr 5:dff54041, secondary cpu clock
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Local File Systems.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.169894]  #2
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] kvm-clock: cpu 2, msr 5:dff54081, secondary cpu clock
+Aug 12 02:50:47 phoneme-5 kernel: [    0.172050]  #3
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Create Volatile Files and Directories...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] kvm-clock: cpu 3, msr 5:dff540c1, secondary cpu clock
+Aug 12 02:50:47 phoneme-5 kernel: [    0.173813] MDS CPU bug present and SMT on, data leak possible. See https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for more details.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.176106]  #4
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] kvm-clock: cpu 4, msr 5:dff54101, secondary cpu clock
+Aug 12 02:50:47 phoneme-5 kernel: [    0.177553]  #5
+Aug 12 02:50:47 phoneme-5 kernel: [    0.004000] kvm-clock: cpu 5, msr 5:dff54141, secondary cpu clock
+Aug 12 02:50:47 phoneme-5 kernel: [    0.177675] smp: Brought up 1 node, 6 CPUs
+Aug 12 02:50:47 phoneme-5 kernel: [    0.180002] smpboot: Max logical packages: 1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.180616] smpboot: Total of 6 processors activated (27600.00 BogoMIPS)
+Aug 12 02:50:47 phoneme-5 systemd-tmpfiles[564]: [/usr/lib/tmpfiles.d/var.conf:14] Duplicate line for path "/var/log", ignoring.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Set console font and keymap...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.182628] devtmpfs: initialized
+Aug 12 02:50:47 phoneme-5 kernel: [    0.182628] x86/mm: Memory block size: 128MB
+Aug 12 02:50:47 phoneme-5 kernel: [    0.185288] evm: security.selinux
+Aug 12 02:50:47 phoneme-5 systemd[565]: console-setup.service: Failed at step EXEC spawning /bin/setupcon: No such file or directory
+Aug 12 02:50:47 phoneme-5 kernel: [    0.185797] evm: security.SMACK64
+Aug 12 02:50:47 phoneme-5 kernel: [    0.186376] evm: security.SMACK64EXEC
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting LSB: AppArmor initialization...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.186997] evm: security.SMACK64TRANSMUTE
+Aug 12 02:50:47 phoneme-5 kernel: [    0.188007] evm: security.SMACK64MMAP
+Aug 12 02:50:47 phoneme-5 kernel: [    0.188541] evm: security.apparmor
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Tell Plymouth To Write Out Runtime Data...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.189229] evm: security.ima
+Aug 12 02:50:47 phoneme-5 kernel: [    0.189749] evm: security.capability
+Aug 12 02:50:47 phoneme-5 kernel: [    0.190292] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started File System Check on /dev/disk/by-uuid/1bbeb6dc-649d-4726-863b-2d3e7b8a5550.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.192011] futex hash table entries: 2048 (order: 5, 131072 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.193037] pinctrl core: initialized pinctrl subsystem
+Aug 12 02:50:47 phoneme-5 kernel: [    0.194191] RTC time:  8:50:28, date: 08/12/20
+Aug 12 02:50:47 phoneme-5 systemd[1]: console-setup.service: Main process exited, code=exited, status=203/EXEC
+Aug 12 02:50:47 phoneme-5 kernel: [    0.195029] NET: Registered protocol family 16
+Aug 12 02:50:47 phoneme-5 kernel: [    0.195869] audit: initializing netlink subsys (disabled)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.196013] audit: type=2000 audit(1597222228.736:1): state=initialized audit_enabled=0 res=1
+Aug 12 02:50:47 phoneme-5 systemd[1]: Failed to start Set console font and keymap.
+Aug 12 02:50:47 phoneme-5 systemd[1]: console-setup.service: Unit entered failed state.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.196123] cpuidle: using governor ladder
+Aug 12 02:50:47 phoneme-5 kernel: [    0.196618] cpuidle: using governor menu
+Aug 12 02:50:47 phoneme-5 kernel: [    0.196618] ACPI: bus type PCI registered
+Aug 12 02:50:47 phoneme-5 kernel: [    0.200003] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+Aug 12 02:50:47 phoneme-5 systemd[1]: console-setup.service: Failed with result 'exit-code'.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.201209] PCI: Using configuration type 1 for base access
+Aug 12 02:50:47 phoneme-5 kernel: [    0.202135] HugeTLB registered 1.00 GiB page size, pre-allocated 0 pages
+Aug 12 02:50:47 phoneme-5 kernel: [    0.202135] HugeTLB registered 2.00 MiB page size, pre-allocated 0 pages
+Aug 12 02:50:47 phoneme-5 systemd[1]: dev-disk-by\x2dlabel-cloudimg\x2drootfs.device: Dev dev-disk-by\x2dlabel-cloudimg\x2drootfs.device appeared twice with different sysfs paths /sys/devices/pci0000:00/0000:00:03.0/virtio0/host0/target0:0:1/0:0:1:0/block/sda/sda1 and /sys/devices/pci0000:00/0000:00:03.0/virtio0/host0/target0:0:2/0:0:2:0/block/sdb/sdb1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.204111] ACPI: Added _OSI(Module Device)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.204781] ACPI: Added _OSI(Processor Device)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.208003] ACPI: Added _OSI(3.0 _SCP Extensions)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.208645] ACPI: Added _OSI(Processor Aggregator Device)
+Aug 12 02:50:47 phoneme-5 systemd[1]: dev-disk-by\x2dpartuuid-71fd92d1\x2d0c88\x2d4288\x2db2d8\x2da1564dd55043.device: Dev dev-disk-by\x2dpartuuid-71fd92d1\x2d0c88\x2d4288\x2db2d8\x2da1564dd55043.device appeared twice with different sysfs paths /sys/devices/pci0000:00/0000:00:03.0/virtio0/host0/target0:0:1/0:0:1:0/block/sda/sda1 and /sys/devices/pci0000:00/0000:00:03.0/virtio0/host0/target0:0:2/0:0:2:0/block/sdb/sdb1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.209578] ACPI: Added _OSI(Linux-Dell-Video)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.210282] ACPI: Added _OSI(Linux-Lenovo-NV-HDMI-Audio)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.211179] ACPI: Added _OSI(Linux-HPI-Hybrid-Graphics)
+Aug 12 02:50:47 phoneme-5 systemd[1]: dev-disk-by\x2duuid-1bbeb6dc\x2d649d\x2d4726\x2d863b\x2d2d3e7b8a5550.device: Dev dev-disk-by\x2duuid-1bbeb6dc\x2d649d\x2d4726\x2d863b\x2d2d3e7b8a5550.device appeared twice with different sysfs paths /sys/devices/pci0000:00/0000:00:03.0/virtio0/host0/target0:0:1/0:0:1:0/block/sda/sda1 and /sys/devices/pci0000:00/0000:00:03.0/virtio0/host0/target0:0:2/0:0:2:0/block/sdb/sdb1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.212300] ACPI: Executed 2 blocks of module-level executable AML code
+Aug 12 02:50:47 phoneme-5 kernel: [    0.214424] ACPI: Interpreter enabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.215109] ACPI: (supports S0 S3 S4 S5)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Created slice system-getty.slice.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.215660] ACPI: Using IOAPIC for interrupt routing
+Aug 12 02:50:47 phoneme-5 systemd[1]: Mounting /mnt/disks/data_disk...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.216012] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+Aug 12 02:50:47 phoneme-5 kernel: [    0.217819] ACPI: Enabled 16 GPEs in block 00 to 0F
+Aug 12 02:50:47 phoneme-5 kernel: [    0.221378] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+Aug 12 02:50:47 phoneme-5 kernel: [    0.222366] acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.223723] acpi PNP0A03:00: _OSC failed (AE_NOT_FOUND); disabling ASPM
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Tell Plymouth To Write Out Runtime Data.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.224007] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended PCI configuration space under this bridge.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Create Volatile Files and Directories.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.226344] PCI host bridge to bus 0000:00
+Aug 12 02:50:47 phoneme-5 kernel: [    0.227190] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.228002] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target System Time Synchronized.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Update UTMP about System Boot/Shutdown...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Update UTMP about System Boot/Shutdown.
+Aug 12 02:50:47 phoneme-5 apparmor[567]:  * Starting AppArmor profiles
+Aug 12 02:50:47 phoneme-5 systemd[1]: Mounted /mnt/disks/data_disk.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Set console keymap...
+Aug 12 02:50:47 phoneme-5 systemd[631]: keyboard-setup.service: Failed at step EXEC spawning /usr/bin/loadkeys: No such file or directory
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Tell Plymouth To Write Out Runtime Data...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Set console font and keymap...
+Aug 12 02:50:47 phoneme-5 systemd[638]: console-setup.service: Failed at step EXEC spawning /bin/setupcon: No such file or directory
+Aug 12 02:50:47 phoneme-5 systemd[1]: keyboard-setup.service: Main process exited, code=exited, status=203/EXEC
+Aug 12 02:50:47 phoneme-5 systemd[1]: Failed to start Set console keymap.
+Aug 12 02:50:47 phoneme-5 systemd[1]: keyboard-setup.service: Unit entered failed state.
+Aug 12 02:50:47 phoneme-5 systemd[1]: keyboard-setup.service: Failed with result 'exit-code'.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Tell Plymouth To Write Out Runtime Data.
+Aug 12 02:50:47 phoneme-5 systemd[1]: console-setup.service: Main process exited, code=exited, status=203/EXEC
+Aug 12 02:50:47 phoneme-5 systemd[1]: Failed to start Set console font and keymap.
+Aug 12 02:50:47 phoneme-5 systemd[1]: console-setup.service: Unit entered failed state.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.229144] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.230312] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xc4ffffff window]
+Aug 12 02:50:47 phoneme-5 systemd[1]: console-setup.service: Failed with result 'exit-code'.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.232001] pci_bus 0000:00: root bus resource [mem 0xc5040000-0xedffffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.233238] pci_bus 0000:00: root bus resource [mem 0xee040000-0xfebfefff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.234408] pci_bus 0000:00: root bus resource [mem 0x600000000-0xc3fffffff window]
+Aug 12 02:50:47 phoneme-5 apparmor[567]: Skipping profile in /etc/apparmor.d/disable: usr.sbin.rsyslogd
+Aug 12 02:50:47 phoneme-5 kernel: [    0.235472] pci_bus 0000:00: root bus resource [bus 00-ff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.236034] pci 0000:00:00.0: [8086:1237] type 00 class 0x060000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.240389] pci 0000:00:01.0: [8086:7110] type 00 class 0x060100
+Aug 12 02:50:47 phoneme-5 kernel: [    0.254841] pci 0000:00:01.3: [8086:7113] type 00 class 0x068000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.270829] pci 0000:00:01.3: quirk: [io  0xb000-0xb03f] claimed by PIIX4 ACPI
+Aug 12 02:50:47 phoneme-5 apparmor[567]:    ...done.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.272253] pci 0000:00:03.0: [1af4:1004] type 00 class 0x000000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.277822] pci 0000:00:03.0: reg 0x10: [io  0xc080-0xc0bf]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.281728] pci 0000:00:03.0: reg 0x14: [mem 0xfd800000-0xfd80007f]
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started LSB: AppArmor initialization.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.292255] pci 0000:00:04.0: [10de:15f8] type 00 class 0x030200
+Aug 12 02:50:47 phoneme-5 kernel: [    0.300013] pci 0000:00:04.0: reg 0x10: [mem 0xfc000000-0xfcffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.312017] pci 0000:00:04.0: reg 0x14: [mem 0x800000000-0xbffffffff 64bit pref]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.332093] pci 0000:00:04.0: reg 0x1c: [mem 0xc00000000-0xc01ffffff 64bit pref]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.344013] pci 0000:00:04.0: reg 0x24: [io  0xc000-0xc07f]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.352152] pci 0000:00:04.0: Enabling HDA controller
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Load AppArmor profiles managed internally by snapd...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.356215] pci 0000:00:05.0: [1af4:1000] type 00 class 0x020000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.361993] pci 0000:00:05.0: reg 0x10: [io  0xc0c0-0xc0ff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.365238] pci 0000:00:05.0: reg 0x14: [mem 0xfd801000-0xfd8010ff]
+Aug 12 02:50:47 phoneme-5 snapd-apparmor[664]: find: ‘/var/lib/snapd/apparmor/profiles/’: No such file or directory
+Aug 12 02:50:47 phoneme-5 kernel: [    0.380242] pci 0000:00:06.0: [1ae0:a002] type 00 class 0x030000
+Aug 12 02:50:47 phoneme-5 kernel: [    0.390696] pci 0000:00:06.0: reg 0x10: [mem 0xfd000000-0xfd7fffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.426376] pci 0000:00:07.0: [1af4:1005] type 00 class 0x00ff00
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Load AppArmor profiles managed internally by snapd.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.432004] pci 0000:00:07.0: reg 0x10: [io  0xc100-0xc11f]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.436003] pci 0000:00:07.0: reg 0x14: [mem 0xfd802000-0xfd80203f]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.446550] ACPI: PCI Interrupt Link [LNKA] (IRQs 5 *10 11)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.448927] ACPI: PCI Interrupt Link [LNKB] (IRQs 5 *10 11)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.450895] ACPI: PCI Interrupt Link [LNKC] (IRQs 5 10 *11)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.453004] ACPI: PCI Interrupt Link [LNKD] (IRQs 5 10 *11)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.455092] ACPI: PCI Interrupt Link [LNKS] (IRQs *9)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.456677] SCSI subsystem initialized
+Aug 12 02:50:47 phoneme-5 kernel: [    0.457457] libata version 3.00 loaded.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.457457] pci 0000:00:06.0: vgaarb: setting as boot VGA device
+Aug 12 02:50:47 phoneme-5 kernel: [    0.457457] pci 0000:00:06.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+Aug 12 02:50:47 phoneme-5 cloud-init[364]: Cloud-init v. 19.3-41-gc4735dd3-0ubuntu1~16.04.1 running 'init-local' at Wed, 12 Aug 2020 08:50:40 +0000. Up 10.41 seconds.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.460008] pci 0000:00:06.0: vgaarb: bridge control possible
+Aug 12 02:50:47 phoneme-5 kernel: [    0.460980] vgaarb: loaded
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Initial cloud-init job (pre-networking).
+Aug 12 02:50:47 phoneme-5 kernel: [    0.461706] ACPI: bus type USB registered
+Aug 12 02:50:47 phoneme-5 kernel: [    0.462413] usbcore: registered new interface driver usbfs
+Aug 12 02:50:47 phoneme-5 kernel: [    0.463449] usbcore: registered new interface driver hub
+Aug 12 02:50:47 phoneme-5 kernel: [    0.464032] usbcore: registered new device driver usb
+Aug 12 02:50:47 phoneme-5 kernel: [    0.464913] EDAC MC: Ver: 3.0.0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.465031] PCI: Using ACPI for IRQ routing
+Aug 12 02:50:47 phoneme-5 kernel: [    0.465031] PCI: pci_cache_line_size set to 64 bytes
+Aug 12 02:50:47 phoneme-5 kernel: [    0.465031] e820: reserve RAM buffer [mem 0x0009fc00-0x0009ffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.465031] e820: reserve RAM buffer [mem 0xbfffd000-0xbfffffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.465031] NetLabel: Initializing
+Aug 12 02:50:47 phoneme-5 kernel: [    0.468002] NetLabel:  domain hash size = 128
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Network (Pre).
+Aug 12 02:50:47 phoneme-5 kernel: [    0.468637] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+Aug 12 02:50:47 phoneme-5 kernel: [    0.469590] NetLabel:  unlabeled traffic allowed by default
+Aug 12 02:50:47 phoneme-5 kernel: [    0.470605] clocksource: Switched to clocksource kvm-clock
+Aug 12 02:50:47 phoneme-5 kernel: [    0.477881] VFS: Disk quotas dquot_6.6.0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.478781] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Raise network interfaces...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.479902] AppArmor: AppArmor Filesystem Enabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.480642] pnp: PnP ACPI init
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started ifup for ens4.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481128] pnp 00:00: Plug and Play ACPI device, IDs PNP0b00 (active)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481173] pnp 00:01: Plug and Play ACPI device, IDs PNP0303 (active)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481206] pnp 00:02: Plug and Play ACPI device, IDs PNP0f13 (active)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481245] pnp 00:03: Plug and Play ACPI device, IDs PNP0501 (active)
+Aug 12 02:50:47 phoneme-5 ifup[720]: /sbin/ifup: waiting for lock on /run/network/ifstate.ens4
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481277] pnp 00:04: Plug and Play ACPI device, IDs PNP0501 (active)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481310] pnp 00:05: Plug and Play ACPI device, IDs PNP0501 (active)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481341] pnp 00:06: Plug and Play ACPI device, IDs PNP0501 (active)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.481464] pnp: PnP ACPI: found 7 devices
+Aug 12 02:50:47 phoneme-5 kernel: [    0.488377] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489870] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+Aug 12 02:50:47 phoneme-5 dhclient[741]: Internet Systems Consortium DHCP Client 4.3.3
+Aug 12 02:50:47 phoneme-5 dhclient[741]: Copyright 2004-2015 Internet Systems Consortium.
+Aug 12 02:50:47 phoneme-5 sh[704]: Internet Systems Consortium DHCP Client 4.3.3
+Aug 12 02:50:47 phoneme-5 sh[704]: Copyright 2004-2015 Internet Systems Consortium.
+Aug 12 02:50:47 phoneme-5 sh[704]: All rights reserved.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489871] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489872] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489873] pci_bus 0000:00: resource 7 [mem 0xc0000000-0xc4ffffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489874] pci_bus 0000:00: resource 8 [mem 0xc5040000-0xedffffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489875] pci_bus 0000:00: resource 9 [mem 0xee040000-0xfebfefff window]
+Aug 12 02:50:47 phoneme-5 sh[704]: For info, please visit https://www.isc.org/software/dhcp/
+Aug 12 02:50:47 phoneme-5 dhclient[741]: All rights reserved.
+Aug 12 02:50:47 phoneme-5 dhclient[741]: For info, please visit https://www.isc.org/software/dhcp/
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489876] pci_bus 0000:00: resource 10 [mem 0x600000000-0xc3fffffff window]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.489924] NET: Registered protocol family 2
+Aug 12 02:50:47 phoneme-5 kernel: [    0.490839] TCP established hash table entries: 262144 (order: 9, 2097152 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.492441] TCP bind hash table entries: 65536 (order: 8, 1048576 bytes)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.493544] TCP: Hash tables configured (established 262144 bind 65536)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.494702] UDP hash table entries: 16384 (order: 7, 524288 bytes)
+Aug 12 02:50:47 phoneme-5 dhclient[741]: 
+Aug 12 02:50:47 phoneme-5 kernel: [    0.495809] UDP-Lite hash table entries: 16384 (order: 7, 524288 bytes)
+Aug 12 02:50:47 phoneme-5 dhclient[741]: Listening on LPF/ens4/42:01:0a:80:00:0b
+Aug 12 02:50:47 phoneme-5 kernel: [    0.497316] NET: Registered protocol family 1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.498081] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
+Aug 12 02:50:47 phoneme-5 kernel: [    0.499073] pci 0000:00:06.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.500364] PCI: CLS 0 bytes, default 64
+Aug 12 02:50:47 phoneme-5 kernel: [    0.500392] Unpacking initramfs...
+Aug 12 02:50:47 phoneme-5 kernel: [    0.805446] Freeing initrd memory: 28504K
+Aug 12 02:50:47 phoneme-5 kernel: [    0.806319] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.807434] software IO TLB: mapped [mem 0xbbffd000-0xbfffd000] (64MB)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.808554] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x212735223b2, max_idle_ns: 440795277976 ns
+Aug 12 02:50:47 phoneme-5 kernel: [    0.810106] Scanning for low memory corruption every 60 seconds
+Aug 12 02:50:47 phoneme-5 kernel: [    0.811926] Initialise system trusted keyrings
+Aug 12 02:50:47 phoneme-5 kernel: [    0.812883] Key type blacklist registered
+Aug 12 02:50:47 phoneme-5 kernel: [    0.813513] workingset: timestamp_bits=36 max_order=23 bucket_order=0
+Aug 12 02:50:47 phoneme-5 sh[704]: Listening on LPF/ens4/42:01:0a:80:00:0b
+Aug 12 02:50:47 phoneme-5 kernel: [    0.815440] zbud: loaded
+Aug 12 02:50:47 phoneme-5 kernel: [    0.816399] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+Aug 12 02:50:47 phoneme-5 kernel: [    0.817422] fuse init (API version 7.26)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.819935] Key type asymmetric registered
+Aug 12 02:50:47 phoneme-5 kernel: [    0.820697] Asymmetric key parser 'x509' registered
+Aug 12 02:50:47 phoneme-5 kernel: [    0.821766] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 246)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.823234] io scheduler noop registered
+Aug 12 02:50:47 phoneme-5 sh[704]: Sending on   LPF/ens4/42:01:0a:80:00:0b
+Aug 12 02:50:47 phoneme-5 kernel: [    0.823833] io scheduler deadline registered
+Aug 12 02:50:47 phoneme-5 kernel: [    0.824574] io scheduler cfq registered (default)
+Aug 12 02:50:47 phoneme-5 sh[704]: Sending on   Socket/fallback
+Aug 12 02:50:47 phoneme-5 kernel: [    0.825529] intel_idle: Please enable MWAIT in BIOS SETUP
+Aug 12 02:50:47 phoneme-5 kernel: [    0.825596] input: Power Button as /devices/LNXSYSTM:00/LNXPWRBN:00/input/input0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.826651] ACPI: Power Button [PWRF]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.827258] input: Sleep Button as /devices/LNXSYSTM:00/LNXSLPBN:00/input/input1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.828314] ACPI: Sleep Button [SLPF]
+Aug 12 02:50:47 phoneme-5 kernel: [    0.831336] ACPI: PCI Interrupt Link [LNKC] enabled at IRQ 11
+Aug 12 02:50:47 phoneme-5 sh[704]: DHCPDISCOVER on ens4 to 255.255.255.255 port 67 interval 3 (xid=0x23caba56)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.832634] virtio-pci 0000:00:03.0: virtio_pci: leaving for legacy driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.837194] ACPI: PCI Interrupt Link [LNKA] enabled at IRQ 10
+Aug 12 02:50:47 phoneme-5 dhclient[741]: Sending on   LPF/ens4/42:01:0a:80:00:0b
+Aug 12 02:50:47 phoneme-5 kernel: [    0.838956] virtio-pci 0000:00:05.0: virtio_pci: leaving for legacy driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.843845] virtio-pci 0000:00:07.0: virtio_pci: leaving for legacy driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.848206] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled
+Aug 12 02:50:47 phoneme-5 kernel: [    0.871851] 00:03: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+Aug 12 02:50:47 phoneme-5 dhclient[741]: Sending on   Socket/fallback
+Aug 12 02:50:47 phoneme-5 kernel: [    0.894615] 00:04: ttyS1 at I/O 0x2f8 (irq = 3, base_baud = 115200) is a 16550A
+Aug 12 02:50:47 phoneme-5 kernel: [    0.917415] 00:05: ttyS2 at I/O 0x3e8 (irq = 6, base_baud = 115200) is a 16550A
+Aug 12 02:50:47 phoneme-5 kernel: [    0.940269] 00:06: ttyS3 at I/O 0x2e8 (irq = 7, base_baud = 115200) is a 16550A
+Aug 12 02:50:47 phoneme-5 kernel: [    0.942684] Linux agpgart interface v0.103
+Aug 12 02:50:47 phoneme-5 kernel: [    0.945134] loop: module loaded
+Aug 12 02:50:47 phoneme-5 kernel: [    0.955721] scsi host0: Virtio SCSI HBA
+Aug 12 02:50:47 phoneme-5 dhclient[741]: DHCPDISCOVER on ens4 to 255.255.255.255 port 67 interval 3 (xid=0x23caba56)
+Aug 12 02:50:47 phoneme-5 dhclient[741]: DHCPREQUEST of 10.128.0.11 on ens4 to 255.255.255.255 port 67 (xid=0x56baca23)
+Aug 12 02:50:47 phoneme-5 sh[704]: DHCPREQUEST of 10.128.0.11 on ens4 to 255.255.255.255 port 67 (xid=0x56baca23)
+Aug 12 02:50:47 phoneme-5 sh[704]: DHCPOFFER of 10.128.0.11 from 169.254.169.254
+Aug 12 02:50:47 phoneme-5 dhclient[741]: DHCPOFFER of 10.128.0.11 from 169.254.169.254
+Aug 12 02:50:47 phoneme-5 sh[704]: DHCPACK of 10.128.0.11 from 169.254.169.254
+Aug 12 02:50:47 phoneme-5 dhclient[741]: DHCPACK of 10.128.0.11 from 169.254.169.254
+Aug 12 02:50:47 phoneme-5 sh[704]: (process:834): nmcli-CRITICAL **: Error: Could not create NMClient object: Could not connect: No such file or directory.
+Aug 12 02:50:47 phoneme-5 sh[704]: invoke-rc.d: could not determine current runlevel
+Aug 12 02:50:47 phoneme-5 dhclient[741]: bound to 10.128.0.11 -- renewal in 32934 seconds.
+Aug 12 02:50:47 phoneme-5 sh[704]: bound to 10.128.0.11 -- renewal in 32934 seconds.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Raise network interfaces.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Initial cloud-init job (metadata service crawler)...
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: Cloud-init v. 19.3-41-gc4735dd3-0ubuntu1~16.04.1 running 'init' at Wed, 12 Aug 2020 08:50:44 +0000. Up 13.96 seconds.
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: ++++++++++++++++++++++++++++++++++++++Net device info++++++++++++++++++++++++++++++++++++++
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +--------+------+--------------------------+-----------------+--------+-------------------+
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: | Device |  Up  |         Address          |       Mask      | Scope  |     Hw-Address    |
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +--------+------+--------------------------+-----------------+--------+-------------------+
+Aug 12 02:50:47 phoneme-5 kernel: [    0.963916] libphy: Fixed MDIO Bus: probed
+Aug 12 02:50:47 phoneme-5 kernel: [    0.964880] tun: Universal TUN/TAP device driver, 1.6
+Aug 12 02:50:47 phoneme-5 kernel: [    0.965867] PPP generic driver version 2.4.2
+Aug 12 02:50:47 phoneme-5 kernel: [    0.966090] scsi 0:0:1:0: Direct-Access     Google   PersistentDisk   1    PQ: 0 ANSI: 6
+Aug 12 02:50:47 phoneme-5 kernel: [    0.966716] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |  ens4  | True |       10.128.0.11        | 255.255.255.255 | global | 42:01:0a:80:00:0b |
+Aug 12 02:50:47 phoneme-5 kernel: [    0.968529] scsi 0:0:2:0: Direct-Access     Google   PersistentDisk   1    PQ: 0 ANSI: 6
+Aug 12 02:50:47 phoneme-5 kernel: [    0.969438] ehci-pci: EHCI PCI platform driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.971929] ehci-platform: EHCI generic platform driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.972924] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.973933] ohci-pci: OHCI PCI platform driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.974716] ohci-platform: OHCI generic platform driver
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |  ens4  | True | fe80::4001:aff:fe80:b/64 |        .        |  link  | 42:01:0a:80:00:0b |
+Aug 12 02:50:47 phoneme-5 kernel: [    0.975568] uhci_hcd: USB Universal Host Controller Interface driver
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   lo   | True |        127.0.0.1         |    255.0.0.0    |  host  |         .         |
+Aug 12 02:50:47 phoneme-5 kernel: [    0.976744] i8042: PNP: PS/2 Controller [PNP0303:KBD,PNP0f13:MOU] at 0x60,0x64 irq 1,12
+Aug 12 02:50:47 phoneme-5 kernel: [    0.978573] i8042: Warning: Keylock active
+Aug 12 02:50:47 phoneme-5 kernel: [    0.980250] serio: i8042 KBD port at 0x60,0x64 irq 1
+Aug 12 02:50:47 phoneme-5 kernel: [    0.981127] serio: i8042 AUX port at 0x60,0x64 irq 12
+Aug 12 02:50:47 phoneme-5 kernel: [    0.982153] mousedev: PS/2 mouse device common for all mice
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   lo   | True |         ::1/128          |        .        |  host  |         .         |
+Aug 12 02:50:47 phoneme-5 kernel: [    0.983281] rtc_cmos 00:00: RTC can wake from S4
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +--------+------+--------------------------+-----------------+--------+-------------------+
+Aug 12 02:50:47 phoneme-5 kernel: [    0.984282] rtc_cmos 00:00: rtc core: registered rtc_cmos as rtc0
+Aug 12 02:50:47 phoneme-5 kernel: [    0.985626] rtc_cmos 00:00: alarms up to one day, 114 bytes nvram
+Aug 12 02:50:47 phoneme-5 kernel: [    0.986644] i2c /dev entries driver
+Aug 12 02:50:47 phoneme-5 kernel: [    0.987285] device-mapper: uevent: version 1.0.3
+Aug 12 02:50:47 phoneme-5 kernel: [    0.988214] device-mapper: ioctl: 4.37.0-ioctl (2017-09-20) initialised: dm-devel@redhat.com
+Aug 12 02:50:47 phoneme-5 kernel: [    0.989743] ledtrig-cpu: registered to indicate activity on CPUs
+Aug 12 02:50:47 phoneme-5 kernel: [    0.991300] Netfilter messages via NETLINK v0.30.
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +++++++++++++++++++++++++++++Route IPv4 info++++++++++++++++++++++++++++++
+Aug 12 02:50:47 phoneme-5 kernel: [    0.992382] nf_conntrack version 0.5.0 (65536 buckets, 262144 max)
+Aug 12 02:50:47 phoneme-5 kernel: [    0.993489] ctnetlink v0.93: registering with nfnetlink.
+Aug 12 02:50:47 phoneme-5 kernel: [    0.994627] NET: Registered protocol family 10
+Aug 12 02:50:47 phoneme-5 kernel: [    1.000482] Segment Routing with IPv6
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +-------+-------------+------------+-----------------+-----------+-------+
+Aug 12 02:50:47 phoneme-5 kernel: [    1.001230] NET: Registered protocol family 17
+Aug 12 02:50:47 phoneme-5 kernel: [    1.002126] Key type dns_resolver registered
+Aug 12 02:50:47 phoneme-5 kernel: [    1.003433] mce: Using 32 MCE banks
+Aug 12 02:50:47 phoneme-5 kernel: [    1.004039] RAS: Correctable Errors collector initialized.
+Aug 12 02:50:47 phoneme-5 kernel: [    1.005022] sched_clock: Marking stable (1004010887, 0)->(3495154075, -2491143188)
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: | Route | Destination |  Gateway   |     Genmask     | Interface | Flags |
+Aug 12 02:50:47 phoneme-5 kernel: [    1.006761] registered taskstats version 1
+Aug 12 02:50:47 phoneme-5 kernel: [    1.007458] Loading compiled-in X.509 certificates
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +-------+-------------+------------+-----------------+-----------+-------+
+Aug 12 02:50:47 phoneme-5 kernel: [    1.010689] Loaded X.509 cert 'Build time autogenerated kernel key: d1e01151749778c99eb3a900d525ce6267e8b334'
+Aug 12 02:50:47 phoneme-5 kernel: [    1.012632] zswap: loaded using pool lzo/zbud
+Aug 12 02:50:47 phoneme-5 kernel: [    1.018046] Key type big_key registered
+Aug 12 02:50:47 phoneme-5 kernel: [    1.018850] Key type trusted registered
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   0   |   0.0.0.0   | 10.128.0.1 |     0.0.0.0     |    ens4   |   UG  |
+Aug 12 02:50:47 phoneme-5 kernel: [    1.021668] Key type encrypted registered
+Aug 12 02:50:47 phoneme-5 kernel: [    1.022502] AppArmor: AppArmor sha1 policy hashing enabled
+Aug 12 02:50:47 phoneme-5 kernel: [    1.023405] ima: No TPM chip found, activating TPM-bypass! (rc=-19)
+Aug 12 02:50:47 phoneme-5 kernel: [    1.024515] ima: Allocated hash algorithm: sha1
+Aug 12 02:50:47 phoneme-5 kernel: [    1.024595] random: fast init done
+Aug 12 02:50:47 phoneme-5 kernel: [    1.025271] evm: HMAC attrs: 0x1
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   1   |  10.128.0.1 |  0.0.0.0   | 255.255.255.255 |    ens4   |   UH  |
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +-------+-------------+------------+-----------------+-----------+-------+
+Aug 12 02:50:47 phoneme-5 kernel: [    1.026596]   Magic number: 0:548:826
+Aug 12 02:50:47 phoneme-5 kernel: [    1.027392] rtc_cmos 00:00: setting system clock to 2020-08-12 08:50:31 UTC (1597222231)
+Aug 12 02:50:47 phoneme-5 kernel: [    1.028921] BIOS EDD facility v0.16 2004-Jun-25, 0 devices found
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +++++++++++++++++++Route IPv6 info+++++++++++++++++++
+Aug 12 02:50:47 phoneme-5 kernel: [    1.029913] EDD information not available.
+Aug 12 02:50:47 phoneme-5 kernel: [    1.031236] sd 0:0:1:0: Attached scsi generic sg0 type 0
+Aug 12 02:50:47 phoneme-5 kernel: [    1.031396] sd 0:0:1:0: [sda] 1048576000 512-byte logical blocks: (537 GB/500 GiB)
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +-------+-------------+---------+-----------+-------+
+Aug 12 02:50:47 phoneme-5 kernel: [    1.032257] sd 0:0:2:0: Attached scsi generic sg1 type 0
+Aug 12 02:50:47 phoneme-5 kernel: [    1.033187] sd 0:0:1:0: [sda] 4096-byte physical blocks
+Aug 12 02:50:47 phoneme-5 kernel: [    1.034761] sd 0:0:1:0: [sda] Write Protect is off
+Aug 12 02:50:47 phoneme-5 kernel: [    1.035466] sd 0:0:1:0: [sda] Mode Sense: 1f 00 00 08
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: | Route | Destination | Gateway | Interface | Flags |
+Aug 12 02:50:47 phoneme-5 kernel: [    1.035538] sd 0:0:1:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+Aug 12 02:50:47 phoneme-5 kernel: [    1.036850] sd 0:0:2:0: [sdb] 1887436800 512-byte logical blocks: (966 GB/900 GiB)
+Aug 12 02:50:47 phoneme-5 kernel: [    1.036851] sd 0:0:2:0: [sdb] 4096-byte physical blocks
+Aug 12 02:50:47 phoneme-5 kernel: [    1.037962] sd 0:0:2:0: [sdb] Write Protect is on
+Aug 12 02:50:47 phoneme-5 kernel: [    1.039554] sd 0:0:2:0: [sdb] Mode Sense: 1f 00 80 08
+Aug 12 02:50:47 phoneme-5 kernel: [    1.039627] sd 0:0:2:0: [sdb] Write cache: disabled, read cache: enabled, doesn't support DPO or FUA
+Aug 12 02:50:47 phoneme-5 kernel: [    1.105393]  sda: sda1 sda14 sda15
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +-------+-------------+---------+-----------+-------+
+Aug 12 02:50:47 phoneme-5 kernel: [    1.106994] sd 0:0:1:0: [sda] Attached SCSI disk
+Aug 12 02:50:47 phoneme-5 kernel: [    1.184589] input: AT Translated Set 2 keyboard as /devices/platform/i8042/serio0/input/input2
+Aug 12 02:50:47 phoneme-5 kernel: [    1.223886]  sdb: sdb1 sdb14 sdb15
+Aug 12 02:50:47 phoneme-5 kernel: [    1.225943] sd 0:0:2:0: [sdb] Attached SCSI disk
+Aug 12 02:50:47 phoneme-5 kernel: [    1.789149] Freeing unused kernel image memory: 2440K
+Aug 12 02:50:47 phoneme-5 kernel: [    1.796169] Write protecting the kernel read-only data: 20480k
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   0   |  fe80::/64  |    ::   |    ens4   |   U   |
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   2   |    local    |    ::   |    ens4   |   U   |
+Aug 12 02:50:47 phoneme-5 kernel: [    1.799144] Freeing unused kernel image memory: 2008K
+Aug 12 02:50:47 phoneme-5 kernel: [    1.800532] Freeing unused kernel image memory: 2012K
+Aug 12 02:50:47 phoneme-5 kernel: [    1.808154] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+Aug 12 02:50:47 phoneme-5 kernel: [    1.809119] x86/mm: Checking user space page tables
+Aug 12 02:50:47 phoneme-5 kernel: [    1.816105] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+Aug 12 02:50:47 phoneme-5 kernel: [    1.827230] random: systemd-udevd: uninitialized urandom read (16 bytes read)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Initial cloud-init job (metadata service crawler).
+Aug 12 02:50:47 phoneme-5 kernel: [    1.827925] random: udevadm: uninitialized urandom read (16 bytes read)
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: |   3   |   ff00::/8  |    ::   |    ens4   |   U   |
+Aug 12 02:50:47 phoneme-5 kernel: [    1.828480] random: systemd-udevd: uninitialized urandom read (16 bytes read)
+Aug 12 02:50:47 phoneme-5 kernel: [    1.869647] ipmi message handler version 39.2
+Aug 12 02:50:47 phoneme-5 kernel: [    1.883342] ipmi device interface
+Aug 12 02:50:47 phoneme-5 kernel: [    1.919611] virtio_net virtio1 ens4: renamed from eth0
+Aug 12 02:50:47 phoneme-5 kernel: [    2.015104] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 cloud-init[983]: ci-info: +-------+-------------+---------+-----------+-------+
+Aug 12 02:50:47 phoneme-5 kernel: [    2.016398] nvidia: loading out-of-tree module taints kernel.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.017582] nvidia: module license 'NVIDIA' taints kernel.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target System Initialization.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.018817] Disabling lock debugging due to kernel taint
+Aug 12 02:50:47 phoneme-5 kernel: [    2.026479] nvidia: module verification failed: signature and/or required key missing - tainting kernel
+Aug 12 02:50:47 phoneme-5 kernel: [    2.033807] nvidia-nvlink: Nvlink Core is being initialized, major device number 244
+Aug 12 02:50:47 phoneme-5 kernel: [    2.040458] ACPI: PCI Interrupt Link [LNKD] enabled at IRQ 11
+Aug 12 02:50:47 phoneme-5 kernel: [    2.048244] NVRM: loading NVIDIA UNIX x86_64 Kernel Module  440.33.01  Wed Nov 13 00:00:22 UTC 2019
+Aug 12 02:50:47 phoneme-5 dbus-daemon[1057]: Unknown username "whoopsie" in message bus configuration file
+Aug 12 02:50:47 phoneme-5 kernel: [    2.173709] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    2.187478] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    2.189724] nvidia-modeset: Loading NVIDIA Kernel Mode Setting Driver for UNIX platforms  440.33.01  Tue Nov 12 23:43:11 UTC 2019
+Aug 12 02:50:47 phoneme-5 kernel: [    2.192484] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started ACPI Events Check.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Paths.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.194244] [drm] [nvidia-drm] [GPU ID 0x00000004] Loading driver
+Aug 12 02:50:47 phoneme-5 kernel: [    2.195107] [drm] Initialized nvidia-drm 0.0.0 20160202 for 0000:00:04.0 on minor 0
+Aug 12 02:50:47 phoneme-5 kernel: [    2.220000] raid6: using default algorithm avx2x4 gen() without performace tests.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.221631] raid6: using avx2x2 recovery algorithm
+Aug 12 02:50:47 phoneme-5 kernel: [    2.223346] xor: automatically using best checksumming function   avx       
+Aug 12 02:50:47 phoneme-5 systemd[1]: Listening on Avahi mDNS/DNS-SD Stack Activation Socket.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.225376] async_tx: api initialized (async)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Socket activation for snappy daemon.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.258628] Btrfs loaded, crc32c=crc32c-intel
+Aug 12 02:50:47 phoneme-5 kernel: [    2.451546] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Message of the Day.
+Aug 12 02:50:47 phoneme-5 kernel: [    2.733390] input: ImExPS/2 Generic Explorer Mouse as /devices/platform/i8042/serio1/input/input4
+Aug 12 02:50:47 phoneme-5 kernel: [    6.234569] Loading iSCSI transport class v2.0-870.
+Aug 12 02:50:47 phoneme-5 kernel: [    6.253561] iscsi: registered transport (tcp)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Daily apt download activities.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Daily apt upgrade and clean activities.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Daily Cleanup of Temporary Directories.
+Aug 12 02:50:47 phoneme-5 kernel: [    6.366476] EXT4-fs (sda1): re-mounted. Opts: (null)
+Aug 12 02:50:47 phoneme-5 kernel: [    6.436922] iscsi: registered transport (iser)
+Aug 12 02:50:47 phoneme-5 kernel: [    7.994905] AVX2 version of gcm_enc/dec engaged.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Timers.
+Aug 12 02:50:47 phoneme-5 kernel: [    7.994906] AES CTR mode by8 optimization enabled
+Aug 12 02:50:47 phoneme-5 systemd[1]: Listening on ACPID Listen Socket.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting LXD - unix socket.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Listening on D-Bus System Message Bus Socket.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Cloud-config availability.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Listening on Socket activation for snappy daemon.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Listening on LXD - unix socket.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Sockets.
+Aug 12 02:50:47 phoneme-5 kernel: [    8.042675] random: crng init done
+Aug 12 02:50:47 phoneme-5 kernel: [    8.042677] random: 7 urandom warning(s) missed due to ratelimiting
+Aug 12 02:50:47 phoneme-5 systemd[1]: Reached target Basic System.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started D-Bus System Message Bus.
+Aug 12 02:50:47 phoneme-5 kernel: [    8.610173] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.615907] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.708758] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.747579] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.763808] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.767066] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 dbus[1057]: [system] AppArmor D-Bus mediation is enabled
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started ACPI event daemon.
+Aug 12 02:50:47 phoneme-5 kernel: [    8.832399] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.848196] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.850869] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 kernel: [    8.964341] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting SSHGuard...
+Aug 12 02:50:47 phoneme-5 kernel: [    8.979135] EXT4-fs (sdb1): mounted filesystem without journal. Opts: discard,noload
+Aug 12 02:50:47 phoneme-5 kernel: [    9.034491] PKCS#7 signature not signed with a trusted key
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting LSB: Record successful boot for GRUB...
+Aug 12 02:50:47 phoneme-5 kernel: [    9.040204] nvidia-uvm: Loaded the UVM driver, major device number 241.
+Aug 12 02:50:47 phoneme-5 kernel: [    9.525408] audit: type=1400 audit(1597222239.996:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/bin/lxc-start" pid=653 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.530682] audit: type=1400 audit(1597222240.000:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/lxd/lxd-bridge-proxy" pid=654 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.532985] audit: type=1400 audit(1597222240.004:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/sbin/ippusbxd" pid=656 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.545234] audit: type=1400 audit(1597222240.016:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/sbin/dhclient" pid=652 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Restore /etc/resolv.conf if the system crashed before the ppp link was shut down...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting LXD - container startup/shutdown...
+Aug 12 02:50:47 phoneme-5 kernel: [    9.545238] audit: type=1400 audit(1597222240.016:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/NetworkManager/nm-dhcp-client.action" pid=652 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.545241] audit: type=1400 audit(1597222240.016:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/NetworkManager/nm-dhcp-helper" pid=652 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.545243] audit: type=1400 audit(1597222240.016:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/connman/scripts/dhclient-script" pid=652 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.551290] audit: type=1400 audit(1597222240.020:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/snapd/snap-confine" pid=655 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 acpid: starting up with netlink and the input layer
+Aug 12 02:50:47 phoneme-5 kernel: [    9.551295] audit: type=1400 audit(1597222240.020:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="/usr/lib/snapd/snap-confine//mount-namespace-capture-helper" pid=655 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 kernel: [    9.562878] audit: type=1400 audit(1597222240.032:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="lxc-container-default" pid=651 comm="apparmor_parser"
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Avahi mDNS/DNS-SD Stack...
+Aug 12 02:50:47 phoneme-5 kernel: [   16.437023] ip_tables: (C) 2000-2006 Netfilter Core Team
+Aug 12 02:50:47 phoneme-5 kernel: [   16.529878] new mount options do not match the existing superblock, will be ignored
+Aug 12 02:50:47 phoneme-5 kernel: [   16.542890] ip6_tables: (C) 2000-2006 Netfilter Core Team
+Aug 12 02:50:47 phoneme-5 acpid: 1 rule loaded
+Aug 12 02:50:47 phoneme-5 acpid: waiting for events: event logging is off
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Regular background program processing daemon.
+Aug 12 02:50:47 phoneme-5 cron[1130]: (CRON) INFO (pidfile fd = 3)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Accounts Service...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Login Service...
+Aug 12 02:50:47 phoneme-5 cron[1130]: (CRON) INFO (Running @reboot jobs)
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting System Logging Service...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Network Manager...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting LSB: MD monitoring daemon...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Deferred execution scheduler.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started FUSE filesystem for LXC.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started GPU Utilization Metric Agent.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Starting Snap Daemon...
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Restore /etc/resolv.conf if the system crashed before the ppp link was shut down.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Login Service.
+Aug 12 02:50:47 phoneme-5 mdadm[1185]:  * Starting MD monitoring service mdadm --monitor
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Found user 'avahi' (UID 113) and group 'avahi' (GID 117).
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Successfully dropped root privileges.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: avahi-daemon 0.6.32-rc starting up.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started Avahi mDNS/DNS-SD Stack.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Successfully called chroot().
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Successfully dropped remaining capabilities.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: No service file found in /etc/avahi/services.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Joining mDNS multicast group on interface ens4.IPv6 with address fe80::4001:aff:fe80:b.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: New relevant interface ens4.IPv6 for mDNS.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Joining mDNS multicast group on interface ens4.IPv4 with address 10.128.0.11.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: New relevant interface ens4.IPv4 for mDNS.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Network interface enumeration completed.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Registering new address record for fe80::4001:aff:fe80:b on ens4.*.
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Registering new address record for 10.128.0.11 on ens4.IPv4.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started System Logging Service.
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]: hierarchies:
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   0: fd:   5: rdma
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   1: fd:   6: devices
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   2: fd:   7: hugetlb
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   3: fd:   8: perf_event
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   4: fd:   9: memory
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   5: fd:  10: cpu,cpuacct
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   6: fd:  11: cpuset
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   7: fd:  12: freezer
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   8: fd:  13: pids
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:   9: fd:  14: blkio
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:  10: fd:  15: net_cls,net_prio
+Aug 12 02:50:47 phoneme-5 lxcfs[1199]:  11: fd:  16: name=systemd
+Aug 12 02:50:47 phoneme-5 rsyslogd-2007: action 'action 10' suspended, next retry is Wed Aug 12 02:51:17 2020 [v8.16.0 try http://www.rsyslog.com/e/2007 ]
+Aug 12 02:50:47 phoneme-5 mdadm[1185]:    ...done.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started LSB: MD monitoring daemon.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started LSB: Record successful boot for GRUB.
+Aug 12 02:50:47 phoneme-5 systemd[1]: Started SSHGuard.
+Aug 12 02:50:47 phoneme-5 bash[1213]: mesg: ttyname failed: Inappropriate ioctl for device
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: Chain INPUT (policy ACCEPT)
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: target     prot opt source               destination
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: sshguard   all  --  0.0.0.0/0            0.0.0.0/0
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: Chain FORWARD (policy ACCEPT)
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: target     prot opt source               destination
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: Chain OUTPUT (policy ACCEPT)
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: target     prot opt source               destination
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: Chain sshguard (1 references)
+Aug 12 02:50:47 phoneme-5 sshguard[1323]: target     prot opt source               destination
+Aug 12 02:50:47 phoneme-5 NetworkManager[1174]: <info>  [1597222247.3364] NetworkManager (version 1.2.6) is starting...
+Aug 12 02:50:47 phoneme-5 NetworkManager[1174]: <info>  [1597222247.3372] Read config: /etc/NetworkManager/NetworkManager.conf (etc: default-wifi-powersave-on.conf)
+Aug 12 02:50:47 phoneme-5 NetworkManager[1174]: <info>  [1597222247.3425] manager[0x285f1c0]: monitoring kernel firmware directory '/lib/firmware'.
+Aug 12 02:50:47 phoneme-5 NetworkManager[1174]: <info>  [1597222247.3426] monitoring ifupdown state file '/run/network/ifstate'.
+Aug 12 02:50:47 phoneme-5 NetworkManager[1174]: <info>  [1597222247.3467] dns-mgr[0x283f150]: init: dns=dnsmasq, rc-manager=resolvconf, plugin=dnsmasq
+Aug 12 02:50:47 phoneme-5 dbus[1057]: [system] Activating via systemd: service name='org.freedesktop.nm_dispatcher' unit='dbus-org.freedesktop.nm-dispatcher.service'
+Aug 12 02:50:47 phoneme-5 dbus[1057]: [system] Activating via systemd: service name='org.freedesktop.PolicyKit1' unit='polkitd.service'
+Aug 12 02:50:47 phoneme-5 snapd[1222]: AppArmor status: apparmor is enabled and all features are available
+Aug 12 02:50:47 phoneme-5 avahi-daemon[1122]: Server startup complete. Host name is phoneme-5.local. Local service cookie is 163042232.
+Aug 12 02:50:47 phoneme-5 snapd[1222]: daemon.go:343: started snapd/2.45.1ubuntu0.2 (series 16; classic) ubuntu/16.04 (amd64) linux/4.15.0-1080-gcp.
+Aug 12 02:50:47 phoneme-5 snapd[1222]: daemon.go:436: adjusting startup timeout by 30s (pessimistic estimate of 30s plus 5s per snap)
+Aug 12 02:50:48 phoneme-5 systemd[1]: Started LXD - container startup/shutdown.
+Aug 12 02:50:49 phoneme-5 systemd[1]: Started Snap Daemon.
+Aug 12 02:50:49 phoneme-5 systemd[1]: Started Network Manager.
+Aug 12 02:50:50 phoneme-5 systemd[1]: Starting Authenticate and Authorize Users to Run Privileged Tasks...
+Aug 12 02:50:50 phoneme-5 polkitd[1414]: started daemon version 0.105 using authority implementation `local' version `0.105'
+Aug 12 02:50:50 phoneme-5 dbus[1057]: [system] Successfully activated service 'org.freedesktop.PolicyKit1'
+Aug 12 02:50:50 phoneme-5 accounts-daemon[1138]: started daemon version 0.6.40
+Aug 12 02:50:51 phoneme-5 systemd[1]: Starting Network Manager Script Dispatcher Service...
+Aug 12 02:50:51 phoneme-5 dbus[1057]: [system] Successfully activated service 'org.freedesktop.nm_dispatcher'
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2657] init!
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2662] guessed connection type (ens4) = 802-3-ethernet
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2662] update_connection_setting_from_if_block: name:ens4, type:802-3-ethernet, id:Ifupdown (ens4), uuid: 3922684e-a5fa-401f-ae3c-58a4d8e0cd0c
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2664] adding ens4 to connections
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2664] adding iface ens4 to eni_ifaces
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2664] autoconnect
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2664] management mode: unmanaged
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2667] devices added (path: /sys/devices/pci0000:00/0000:00:05.0/virtio1/net/ens4, iface: ens4)
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2669] locking wired connection setting
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2669] devices added (path: /sys/devices/virtual/net/lo, iface: lo)
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2669] device added (path: /sys/devices/virtual/net/lo, iface: lo): no ifupdown configuration found.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2669] end _init.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2669] settings: loaded plugin ifupdown: (C) 2008 Canonical Ltd.  To report bugs please use the NetworkManager mailing list. (/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-settings-plugin-ifupdown.so)
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2670] settings: loaded plugin keyfile: (c) 2007 - 2015 Red Hat, Inc.  To report bugs please use the NetworkManager mailing list.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2683] SettingsPlugin-Ofono: init!
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <warn>  [1597222251.2683] SettingsPlugin-Ofono: file doesn't exist: /var/lib/ofono
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2683] SettingsPlugin-Ofono: end _init.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2683] settings: loaded plugin ofono: (C) 2013-2016 Canonical Ltd.  To report bugs please use the NetworkManager mailing list. (/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-settings-plugin-ofono.so)
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2684] (42451152) ... get_connections.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2684] (42451152) ... get_connections (managed=false): return empty list.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2691] SettingsPlugin-Ofono: (42451472) ... get_connections.
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2691] SettingsPlugin-Ofono: (42451472) connections count: 0
+Aug 12 02:50:51 phoneme-5 NetworkManager[1174]: <info>  [1597222251.2691] get unmanaged devices count: 1
+Aug 12 02:50:51 phoneme-5 dbus[1057]: [system] Activating via systemd: service name='org.freedesktop.hostname1' unit='dbus-org.freedesktop.hostname1.service'
+Aug 12 02:50:51 phoneme-5 systemd[1]: Starting Network Manager Wait Online...
+Aug 12 02:50:52 phoneme-5 systemd[1]: Reached target Network.
+Aug 12 02:50:52 phoneme-5 systemd[1]: Started Unattended Upgrades Shutdown.
+Aug 12 02:50:53 phoneme-5 systemd[1]: Starting Wait until snapd is fully seeded...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started Wait until snapd is fully seeded.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started Authenticate and Authorize Users to Run Privileged Tasks.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started Accounts Service.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started Network Manager Script Dispatcher Service.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting NVIDIA Persistence Daemon...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting Hostname Service...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting NVIDIA Persistence Daemon...
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Verbose syslog connection opened
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Started (1529)
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Received signal 15
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Shutdown (1529)
+Aug 12 02:50:54 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting NVIDIA Persistence Daemon...
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Verbose syslog connection opened
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Started (1535)
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Received signal 15
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: PID file unlocked.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: PID file closed.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Shutdown (1529)
+Aug 12 02:50:54 phoneme-5 dbus[1057]: [system] Successfully activated service 'org.freedesktop.hostname1'
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started Hostname Service.
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2650] settings: hostname: using hostnamed
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2651] settings: hostname changed from (none) to "phoneme-5"
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2652] Using DHCP client 'dhclient'
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2653] manager: WiFi enabled by radio killswitch; enabled by state file
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2653] manager: WWAN enabled by radio killswitch; enabled by state file
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2653] manager: Networking is enabled by state file
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2654] Loaded device plugin: NMVxlanFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2654] Loaded device plugin: NMVlanFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2654] Loaded device plugin: NMVethFactory (internal)
+Aug 12 02:50:54 phoneme-5 nm-dispatcher: req:1 'hostname': new request (2 scripts)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2654] Loaded device plugin: NMTunFactory (internal)
+Aug 12 02:50:54 phoneme-5 nm-dispatcher: req:1 'hostname': start running ordered scripts...
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2654] Loaded device plugin: NMMacvlanFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2655] Loaded device plugin: NMIPTunnelFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2655] Loaded device plugin: NMInfinibandFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2655] Loaded device plugin: NMEthernetFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2655] Loaded device plugin: NMBridgeFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.2655] Loaded device plugin: NMBondFactory (internal)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.4442] Loaded device plugin: NMWwanFactory (/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-device-plugin-wwan.so)
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: device 0000:00:04.0 - registered
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Failed to create RPC service
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced[1534]: nvidia-persistenced failed to initialize. Check syslog for more details.
+Aug 12 02:50:54 phoneme-5 systemd[1]: nvidia-persistenced.service: Control process exited, code=exited status=1
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Socket closed.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Failed to unlink socket: No such file or directory
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: PID file unlocked.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Failed to start NVIDIA Persistence Daemon.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: PID file closed.
+Aug 12 02:50:54 phoneme-5 systemd[1]: nvidia-persistenced.service: Unit entered failed state.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Failed to unlink PID file: No such file or directory
+Aug 12 02:50:54 phoneme-5 systemd[1]: nvidia-persistenced.service: Failed with result 'exit-code'.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Shutdown (1535)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.4730] Loaded device plugin: NMWifiFactory (/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-device-plugin-wifi.so)
+Aug 12 02:50:54 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting NVIDIA Persistence Daemon...
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Verbose syslog connection opened
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Started (1579)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.5786] Loaded device plugin: NMBluezManager (/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-device-plugin-bluetooth.so)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6145] Loaded device plugin: NMAtmManager (/usr/lib/x86_64-linux-gnu/NetworkManager/libnm-device-plugin-adsl.so)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: nm_device_get_device_type: assertion 'NM_IS_DEVICE (self)' failed
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6240] device (lo): link connected
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6247] manager: (lo): new Generic device (/org/freedesktop/NetworkManager/Devices/0)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6251] device (ens4): link connected
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6257] manager: (ens4): new Ethernet device (/org/freedesktop/NetworkManager/Devices/1)
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6751] manager: startup complete
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.6752] manager: NetworkManager state is now CONNECTED_GLOBAL
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.7534] urfkill disappeared from the bus
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <info>  [1597222254.7546] ofono is now available
+Aug 12 02:50:54 phoneme-5 NetworkManager[1174]: <warn>  [1597222254.7552] failed to enumerate oFono devices: GDBus.Error:org.freedesktop.DBus.Error.ServiceUnknown: The name org.ofono was not provided by any .service files
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started Network Manager Wait Online.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Reached target Network is Online.
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting Apply the settings specified in cloud-config...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting /etc/rc.local Compatibility...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting iSCSI initiator daemon (iscsid)...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Starting Google Compute Engine Instance Setup...
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started /etc/rc.local Compatibility.
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: device 0000:00:04.0 - registered
+Aug 12 02:50:54 phoneme-5 nvidia-persistenced: Local RPC services initialized
+Aug 12 02:50:54 phoneme-5 systemd[1]: Started NVIDIA Persistence Daemon.
+Aug 12 02:50:55 phoneme-5 iscsid: iSCSI logger with pid=1660 started!
+Aug 12 02:50:55 phoneme-5 systemd[1]: Started iSCSI initiator daemon (iscsid).
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting Login to default iSCSI targets...
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: Received signal 15
+Aug 12 02:50:55 phoneme-5 systemd[1]: Stopping NVIDIA Persistence Daemon...
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: Socket closed.
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: PID file unlocked.
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: PID file closed.
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: Shutdown (1579)
+Aug 12 02:50:55 phoneme-5 systemd[1]: Stopped NVIDIA Persistence Daemon.
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting NVIDIA Persistence Daemon...
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: Verbose syslog connection opened
+Aug 12 02:50:55 phoneme-5 nvidia-persistenced: Started (1707)
+Aug 12 02:50:55 phoneme-5 iscsiadm[1679]: iscsiadm: No records found
+Aug 12 02:50:55 phoneme-5 systemd[1]: Started Login to default iSCSI targets.
+Aug 12 02:50:55 phoneme-5 systemd[1]: Reached target Remote File Systems (Pre).
+Aug 12 02:50:55 phoneme-5 systemd[1]: Reached target Remote File Systems.
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting LSB: Set the CPU Frequency Scaling governor to "ondemand"...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting LSB: automatic crash report generation...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting LSB: Start NTP daemon...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting LSB: start and stop Stackdriver Agent...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting Permit User Sessions...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Started LSB: Set the CPU Frequency Scaling governor to "ondemand".
+Aug 12 02:50:55 phoneme-5 ntp[1726]:  * Starting NTP server ntpd
+Aug 12 02:50:55 phoneme-5 cloud-init[1602]: Cloud-init v. 19.3-41-gc4735dd3-0ubuntu1~16.04.1 running 'modules:config' at Wed, 12 Aug 2020 08:50:55 +0000. Up 24.57 seconds.
+Aug 12 02:50:55 phoneme-5 apport[1722]:  * Starting automatic crash report generation: apport
+Aug 12 02:50:55 phoneme-5 systemd[1]: Started Permit User Sessions.
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting Light Display Manager...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Starting Hold until boot process finishes up...
+Aug 12 02:50:55 phoneme-5 systemd[1]: Started Hold until boot process finishes up.
+Aug 12 02:50:55 phoneme-5 systemd[1]: Started Getty on tty1.
