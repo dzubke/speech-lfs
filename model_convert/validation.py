@@ -65,9 +65,13 @@ def main(model_name, num_frames):
     logging.warning(f"PARAMS dict: {PARAMS}")
     
     #load models
-    state_dict_model = torch.load(model_fn, map_location=torch.device('cpu'))
     model = ctc_model.CTC(preproc.input_dim, preproc.vocab_size, model_cfg)
-    state_dict = state_dict_model.state_dict()
+    
+    state_dict_model = torch.load(model_fn, map_location=torch.device('cpu'))
+    if isinstance(state_dict_model, dict):
+        state_dict = state_dict_model
+    elif isinstance(state_dict_model, torch.nn.Module):
+        state_dict = state_dict_model.state_dict()
     torch.save(state_dict, state_dict_path)
     model.load_state_dict(state_dict)
 
