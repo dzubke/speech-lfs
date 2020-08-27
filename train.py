@@ -108,7 +108,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: Avg loss: {avg_loss}")
         tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
         tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_loss}, iter_count)
+        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
         tq.set_postfix(iter=iter_count, loss=loss, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
@@ -123,6 +123,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 save_batch_log_stats(temp_batch, logger)
                 log_param_grad_norms(model_module.named_parameters(), logger)
                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
+                speech.save(model, preproc, config["save_path"], tag="nan")
             debug_mode = True
             torch.autograd.set_detect_anomaly(True)
 
