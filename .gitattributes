@@ -4,4 +4,6 @@ examples/librispeech/models/ctc_models/20200803/ph4/*model filter=lfs diff=lfs m
 examples/librispeech/models/ctc_models/20200803/ph4/20200806/best_model filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20200803/ph4/20200806/model filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20200806/ph4/*model filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20200806/ph4/*model.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20200806/ph4/*/*model filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20200806/ph4/*/*model.pth filter=lfs diff=lfs merge=lfs -text

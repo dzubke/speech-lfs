@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 8
-    run_state: [943506, 72.616]
+    run_state: [1048340, 64.764]
     best_so_far: 0.3982
-    start_epoch: 9
+    start_epoch: 10
     epochs: 100
     learning_rate: 0.001
     momentum: 0.0
