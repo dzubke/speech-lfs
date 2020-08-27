@@ -1,0 +1,78 @@
+47a48,54
+>     # model compatibility for using multiple gpu's
+>     multi_gpu = isinstance(model, torch.nn.DataParallel)
+>     if multi_gpu:
+>         model_module = model.module
+>     else: 
+>         model_module = model
+> 
+56c63
+<                 log_batchnorm_mean_std(model.state_dict(), logger)
+---
+>                 log_batchnorm_mean_std(model_module.state_dict(), logger)
+62c69,73
+<         loss = model.loss(temp_batch)
+---
+>         # calcuating the loss outside of model.loss to allow multi-gpu use
+>         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
+>         out, rnn_args = model(inputs, softmax=False)
+>         loss_fn = ctc.CTCLoss()
+>         loss = loss_fn(out, labels, input_lens, label_lens)
+65a77
+>         #print(f"loss value 1: {loss.data[0]}")
+70,71c82,83
+<                 plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
+<                 log_param_grad_norms(model.named_parameters(), logger)
+---
+>                 plot_grad_flow_bar(model_module.named_parameters(),  get_logger_filename(logger))
+>                 log_param_grad_norms(model_module.named_parameters(), logger)
+73c85
+<         grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200)
+---
+>         grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200)
+107c119
+<         if check_nan_params_grads(model.parameters()):
+---
+>         if check_nan_params_grads(model_module.parameters()):
+109,110c121,122
+<                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
+<                 log_model_grads(model.named_parameters(), logger)
+---
+>                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model_module.state_dict()}")
+>                 log_model_grads(model_module.named_parameters(), logger)
+112,113c124,125
+<                 log_param_grad_norms(model.named_parameters(), logger)
+<                 plot_grad_flow_bar(model.named_parameters(), get_logger_filename(logger))
+---
+>                 log_param_grad_norms(model_module.named_parameters(), logger)
+>                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
+230a243,249
+>     if model_cfg["multi_gpu"]:
+>         assert torch.cuda.device_count() > 1, "multi_gpu selected but less than on GPU available"
+>         model = torch.nn.DataParallel(model)
+>         model_module = model.module
+>     else:
+>         # allows for compatbility with data-parallel models
+>         model_module = model
+234c253
+<     optimizer = torch.optim.SGD(model.parameters(),
+---
+>     optimizer = torch.optim.SGD(model_module.parameters(),
+270,271c289,290
+<                 logger.error(f"train: state_dict: {model.state_dict()}")
+<                 log_model_grads(model.named_parameters(), logger)
+---
+>                 logger.error(f"train: state_dict: {model_module.state_dict()}")
+>                 log_model_grads(model_module.named_parameters(), logger)
+291c310
+<         speech.save(model, preproc, config["save_path"])
+---
+>         speech.save(model_module, preproc, config["save_path"])
+302c321
+<             dev_loss, dev_per = eval_dev(model, dev_ldr, preproc, logger)
+---
+>             dev_loss, dev_per = eval_dev(model_module, dev_ldr, preproc, logger)
+317c336
+<                     speech.save(model, preproc,
+---
+>                     speech.save(model_module, preproc,
