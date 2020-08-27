@@ -15,9 +15,7 @@ from speech.utils.io import load_config
 
 
 
-def main(model_name, num_frames, use_state_dict, half_precision):  
-    print(f'\nuse_state_dict: {use_state_dict}')
-    print(f'\nuse half precision: {half_precision}')
+def main(model_name, num_frames):  
 
     freq_dim = 257  #freq dimension out of log_spectrogram 
     time_dim = num_frames
@@ -26,28 +24,24 @@ def main(model_name, num_frames, use_state_dict, half_precision):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if use_state_dict:
-        print(f'loaded state_dict from: {torch_path}')
-        
-        config = load_config(config_path)
-        model_cfg = config['model']
-        
-        ctc_model = CTC_model(freq_dim, 39, model_cfg) 
-        state_dict_model = torch.load(torch_path, map_location=device)
-        ctc_model.load_state_dict(state_dict_model.state_dict())
-        ctc_model.to(device)
-        print("model on cuda: ", ctc_model.is_cuda)    
-    else: 
-        print(f'loaded entire model from: {torch_path}')
-        ctc_model = torch.load(torch_path, map_location=torch.device(torch_device))
-        torch.save(ctc_model, torch_path)
-        ctc_model = torch.load(torch_path, map_location=torch.device(torch_device))
+    print(f'loaded state_dict from: {torch_path}')
     
-    # converts model to half precision
-    if half_precision:
-       ctc_model = convert_half_precision(ctc_model)
-        
+    config = load_config(config_path)
+    model_cfg = config['model']
     
+    ctc_model = CTC_model(freq_dim, 39, model_cfg) 
+    state_dict_model = torch.load(torch_path, map_location=device)
+
+    if isinstance(state_dict_model, dict):
+        state_dict = state_dict_model
+    elif isinstance(state_dict_model, torch.nn.Module):
+        state_dict = state_dict_model.state_dict()
+
+    ctc_model.load_state_dict(state_dict)
+    ctc_model.to(device)
+    print("model on cuda: ", ctc_model.is_cuda)    
+
+   
     ctc_model.eval()    
     
     input_tensor = generate_test_input("pytorch", model_name, time_dim, half_precision) 
@@ -61,10 +55,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="converts models in pytorch to onnx.")
     parser.add_argument("--model-name", help="name of the model.")
     parser.add_argument("--num-frames", type=int, help="number of input frames in time dimension hard-coded in onnx model")
-    parser.add_argument("--use-state-dict", action='store_true', default=False, 
-                        help="boolean whether to load model from state dict") 
-    parser.add_argument("--half-precision", action='store_true', default=False, 
-                        help="boolean whether to convert model to half precision") 
     args = parser.parse_args()
 
-    main(args.model_name, args.num_frames, args.use_state_dict, args.half_precision)
+    main(args.model_name, args.num_frames)

@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: True
-    log_file: logs/2020-08-06-08-24_ph4_large-model-w-aug-w-feat-norm_lib-ted-cv.log
+    log_file: logs/2020-08-06-08-26_ph4_large-model-w-aug-w-feat-norm_lib-ted-cv.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path:  examples/librispeech/models/ctc_models/20200806/ph4/20200824/model.pth
+    trained_path:  examples/librispeech/models/ctc_models/20200806/ph4/model.pth
     remove_layers: []
     encoder: 
         conv:
