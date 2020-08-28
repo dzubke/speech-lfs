@@ -8,7 +8,7 @@ import torch
 import torch.autograd as autograd
 import torch.nn as nn
 
-import functions.ctc as ctc #awni hannun's ctc bindings
+#import functions.ctc as ctc #awni hannun's ctc bindings
 from speech.models import ctc_model
 from speech.models import model
 from .ctc_decoder import decode
@@ -21,7 +21,7 @@ class CTC_train(ctc_model.CTC):
         super().__init__(freq_dim, output_dim, config)
 
         # include the blank token
-        self.blank = output_dim
+        self.blank = 0  # set for native-loss fucntion  ## old value: output_dim
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
     def forward(self, x, rnn_args=None, softmax=False):
@@ -49,12 +49,12 @@ class CTC_train(ctc_model.CTC):
             return torch.nn.functional.softmax(x, dim=2), rnn_args
         return x, rnn_args
 
-    def loss(self, batch):
-        x, y, x_lens, y_lens = self.collate(*batch)
-        out, rnn_args = self.forward_impl(x, softmax=False)
-        loss_fn = ctc.CTCLoss()         # awni's ctc loss call        
-        loss = loss_fn(out, y, x_lens, y_lens)
-        return loss
+    #def loss(self, batch):
+    #    x, y, x_lens, y_lens = self.collate(*batch)
+    #    out, rnn_args = self.forward_impl(x, softmax=False)
+    #    loss_fn = ctc.CTCLoss()         # awni's ctc loss call        
+    #    loss = loss_fn(out, y, x_lens, y_lens)
+    #    return loss
 
     def collate(self, inputs, labels):
         max_t = max(i.shape[0] for i in inputs)

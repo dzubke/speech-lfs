@@ -12,7 +12,7 @@ import math
 import random
 import time
 # third-party libraries
-import functions.ctc as ctc #awni hannun's ctc bindings
+#import functions.ctc as ctc #awni hannun's ctc bindings
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -30,6 +30,8 @@ from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_st
 from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 
 
+BLANK_IDX = 0
+
 
 def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss):
     """
@@ -37,6 +39,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     Arguments
         iter_count - int: count of iterations
     """
+
     use_log = (logger is not None)
     model_t = 0.0; data_t = 0.0
     end_t = time.time()
@@ -69,12 +72,19 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         # calcuating the loss outside of model.loss to allow multi-gpu use
         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
         out, rnn_args = model(inputs, softmax=False)
-        loss_fn = ctc.CTCLoss()
-        loss = loss_fn(out, labels, input_lens, label_lens)
+ 
+        ############## Native loss code ############################################################
+        log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
+        loss_fn = torch.nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)         #     
+        loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
+
+        ############## Native loss code ############################################################
+        # loss_fn = ctc.CTCLoss()                                                                  #     
+        # loss = loss_fn(out, labels, input_lens, label_lens)                                      #     
         
         if use_log: logger.info(f"train: Loss calculated")
 
-        #print(f"loss value 1: {loss.data[0]}")
+    
         loss.backward()
         if use_log: logger.info(f"train: Backward run ")
         if use_log: 
@@ -82,13 +92,12 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 plot_grad_flow_bar(model_module.named_parameters(),  get_logger_filename(logger))
                 log_param_grad_norms(model_module.named_parameters(), logger)
 
-        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200)
+        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200).item()
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
         loss = loss.item()
         if use_log: logger.info(f"train: loss reassigned ")
 
-        #loss = loss.data[0]
 
         optimizer.step()
         if use_log: logger.info(f"train: Optimizer step taken")
@@ -108,7 +117,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: Avg loss: {avg_loss}")
         tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
         tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
+        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_loss}, iter_count)
         tq.set_postfix(iter=iter_count, loss=loss, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
@@ -123,7 +132,6 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 save_batch_log_stats(temp_batch, logger)
                 log_param_grad_norms(model_module.named_parameters(), logger)
                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
-                speech.save(model, preproc, config["save_path"], tag="nan")
             debug_mode = True
             torch.autograd.set_detect_anomaly(True)
 
@@ -133,6 +141,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         iter_count += 1
 
     return iter_count, avg_loss
+
 
 def eval_dev(model, ldr, preproc,  logger):
     losses = []; all_preds = []; all_labels = []
@@ -150,7 +159,15 @@ def eval_dev(model, ldr, preproc,  logger):
             if use_log: logger.info(f"eval_dev: batch converted")
             preds = model.infer(temp_batch)
             if use_log: logger.info(f"eval_dev: infer call")
-            loss = model.loss(temp_batch)
+            
+            inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+            out, rnn_args = model(inputs, softmax=False)
+
+            ############## Native loss code ############################################################
+            log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
+            loss_fn = nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)              #     
+            loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
+
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
             losses.append(loss.item())
@@ -177,19 +194,21 @@ def eval_dev(model, ldr, preproc,  logger):
 
     return loss, cer
 
-def run(config):
+def run(gpu_idx, config):
 
     data_cfg = config["data"]
     log_cfg = config["logger"]
     preproc_cfg = config["preproc"]
     opt_cfg = config["optimizer"]
     model_cfg = config["model"]
-    
+    train_cfg = config['training']    
+
     use_log = log_cfg["use_log"]
     debug_mode = log_cfg["debug_mode"]
     
     if debug_mode: torch.autograd.set_detect_anomaly(True)
 
+    # TODO, drz, replace with get_logger function
     if use_log:
         # create logger
         logger = logging.getLogger("train_log")
@@ -202,6 +221,17 @@ def run(config):
         logger.addHandler(fh)
     else:
         logger = None
+    
+    # setting up the distributed training environment
+    if train_cfg['distributed']:
+        rank = train_cfg['rank'] * train_cfg['n_gpus'] + gpu_idx                              
+        dist.init_process_group(                                   
+            backend='nccl',
+            init_method='env://',
+            world_size=train_cfg['world_size'],
+            rank=rank                                               
+        )
+        torch.cuda.set_device(gpu_idx)
 
     tbX_writer = SummaryWriter(logdir=config["save_path"])
     
@@ -226,12 +256,17 @@ def run(config):
     batch_size = opt_cfg["batch_size"]
     preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
                   start_and_end=data_cfg["start_and_end"])
-    train_ldr = loader.make_loader(data_cfg["train_set"],
-                        preproc, batch_size, num_workers=data_cfg["num_workers"])
+    
+    if train_cfg['distributed']:
+        loader_func = loader.make_ddp_loader
+    else: 
+        loader_func = loader.make_loader    
+
+    train_ldr = loader_func(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
+    
     dev_ldr_dict = dict() # dict that includes all the dev_loaders
     for dev_name, dev_path in data_cfg["dev_sets"].items():
-        dev_ldr = loader.make_loader(dev_path,
-                        preproc, batch_size, num_workers=data_cfg["num_workers"])
+        dev_ldr = loader_func(dev_path, preproc, batch_size=8, num_workers=data_cfg["num_workers"])
         dev_ldr_dict.update({dev_name: dev_ldr})
 
     # Model
@@ -241,14 +276,20 @@ def run(config):
     if model_cfg["load_trained"]:
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
-    if model_cfg["multi_gpu"]:
+    if train_cfg["multi_gpu"]:
         assert torch.cuda.device_count() > 1, "multi_gpu selected but less than on GPU available"
         model = torch.nn.DataParallel(model)
         model_module = model.module
+    elif train_cfg['distributed']:
+        model = nn.parallel.DistributedDataParallel(model, device_ids=[gpu_idx])
     else:
         # allows for compatbility with data-parallel models
         model_module = model
-    model.cuda() if use_cuda else model.cpu()
+    
+    if train_cfg['distributed']:
+        model.cuda(gpu_idx)
+    else:
+        model.cuda() if use_cuda else model.cpu()
 
     # Optimizer
     optimizer = torch.optim.SGD(model_module.parameters(),
@@ -382,6 +423,8 @@ if __name__ == "__main__":
     parser.add_argument("--deterministic", default=False,
         action="store_true",
         help="Run in deterministic mode (no cudnn). Only works on GPU.")
+    parser.add_argument('-nr', '--nr', default=0, type=int,
+                        help='ranking within the nodes')
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -393,4 +436,18 @@ if __name__ == "__main__":
 
     if use_cuda and args.deterministic:
         torch.backends.cudnn.enabled = False
-    run(config)
+
+    train_cfg = config['training']    
+    n_gpus = train_cfg['n_gpus']
+    n_nodes = train_cfg['n_nodes']
+    world_size = n_gpus * n_nodes                
+    print("world_size", world_size)
+    train_cfg.update({'world_size': world_size})
+    train_cfg.update({'rank': args.nr})
+
+    os.environ['MASTER_ADDR'] = train_cfg['master_addr']              
+    os.environ['MASTER_PORT'] = train_cfg['master_port']                      
+    print(train_cfg['master_addr'], train_cfg['master_port'])
+
+
+    run(args.nr, config)
