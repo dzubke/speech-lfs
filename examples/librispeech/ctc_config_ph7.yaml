@@ -1,16 +1,18 @@
 seed: 2007
 save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200827/ph7/
-data: 
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
-    dev_sets: 
+data:
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
+    dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
+        cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
+        libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
         ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
     dev_set_save_reference: speak
     start_and_end: false
     num_workers: 4
 logger:
-    use_log: true
-    log_file: logs/2020-08-27_ph7_ddp.log
+    use_log: False
+    log_file: logs/2020-08-27_ph7_ddp_lib-ted-cv.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -37,7 +39,7 @@ preproc:
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2}
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
-    batch_size: 8
+    batch_size: 24
     run_state: [0, 0]
     best_so_far: 999
     start_epoch: 0
@@ -65,8 +67,8 @@ model:
             layers: 5
 training: 
     multi_gpu: False
-    distributed: False
+    distributed: True
     n_nodes: 1
-    n_gpus: 2 
+    n_gpus: 4 
     master_addr: '10.128.0.25'
     master_port: '8888'

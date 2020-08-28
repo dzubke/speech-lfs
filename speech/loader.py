@@ -435,7 +435,7 @@ class DistributedBatchRandomSampler(DistributedSampler):
         batch_indices = batch_indices[offset:offset + self.num_samples]
         assert len(batch_indices) == self.num_samples
 
-        return self.batches[iter(batch_indices)]
+        return  (idx for batch_idx in batch_indices for idx in self.batches[batch_idx])
 
     def __len__(self):
         return self.num_samples * self.batch_size
@@ -462,7 +462,7 @@ def make_ddp_loader(dataset_json, preproc,
     loader = tud.DataLoader(dataset,
                 batch_size=batch_size,
                 sampler=sampler,
-                num_workers=num_workers,
+                num_workers=0,
                 collate_fn=lambda batch : zip(*batch),
                 drop_last=True,
                 pin_memory=True)
