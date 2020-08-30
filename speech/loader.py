@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 # standard libraries
+import copy
 import json
 import math
 import random
@@ -339,13 +340,17 @@ class AudioDataset(tud.Dataset):
         max_len = max(len(x['text']) for x in data) # max number of phoneme labels in data
         num_buckets = max_len // bucket_diff        # the number of buckets
         buckets = [[] for _ in range(num_buckets)]  # creating an empy list for the buckets
+        
+        #def sort_fn(sample):
+        #    # using this instead of lambda fn to allow for pickling in multiprocessing
+        #    return (round(sample['duration'], 1), len(sample['text']))
+
         for sample in data:                          
             bucket_id = min(len(sample['text']) // bucket_diff, num_buckets - 1)
             buckets[bucket_id].append(sample)
 
-        # Sort by input length followed by output length
-        sort_fn = lambda x : (round(x['duration'], 1),
-                              len(x['text']))
+        sort_fn = lambda x: (round(x['duration'], 1), len(x['text']))
+
         for bucket in buckets:
             bucket.sort(key=sort_fn)
         
@@ -450,23 +455,29 @@ def make_loader(dataset_json, preproc,
                 batch_size=batch_size,
                 sampler=sampler,
                 num_workers=num_workers,
-                collate_fn=lambda batch : zip(*batch),
+                collate_fn=collate_fn,
                 drop_last=True)
     return loader
 
-def make_ddp_loader(dataset_json, preproc,
-                batch_size, num_workers=4):
+def make_ddp_loader(dataset_json, 
+                    preproc,
+                    batch_size, 
+                    num_workers=4):
+    
     dataset = AudioDataset(dataset_json, preproc,
                            batch_size)
     sampler = DistributedBatchRandomSampler(dataset, batch_size=batch_size)
     loader = tud.DataLoader(dataset,
                 batch_size=batch_size,
                 sampler=sampler,
-                num_workers=0,
-                collate_fn=lambda batch : zip(*batch),
+                num_workers=num_workers,
+                collate_fn=collate_fn,
                 drop_last=True,
                 pin_memory=True)
     return loader
+    
+def collate_fn(batch):
+    return zip(*batch)
 
 
 def mfcc_from_data(audio: np.ndarray, samp_rate:int, window_size=20, step_size=10):

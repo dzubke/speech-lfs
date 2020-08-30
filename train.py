@@ -121,7 +121,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
             
             tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
             tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-            tbX_writer.add_scalars('train/grad', {"grad_norm": avg_loss}, iter_count)
+            tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
             tq.set_postfix(iter=iter_count, loss=loss, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
@@ -271,7 +271,7 @@ def run(gpu_idx, config):
                   start_and_end=data_cfg["start_and_end"])
     
     if train_cfg['distributed']:
-        data_cfg["num_workers"] = 0   #DDP doesn't seem to like multiple workers
+        #data_cfg["num_workers"] = 0   #DDP doesn't seem to like multiple workers
         train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
     else: 
         train_ldr = loader.make_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])  
@@ -359,6 +359,7 @@ def run(gpu_idx, config):
             msg = "Epoch {} completed in {:.2f} (hr)."
             epoch_time_hr = (time.time() - start)/60/60
             print(msg.format(epoch, epoch_time_hr))
+            print("testing printing~~~~")
             if use_log: logger.info(msg.format(epoch, epoch_time_hr))
             tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
     
@@ -467,4 +468,4 @@ if __name__ == "__main__":
     if train_cfg['distributed']:
         mp.spawn(run, nprocs=n_gpus, args=(config, ))
     else:
-        run(gpu, config)
+        run(0, config)
