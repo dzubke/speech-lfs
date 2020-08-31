@@ -6,7 +6,7 @@ from speech.models.ctc_model_naren_loss import CTC_train
 from speech.utils.io import load_config, load_from_trained
 
 
-def get_model_optimizer(config_path:str):
+def get_model_optimizer(config_path:str, return_preproc=False):
     """
     Creates a model and optimizer object from the confing file in config_path
     """
@@ -34,5 +34,7 @@ def get_model_optimizer(config_path:str):
                          lr= opt_cfg['learning_rate'],
                          momentum=opt_cfg["momentum"],
                          dampening=opt_cfg["dampening"])
-
-    return model, optimizer
+    if return_preproc:
+        return model, optimizer, preproc
+    else: 
+        return model, optimizer

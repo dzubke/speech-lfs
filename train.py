@@ -27,11 +27,11 @@ from speech.models.ctc_model_naren_loss import CTC_train
 from speech.utils.io import read_pickle, write_pickle, load_from_trained, load_config
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
 from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
-from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
+from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage, check_loss
 
 
 
-def run_epoch(model, optimizer, scaler, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss):
+def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss):
     """
     Performs a forwards and backward pass through the model
     Arguments
@@ -48,40 +48,45 @@ def run_epoch(model, optimizer, scaler, train_ldr, logger, debug_mode, tbX_write
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
         
-        temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
+        batch = tuple(batch)    # this was added as the batch generator was being exhausted when it was called
 
         if use_log: 
             if debug_mode:  
-                save_batch_log_stats(temp_batch, logger)
+                save_batch_log_stats(batch, logger)
                 log_batchnorm_mean_std(model.state_dict(), logger)
  
         start_t = time.time()
-        optimizer.zero_grad()
-        if use_log: logger.info(f"train: Optimizer zero_grad")
         
-        with torch.cuda.amp.autocast():
-            loss = model.loss(temp_batch)        
-            if use_log: logger.info(f"train: Loss calculated")
+        loss = model.loss(batch)        
+        loss_value = loss.item()
+        if use_log: logger.info(f"train: Loss calculated")
 
-        scaler.scale(loss).backward()
-        if use_log: logger.info(f"train: Backward run ")
+        valid_loss, error = check_loss(loss, loss_value)
+    
+        if valid_loss:
+            optimizer.zero_grad()
+            if use_log: logger.info(f"train: Optimizer zero_grad")        
+            loss.backward()
+            if use_log: logger.info(f"train: Backward run ")
+
+    
+            if use_log: 
+                if debug_mode: 
+                    plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
+                    log_param_grad_norms(model.named_parameters(), logger)
         
-        scaler.unscale_(optimizer)
+            grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
+            if use_log: logger.info(f"train: Grad_norm clipped ")
 
-        if use_log: 
-            if debug_mode: 
-                plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
-                log_param_grad_norms(model.named_parameters(), logger)
-        
-        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
-        if use_log: logger.info(f"train: Grad_norm clipped ")
+            optimizer.step()
+            if use_log: logger.info(f"train: Optimizer step taken")
 
-        scaler.step(optimizer)
-        if use_log: logger.info(f"train: Optimizer step taken")
-        scaler.update()
-
-        loss = loss.item()
-        if use_log: logger.info(f"train: loss reassigned ")
+        else:           # loss is invalid
+            print(error)
+            logger.error(f"train: loss error: {error}")
+            print('Skipping grad update')
+            loss_value = 0
+            grad_norm = 0
 
         prev_end_t = end_t
         end_t = time.time()
@@ -90,29 +95,29 @@ def run_epoch(model, optimizer, scaler, train_ldr, logger, debug_mode, tbX_write
         if use_log: logger.info(f"train: time calculated ")
 
         if iter_count == 0:
-            avg_loss = loss
+            avg_loss = loss_value
             avg_grad_norm = grad_norm
         else: 
-            avg_loss = exp_w * avg_loss + (1 - exp_w) * loss
+            avg_loss = exp_w * avg_loss + (1 - exp_w) * loss_value
             avg_grad_norm = exp_w * avg_grad_norm + (1 - exp_w) * grad_norm
 
         if use_log: logger.info(f"train: Avg loss: {avg_loss}")
-        tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
+        tbX_writer.add_scalars('train/loss', {"loss": loss_value}, iter_count)
         tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_loss}, iter_count)
-        tq.set_postfix(iter=iter_count, loss=loss, 
+        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
+        tq.set_postfix(iter=iter_count, loss=loss_value, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
         
         if use_log: logger.info(f'train: loss is inf: {loss == float("inf")}')
-        if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss, 3)}, grad_norm={round(grad_norm,3)}")
+        if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss_value, 3)}, grad_norm={round(grad_norm,3)}")
         
         if check_nan_params_grads(model.parameters()):
             if use_log:
-                inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+                inputs, labels, input_lens, label_lens = model.collate(*batch)
                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
                 log_model_grads(model.named_parameters(), logger)
-                save_batch_log_stats(temp_batch, logger)
+                save_batch_log_stats(batch, logger)
                 log_param_grad_norms(model.named_parameters(), logger)
                 plot_grad_flow_bar(model.named_parameters(), get_logger_filename(logger))
                 torch.save(model,  "./nan_model.pth")
@@ -138,11 +143,11 @@ def eval_dev(model, ldr, preproc,  logger):
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
             if use_log: logger.info(f"eval_dev: =====Inside batch loop=====")
-            temp_batch = list(batch)
+            batch = list(batch)
             if use_log: logger.info(f"eval_dev: batch converted")
-            preds = model.infer(temp_batch)
+            preds = model.infer(batch)
             if use_log: logger.info(f"eval_dev: infer call")
-            loss = model.loss(temp_batch)
+            loss = model.loss(batch)
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
             losses.append(loss.item())
@@ -150,8 +155,8 @@ def eval_dev(model, ldr, preproc,  logger):
             #losses.append(loss.data[0])
             all_preds.extend(preds)
             if use_log: logger.info(f"eval_dev: preds: {preds}")
-            all_labels.extend(temp_batch[1])        #add the labels in the batch object
-            if use_log: logger.info(f"eval_dev: labels: {temp_batch[1]}")
+            all_labels.extend(batch[1])        #add the labels in the batch object
+            if use_log: logger.info(f"eval_dev: labels: {batch[1]}")
 
     model.set_train()
     preproc.set_train()
@@ -244,7 +249,6 @@ def run(config):
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
 
-    scaler = GradScaler()
 
     if use_log: logger.info(f"train: ====== Model, loaders, optimimzer created =======")
     if use_log: logger.info(f"train: model: {model}")
@@ -268,7 +272,7 @@ def run(config):
         
 
         try:
-            run_state = run_epoch(model, optimizer, scaler, train_ldr, logger, debug_mode, tbX_writer, *run_state)
+            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state)
         except Exception as err:
             if use_log: logger.error(f"Exception raised: {err}")
             if use_log: logger.error(f"train: ====In except block====")

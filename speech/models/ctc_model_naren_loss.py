@@ -58,7 +58,7 @@ class CTC_train(ctc_model.CTC):
         out, rnn_args = self.forward_impl(x, softmax=False)
         #print(f"out shape before permute: {out.size()}. sum: {torch.sum(out)}")
         loss_fn = CTCLoss(size_average=True, length_average=False)
-        float_out = out.permute(1,0,2).float().requires_grad_(True).cpu() #permuation for sean ctc
+        float_out = out.permute(1,0,2).float() #permuation for sean ctc
         #print(f"out shape after permute: {float_out.size()}, sum: {torch.sum(float_out)}")
         loss = loss_fn(float_out, y, x_lens, y_lens)
         if self.is_cuda:

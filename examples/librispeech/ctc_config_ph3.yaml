@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200824/ph3/v2
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200826/ph3/
 data:
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
     dev_sets:
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: True
-    log_file: logs/2020-08-25_naren-loss.log
+    log_file: logs/2020-08-26_naren-loss_check-loss.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -44,7 +44,7 @@ optimizer:
     best_so_far: 999
     start_epoch: 0
     epochs: 100
-    learning_rate: 0.0001
+    learning_rate: 0.0003
     momentum: 0.0
     dampening: 0.0
     sched_gamma: 1.0 
@@ -53,7 +53,7 @@ model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     multi_gpu: False
     dropout: 0.4
-    load_trained: True
+    load_trained: False
     trained_path: examples/librispeech/models/ctc_models/20200820/ph3/best_model.pth
     remove_layers: []
     encoder: 
