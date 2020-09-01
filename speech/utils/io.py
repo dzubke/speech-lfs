@@ -6,6 +6,8 @@ import pickle
 import yaml
 # third-party libraries
 import torch
+# project libraries
+from speech.models.ctc_model_train import CTC_train
 
 MODEL = "model.pth"
 PREPROC = "preproc.pyc"
@@ -18,7 +20,7 @@ def get_names(path, tag):
 
 def save(model, preproc, path, tag=""):
     model_n, preproc_n = get_names(path, tag)
-    torch.save(model, model_n)
+    torch.save(model.state_dict(), model_n)
     with open(preproc_n, 'wb') as fid:
         pickle.dump(preproc, fid)
 
@@ -91,7 +93,10 @@ def load_from_trained(model, model_cfg):
         model_cfg (dict)
     """
     trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
-    trained_state_dict = trained_model.state_dict()
+    if isinstance(trained_model, dict):
+        trained_state_dict = trained_model
+    else:
+        trained_state_dict = trained_model.state_dict()
     trained_state_dict = filter_state_dict(trained_state_dict, remove_layers=model_cfg["remove_layers"])
     model_state_dict = model.state_dict()
     model_state_dict.update(trained_state_dict)

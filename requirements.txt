@@ -10,7 +10,7 @@ tqdm==4.19.4
 wget==1.19.5
 psutil==5.7.0
 ipython==7.11.1
-requests==2.24.0
+requests==2.23.0
 # separating pip (above) and conda (below)
 editdistance==0.4
 protobuf==3.8.0

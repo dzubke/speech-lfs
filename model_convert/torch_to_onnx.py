@@ -1,5 +1,6 @@
 # standard libraries
 import argparse
+from collection import OrderedDict
 import json
 import os
 # third-party libraries
@@ -46,10 +47,9 @@ def torch_to_onnx(model_name:str, num_frames:int, use_state_dict:bool, return_mo
         torch_model = CTC_model(freq_dim, 39, model_cfg) 
 
         # TODO, dustin, replace this. only temporary before model_state_dict is saved
-        state_dict_path = torch_path.replace("model.pth", "state_dict.pth")
-        if os.path.exists(state_dict_path):
-            state_dict = torch.load(state_dict_path, map_location=device)
-            print(f'loaded state_dict from: {state_dict_path}')
+        model_state_dict = torch.load(torch_path, map_location=device)
+        if isinstance(model_state_dict, 
+        print(f'loaded state_dict from: {state_dict_path}')
         else:
             state_dict_model = torch.load(torch_path, map_location=device)  
             state_dict = state_dict_model.state_dict()
