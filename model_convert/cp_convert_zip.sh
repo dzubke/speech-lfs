@@ -17,11 +17,11 @@ copy_files(){
 }
 
 convert_model(){
-    sed -i 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
-    python torch_to_onnx.py --model-name $1 --num-frames $2 --use-state-dict --half-precision 
+    sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
+    python torch_to_onnx.py --model-name $1 --num-frames $2 --use-state-dict 
     python onnx_to_coreml.py $1
     python validation.py $1 --num-frames $2
-    sed -i 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
+    sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
 }
 
 zip_files(){
@@ -29,8 +29,18 @@ zip_files(){
     zip -j ./zips/$1.zip ./coreml_models/$1_model.mlmodel ./preproc/$1_preproc.json ./config/$1_config.yaml ./output/$1_output.json
 }
 
+cleanup(){
+    # is run if SIGINT is sent
+    # ensure the modified ctc_model_train file is put back to original state
+    sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
+}
+
 
 # function  execution
+
+# runs the cleanup finction if SIGINT is entered
+trap cleanup SIGINT
+
 copy_files $model_path $model_name
 
 convert_model $model_name $num_frames
