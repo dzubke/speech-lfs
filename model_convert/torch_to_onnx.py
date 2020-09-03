@@ -1,6 +1,6 @@
 # standard libraries
 import argparse
-from collection import OrderedDict
+from collections import OrderedDict
 import json
 import os
 # third-party libraries
@@ -12,7 +12,7 @@ from get_test_input import generate_test_input
 from import_export import torch_load, torch_onnx_export
 import speech.loader as loader
 from speech.models.ctc_model import CTC as CTC_model
-from speech.utils.io import load_config
+from speech.utils.io import load_config, load_state_dict
 
 
 
@@ -46,14 +46,7 @@ def torch_to_onnx(model_name:str, num_frames:int, use_state_dict:bool, return_mo
         
         torch_model = CTC_model(freq_dim, 39, model_cfg) 
 
-        # TODO, dustin, replace this. only temporary before model_state_dict is saved
-        model_state_dict = torch.load(torch_path, map_location=device)
-        if isinstance(model_state_dict, 
-        print(f'loaded state_dict from: {state_dict_path}')
-        else:
-            state_dict_model = torch.load(torch_path, map_location=device)  
-            state_dict = state_dict_model.state_dict()
-            print(f'loaded state_dict from: {torch_path}')
+        state_dict = load_state_dict(torch_path, device=device)
 
         torch_model.load_state_dict(state_dict)
         torch_model.to(device)
