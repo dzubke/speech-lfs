@@ -9,7 +9,7 @@ import torch
 # project libraries
 from speech.models.ctc_model_train import CTC_train
 
-MODEL = "model.pth"
+MODEL = "model_state_dict.pth"
 PREPROC = "preproc.pyc"
 
 def get_names(path, tag):
