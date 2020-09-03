@@ -7,12 +7,12 @@ data:
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
         libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
         ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
-    dev_set_save_reference: cv
+    dev_set_save_reference: speak
     start_and_end: False
     num_workers: 4
 logger:
-    use_log: True
-    log_file: logs/2020-08-06-08-12_ph5_medium-augment-feature-normalize_lib-ted-cv.log
+    use_log: False
+    log_file: logs/2020-08-06-08-28_ph5_medium-augment-feature-normalize_lib-ted-cv.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 8
-    run_state: [419336, 111.73175610796547]
-    best_so_far: 0.38775
-    start_epoch: 4
+    run_state: [1782178, 60.768]
+    best_so_far: 0.3638
+    start_epoch: 17
     epochs: 100
     learning_rate: 0.001
     momentum: 0.0
@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path: examples/librispeech/models/ctc_models/20200806/ph5/20200812/best_model.pth
+    trained_path: examples/librispeech/models/ctc_models/20200806/ph5/model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
