@@ -359,7 +359,6 @@ def run(gpu_idx, config):
             msg = "Epoch {} completed in {:.2f} (hr)."
             epoch_time_hr = (time.time() - start)/60/60
             print(msg.format(epoch, epoch_time_hr))
-            print("testing printing~~~~")
             if use_log: logger.info(msg.format(epoch, epoch_time_hr))
             tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
     
