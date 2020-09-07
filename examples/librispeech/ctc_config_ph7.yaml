@@ -44,7 +44,7 @@ optimizer:
     best_so_far: 0.4583594239
     start_epoch: 20
     epochs: 100
-    learning_rate: 0.0025
+    learning_rate: 0.001
     momentum: 0.0
     dampening: 0.0
     sched_gamma: 1.0
@@ -68,6 +68,8 @@ model:
 training: 
     multi_gpu: False
     distributed: True
+    apex: True
+    opt_level: 'O0'
     n_nodes: 1
     n_gpus: 4
     master_addr: '10.128.0.25'

@@ -13,6 +13,7 @@ import random
 import time
 # third-party libraries
 #import functions.ctc as ctc #awni hannun's ctc bindings
+import apex
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -20,7 +21,6 @@ import torch
 import torch.nn as nn
 import torch.multiprocessing as mp
 import torch.distributed as dist
-
 import tqdm
 import yaml
 # project libraries
@@ -36,7 +36,7 @@ from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 BLANK_IDX = 0
 
 
-def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0):
+def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0, gpu_idx):
     """
     Performs a forwards and backward pass through the model
     Args:
@@ -53,8 +53,8 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     avg_grad_norm = 0
 
     # model compatibility for using multiple gpu's 
-    if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)): 
-       model_module = model.module
+    if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, apex.parallel.DistributedDataParallel)): 
+       model_module = model.module 
     else: 
         model_module = model
 
@@ -74,6 +74,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
         # calcuating the loss outside of model.loss to allow multi-gpu use
         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
+        inputs.cuda(gpu_idx)
         out, rnn_args = model(inputs, softmax=False)
  
         ############## Native loss code ############################################################
@@ -86,16 +87,20 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         # loss = loss_fn(out, labels, input_lens, label_lens)                                      #     
         
         if use_log: logger.info(f"train: Loss calculated")
-
     
-        loss.backward()
+        ############# amp change ##################################################################
+        with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
+            scaled_loss.backward()                                                                #
+
         if use_log: logger.info(f"train: Backward run ")
         if use_log: 
             if debug_mode: 
                 plot_grad_flow_bar(model_module.named_parameters(),  get_logger_filename(logger))
                 log_param_grad_norms(model_module.named_parameters(), logger)
 
-        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200).item()
+        ############# amp change ##################################################################
+        grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
+        
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
         optimizer.step()
@@ -291,28 +296,37 @@ def run(gpu_idx, config):
     if model_cfg["load_trained"]:
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
-    if train_cfg["multi_gpu"]:
-        assert torch.cuda.device_count() > 1, "multi_gpu selected but less than on GPU available"
-        model = torch.nn.DataParallel(model)
-        model_module = model.module
-        model.cuda() if use_cuda else model.cpu()
-    elif train_cfg['distributed']:
-        model.cuda(gpu_idx)
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[gpu_idx])
-        model_module = model.module
-    else:
-        # allows for compatbility with data-parallel models
-        model_module = model
-        model.cuda() if use_cuda else model.cpu()
-
+    
     # Optimizer
-    optimizer = torch.optim.SGD(model_module.parameters(),
+    optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
                     momentum=opt_cfg["momentum"],
                     dampening=opt_cfg["dampening"])
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
+
+    # multi-gpu training
+    if train_cfg["multi_gpu"]:
+        assert torch.cuda.device_count() > 1, "multi_gpu selected but less than on GPU available"
+        model = torch.nn.DataParallel(model)
+        model_module = model.module
+        model.cuda() if use_cuda else model.cpu()
+    
+    elif train_cfg['distributed']:
+        model.cuda(gpu_idx)
+    
+        if train_cfg['apex']:
+            model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
+            #model = apex.parallel.DistributedDataParallel(model)
+        model = nn.parallel.DistributedDataParallel(model, device_ids=[gpu_idx])
+        
+        model_module = model.module
+    else:
+        # allows for compatbility with data-parallel models
+        model_module = model
+        model.cuda() if use_cuda else model.cpu()
+
 
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")
@@ -338,7 +352,7 @@ def run(gpu_idx, config):
         
 
         try:
-            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, is_rank_0)
+            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, is_rank_0, gpu_idx)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")

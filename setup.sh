@@ -4,6 +4,8 @@ export PYTHONPATH=`pwd`:`pwd`/libs/warp-ctc-sean/pytorch_binding:`pwd`/libs:$PYT
 
 export PYTHONPATH=`pwd`/libs/warp-ctc/pytorch_binding:$PYTHONPATH
 
+export PYTHONPATH=`pwd`/libs/apex:$PYTHONPATH
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`pwd`/libs/warp-ctc/build
 
 #export PYTHONPATH=$PYTHONPATH:/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech
