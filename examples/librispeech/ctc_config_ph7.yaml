@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-08-27-09-04_ph7_ddp-no-aug-w-feat-norm_lib-ted-cv.log
+    log_file: logs/2020-08-27-09-07_ph7_ddp-no-aug-w-feat-norm_lib-ted-cv.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
     batch_size: 24
-    run_state: [209664, 1440.912]
-    best_so_far: 0.4583594239
-    start_epoch: 20
+    run_state: [288288, 1446.3899]
+    best_so_far: 0.4489668
+    start_epoch: 29
     epochs: 100
     learning_rate: 0.001
     momentum: 0.0
@@ -71,6 +71,6 @@ training:
     apex: True
     opt_level: 'O0'
     n_nodes: 1
-    n_gpus: 4
+    n_gpus: 8
     master_addr: '10.128.0.25'
     master_port: '8888'
