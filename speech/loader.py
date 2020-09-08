@@ -9,6 +9,8 @@ import math
 import random
 from typing import List, Tuple
 # third-party libraries
+from google.cloud import storage
+from google.cloud.storage.blob import Blob
 import matplotlib.pyplot as plt
 import numpy as np
 import python_speech_features
@@ -76,15 +78,18 @@ class Preprocessor():
         self.spec_augment_prob = preproc_cfg.get('spec_augment_prob', 1.0)
         self.spec_augment_policy = preproc_cfg['spec_augment_policy']
 
+        self.load_from_gcs = preproc_cfg.get('load_from_gcs', False) # if true, load data from google cloud storage
+
         # Compute data mean, std from sample
         data = read_data_json(data_json)
         audio_files = [sample['audio'] for sample in data]
         random.shuffle(audio_files)
         self.mean, self.std = compute_mean_std(audio_files[:max_samples], 
-                                                preprocessor = self.preprocessor,
-                                                window_size = self.window_size, 
-                                                step_size = self.step_size,
-                                                use_feature_normalize =self.use_feature_normalize)
+                                                self.preprocessor,
+                                                self.window_size, 
+                                                self.step_size,
+                                                self.use_feature_normalize
+                                                self.load_from_gcs)
         self._input_dim = self.mean.shape[0]
         self.use_log = (logger is not None)
         self.logger = logger
@@ -152,20 +157,45 @@ class Preprocessor():
             samp_rate - int: sample rate of the audio recording
         """
         if self.use_log: self.logger.info(f"preproc: audio_data read: {wave_file}")
-        
-        audio_data, samp_rate = array_from_wave(wave_file)
 
+        # use a tmp file to download audio from gcp
+        if self.load_from_gcs:        
+            assert wave_file.startswith("gs://"), f"filename {file_name} doesn't being with 'gs://'"
+            client = storage.Client() 
+            blob = Blob.from_string(wave_file, client)
+            with NamedTemporaryFile(suffix=".wav") as tmp_file_obj:
+                tmp_wave_file = tmp_file_obj.name
+                with open(tmp_wave_file, "wb") as file_obj:
+                    blob.download_to_file(file_obj)
+                audio_data, samp_rate = array_from_wave(tmp_wave_file, load_from_gcs=False)
+        
+                # TODO sorry, mom and dad, for duplicating this code. not sure how else to do it.
+                if self.tempo_gain_pitch_perturb and self.train_status:
+                    if np.random.binomial(1, self.tempo_gain_pitch_prob):
+                    audio_data, samp_rate = tempo_gain_pitch_perturb(tmp_wave_file,
+                                                                     samp_rate,
+                                                                     self.tempo_range,
+                                                                     self.gain_range,
+                                                                     self.pitch_range,
+                                                                     self.augment_from_normal,
+                                                                     logger=self.logger)
+                    if self.use_log: self.logger.info(f"preproc: tempo_gain_pitch applied")
+
+        # not loading audio from gcs
+        else:
+            audio_data, samp_rate = array_from_wave(wave_file)
         # sox-based tempo, gain, pitch augmentations
-        if self.tempo_gain_pitch_perturb and self.train_status:
-            if np.random.binomial(1, self.tempo_gain_pitch_prob): 
-                audio_data, samp_rate = tempo_gain_pitch_perturb(wave_file, 
+            if self.tempo_gain_pitch_perturb and self.train_status:
+                if np.random.binomial(1, self.tempo_gain_pitch_prob): 
+                    audio_data, samp_rate = tempo_gain_pitch_perturb(wave_file, 
                                                                 samp_rate, 
                                                                 self.tempo_range,
                                                                 self.gain_range, 
                                                                 self.pitch_range, 
                                                                 self.augment_from_normal, 
+                                                                self.load_from_gcs,
                                                                 logger=self.logger)
-                if self.use_log: self.logger.info(f"preproc: tempo_gain_pitch applied")
+                    if self.use_log: self.logger.info(f"preproc: tempo_gain_pitch applied")
 
         # synthetic gaussian noise
         if self.synthetic_gaussian_noise and self.train_status:
@@ -303,8 +333,12 @@ def feature_normalize(feature_array:np.ndarray, eps=1e-7)->np.ndarray:
     return feature_array
 
 
-def compute_mean_std(audio_files:List[str], preprocessor:str, window_size:int, 
-                    step_size:int, use_feature_normalize:bool)->Tuple[np.ndarray, np.ndarray]:
+def compute_mean_std(audio_files:List[str], 
+                     preprocessor:str, 
+                     window_size:int, 
+                     step_size:int, 
+                     use_feature_normalize:bool,
+                     load_from_gcs:bool=False)->Tuple[np.ndarray, np.ndarray]:
     """
     Compute the mean and std deviation of all of the feature bins (frequency bins if log_spec
     preprocessor). Will first normalize the audio samples if use_feature_normalize is true.
@@ -324,7 +358,7 @@ def compute_mean_std(audio_files:List[str], preprocessor:str, window_size:int,
     samples = []
     preprocessing_function  =  eval(preprocessor + "_from_data")
     for audio_file in audio_files: 
-        data, samp_rate = array_from_wave(audio_file)
+        data, samp_rate = array_from_wave(audio_file, load_from_gcs)
         feature_array = preprocessing_function(data, samp_rate, window_size, step_size)
         if use_feature_normalize:
             feature_array = feature_normalize(feature_array)   # normalize the feature
