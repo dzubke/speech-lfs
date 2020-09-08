@@ -14,6 +14,7 @@ dependencies:
   - cffi=1.11.2=py36h2825082_0
   - chardet=3.0.4=py36_1003
   - cryptography=2.3.1=py36hc365091_0
+  - cuda92=1.0=0
   - cudatoolkit=10.2.89=hfd86e86_1
   - cycler=0.10.0=py36_0
   - dbus=1.13.12=h746ee38_0
@@ -57,7 +58,6 @@ dependencies:
   - more-itertools=8.2.0=py_0
   - ncurses=6.1=he6710b0_1
   - ninja=1.9.0=py36hfd86e86_0
-  - numpy=1.14.0=py36ha266831_2
   - olefile=0.46=py_0
   - openssl=1.0.2u=h7b6447c_0
   - packaging=20.3=py_0
@@ -70,7 +70,6 @@ dependencies:
   - pip=19.3.1=py36_0
   - pluggy=0.13.1=py36_0
   - prompt_toolkit=3.0.2=py_0
-  - protobuf=3.12.4=py36he6710b0_0
   - psutil=5.7.0=py36h7b6447c_0
   - ptyprocess=0.6.0=py36_0
   - py=1.8.1=py_0
@@ -82,9 +81,9 @@ dependencies:
   - pyparsing=2.4.6=py_0
   - pyqt=5.9.2=py36h05f1152_2
   - pysocks=1.7.1=py36_0
-  - pytest=5.4.1=py36_0
   - python=3.6.5=hc3d631a_2
   - python-dateutil=2.8.1=py_0
+  - pytorch=1.6.0=py3.6_cuda10.2.89_cudnn7.6.5_0
   - pytz=2019.3=py_0
   - pyyaml=3.12=py36h14c3975_1
   - qt=5.9.6=h8703b6f_2
@@ -96,6 +95,7 @@ dependencies:
   - six=1.11.0=py36_1
   - sqlite=3.30.1=h7b6447c_0
   - tk=8.6.8=hbc83047_0
+  - torchvision=0.7.0=py36_cu102
   - tornado=6.0.3=py36h7b6447c_0
   - tqdm=4.41.1=py_0
   - traitlets=4.3.3=py36_0
@@ -109,8 +109,67 @@ dependencies:
   - zipp=2.2.0=py_0
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.3.7=h0b5b093_0
-  - cuda92=1.0=0
-  - pytorch=1.6.0=py3.6_cuda10.2.89_cudnn7.6.5_0
-  - torchvision=0.7.0=py36_cu102
+  - pip:
+    - absl-py==0.10.0
+    - anykeystore==0.2
+    - apex==0.1
+    - astor==0.8.1
+    - audioread==2.1.8
+    - cryptacular==1.5.5
+    - cython==0.29.21
+    - defusedxml==0.6.0
+    - editdistance==0.4
+    - future==0.18.2
+    - gast==0.2.2
+    - google-pasta==0.2.0
+    - grpcio==1.31.0
+    - h5py==2.10.0
+    - hupper==1.10.2
+    - joblib==0.16.0
+    - keras-applications==1.0.8
+    - keras-preprocessing==1.1.2
+    - librosa==0.7.2
+    - llvmlite==0.31.0
+    - markdown==3.2.2
+    - markupsafe==1.1.1
+    - numba==0.48.0
+    - numpy==1.19.1
+    - oauthlib==3.1.0
+    - opt-einsum==3.3.0
+    - pastedeploy==2.1.0
+    - pbkdf2==1.3
+    - plaster==1.0
+    - plaster-pastedeploy==0.7
+    - protobuf==3.8.0
+    - pyramid==1.10.4
+    - pyramid-mailer==0.15.1
+    - pytest==3.2.3
+    - python-graphviz==0.14
+    - python-speech-features==0.6
+    - python3-openid==3.2.0
+    - repoze-sendmail==4.4.1
+    - requests-oauthlib==1.3.0
+    - resampy==0.2.2
+    - scikit-learn==0.23.2
+    - scipy==1.4.1
+    - soundfile==0.10.2
+    - sqlalchemy==1.3.19
+    - tensorboard==1.15.0
+    - tensorboardx==2.1
+    - tensorflow==1.15.3
+    - tensorflow-estimator==1.15.1
+    - termcolor==1.1.0
+    - threadpoolctl==2.1.0
+    - transaction==3.0.0
+    - translationstring==1.4
+    - velruse==1.1.1
+    - venusian==3.0.0
+    - webob==1.8.6
+    - werkzeug==1.0.1
+    - wrapt==1.12.1
+    - wtforms==2.3.3
+    - wtforms-recaptcha==0.3.2
+    - zope-deprecation==4.4.0
+    - zope-interface==5.1.0
+    - zope-sqlalchemy==1.3
 prefix: /home/dzubke/miniconda/envs/pyt_16
-
