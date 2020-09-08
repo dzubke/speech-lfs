@@ -135,6 +135,8 @@ examples/librispeech/models/ctc_models/20200625/ph4/*/*model
 examples/librispeech/models/ctc_models/20200715/ph2/*model
 examples/librispeech/models/ctc_models/20200715/ph2/*/*model
 examples/librispeech/models/ctc_models/null/
+examples/librispeech/models/ctc_models/20200806/ph4/20200907/best_model_state_dict.pth
+
 
 model_convert/torch_models/
 model_convert/onnx_models/
