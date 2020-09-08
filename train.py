@@ -82,7 +82,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         loss_fn = torch.nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)         #     
         loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
 
-        ############## Native loss code ############################################################
+        ############## Awni loss code  #############################################################
         # loss_fn = ctc.CTCLoss()                                                                  #     
         # loss = loss_fn(out, labels, input_lens, label_lens)                                      #     
         
