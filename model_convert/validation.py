@@ -140,7 +140,7 @@ def full_audio_infer(model, preproc, PARAMS:dict, audio_dir)->dict:
         features = log_spectrogram_from_data(audio_data, samp_rate)
         norm_features = normalize(preproc, features)
         # adds the batch dimension (1, time, 257)
-        norm_features = np.expand_dims(norm_features, axis=0) 
+        norm_features = np.expand_dims(norm_features, axis=0)   
         torch_input = torch.from_numpy(norm_features)
         
         # padding time dim, pads from the back: zero padding (0,0) to freq, 15 paddding (15,0) to time

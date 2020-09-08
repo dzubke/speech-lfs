@@ -48,13 +48,6 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, sched
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0.0
 
-    # model compatibility for using multiple gpu's
-    multi_gpu = isinstance(model, torch.nn.DataParallel)
-    if multi_gpu:
-        model_module = model.module
-    else: 
-        model_module = model
-
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
         
@@ -63,7 +56,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, sched
         if use_log: 
             if debug_mode:  
                 save_batch_log_stats(temp_batch, logger)
-                log_batchnorm_mean_std(model_module.state_dict(), logger)
+                log_batchnorm_mean_std(model.state_dict(), logger)
  
         start_t = time.time()
         optimizer.zero_grad()
@@ -89,15 +82,14 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, sched
         if use_log: logger.info(f"train: Backward run ")
         if use_log: 
             if debug_mode: 
-                plot_grad_flow_bar(model_module.named_parameters(),  get_logger_filename(logger))
-                log_param_grad_norms(model_module.named_parameters(), logger)
+                plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
+                log_param_grad_norms(model.named_parameters(), logger)
 
         grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200).item()
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
         loss = loss.item()
         if use_log: logger.info(f"train: loss reassigned ")
-
 
         optimizer.step()
         scheduler.step()
@@ -126,10 +118,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, sched
         if use_log: logger.info(f'train: loss is inf: {loss == float("inf")}')
         if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss,3)}, grad_norm={round(grad_norm,3)}")
         
-        if check_nan_params_grads(model_module.parameters()):
+        if check_nan_params_grads(model.parameters()):
             if use_log:
-                logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model_module.state_dict()}")
-                log_model_grads(model_module.named_parameters(), logger)
+                inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+                logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
+                log_model_grads(model.named_parameters(), logger)
                 save_batch_log_stats(temp_batch, logger)
                 log_param_grad_norms(model_module.named_parameters(), logger)
                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
@@ -294,7 +287,7 @@ def run(gpu_idx, config):
         model.cuda() if use_cuda else model.cpu()
 
     # Optimizer
-    optimizer = torch.optim.SGD(model_module.parameters(),
+    optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
                     momentum=opt_cfg["momentum"],
                     dampening=opt_cfg["dampening"])
@@ -338,8 +331,8 @@ def run(gpu_idx, config):
             if use_log: 
                 logger.error(f"Exception raised: {err}")
                 logger.error(f"train: ====In except block====")
-                logger.error(f"train: state_dict: {model_module.state_dict()}")
-                log_model_grads(model_module.named_parameters(), logger)
+                logger.error(f"train: state_dict: {model.state_dict()}")
+                log_model_grads(model.named_parameters(), logger)
             raise Exception('Failure in run_epoch').with_traceback(err.__traceback__)
         finally: # used to ensure that plots are closed even if exception raised
             plt.close('all')
@@ -359,7 +352,7 @@ def run(gpu_idx, config):
 
         # the logger needs to be removed to save the model
         if use_log: preproc.logger = None
-        speech.save(model_module, preproc, config["save_path"])
+        speech.save(model, preproc, config["save_path"])
         if use_log: logger.info(f"train: ====== model saved =======")
         if use_log: preproc.logger = logger
 
@@ -370,7 +363,7 @@ def run(gpu_idx, config):
         for dev_name, dev_ldr in dev_ldr_dict.items():
             print(f"evaluating devset: {dev_name}")
             if use_log: logger.info(f"train: === evaluating devset: {dev_name} ==")
-            dev_loss, dev_per = eval_dev(model_module, dev_ldr, preproc, logger)
+            dev_loss, dev_per = eval_dev(model, dev_ldr, preproc, logger)
 
             dev_loss_dict.update({dev_name: dev_loss})
             dev_per_dict.update({dev_name: dev_per})
@@ -385,7 +378,7 @@ def run(gpu_idx, config):
                 if dev_per < best_so_far:
                     if use_log: preproc.logger = None   # remove the logger to save the model
                     best_so_far = dev_per
-                    speech.save(model_module, preproc,
+                    speech.save(model, preproc,
                             config["save_path"], tag="best")
                     if use_log: 
                         preproc.logger = logger
