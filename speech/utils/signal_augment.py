@@ -71,25 +71,27 @@ def apply_augmentation(audio_path:str, preproc_cfg:dict, logger:Logger)\
 
     logger.info(f"audio_path: {audio_path}")
     if preproc_cfg['tempo_gain_pitch_perturb']:
-        aug_data, samp_rate = tempo_gain_pitch_perturb(audio_path,
+        if np.random.binomial(1, preproc_cfg['tempo_gain_pitch_prob']):
+            aug_data, samp_rate = tempo_gain_pitch_perturb(audio_path,
                                             tempo_range = preproc_cfg['tempo_range'],
                                             gain_range = preproc_cfg['gain_range'],
                                             pitch_range = preproc_cfg['pitch_range'],
                                             augment_from_normal = preproc_cfg['augment_from_normal'],
                                             logger= logger)
+        else:
+            aug_data, samp_rate = array_from_wave(audio_path)
     else: 
         aug_data, samp_rate = array_from_wave(audio_path)
-
     if preproc_cfg['synthetic_gaussian_noise']:
-        aug_data = synthetic_gaussian_noise_inject(aug_data, preproc_cfg['signal_to_noise_range_db'],
+        if np.random.binomial(1, preproc_cfg['gauss_noise_prob']):
+            aug_data = synthetic_gaussian_noise_inject(aug_data, preproc_cfg['gauss_snr_db_range'],
                                                         preproc_cfg['augment_from_normal'], logger=logger)
-    if preproc_cfg['inject_noise']: 
-        add_noise = np.random.binomial(1, preproc_cfg['noise_prob'])
-        if add_noise:
+    if preproc_cfg['background_noise']: 
+        if np.random.binomial(1, preproc_cfg['background_noise_prob']):
             logger.info("noise injected")
             aug_data =  inject_noise(aug_data, samp_rate,  
-                                        preproc_cfg['noise_directory'], 
-                                        preproc_cfg['noise_levels'], 
+                                        preproc_cfg['background_noise_dir'], 
+                                        preproc_cfg['background_noise_range'], 
                                         preproc_cfg['augment_from_normal'],
                                         logger) 
         else:
