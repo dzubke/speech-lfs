@@ -33,7 +33,7 @@ from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 BLANK_IDX = 0
 
 
-def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss):
+def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, scheduler, iter_count, avg_loss):
     """
     Performs a forwards and backward pass through the model
     Arguments
@@ -100,6 +100,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
 
         optimizer.step()
+        scheduler.step()
         if use_log: logger.info(f"train: Optimizer step taken")
 
         prev_end_t = end_t
@@ -117,7 +118,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: Avg loss: {avg_loss}")
         tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
         tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_loss}, iter_count)
+        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
         tq.set_postfix(iter=iter_count, loss=loss, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
@@ -263,7 +264,8 @@ def run(gpu_idx, config):
         loader_func = loader.make_loader    
 
     train_ldr = loader_func(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
-    
+    print(f"~~~~~~~~~~~~   train_ldr len: {len(train_ldr)} ~~~~~~~~~~~~")
+ 
     dev_ldr_dict = dict() # dict that includes all the dev_loaders
     for dev_name, dev_path in data_cfg["dev_sets"].items():
         dev_ldr = loader_func(dev_path, preproc, batch_size=8, num_workers=data_cfg["num_workers"])
@@ -296,9 +298,17 @@ def run(gpu_idx, config):
                     lr=learning_rate,   # from train_state or opt_config
                     momentum=opt_cfg["momentum"],
                     dampening=opt_cfg["dampening"])
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
-        step_size=opt_cfg["sched_step"], 
-        gamma=opt_cfg["sched_gamma"])
+    #lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
+    #    step_size=opt_cfg["sched_step"], 
+    #    gamma=opt_cfg["sched_gamma"])
+
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, 
+                                                    max_lr=0.01, 
+                                                    steps_per_epoch=len(train_ldr), 
+                                                    epochs=10,
+                                                    verbose=False)
+
+
 
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")
@@ -323,7 +333,7 @@ def run(gpu_idx, config):
         
 
         try:
-            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state)
+            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, scheduler, *run_state)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
@@ -335,7 +345,7 @@ def run(gpu_idx, config):
             plt.close('all')
     
         # update the learning rate
-        lr_scheduler.step()       
+        #lr_scheduler.step()       
  
         if use_log:
             logger.info(f"train: ====== Run_state finished =======") 

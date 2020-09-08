@@ -9,7 +9,8 @@ import torch
 # project libraries
 from speech.models.ctc_model_train import CTC_train
 
-MODEL = "model_state_dict.pth"
+#MODEL = "model_state_dict.pth"
+MODEL = "model"
 PREPROC = "preproc.pyc"
 
 def get_names(path, tag):
@@ -25,7 +26,6 @@ def save(model, preproc, path, tag=""):
         pickle.dump(preproc, fid)
 
 def load(path, tag=""):
-    raise NotImplementedError
     model_n, preproc_n = get_names(path, tag)
     model = torch.load(model_n, map_location=torch.device('cpu'))
     with open(preproc_n, 'rb') as fid:
