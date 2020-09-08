@@ -120,7 +120,7 @@ class TatoebaAssessor():
         eng_skill_df = user_lang_df[user_lang_df['lang']=='eng']    # shape: (9999, 4)
 
         audio_eng_skill_df = pd.merge(audio_eng_sent_df, eng_skill_df, how='left', on='user', suffixes=('_m', '_s')) 
-        # audio_eng_skill_df.shape = (499085, 9) compared to audio_eng_sent_df.shape = (499027, 6)
+        # audio_eng_skill_df.shape = (499085, 9) compared speech_featuresto audio_eng_sent_df.shape = (499027, 6)
         # extra 58 samples I think comes from usernames \N being duplicated 
         # as there are 30 entries in eng_skill_df with username '/N'
         # yeah, audio_eng_skill_df[audio_eng_skill_df['user']=='\\N'].shape   = (60, 9)

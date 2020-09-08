@@ -108,9 +108,8 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
                 log_model_grads(model.named_parameters(), logger)
                 save_batch_log_stats(temp_batch, logger)
-                log_param_grad_norms(model.named_parameters(), logger)
-                plot_grad_flow_bar(model.named_parameters(), get_logger_filename(logger))
-                torch.save(model,  "./nan_model.pth")
+                log_param_grad_norms(model_module.named_parameters(), logger)
+                plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
             debug_mode = True
             torch.autograd.set_detect_anomaly(True)
 
@@ -229,7 +228,6 @@ def run(config):
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
     model.cuda() if use_cuda else model.cpu()
-
     # Optimizer
     optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
@@ -321,6 +319,8 @@ def run(config):
                         logger.info(f"model saved based per on: {dev_name} dataset")
 
                     print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
+            
+
         
         per_diff_dict = calc_per_difference(dev_per_dict) 
 

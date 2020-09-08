@@ -28,6 +28,7 @@ gcloud compute instances stop phoneme-3
 gcloud compute ssh --project speak-ml-dev --zone us-central1-a  dzubke@phoneme-1
 
 
+
 3.  HOW TO SETUP STACKDRIVER MONITORING AGENT
 # installing stackdriver agent
 curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh
@@ -48,6 +49,25 @@ sudo service stackdriver-agent status
 # examing logs and ensure no errors 
 grep collectd /var/log/{syslog,messages} | tail
 
+# to restart, 
+sudo service stackdriver-agent stop
+sudo service stackdriver-agent start
+
+
+3.1 REMOVE `WRITE_GCM: CAN NOT TAKE INFINITE VALUE` ERRORS
+
+# as per these instructions: https://myshittycode.com/2020/06/13/gcp-stackdriver-agent-write_gcm-can-not-take-infinite-value-error/
+# remove the "LoadPlugin swap" section by
+sudo vim /etc/stackdriver/collectd.conf
+
+# then restart the stackdriver service using:
+sudo service stackdriver-agent stop
+sudo service stackdriver-agent start
+
+# also uncomment the lines below: `# if you uncomment this, you will get collectd logs separate from syslog` 
+# which will create a separate log file
+
+
 
 4. HOW TO SETUP GPU MONITORING 
 # modified commands based on:  https://cloud.google.com/compute/docs/gpus/monitor-gpus
@@ -56,7 +76,7 @@ grep collectd /var/log/{syslog,messages} | tail
 sudo apt-get install -y python-pip
 sudo -H pip install --upgrade pip
 sudo -H  pip install --upgrade setuptools
-sudo pip install google-cloud-monitoring>=0.30.1
+sudo pip install google-cloud-monitoring=0.30.1
 
 sudo cp ~/awni_speech/speech/dev_ops/report_gpu_metrics_editted.py /root/
 

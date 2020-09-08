@@ -1,16 +1,39 @@
 #!/bin/bash
 # this command should be called from inside the onnx_coreml/ directory
-# command structure: bash cp_convert_zip.sh <base_path_to_model> <model_name> <num_frames>
-cp $1/best_model ./torch_models/$2_model.pth
-cp $1/best_preproc.pyc ./preproc/$2_preproc.pyc
-cp $1/ctc_config.json ./config/$2_config.json
+# command structure: bash cp_convert_zip.sh <base_path_to_model> <model_name> <num_frames> 
 
-#sed -i '' 's/"convert_model": false,/"convert_model": true,/g' ./config/$2_config.json
-#sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ~/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech/speech/models/ctc_model.py
+# assigning the arguments
+model_path=$1
+model_name=$2
+num_frames=$3
 
-python torch_to_onnx.py $2 --num_frames $3 --use_state_dict True 
-python onnx_to_coreml.py $2
-python validation.py $2 --num_frames $3
-bash transfer_zip.sh $2
 
-#sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ~/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech/speech/models/ctc_model.py
+
+# creating the functions
+copy_files(){
+    cp $1/best_model.pth ./torch_models/$2_model.pth
+    cp $1/best_preproc.pyc ./preproc/$2_preproc.pyc
+    cp $1/*.yaml ./config/$2_config.yaml
+}
+
+convert_model(){
+    #sed -i 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
+    python torch_to_onnx.py --model-name $1 --num-frames $2 --use-state-dict --half-precision 
+    python onnx_to_coreml.py $1
+    python validation.py $1 --num-frames $2
+    #sed -i 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
+}
+
+zip_files(){
+    echo "Zipping $1.zip"
+    zip -j ./zips/$1.zip ./coreml_models/$1_model.mlmodel ./preproc/$1_preproc.json ./config/$1_config.yaml ./output/$1_output.json
+}
+
+
+# function  execution
+copy_files $model_path $model_name
+
+convert_model $model_name $num_frames
+
+zip_files $model_name
+

@@ -18,11 +18,12 @@ import torch.nn as nn
 #project libraries
 from get_paths import validation_paths
 from import_export import preproc_to_dict, preproc_to_json, export_state_dict
-from speech.loader import log_specgram_from_data, log_specgram_from_file
+from speech.loader import log_spectrogram_from_data, log_spectrogram_from_file
 from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models import ctc_model
 from speech.utils.compat import normalize
 from speech.utils.convert import to_numpy
+from speech.utils.io import load_config
 from speech.utils.stream_utils import make_full_window
 from speech.utils.wave import array_from_wave
 
@@ -43,9 +44,9 @@ def main(model_name, num_frames):
 
     model_fn, onnx_fn, coreml_fn, config_fn, preproc_fn, state_dict_path = validation_paths(model_name)
     
-    with open(config_fn, 'rb') as fid:
-        config = json.load(fid)
-        model_cfg = config["model"]
+    config = load_config(config_fn)
+    model_cfg = config["model"]
+    
     with open(preproc_fn, 'rb') as fid:
         preproc = pickle.load(fid)
 
@@ -64,9 +65,13 @@ def main(model_name, num_frames):
     logging.warning(f"PARAMS dict: {PARAMS}")
     
     #load models
-    state_dict_model = torch.load(model_fn, map_location=torch.device('cpu'))
     model = ctc_model.CTC(preproc.input_dim, preproc.vocab_size, model_cfg)
-    state_dict = state_dict_model.state_dict()
+    
+    state_dict_model = torch.load(model_fn, map_location=torch.device('cpu'))
+    if isinstance(state_dict_model, dict):
+        state_dict = state_dict_model
+    elif isinstance(state_dict_model, torch.nn.Module):
+        state_dict = state_dict_model.state_dict()
     torch.save(state_dict, state_dict_path)
     model.load_state_dict(state_dict)
 
@@ -132,7 +137,7 @@ def full_audio_infer(model, preproc, PARAMS:dict, audio_dir)->dict:
         assert PARAMS['sample_rate'] == samp_rate, "audio sample rate is not equal to default sample rate"
 
         audio_data = make_full_window(audio_data, PARAMS['feature_win_len'], PARAMS['feature_win_step'])
-        features = log_specgram_from_data(audio_data, samp_rate)
+        features = log_spectrogram_from_data(audio_data, samp_rate)
         norm_features = normalize(preproc, features)
         # adds the batch dimension (1, time, 257)
         norm_features = np.expand_dims(norm_features, axis=0) 
@@ -172,12 +177,20 @@ def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, 
     stream_test_name = "Speak-out.wav"
     predictions_dict= {}
 
+    # relativfe and absolute tolerances for function
+    rel_tol = 7e-1
+    abs_tol = 7e-2
+
+    check_preds = True  # checks if the predictions of the torch and coreml models are equal
+    check_probs = True  # checks if the probabilities across models are equal
+    check_hidden = False # checks if the hidden and cell states across models are equal
+
     for audio_file in os.listdir(audio_dir):
         test_h = np.zeros((5, 1, 512)).astype(np.float32)
         test_c = np.zeros((5, 1, 512)).astype(np.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
-        log_spec = log_specgram_from_file(audio_path)
+        log_spec = log_spectrogram_from_file(audio_path)
         features = normalize(preproc, log_spec)
         features = features[:num_frames,:]
         test_x = np.expand_dims(features, 0)
@@ -245,26 +258,29 @@ def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, 
         logging.debug(f"ctc decode: {coreml_ctc_decoder}")
 
         # Compare torch and Coreml predictions
-        np.testing.assert_allclose(coreml_probs, torch_probs, rtol=1e-03, atol=1e-05)
-        np.testing.assert_allclose(coreml_h, torch_h, rtol=1e-03, atol=1e-05)
-        np.testing.assert_allclose(coreml_c, torch_c, rtol=1e-03, atol=1e-05)
-        #assert(torch_max_decoder==coreml_max_decoder), "max decoder doesn't match"
-        #assert(torch_ctc_decoder[0]==coreml_ctc_decoder[0]), "ctc decoder labels don't match"
-        #np.testing.assert_almost_equal(torch_ctc_decoder[1], coreml_ctc_decoder[1], decimal=3)
-        logging.debug("\ntorch and Coreml probs, hidden, cell, decoder states match, all good!")
+        if check_preds: 
+            assert(torch_max_decoder==coreml_max_decoder), \
+                f"max decoder preds doesn't match, torch: {torch_max_decoder}, coreml: {coreml_max_decoder}"
+            assert(torch_ctc_decoder[0]==coreml_ctc_decoder[0]), \
+                f"ctc decoder preds doesn't match, torch: {torch_ctc_decoder[0]}, coreml: {coreml_ctc_decoder[0]}"
+            logging.debug("preds check passed")
 
-        # Compare Torch and ONNX predictions
-        np.testing.assert_allclose(torch_probs, onnx_probs, rtol=1e-03, atol=1e-05)
-        np.testing.assert_allclose(torch_h, onnx_h, rtol=1e-03, atol=1e-05)
-        np.testing.assert_allclose(torch_c, onnx_c, rtol=1e-03, atol=1e-05)
-        logging.debug("\ntorch and ONNX probs, hidden, cell states match, all good!")  
+        if check_probs:
+            np.testing.assert_allclose(coreml_probs, torch_probs, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(torch_probs, onnx_probs, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(onnx_probs, coreml_probs, rtol=rel_tol, atol=abs_tol)
+            logging.debug("probs check passed")
 
-        # Compare ONNX and CoreML predictions
-        np.testing.assert_allclose(onnx_probs, coreml_probs, rtol=1e-03, atol=1e-05)
-        np.testing.assert_allclose(onnx_h, coreml_h, rtol=1e-03, atol=1e-05)
-        np.testing.assert_allclose(onnx_c, coreml_c, rtol=1e-03, atol=1e-05)
-        logging.debug("\nONNX and CoreML probs, hidden, cell states match, all good!")
+        if check_hidden:
+            np.testing.assert_allclose(coreml_h, torch_h, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(coreml_c, torch_c, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(torch_h, onnx_h, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(torch_c, onnx_c, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(onnx_h, coreml_h, rtol=rel_tol, atol=abs_tol)
+            np.testing.assert_allclose(onnx_c, coreml_c, rtol=rel_tol, atol=abs_tol)
+            logging.debug("hidden check passed")        
 
+        logging.debug(f"\nChecks: preds: {check_preds},  probs: {check_probs}, hidden: {check_hidden} passed")
     
     dict_to_json(predictions_dict, "./output/"+model_name+"_output.json")
 
@@ -324,7 +340,7 @@ def load_audio(preproc, test_names, test_fns, base_path, test_h, test_c, num_fra
     dct = {}
     for test_name, test_fn in zip(test_names, test_fns):
 
-        audio_data = normalize(preproc, log_specgram_from_file(base_path+test_fn))
+        audio_data = normalize(preproc, log_spectrogram_from_file(base_path+test_fn))
         audio_data = audio_data[:num_frames,:]
         audio_data = np.expand_dims(audio_data, 0)
         dct.update({test_name : [audio_data, test_h, test_c]})
@@ -347,7 +363,7 @@ if  __name__=="__main__":
     # commmand format: python validation.py <model_name>
     parser = argparse.ArgumentParser(description="validates the outputs of the models.")
     parser.add_argument("model_name", help="name of the model.")
-    parser.add_argument("--num_frames", help="number of input frames in time dimension hard-coded in onnx model")
+    parser.add_argument("--num-frames", help="number of input frames in time dimension hard-coded in onnx model")
 
     args = parser.parse_args()
 

@@ -28,19 +28,10 @@ def torch_onnx_export(torch_model, input_tensor, onnx_path,
                 opset_version=opset_version,          # the ONNX version to export the model to
                 do_constant_folding=do_constant_folding,  # whether to execute constant folding for opti
                 input_names = input_names,   # the model's input names
-                output_names = output_names, # the model's output names
+                output_names = output_names # the model's output names
                 #dynamic_axes=dynamic_axes)    # variable lenght axes
                 )
 
-
-def onnx_coreml_export(onnx_path, coreml_path):
-    onnx_model = onnx.load(onnx_path)
-    
-    coreml_model = convert(
-        model=onnx_model,
-        minimum_ios_deployment_target = '13'
-    )
-    coreml_model.save(coreml_path)
 
 
 def preproc_to_dict(preproc_path_in, preproc_path_out=None, export=False):
