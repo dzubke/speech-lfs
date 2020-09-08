@@ -66,7 +66,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: 
             if debug_mode:  
                 save_batch_log_stats(temp_batch, logger)
-                log_batchnorm_mean_std(model_module.state_dict(), logger)
+                log_batchnorm_mean_std(model.state_dict(), logger)
  
         start_t = time.time()
         optimizer.zero_grad()
@@ -89,19 +89,26 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: Loss calculated")
     
         ############# amp change ##################################################################
-        with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
-            scaled_loss.backward()                                                                #
+        #with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
+        #    scaled_loss.backward()                                                                #
 
+        loss.backward()
         if use_log: logger.info(f"train: Backward run ")
         if use_log: 
             if debug_mode: 
-                plot_grad_flow_bar(model_module.named_parameters(),  get_logger_filename(logger))
-                log_param_grad_norms(model_module.named_parameters(), logger)
+                plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
+                log_param_grad_norms(model.named_parameters(), logger)
 
         ############# amp change ##################################################################
-        grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
+        #grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
         
+        #if use_log: logger.info(f"train: Grad_norm clipped ")
+
+        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200)
         if use_log: logger.info(f"train: Grad_norm clipped ")
+
+        loss = loss.item()
+        if use_log: logger.info(f"train: loss reassigned ")
 
         optimizer.step()
         if use_log: logger.info(f"train: Optimizer step taken")
@@ -137,10 +144,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
             if iter_count % log_modulus == 0:
                 if use_log: log_cpu_mem_disk_usage(logger)
         
-        if check_nan_params_grads(model_module.parameters()):
+        if check_nan_params_grads(model.parameters()):
             if use_log:
-                logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model_module.state_dict()}")
-                log_model_grads(model_module.named_parameters(), logger)
+                inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+                logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
+                log_model_grads(model.named_parameters(), logger)
                 save_batch_log_stats(temp_batch, logger)
                 log_param_grad_norms(model_module.named_parameters(), logger)
                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
@@ -296,7 +304,6 @@ def run(gpu_idx, config):
     if model_cfg["load_trained"]:
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
-    
     # Optimizer
     optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
@@ -357,8 +364,8 @@ def run(gpu_idx, config):
             if use_log: 
                 logger.error(f"Exception raised: {err}")
                 logger.error(f"train: ====In except block====")
-                logger.error(f"train: state_dict: {model_module.state_dict()}")
-                log_model_grads(model_module.named_parameters(), logger)
+                logger.error(f"train: state_dict: {model.state_dict()}")
+                log_model_grads(model.named_parameters(), logger)
             raise Exception('Failure in run_epoch').with_traceback(err.__traceback__)
         finally: # used to ensure that plots are closed even if exception raised
             plt.close('all')
@@ -412,6 +419,49 @@ def run(gpu_idx, config):
 
                         print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
                 
+
+        msg = "Epoch {} completed in {:.2f} (hr)."
+        epoch_time_hr = (time.time() - start)/60/60
+        print(msg.format(epoch, epoch_time_hr))
+        if use_log: logger.info(msg.format(epoch, epoch_time_hr))
+        tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
+
+        # the logger needs to be removed to save the model
+        if use_log: preproc.logger = None
+        speech.save(model, preproc, config["save_path"])
+        if use_log: logger.info(f"train: ====== model saved =======")
+        if use_log: preproc.logger = logger
+
+        # creating the dictionaries that hold the PER and loss values
+        dev_loss_dict = dict()
+        dev_per_dict = dict()
+        # iterating through the dev-set loaders to calculate the PER/loss
+        for dev_name, dev_ldr in dev_ldr_dict.items():
+            print(f"evaluating devset: {dev_name}")
+            if use_log: logger.info(f"train: === evaluating devset: {dev_name} ==")
+            dev_loss, dev_per = eval_dev(model, dev_ldr, preproc, logger)
+
+            dev_loss_dict.update({dev_name: dev_loss})
+            dev_per_dict.update({dev_name: dev_per})
+
+            if use_log: logger.info(f"train: ====== eval_dev {dev_name} finished =======")
+            
+            # Save the best model on the dev set
+            if dev_name == data_cfg['dev_set_save_reference']:
+                print(f"dev_reference {dev_name}: current PER: {dev_per} vs. best_so_far: {best_so_far}")
+                
+                if use_log: logger.info(f"dev_reference {dev_name}: current PER: {dev_per} vs. best_so_far: {best_so_far}")
+                if dev_per < best_so_far:
+                    if use_log: preproc.logger = None   # remove the logger to save the model
+                    best_so_far = dev_per
+                    speech.save(model, preproc,
+                            config["save_path"], tag="best")
+                    if use_log: 
+                        preproc.logger = logger
+                        logger.info(f"model saved based per on: {dev_name} dataset")
+
+                    print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
+            
 
             
             per_diff_dict = calc_per_difference(dev_per_dict) 
