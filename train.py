@@ -89,8 +89,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: Loss calculated")
     
         ############# amp change ##################################################################
-        with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
-            scaled_loss.backward()                                                                #
+        # with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
+        #    scaled_loss.backward()                                                                #
+
+        ############# non-amp change  #############################################################
+        loss.backward()                                                                           #
 
         if use_log: logger.info(f"train: Backward run ")
         if use_log: 
@@ -99,8 +102,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 log_param_grad_norms(model_module.named_parameters(), logger)
 
         ############# amp change ##################################################################
-        grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
+        # grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
         
+        ############# non-amp change ##################################################################
+        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200).item()            #
+
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
         optimizer.step()

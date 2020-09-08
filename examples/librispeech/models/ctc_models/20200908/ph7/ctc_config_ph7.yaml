@@ -9,10 +9,10 @@ data:
         ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
     dev_set_save_reference: speak
     start_and_end: false
-    num_workers: 6
+    num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-09-08_ph7_ddp-6wrkr_large-model-high-aug_lib-ted-cv.log
+    log_file: logs/2020-09-08_ph7_ddp_large-model-high-aug_lib-ted-cv.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
