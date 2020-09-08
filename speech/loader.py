@@ -98,7 +98,22 @@ class Preprocessor():
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
     
     
-    def preprocess(self, wave_file, text):
+    def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
+        """
+        Arguments
+        ---------
+        wave_file: str
+            path to wav file
+        text: List[str]
+            a list of labels 
+        
+        Returns
+        --------
+        feature_data: numpy array
+            a feature array augmented and processed by a log-spec or mfcc transformation
+        targets: List[int]
+            a list of the integer-encoded labels
+        """
         if self.use_log: self.logger.info(f"preproc: ======= Entering preprocess =====")
         if self.use_log: self.logger.info(f"preproc: wave_file: {wave_file}")
         if self.use_log: self.logger.info(f"preproc: text: {text}") 

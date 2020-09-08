@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200721/ph6/ --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200827/ph7/--port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -122,9 +122,25 @@ git config credential.helper 'cache --timeout 864000'
 
 
 
-2020-07-21-08-19_ph6_no-augment-feature-normalize_lib-ted-cv
+2020-08-06-08-24_ph4_large-model-w-aug-w-feat-norm_lib-ted-cv.log
 
-/var/log/syslog:Aug 19 04:31:01 phoneme-2 bash[1208]:   File "/usr/local/lib/python2.7/dist-packages/google/api_core/grpc_helpers.py", line 59, in error_remapped_callable
-/var/log/syslog:Aug 19 04:31:01 phoneme-2 bash[1208]:     six.raise_from(exceptions.from_grpc_error(exc), exc)
-/var/log/syslog:Aug 19 04:31:02 phoneme-2 bash[16096]:     on_error=on_error,
+2020-08-25_naren-loss_check-loss
 
+{"text": ["ay", "w", "aa", "z", "dh", "ah", "ow", "n", "l", "iy", "p", "ey", "sh", "ah", "n", "t", "ih", "n", "dh", "ah", "w", "ey", "t", "ih", "ng", "r", "uw", "m"], "duration": 1.344, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/clips/common_voice_en_17932046.wv"}
+
+
+{"text": ["s", "ow", "dh", "ey", "k", "ae", "n", "k", "ah", "n", "t", "r", "ow", "l", "dh", "eh", "m", "f", "ao", "r", "dh", "eh", "r", "ow", "n", "p", "er", "s", "ih", "n", "ih", "l", "g", "ey", "n", "w", "iy", "eh", "l", "eh", "l", "k", "ao", "l", "ih", "t", "ih", "n", "s", "eh", "p", "sh", "ah", "n", "s", "ow"], "duration": 1.33, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/legacy/train/converted/wav/SteveRamirez_2013X_94.wv"}
+
+SteveRamirez_2013X_94.wv//
+
+
+{'start_epoch': 42, 'run_state': (4403028, 37.61638551357501), 'best_so_far': 0.19427677174156047, 'learning_rate': 0.001}
+
+2020-07-17-08-31_ph1_no-augment_lib-ted-cv.
+
+examples/librispeech/models/ctc_models/20200831/ph3/
+
+2020-08-31_ph3_1cycle.
+
+
+examples/librispeech/models/ctc_models/20200827/ph7/
