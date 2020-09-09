@@ -68,9 +68,10 @@ model:
 training: 
     multi_gpu: False
     distributed: True
+    use_spawn: False
     apex: False
     opt_level: 'O0'
-    n_nodes: 1
-    n_gpus: 8
+    n_node: 1
+    gpu_per_node: 8
     master_addr: '10.128.0.25'
     master_port: '8888'
