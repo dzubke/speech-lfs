@@ -112,7 +112,7 @@ dependencies:
   - pip:
     - absl-py==0.10.0
     - anykeystore==0.2
-    - apex==0.1
+    - apex==0.9.10.dev0
     - astor==0.8.1
     - audioread==2.1.8
     - cryptacular==1.5.5
@@ -144,7 +144,7 @@ dependencies:
     - pyramid==1.10.4
     - pyramid-mailer==0.15.1
     - pytest==3.2.3
-    - python-graphviz==0.14
+    - graphviz==0.14
     - python-speech-features==0.6
     - python3-openid==3.2.0
     - repoze-sendmail==4.4.1
