@@ -36,7 +36,7 @@ from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 BLANK_IDX = 0
 
 
-def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0, gpu_idx):
+def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0, local_rank):
     """
     Performs a forwards and backward pass through the model
     Args:
@@ -74,7 +74,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
         # calcuating the loss outside of model.loss to allow multi-gpu use
         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
-        inputs.cuda(gpu_idx)
+        inputs.cuda(local_rank)
         out, rnn_args = model(inputs, softmax=False)
  
         ############## Native loss code ############################################################
@@ -210,7 +210,7 @@ def eval_dev(model, ldr, preproc,  logger):
 
     return loss, cer
 
-def run(gpu_idx, config):
+def run(local_rank, config):
 
     data_cfg = config["data"]
     log_cfg = config["logger"]
@@ -222,14 +222,14 @@ def run(gpu_idx, config):
 
     # setting up the distributed training environment
     if train_cfg['distributed']:
-        rank = train_cfg['rank'] * train_cfg['n_gpus'] + gpu_idx                              
+        #rank = train_cfg['rank'] * train_cfg['gpu_per_node'] + local_rank                       
         dist.init_process_group(                                   
             backend='nccl',
             init_method='env://',
             world_size=train_cfg['world_size'],
-            rank=rank                                               
+            rank=train_cfg['rank']
         )
-        torch.cuda.set_device(gpu_idx)
+        torch.cuda.set_device(local_rank)
         is_rank_0 = (rank == 0)
     else:
         is_rank_0 = True
@@ -320,12 +320,12 @@ def run(gpu_idx, config):
         model.cuda() if use_cuda else model.cpu()
     
     elif train_cfg['distributed']:
-        model.cuda(gpu_idx)
+        model.cuda(local_rank)
     
         if train_cfg['apex']:
             model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
             #model = apex.parallel.DistributedDataParallel(model)
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[gpu_idx])
+        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank])
         
         model_module = model.module
     else:
@@ -358,7 +358,7 @@ def run(gpu_idx, config):
         
 
         try:
-            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, is_rank_0, gpu_idx)
+            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, is_rank_0, local_rank)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
@@ -458,8 +458,8 @@ if __name__ == "__main__":
     parser.add_argument("--deterministic", default=False,
         action="store_true",
         help="Run in deterministic mode (no cudnn). Only works on GPU.")
-    parser.add_argument('-nr', '--nr', default=0, type=int,
-                        help='ranking within the nodes')
+    parser.add_argument('--rank', default=0, type=int,
+                        help='ranking within the compute nodes')
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -473,18 +473,20 @@ if __name__ == "__main__":
         torch.backends.cudnn.enabled = False
 
     train_cfg = config['training']    
-    n_gpus = train_cfg['n_gpus']
-    n_nodes = train_cfg['n_nodes']
-    world_size = n_gpus * n_nodes                
+    gpu_per_node = train_cfg['gpu_per_node']
+    n_node = train_cfg['n_node']
+    world_size = gpu_per_node * n_node
     print("world_size", world_size)
     train_cfg.update({'world_size': world_size})
-    train_cfg.update({'rank': args.nr})
+    train_cfg.update({'rank': args.rank})
 
     os.environ['MASTER_ADDR'] = train_cfg['master_addr']              
     os.environ['MASTER_PORT'] = train_cfg['master_port']                      
     print(train_cfg['master_addr'], train_cfg['master_port'])
 
-    if train_cfg['distributed']:
-        mp.spawn(run, nprocs=n_gpus, args=(config, ))
+    if train_cfg['distributed'] and train_cfg['use_spawn']:
+        mp.spawn(run, nprocs=gpu_per_node, args=(config, ))
+    elif train_cfg['distributed'] and not train_cfg['use_spawn']:
+        run(local_rank=0, config=config)
     else:
-        run(0, config)
+        run(local_rank=0, config=config)
