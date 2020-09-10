@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 # standard libraries
 import argparse
+import datetime
 import os
 import itertools
 import json
@@ -278,9 +279,10 @@ def run(config):
             logger.info(f"train: ====== Run_state finished =======") 
             logger.info(f"train: preproc type: {type(preproc)}")
 
-        msg = "Epoch {} completed in {:.2f} (hr)."
+        msg = "Epoch {} completed in {:.2f} (hr) at {}."
         epoch_time_hr = (time.time() - start)/60/60
-        print(msg.format(epoch, epoch_time_hr))
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
+        print(msg.format(epoch, epoch_time_hr, current_time))
         if use_log: logger.info(msg.format(epoch, epoch_time_hr))
         tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
 
