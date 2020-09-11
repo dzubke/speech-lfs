@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-08-06-08-28_ph4_large-model-w-aug-w-feat-norm_lib-ted-cv.log
+    log_file: logs/2020-08-06-09-11_ph4_large-model-w-aug-w-feat-norm_lib-ted-cv.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -40,12 +40,12 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 8
-    run_state: [1153174, 68.44362]
-    best_so_far: 0.3882
-    start_epoch: 11
+    run_state: [1887012, 53.8242]
+    best_so_far: 0.346274
+    start_epoch: 18
     epochs: 100
-    learning_rate: 0.001
-    momentum: 0.0
+    learning_rate: 0.0005
+    momentum: 0.5
     dampening: 0.0
     sched_gamma: 1.0
     sched_step: 1
@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path:  examples/librispeech/models/ctc_models/20200806/ph4/20200828/model_state_dict.pth
+    trained_path:  examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
