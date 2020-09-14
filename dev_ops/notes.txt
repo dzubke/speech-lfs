@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200827/ph7/--port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200907/ph6/  --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -129,4 +129,41 @@ git config credential.helper 'cache --timeout 864000'
 
 /Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech/examples/librispeech/models/ctc_models/20200806/ph5/20200828
 
-2020-08-06-09-02_ph5_medium-augment-feature-normalize_lib-ted-cv.
+
+2020-08-27-09-04_ph7_ddp-no-aug-w-feat-norm_lib-ted-cv.
+
+gs://speak-aip/data/speak_test_data/2020-05-27/audio/1z35JH69YbWc5NwBTVx108JJBsn2-1589972557.wav
+
+
+from google.cloud import storage 
+
+from google.cloud.storage.blob import Blob      
+
+client = storage.Client() 
+
+blob = Blob.from_string(path)
+
+
+
+with NamedTemporaryFile(suffix=".wav") as tmp_wav_file:
+    wav_filename = tmp_wave_file.name
+    with open(wav_filename, "wb") as file_obj:
+        blob.download_to_file(file_obj)
+
+    
+    
+    
+    gs://speak-aip/data/speak_test_data/2020-05-27/audio/HFd3BBoF95frI91I5AvBfpGA6s53-1589889601.wav
+
+    /mnt/disks/data_disk/home/dzubke/data/speak_test_data/2020-05-27/audio/HFd3BBoF95frI91I5AvBfpGA6s53-1589889601.wav
+
+
+    examples/librispeech/models/ctc_models/20200827/ph7/
+
+    2020-08-27-09-07_ph7_ddp-4V100_-no-aug-w-feat-norm_lib-ted-cv.
+
+2020-08-06-09-08_v2_ph5_medium-augment-feature-normalize_lib-ted-cv.l
+
+nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-rank 0 &> ddp-rank2-localrank0.out &
+
+2020-09-09_ph7_ddp_large-model-high-aug_lib-ted-cv.
