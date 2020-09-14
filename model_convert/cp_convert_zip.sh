@@ -6,8 +6,8 @@
 
 display_help(){
     echo "$(basename "$0") [-mp MODEL_PATH] [-mn MODEL_NAME] [-nf NUM_FRAMES] 
-                            [--quarter-precision] [--half-precision] [--best]" >& 2
-    echo
+            (options) [--quarter-precision] [--half-precision] [--best]" >& 2
+    echo "call this function inside the <main>/model_convert directory"
     echo "where:
             -mp or --model-path:  is the path to the model directory
             -mn or --model-name: is the model name
@@ -51,6 +51,10 @@ do
         --quarter-precision)
         QUARTER_PRECISION="--quarter-precision"
         shift # past argument
+        ;;
+        --help|-h)
+        display_help
+        exit 1
         ;;
         -*)
         echo "Error: Unknown option: $1" >&2
