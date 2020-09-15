@@ -1,5 +1,6 @@
 # standard libraries
 import argparse
+import csv
 import glob
 import os
 import re
@@ -221,7 +222,7 @@ class SpeakTrainDownloader(Downloader):
         AUDIO_EXT = ".m4a"
         TXT_EXT = ".txt"
         QUERY_LIMIT = 1000    
-        LAST_ID_PRINT_INTERVAL = 5000  # this should be a mutliple of the QUERY_LIMIT
+        LAST_ID_PRINT_INTERVAL = 1000  # this should be a mutliple of the QUERY_LIMIT
      
         # verify and set the credientials
         CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
@@ -229,12 +230,17 @@ class SpeakTrainDownloader(Downloader):
         # set the enviroment variable that `firebase_admin.credentials` will use
         os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
          
-        # ensure the save directories exits
+        # ensure the save directory exits
         audio_dir = os.path.join(SAVE_DIR, "audio")
         os.makedirs(audio_dir, exist_ok=True)
-        
-        transcript_dir = os.path.join(SAVE_DIR, "text")
-        os.makedirs(transcript_dir, exist_ok=True)
+
+        example_data_path = os.path.join(SAVE_DIR, "train_data.tsv")
+        with open(example_data_path, 'w', newline='\n') as tsv_file:
+            tsv_writer = csv.writer(tsv_file, delimiter='\t')
+            header = [
+                "id", "text", "lessonId", "lineId", "uid", "date"
+            ]
+            tsv_writer.writerow(header)
 
         # initialize the credentials and firebase db client
         cred = credentials.ApplicationDefault()
@@ -255,7 +261,7 @@ class SpeakTrainDownloader(Downloader):
         #while True:
         
         #testing the code with this loop
-        loop_iterations = 5
+        loop_iterations = 3
         while loop_iterations > 0:
             # converting generator to list to it can be referenced mutliple times
             docs = list(next_query.stream())
@@ -268,31 +274,44 @@ class SpeakTrainDownloader(Downloader):
             except IndexError:
                 break
             
-            # filter the documents where `target`==`guess`
-            for doc in docs:
-      
-                doc_dict = doc.to_dict() 
-                target = self.process_text(doc_dict['info']['target'])
-                guess = self.process_text(doc_dict['result']['guess'])
-         
-                # some of the guess's don't include apostrophes
-                # so the filter criterion will not use apostrophes
-                target_no_apostrophe = target.replace("'", "")
-                guess_no_apostrophe = guess.replace("'", "")
-
-                if target_no_apostrophe == guess_no_apostrophe:
-                    # save the audio file from the link in the document
-                    audio_url = doc_dict['result']['audioDownloadUrl']
-                    audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
-                    urllib.request.urlretrieve(audio_url, filename=audio_save_path)
-                    # save the target text in a text file
-                    txt_save_path = os.path.join(transcript_dir, doc_dict['id'] + AUDIO_EXT)
-                    with open(txt_save_path, 'w') as txt_file:
-                        txt_file.write(target)
-                    
-                    count_dict['filtered'] += 1
+            with open(example_data_path, 'a', newline='\n') as tsv_file:
+                tsv_writer = csv.writer(tsv_file, delimiter='\t')
                 
-                count_dict['total'] += 1
+                # filter the documents where `target`==`guess`
+                for doc in docs:
+          
+                    doc_dict = doc.to_dict() 
+                    original_target = doc_dict['info']['target']
+             
+                    # some of the guess's don't include apostrophes
+                    # so the filter criterion will not use apostrophes
+                    target = self.process_text(doc_dict['info']['target'])
+                    target_no_apostrophe = target.replace("'", "")
+                    
+                    guess = self.process_text(doc_dict['result']['guess'])
+                    guess_no_apostrophe = guess.replace("'", "")
+
+                    if target_no_apostrophe == guess_no_apostrophe:
+                        # save the audio file from the link in the document
+                        audio_url = doc_dict['result']['audioDownloadUrl']
+                        audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
+                        urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+                        
+                        # save the target in a tsv row
+                        # tsv header: "id", "text", "lessonId", "lineId", "uid", "date"
+                        tsv_row =[
+                            doc_dict['id'], 
+                            original_target, 
+                            doc_dict['info']['lessonId'],
+                            doc_dict['info']['lineId'],
+                            doc_dict['user']['uid'],
+                            doc_dict['info']['date']
+                        ]
+                        tsv_writer.writerow(tsv_row)
+                        
+                        count_dict['filtered'] += 1
+                    
+                    count_dict['total'] += 1
            
             # print the last_id every 5000 samples so the script can pick up from the last_id
             # if something breaks 
