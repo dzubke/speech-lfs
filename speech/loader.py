@@ -439,7 +439,10 @@ class DistributedBatchRandomSampler(DistributedSampler):
         it_end = len(dataset) - batch_size + 1
         self.batches = [range(i, i + batch_size)
                 for i in range(0, it_end, batch_size)]
-        
+       
+        print(f"in ddp_sampler: num_replicas: {self.num_replicas}")
+        print(f"in ddp_sampler: rank: {self.rank}")
+ 
     def __iter__(self):
         # deterministically shuffle based on epoch
         g = torch.Generator()

@@ -13,7 +13,7 @@ import random
 import time
 # third-party libraries
 #import functions.ctc as ctc #awni hannun's ctc bindings
-import apex
+#import apex
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -53,10 +53,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     avg_grad_norm = 0
 
     # model compatibility for using multiple gpu's 
-    if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, apex.parallel.DistributedDataParallel)): 
+    if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):#, apex.parallel.DistributedDataParallel)): 
        model_module = model.module 
     else: 
         model_module = model
+
 
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
@@ -230,7 +231,7 @@ def run(local_rank, config):
             rank=train_cfg['rank']
         )
         torch.cuda.set_device(local_rank)
-        is_rank_0 = (rank == 0)
+        is_rank_0 = (train_cfg['rank'] == 0)
     else:
         is_rank_0 = True
 
@@ -322,8 +323,8 @@ def run(local_rank, config):
     elif train_cfg['distributed']:
         model.cuda(local_rank)
     
-        if train_cfg['apex']:
-            model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
+        #if train_cfg['apex']:
+            #model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
             #model = apex.parallel.DistributedDataParallel(model)
         model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank])
         
@@ -342,12 +343,11 @@ def run(local_rank, config):
         logger.info(f"train: config: {config}")
 
     # printing to the output file
-    if is_rank_0:
-        print(f"====== Model, loaders, optimimzer created =======")
-        print(f"model: {model}")
-        print(f"preproc: {preproc}")
-        print(f"optimizer: {optimizer}")
-        print(f"config: {config}")
+    print(f"====== Model, loaders, optimimzer created =======")
+    print(f"model: {model}")
+    print(f"preproc: {preproc}")
+    print(f"optimizer: {optimizer}")
+    print(f"config: {config}")
 
     for epoch in range(start_epoch, opt_cfg["epochs"]):
         if use_log: logger.info(f"Starting epoch: {epoch}")
@@ -460,6 +460,8 @@ if __name__ == "__main__":
         help="Run in deterministic mode (no cudnn). Only works on GPU.")
     parser.add_argument('--rank', default=0, type=int,
                         help='ranking within the compute nodes')
+    parser.add_argument('--local-rank', default=0, type=int,
+                        help='local rank for singe node, aka gpu index.')
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -487,6 +489,6 @@ if __name__ == "__main__":
     if train_cfg['distributed'] and train_cfg['use_spawn']:
         mp.spawn(run, nprocs=gpu_per_node, args=(config, ))
     elif train_cfg['distributed'] and not train_cfg['use_spawn']:
-        run(local_rank=0, config=config)
+        run(local_rank=args.local_rank, config=config)
     else:
         run(local_rank=0, config=config)
