@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-09-11_ph3_time-test_mid-model-no-aug-1V100_lib-ted-cv.log
+    log_file: logs/2020-09-10_ph3_ddp_mid-model-no-aug_lib-ted-cv.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -71,7 +71,7 @@ training:
     use_spawn: False
     apex: False
     opt_level: 'O0'
-    n_node: 1
-    gpu_per_node: 1
+    n_node: 2
+    gpu_per_node: 4
     master_addr: '10.128.0.22'
     master_port: '8888'

@@ -428,7 +428,8 @@ class DistributedBatchRandomSampler(DistributedSampler):
         super().__init__(dataset=dataset, num_replicas=num_replicas, rank=rank)
         if len(dataset) < batch_size:
             raise ValueError("batch_size is greater than data length")
-
+        
+    
         self.batch_size = batch_size
         # here num_samples is the number of batches per replica
         self.num_samples = int(math.ceil(len(self.dataset)//batch_size * 1.0 / self.num_replicas))
@@ -439,16 +440,17 @@ class DistributedBatchRandomSampler(DistributedSampler):
         it_end = len(dataset) - batch_size + 1
         self.batches = [range(i, i + batch_size)
                 for i in range(0, it_end, batch_size)]
-       
-        print(f"in ddp_sampler: num_replicas: {self.num_replicas}")
-        print(f"in ddp_sampler: rank: {self.rank}")
- 
+    
+        print(f"in ddp_sampler: num_replicas: {self.num_replicas}")              
+        print(f"in ddp_sampler: rank: {self.rank}")              
+        
     def __iter__(self):
         # deterministically shuffle based on epoch
+        print("in sampler: iterator: mark 1")
         g = torch.Generator()
         g.manual_seed(self.epoch)
         batch_indices = list(torch.randperm(len(self.batches), generator=g))
-
+        print("in sampler: iterator: mark 2")
         # add extra batches to make the total num batches evenly divisible by num_replicas
         batch_indices += batch_indices[:(self.total_size - len(batch_indices))]
         assert len(batch_indices) == self.total_size
@@ -457,7 +459,7 @@ class DistributedBatchRandomSampler(DistributedSampler):
         offset = self.num_samples * self.rank
         batch_indices = batch_indices[offset:offset + self.num_samples]
         assert len(batch_indices) == self.num_samples
-
+        print("in sampler: iterator: mark 3")
         return  (idx for batch_idx in batch_indices for idx in self.batches[batch_idx])
 
     def __len__(self):
