@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 # standard libraries
 import argparse
+import datetime
 import os
 import itertools
 import json
@@ -12,6 +13,7 @@ import math
 import random
 import time
 # third-party libraries
+import functions.ctc as ctc #awni hannun's ctc bindings
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -58,13 +60,10 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         optimizer.zero_grad()
         if use_log: logger.info(f"train: Optimizer zero_grad")
 
-        
-        
         loss = model.loss(temp_batch)
         
         if use_log: logger.info(f"train: Loss calculated")
 
-        #print(f"loss value 1: {loss.data[0]}")
         loss.backward()
         if use_log: logger.info(f"train: Backward run ")
         if use_log: 
@@ -77,8 +76,6 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
         loss = loss.item()
         if use_log: logger.info(f"train: loss reassigned ")
-
-        #loss = loss.data[0]
 
         optimizer.step()
         if use_log: logger.info(f"train: Optimizer step taken")
@@ -98,22 +95,22 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: Avg loss: {avg_loss}")
         tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
         tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_loss}, iter_count)
+        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
         tq.set_postfix(iter=iter_count, loss=loss, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
         
         if use_log: logger.info(f'train: loss is inf: {loss == float("inf")}')
         if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss,3)}, grad_norm={round(grad_norm,3)}")
-        inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
         
         if check_nan_params_grads(model.parameters()):
             if use_log:
+                inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
                 log_model_grads(model.named_parameters(), logger)
                 save_batch_log_stats(temp_batch, logger)
-                log_param_grad_norms(model.named_parameters(), logger)
-                plot_grad_flow_bar(model.named_parameters(), get_logger_filename(logger))
+                log_param_grad_norms(model_module.named_parameters(), logger)
+                plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
             debug_mode = True
             torch.autograd.set_detect_anomaly(True)
 
@@ -232,7 +229,6 @@ def run(config):
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
     model.cuda() if use_cuda else model.cpu()
-
     # Optimizer
     optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
@@ -242,11 +238,12 @@ def run(config):
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
 
-    if use_log: logger.info(f"train: ====== Model, loaders, optimimzer created =======")
-    if use_log: logger.info(f"train: model: {model}")
-    if use_log: logger.info(f"train: preproc: {preproc}")
-    if use_log: logger.info(f"train: optimizer: {optimizer}")
-    if use_log: logger.info(f"train: config: {config}")
+    if use_log: 
+        logger.info(f"train: ====== Model, loaders, optimimzer created =======")
+        logger.info(f"train: model: {model}")
+        logger.info(f"train: preproc: {preproc}")
+        logger.info(f"train: optimizer: {optimizer}")
+        logger.info(f"train: config: {config}")
 
     # printing to the output file
     print(f"====== Model, loaders, optimimzer created =======")
@@ -266,10 +263,11 @@ def run(config):
         try:
             run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state)
         except Exception as err:
-            if use_log: logger.error(f"Exception raised: {err}")
-            if use_log: logger.error(f"train: ====In except block====")
-            if use_log: logger.error(f"train: state_dict: {model.state_dict()}")
-            if use_log: log_model_grads(model.named_parameters(), logger)
+            if use_log: 
+                logger.error(f"Exception raised: {err}")
+                logger.error(f"train: ====In except block====")
+                logger.error(f"train: state_dict: {model.state_dict()}")
+                log_model_grads(model.named_parameters(), logger)
             raise Exception('Failure in run_epoch').with_traceback(err.__traceback__)
         finally: # used to ensure that plots are closed even if exception raised
             plt.close('all')
@@ -277,12 +275,14 @@ def run(config):
         # update the learning rate
         lr_scheduler.step()       
  
-        if use_log: logger.info(f"train: ====== Run_state finished =======") 
-        if use_log: logger.info(f"train: preproc type: {type(preproc)}")
+        if use_log:
+            logger.info(f"train: ====== Run_state finished =======") 
+            logger.info(f"train: preproc type: {type(preproc)}")
 
-        msg = "Epoch {} completed in {:.2f} (hr)."
+        msg = "Epoch {} completed in {:.2f} (hr) at {}."
         epoch_time_hr = (time.time() - start)/60/60
-        print(msg.format(epoch, epoch_time_hr))
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
+        print(msg.format(epoch, epoch_time_hr, current_time))
         if use_log: logger.info(msg.format(epoch, epoch_time_hr))
         tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
 
@@ -309,22 +309,27 @@ def run(config):
             # Save the best model on the dev set
             if dev_name == data_cfg['dev_set_save_reference']:
                 print(f"dev_reference {dev_name}: current PER: {dev_per} vs. best_so_far: {best_so_far}")
-                logger.info(f"dev_reference {dev_name}: current PER: {dev_per} vs. best_so_far: {best_so_far}")
+                
+                if use_log: logger.info(f"dev_reference {dev_name}: current PER: {dev_per} vs. best_so_far: {best_so_far}")
                 if dev_per < best_so_far:
                     if use_log: preproc.logger = None   # remove the logger to save the model
                     best_so_far = dev_per
                     speech.save(model, preproc,
                             config["save_path"], tag="best")
-                    if use_log: preproc.logger = logger
-                    
+                    if use_log: 
+                        preproc.logger = logger
+                        logger.info(f"model saved based per on: {dev_name} dataset")
+
                     print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
-                    logger.info(f"model saved based per on: {dev_name} dataset")
             
+
+        
         per_diff_dict = calc_per_difference(dev_per_dict) 
 
         tbX_writer.add_scalars('dev/loss', dev_loss_dict, epoch)
         tbX_writer.add_scalars('dev/per', dev_per_dict, epoch)
-        tbX_writer.add_scalars('dev/per/diff', dev_per_dict, epoch)
+        tbX_writer.add_scalars('dev/per/diff', per_diff_dict, epoch)
+
         learning_rate = list(optimizer.param_groups)[0]["lr"]
         # save the current state of training
         train_state = {"start_epoch": epoch + 1, 
@@ -333,6 +338,20 @@ def run(config):
                        "learning_rate": learning_rate}
         write_pickle(os.path.join(config["save_path"], "train_state.pickle"), train_state)
 
+
+def calc_per_difference(dev_per_dict:dict) -> dict:
+    """
+    Calculates the differecence between the speak testset PER and the training-dev sets. This
+    difference is a measure of data mismatch.
+    """
+    per_diff_dict = dict()
+
+    for name, per in dev_per_dict.items():
+        if not name=='speak':
+            diff_name = name + "-speak"
+            per_diff_dict[diff_name] = dev_per_dict.get('speak', 0.0) - dev_per_dict.get(name, 0.0)
+    
+    return per_diff_dict
 
 
 if __name__ == "__main__":
