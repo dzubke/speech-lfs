@@ -2,6 +2,7 @@
 import argparse
 import glob
 import os
+import re
 from shutil import copyfile
 import tarfile
 import urllib.request
@@ -180,8 +181,6 @@ class WikipediaDownloader(Downloader):
 
     def __init__(self, output_dir, dataset_name):
         """
-        A previous version of common voice (v4) can be downloaded here:
-        "data":"https://voice-prod-bundler-ee1969a6ce8178826482b88e843c335139bd3fb4.s3.amazonaws.com/cv-corpus-4-2019-12-10/en.tar.gz"
         """
         super(WikipediaDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = {
@@ -191,6 +190,147 @@ class WikipediaDownloader(Downloader):
         self.ext = ".tar"
     
 
+class SpeakTrainDownloader(Downloader):
+    
+    def __init__(self, output_dir, dataset_name):
+        """
+        Downloading the Speak Train Data is significantly different than other datasets
+        because the Speak data is not pre-packaged into a zip file. Therefore, the 
+        `download_dataset` method will be overwritten. 
+        """
+        pass
+
+    def download_dataset(self):
+        """
+        This method loops through the firestore document database using paginated queries based on
+        the document id. It filters out documents where `target != guess` and saves the audio file
+        and target text into separate files. 
+
+        The approach to index the queries based on the document `id` is based on the approach
+        outlined here: 
+        https://firebase.google.com/docs/firestore/query-data/query-cursors#paginate_a_query
+        """
+
+        import firebase_admin
+        from firebase_admin import credentials
+        from firebase_admin import firestore
+        import urllib.request
+
+        PROJECT_ID = 'speak-v2-2a1f1'
+        SAVE_DIR = "/home/dzubke/awni_speech/data/speak_train/data/"
+        AUDIO_EXT = ".m4a"
+        TXT_EXT = ".txt"
+        QUERY_LIMIT = 1000    
+        LAST_ID_PRINT_INTERVAL = 5000  # this should be a mutliple of the QUERY_LIMIT
+     
+        # verify and set the credientials
+        CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
+        assert os.path.exists(CREDENTIAL_PATH), "Credential file does not exist or is in the wrong location."
+        # set the enviroment variable that `firebase_admin.credentials` will use
+        os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
+         
+        # ensure the save directories exits
+        audio_dir = os.path.join(SAVE_DIR, "audio")
+        os.makedirs(audio_dir, exist_ok=True)
+        
+        transcript_dir = os.path.join(SAVE_DIR, "text")
+        os.makedirs(transcript_dir, exist_ok=True)
+
+        # initialize the credentials and firebase db client
+        cred = credentials.ApplicationDefault()
+        firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
+        db = firestore.client()
+
+        # create the first query based on the constant QUERY_LIMIT
+        rec_ref = db.collection(u'recordings')
+        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+        
+        # dictionary to count the total and filtered audio files
+        count_dict = {
+            "total": 0,
+            "filtered": 0
+        }
+
+        # loops until break is called in try-except block
+        #while True:
+        
+        #testing the code with this loop
+        loop_iterations = 5
+        while loop_iterations > 0:
+            # converting generator to list to it can be referenced mutliple times
+            docs = list(next_query.stream())
+
+            try:
+                # this `id` will be used to start the next query
+                last_id = docs[-1].to_dict()[u'id']
+            # if docs is empty meaning there are no new documents, 
+            # an IndexError will be raised and break the while loop
+            except IndexError:
+                break
+            
+            # filter the documents where `target`==`guess`
+            for doc in docs:
+      
+                doc_dict = doc.to_dict() 
+                target = self.process_text(doc_dict['info']['target'])
+                guess = self.process_text(doc_dict['result']['guess'])
+         
+                # some of the guess's don't include apostrophes
+                # so the filter criterion will not use apostrophes
+                target_no_apostrophe = target.replace("'", "")
+                guess_no_apostrophe = guess.replace("'", "")
+
+                if target_no_apostrophe == guess_no_apostrophe:
+                    # save the audio file from the link in the document
+                    audio_url = doc_dict['result']['audioDownloadUrl']
+                    audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
+                    urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+                    # save the target text in a text file
+                    txt_save_path = os.path.join(transcript_dir, doc_dict['id'] + AUDIO_EXT)
+                    with open(txt_save_path, 'w') as txt_file:
+                        txt_file.write(target)
+                    
+                    count_dict['filtered'] += 1
+                
+                count_dict['total'] += 1
+           
+            # print the last_id every 5000 samples so the script can pick up from the last_id
+            # if something breaks 
+            if count_dict['total'] % LAST_ID_PRINT_INTERVAL == 0:
+                print(f"last_id: {last_id} at count: {count_dict['total']}")
+            
+            # create the next query starting after the last_id 
+            next_query = (
+                rec_ref
+                .order_by(u'id')
+                .start_after({
+                    u'id': last_id
+                })
+                .limit(QUERY_LIMIT))
+            
+            loop_iterations -= 1
+        
+        print(f"count_dict: {count_dict}")
+
+    @staticmethod 
+    def process_text(transcript:str):
+        # allows for alphanumeric characters, space, and apostrophe
+        accepted_char = '[^A-Za-z0-9 \']+'
+        # replacing apostrophe's with weird encodings
+        transcript = transcript.replace(chr(8217), "'")
+        # filters out unaccepted characters, lowers the case
+        try:
+            transcript = transcript.strip().lower()
+            transcript = re.sub(accepted_char, '', transcript)
+        except TypeError:
+            print(f"Type Error with: {transcript}")
+        # check that all punctuation (minus apostrophe) has been removed 
+        punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+        for punc in punct_noapost:
+            if punc in transcript:
+                raise ValueError(f"unwanted punctuation {punc} in transcript")
+      
+        return transcript    
 
 class Chime1Downloader(Downloader):
 
