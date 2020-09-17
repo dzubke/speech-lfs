@@ -29,7 +29,9 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str)->dict:
     librispeech corpus to phoneme labels and represents the file as a dictionary.
     The digit accents are removed from the file name. 
     """
-    corpus_names = ["librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba"]
+    corpus_names = [
+        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain"
+    ]
     if corpus_name not in corpus_names:
         raise ValueError("corpus_name not accepted")
     

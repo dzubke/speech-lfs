@@ -6,6 +6,7 @@ license: MIT
 # standard libary
 import argparse
 import os
+import re
 # third party libraries
 import pandas as pd
 # project libraries
@@ -72,6 +73,80 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
             # dropping the rows in drop_index
             in_df = in_df.drop(index=drop_index)
     return in_df, drop_row_count
+
+
+def assess_speak_train():
+    """
+    this is mostly scratch work to help me figure out how to access the speak training data in the firestore database.
+    Most of this code has been copied in to the SpeakTrainDownloader class in the `<main>/examples/download.py`. 
+    """
+    # ensure the environment variable GOOGLE_APPLICATION_CREDENTIALS points to a valid credential.json file
+
+    import firebase_admin
+    from firebase_admin import credentials
+    from firebase_admin import firestore
+    import urllib.request        
+        
+    PROJECT_ID = 'speak-v2-2a1f1'
+    SAVE_DIR = "/home/dzubke/awni_speech/data/speak_train/trial"
+    AUDIO_EXT = ".m4a"
+    TXT_EXT = ".txt"
+
+    cred = credentials.ApplicationDefault()
+    firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
+
+    db = firestore.client()
+
+    docs = db.collection(u'recordings').limit(300).stream()
+    
+    # filter the documents where `target`==`guess`
+    
+    accepted_count = 0 
+    for doc in docs:
+        doc_dict = doc.to_dict()
+        target = process_text(doc_dict['info']['target'])
+        target_no_apostrophe = target.replace("'", "")
+        
+        guess = process_text(doc_dict['result']['guess'])
+        guess_no_apostrophe = guess.replace("'", "")
+       
+        print(doc_dict['id'])
+        print(f"target:\t{target}")
+        print(f"guess:\t{guess}")
+         
+        
+        if target_no_apostrophe == guess_no_apostrophe:
+            print(True)
+            audio_url = doc_dict['result']['audioDownloadUrl']
+            basename = os.path.join(SAVE_DIR, doc_dict['id'])
+            audio_save_path = basename + AUDIO_EXT
+            txt_save_path = basename + TXT_EXT
+            urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+            with open(txt_save_path, 'w') as txt_file:
+                txt_file.write(guess)     
+            accepted_count +=1
+        
+        print()
+    print("accepted count: ", accepted_count)
+
+def process_text(transcript:str):
+    # allows for alphanumeric characters, space, and apostrophe
+    accepted_char = '[^A-Za-z0-9 \']+'
+    # replacing apostrophe's with weird encodings
+    transcript = transcript.replace(chr(8217), "'")
+    # filters out unaccepted characters, lowers the case
+    try:
+        transcript = transcript.strip().lower()
+        transcript = re.sub(accepted_char, '', transcript)
+    except TypeError:
+        print(f"Type Error with: {transcript}")
+    # check that all punctuation (minus apostrophe) has been removed 
+    punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+    for punc in punct_noapost:
+        if punc in transcript:
+            raise ValueError(f"unwanted punctuation {punc} in transcript")
+
+    return transcript
 
 
 class DurationAssessor():

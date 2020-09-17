@@ -281,6 +281,7 @@ class TedliumPreprocessor(DataPreprocessor):
         cmd="sox {}  -r {} -b 16 -c 1 {} trim {} ={}".\
             format(src_sph_file, str(sample_rate), target_wav_file, start_time, end_time)
         subprocess.call([cmd], shell=True)
+
            
 class VoxforgePreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
@@ -362,6 +363,7 @@ class VoxforgePreprocessor(DataPreprocessor):
             audio_path = None
             logging.info(f"dir: {sample_dir} and name: {audio_name} not found")
         return audio_path
+
         
 class TatoebaPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
@@ -406,6 +408,45 @@ class TatoebaPreprocessor(DataPreprocessor):
                             logging.info(f"skipping {audio_path}")
                             continue
                         self.audio_trans.append((audio_path, transcript))
+
+
+class SpeakTrainPreprocessor(DataPreprocessor):
+    def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
+                        force_convert, min_duration, max_duration):
+        super(SpeakTrainPreprocessor, self).__init__(dataset_dir, dataset_files,
+                                                      dataset_name, lexicon_path,
+                                                      force_convert, min_duration, max_duration)
+
+    def process_datasets(self):
+        for set_name, label_name in self.dataset_dict.items():
+            self.clear_audio_trans()    # clears the audio_transcript buffer
+            label_path = os.path.join(self.dataset_dir, label_name)
+            logging.info(f"label_path: {label_path}")
+            self.collect_audio_transcripts(label_path)
+            logging.info(f"len of auddio_trans: {len(self.audio_trans)}")
+            root, ext = os.path.splitext(label_path)
+            json_path = root + os.path.extsep + "json"
+            logging.info(f"entering write_json for {set_name}")
+            self.write_json(json_path)
+        unique_unknown_words(self.dataset_dir)
+
+    def collect_audio_transcripts(self, label_path:str):
+
+        audio_dir = os.path.join(
+            os.path.split(label_path)[0], "audio"
+        )
+        audio_ext = ".m4a"
+
+        with open(label_path, 'r') as tsv_file:
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            header = next(tsv_reader)
+
+            # header: id, text, lessonId, lineId, uid, date
+            for row in tsv_reader:
+                audio_path = os.path.join(audio_dir, row[0] + audio_ext)
+                self.audio_trans.append((audio_path, row[1]))
+
+
 
 class UnknownWords():
 
