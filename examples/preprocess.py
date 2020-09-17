@@ -103,7 +103,7 @@ class DataPreprocessor(object):
                     count_outside_duration += 1
         print(f"Count excluded because of duration bounds: {count_outside_duration}")
         unknown_words.process_save(save_path)
-    
+
     def process_text(self, transcript:str, unknown_words, audio_path:str, lex_dict:dict=None,):
         """
         this method removed unwanted puncutation marks split the text into a list of words
@@ -444,7 +444,11 @@ class SpeakTrainPreprocessor(DataPreprocessor):
             # header: id, text, lessonId, lineId, uid, date
             for row in tsv_reader:
                 audio_path = os.path.join(audio_dir, row[0] + audio_ext)
-                self.audio_trans.append((audio_path, row[1]))
+                # skip the file if it is in one of the speak test sets
+                if data_helpers.skip_file(audio_path, "speaktrain"):
+                    continue
+                else:
+                    self.audio_trans.append((audio_path, row[1]))
 
 
 
