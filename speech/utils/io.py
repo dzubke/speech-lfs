@@ -1,5 +1,6 @@
 # standard libraries
 from collections import OrderedDict
+import glob
 import json 
 import os
 import pickle
@@ -12,11 +13,21 @@ from speech.models.ctc_model_train import CTC_train
 MODEL = "model_state_dict.pth"
 PREPROC = "preproc.pyc"
 
-def get_names(path, tag):
+def get_names(path:str, tag:str, get_config:bool=False):
     tag = tag + "_" if tag else ""
-    model = os.path.join(path, tag + MODEL)
-    preproc = os.path.join(path, tag + PREPROC)
-    return model, preproc
+    model_path = os.path.join(path, tag + MODEL)
+    preproc_path = os.path.join(path, tag + PREPROC)
+
+    if get_config:
+        config_path = glob.glob(os.path.join(path, "ctc_config*[.yaml, .json]"))
+        assert len(config_path) == 1, \
+            f"no config or multiple config files found in directory {path}"
+        output = (model_path, preproc_path, config_path[0])
+    else:
+        output = (model_path, preproc_path)
+
+    return output
+
 
 def save(model, preproc, path, tag=""):
     model_n, preproc_n = get_names(path, tag)
@@ -105,6 +116,30 @@ def load_from_trained(model, model_cfg):
     model_state_dict.update(trained_state_dict)
     model.load_state_dict(model_state_dict)
     return model
+
+
+def load_state_dict(model_path:str, device:torch.device)->OrderedDict:
+    """
+    returns the state dict of the model object or state dict specified
+    in `model_path`
+    Args:
+        model_path: path to model or state_dict object
+        device: torch device
+    Returns:
+        state_dict - OrderedDict: state dict of model
+    """
+
+    model_or_state_dict = torch.load(model_path, map_location=device)
+
+    if isinstance(model_or_state_dict, OrderedDict):
+        state_dict = model_or_state_dict
+    elif isinstance(model, torch.nn.Module):
+        model = model_or_state_dict
+        state_dict = model.state_dict()
+    else:
+        raise ValueError(f"model_path {model_path} does not point to model or state_dict object")
+
+    return state_dict
 
 
 def filter_state_dict(state_dict, remove_layers=[]):

@@ -58,7 +58,14 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     else: 
         model_module = model
 
+    # used to only run for a fixed number of epochs
+    #debug_counter = 0
+
     for batch in tq:
+        #debug_counter -= 1
+        #if debug_counter < 0:
+        #    break
+    
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
         
         temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
@@ -161,13 +168,14 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
 def eval_dev(model, ldr, preproc,  logger):
     losses = []; all_preds = []; all_labels = []
-        
+
+    print("model training", model.training)
     model.set_eval()
     preproc.set_eval()  # this turns off dataset augmentation
     use_log = (logger is not None)
     if use_log: logger.info(f"eval_dev: set_eval ")
 
-
+    print("model training", model.training)
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
             if use_log: logger.info(f"eval_dev: =====Inside batch loop=====")
@@ -262,7 +270,7 @@ def run(gpu_idx, config):
     # Load previous train state: dict with contents:
     #   {'start_epoch': int, 'run_state': (int, float), 'best_so_far': float, 'learning_rate': float}
     train_state_path = os.path.join(config["save_path"], "train_state.pickle")
-    if os.path.exists(train_state_path):
+    if os.path.exists(train_state_path) and opt_cfg['load_train_state']:
         print(f"load train_state from: {train_state_path}")
         train_state = read_pickle(train_state_path)
     else:   # if train_path doesn't exist, create empty dict to load from config
@@ -276,7 +284,8 @@ def run(gpu_idx, config):
     )
     learning_rate = opt_cfg['learning_rate']
 
-    # Loaders
+    
+    ##################       LOADERS           #########################
     batch_size = opt_cfg["batch_size"]
     preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
                   start_and_end=data_cfg["start_and_end"])
@@ -295,22 +304,30 @@ def run(gpu_idx, config):
             dev_ldr = loader.make_loader(dev_path, preproc, batch_size=8, num_workers=data_cfg["num_workers"])
             dev_ldr_dict.update({dev_name: dev_ldr})
 
-    # Model
+    
+    ##################       MODEL & OPTIMIZER       #########################
+
     model = CTC_train(preproc.input_dim,
                         preproc.vocab_size,
                         model_cfg)
+
     if model_cfg["load_trained"]:
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
-    
+    else:
+        print(f"Model trained from scratch with no loaded weights")
+    model.set_train() 
+
     # Optimizer
     optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
                     momentum=opt_cfg["momentum"],
                     dampening=opt_cfg["dampening"])
+
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
+
 
     # multi-gpu training
     if train_cfg["multi_gpu"]:

@@ -11,7 +11,8 @@ import tqdm
 # project libraries
 import speech
 import speech.loader as loader
-from speech.utils.io import read_data_json
+from speech.models.ctc_model_train import CTC_train
+from speech.utils.io import get_names, load_config, load_state_dict, read_data_json, read_pickle
 
 def eval_loop(model, ldr):
     all_preds = []; all_labels = []; all_preds_dist=[]
@@ -41,25 +42,41 @@ def run(model_path, dataset_json, batch_size=8, tag="best",
         add_maxdecode - bool: if true, predictions from the max decoder will be added
     """
 
-    use_cuda = torch.cuda.is_available()
-    model, preproc = speech.load(model_path, tag=tag)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model_path, preproc_path, config_path = get_names(model_path, tag=tag, get_config=True)
+
+    # load and update preproc
+    preproc = read_pickle(preproc_path)
     preproc.update()
 
-    if config_path is not None:
-        with open(config_path, 'r') as fid:
-            config = json.load(fid)
-        new_preproc = loader.Preprocessor(dataset_json, config["preproc"], start_and_end=config["data"]["start_and_end"])
-        new_preproc.mean, new_preproc.std = preproc.mean, preproc.std
-        new_preproc.int_to_char, new_preproc.char_to_int = preproc.int_to_char, preproc.char_to_int
-        print(f"preproc attr: {preproc}")
-        print(f"preproc sum of mean, std: {preproc.mean.shape},{preproc.std.shape}")
-        print(f"new_preproc sum of mean, std: {new_preproc.mean.sum()},{new_preproc.std.sum()}")
-        print(f"new preproc attr: {new_preproc}")
-        preproc = new_preproc
+    # load and assign config
+    config = load_config(config_path)
+    model_cfg = config['model']
+
+    # create model
+    model = CTC_train(preproc.input_dim,
+                        preproc.vocab_size,
+                        model_cfg)
+
+    state_dict = load_state_dict(model_path, device=device)
+    model.load_state_dict(state_dict)
+
+    #if config_path is not None:
+    #    with open(config_path, 'r') as fid:
+    #        config = json.load(fid)
+    #    new_preproc = loader.Preprocessor(dataset_json, config["preproc"], start_and_end=config["data"]["start_and_end"])
+    #    new_preproc.mean, new_preproc.std = preproc.mean, preproc.std
+    #    new_preproc.int_to_char, new_preproc.char_to_int = preproc.int_to_char, preproc.char_to_int
+    #    print(f"preproc attr: {preproc}")
+    #    print(f"preproc sum of mean, std: {preproc.mean.shape},{preproc.std.shape}")
+    #    print(f"new_preproc sum of mean, std: {new_preproc.mean.sum()},{new_preproc.std.sum()}")
+    #    print(f"new preproc attr: {new_preproc}")
+    #    preproc = new_preproc
     
     ldr =  loader.make_loader(dataset_json,
             preproc, batch_size)
-    model.cuda() if use_cuda else model.cpu()
+    model.to(device)
     model.set_eval()
     print(f"preproc train_status before set_eval: {preproc.train_status}")
     preproc.set_eval()
