@@ -157,10 +157,6 @@ def skip_file(dataset_name:str, audio_path:str)->bool:
     tatoeba_errors = {"CK": {"min":6122903, "max": 6123834}}
     voxforge_errors = {"DermotColeman-20111125-uom": "b0396"}
 
-    # the speak files in the test sets cannot go into the training set
-    # so they will be skipped based on their firestore record id
-    speak_test_ids = set(get_speak_test_ids())
-
     skip = False
     if dataset_name not in sets_with_errors:
         # jumping out of function to reduce operations
@@ -173,7 +169,7 @@ def skip_file(dataset_name:str, audio_path:str)->bool:
                 if tatoeba_errors[tat_dir_name]["min"] <= int(file_name) <=tatoeba_errors[tat_dir_name]["max"]:
                     skip = True
    
-     elif dataset_name == "voxforge":
+    elif dataset_name == "voxforge":
         #example path: ~/data/voxforge/archive/DermotColeman-20111125-uom/wav/b0396.wv
         speaker_dir = os.path.basename(os.path.dirname(os.path.dirname(audio_path)))
         if speaker_dir in voxforge_errors.keys():
@@ -182,7 +178,10 @@ def skip_file(dataset_name:str, audio_path:str)->bool:
                 skip = True
     
     elif dataset_name == "speaktrain":
-         if file_name in speak_test_ids:
+        # the speak files in the test sets cannot go into the training set
+        # so they will be skipped based on their firestore record id
+        speak_test_ids = set(get_speak_test_ids())
+        if file_name in speak_test_ids:
             skip = True
 
     return skip
@@ -199,16 +198,21 @@ def get_speak_test_ids():
     returns the document ids of the recordings in the old (2019-11-29) and new (2020-05-27) speak test set.
     Two text files containing the ids must existing in the <main>/speech/utils/ directory.
     """
-    assert os.path.exists("./speak-test-ids_2020-05-27.txt"), \
+    abs_dir = os.path.dirname(os.path.abspath(__file__))
+
+    file_path_2019 = os.path.join(abs_dir, 'speak-test-ids_2019-11-29.txt')
+    file_path_2020 = os.path.join(abs_dir, 'speak-test-ids_2020-05-27.txt')
+
+    assert os.path.exists(file_path_2020), \
         "speak-test-ids_2020-05-27.txt doesn't exist in <main>/speech/utils/"
-    assert os.path.exists("./speak-test-ids_2019-11-29.txt"), \
+    assert os.path.exists(file_path_2019), \
         "speak-test-ids_2019-11-29.txt doesn't exist in <main>/speech/utils/"
 
-    with open("./speak-test-ids_2019-11-29.txt", 'r') as id_file:
+    with open(file_path_2019, 'r') as id_file:
         ids_2019 = id_file.readlines() 
         ids_2019 = [i.strip() for i in ids_2019]
 
-    with open("./speak-test-ids_2020-05-27.txt", 'r') as id_file: 
+    with open(file_path_2020, 'r') as id_file: 
         ids_2020 = id_file.readlines() 
         ids_2020 = [i.strip() for i in ids_2020] 
 
