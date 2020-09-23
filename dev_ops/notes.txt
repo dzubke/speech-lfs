@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200914/ph7/  --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200907/ph6/  --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -119,6 +119,17 @@ git config credential.helper 'cache --timeout 864000'
 
 # github password
 9!l2&YQCydRAkhr1f6%x
+
+
+remote: warning: File examples/librispeech/models/ctc_models/20200827/ph7/best_model_state_dict.pth is 88.58 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+remote: warning: File examples/librispeech/models/ctc_models/20200827/ph7/model_state_dict.pth is 88.58 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+remote: error: Trace: 41bd740ed3c705530524b3108608bc58f05a837a0a88ef651561b57ba12965b2
+remote: error: See http://git.io/iEPt8g for more information.
+remote: error: File examples/librispeech/models/ctc_models/20200908/ph7/best_model_state_dict.pth is 285.27 MB; this exceeds GitHub's file size limit of 100.00 MB
+remote: error: File examples/librispeech/models/ctc_models/20200917/chkpt-test/baseline/model_state_dict.pth is 285.27 MB; this exceeds GitHub's file size limit of 100.00 MB
+To https://github.com/dzubke/speech-lfs.git
+ ! [remote rejected] distributed-data-parallel -> distributed-data-parallel (pre-receive hook declined)
 
 0.4.1.post2
 
@@ -148,3 +159,7 @@ nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-
 
 echo $GOOGLE_APPLICATION_CREDENTIALS 
 
+[prog, "-y", "-i", audio_file, "-ac", "1", "-ar", "16000", "-sample_fmt", "s16", "-f", "wav", wave_file]
+
+ffmpeg -y -i "$SRC_FILE" -ac 1 -ar 16000 -sample_fmt s16 -f wav "$DST_FILE"
+{'start_epoch': 21, 'run_state': (2159580, 65.19725112007819), 'best_so_far': 0.32185347526612396, 'learning_rate': 0.001}
