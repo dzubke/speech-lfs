@@ -46,7 +46,7 @@ class DataPreprocessor(object):
         self.force_convert = force_convert
         self.min_duration = min_duration
         self.max_duration = max_duration
-        self.audio_ext = '.wav'
+        self.audio_ext = 'wav'
 
     def process_datasets(self):
         """
@@ -82,6 +82,7 @@ class DataPreprocessor(object):
                 if not os.path.exists(audio_path):
                     logging.info(f"file {audio_path} does not exists")
                     continue
+                
                 base, raw_ext = os.path.splitext(audio_path)
                 # sometimes using the ".wv" extension so that original .wav files can be converted
                 wav_path = base + os.path.extsep + self.audio_ext
@@ -93,12 +94,14 @@ class DataPreprocessor(object):
                         # if the file can't be converted, skip the file by continuing
                         logging.info(f"Process Error converting file: {audio_path}")
                         continue
+                
                 dur = wave.wav_duration(wav_path)
                 if self.min_duration <= dur <= self.max_duration:
                     text = self.process_text(transcript, unknown_words, wav_path, self.lex_dict)
                     # if transcript has an unknown word, skip it
                     if unknown_words.has_unknown: 
                         continue
+                    
                     datum = {'text' : text,
                             'duration' : dur,
                             'audio' : wav_path}
@@ -106,6 +109,7 @@ class DataPreprocessor(object):
                     fid.write("\n")
                 else:
                     count_outside_duration += 1
+
         print(f"Count excluded because of duration bounds: {count_outside_duration}")
         unknown_words.process_save(save_path)
 
@@ -148,81 +152,17 @@ class DataPreprocessor(object):
         transcript, and duration into a json file specified in the input save_path
         """
 
-        def _process_sample(audio_transcript:Tuple[str, str], 
-                            data_json_path:str,
-                            force_convert:bool,
-                            min_duration:float, 
-                            max_duration:float,
-                            lex_dict:dict) -> dict:
-            """
-            Unfortunately, there are four ways this function can exit and return the unk_word_dict.
-            (1) if the audio_path doesn't exists, (2) if the convert.to_wave call fails, 
-            (3) if the unk_word_dict returned by self.process_text_mp is non-empty,
-            (4) if the unk_word_dict is empty. 
-            
-            The (4) path represents a successful function call, and the other three are provisions
-            for undesirable outcomes. In the single-process version, the first three return statements
-            were `continue` statements, which are now not applicable in a multi-process function.
-            
-            Args:
-                audio_transcript: Tuple of audio file and transcript, positional arg in multi-processing 
-                save_path: see argsparse description,  fixed arg using functools.partial
-                force_convert: see argsparse description,  fixed arg using functools.partial
-                min_duration: see argsparse description,  fixed arg using functools.partial
-                max_duration: see argsparse description,  fixed arg using functools.partial
-                lex_dict: see argsparse description,  fixed arg using functools.partial
-            Returns:
-                unk_word_dict: a dictionary of unknown with words as keys and counts as values
-            """
-            audio_path, transcript = audio_transcript
-            print("here I am")
-            unk_words_dict = {}
-            with open(data_json_path, 'a+') as fid:
-                # skip the audio file if it doesn't exist
-                if not os.path.exists(audio_path):
-                    print(f"file {audio_path} does not exists")
-                    return unk_words_dict
-                
-                # create the path of the converted wav file
-                base, raw_ext = os.path.splitext(audio_path)
-                wav_path = base + os.path.extsep + ".wav"
-
-                # if the wave file doesn't exist, convert to wave
-                if not os.path.exists(wav_path) or force_convert:
-                    try:
-                        convert.to_wave(audio_path, wav_path)
-                    except subprocess.CalledProcessError:
-                        # if the file can't be converted, skip the file by continuing
-                        print(f"Process Error converting file: {audio_path}")
-                        return unk_words_dict
-                
-                # filter by duration
-                dur = wave.wav_duration(wav_path)
-                if min_duration <= dur <= max_duration:
-
-                    text, unk_word_dict = self.process_text_mp(transcript, lex_dict)
-                    # if transcript has an unknown word, skip it
-                    if unk_word_dict:
-                        return unk_word_dict
-                    else: 
-                        datum = {
-                            'text' : text,
-                            'duration' : dur,
-                            'audio' : wav_path
-                        }
-                        json.dump(datum, fid)
-                        fid.write("\n")
-                        
-                        return unk_word_dict
-       
-
-
         ############     beginning of multi-process method calls      ###########
-        NUM_PROC = 100
+        NUM_PROC = 20
+
+        # clearing the data_json_path file contents so that values are appended
+        # to older values from previous runs
+        with open(data_json_path, 'w') as fid:
+            fid.write('')
 
         # set the arguments not provided by self.audio_trans
-        process_fn = partial(
-            _process_sample, 
+        pool_fn = partial(
+            self._process_sample, 
             data_json_path = data_json_path,
             force_convert = self.force_convert,
             min_duration = self.min_duration,
@@ -231,31 +171,99 @@ class DataPreprocessor(object):
         )
         # call the multi-process pool
         # the audio_trans list is broken into chunks to see the tqdm progress bar 
-        chunk_size = 100000
+       
+        chunk_size = 60000
         iterations = math.ceil(len(self.audio_trans) / chunk_size) 
         list_unk_dict = list()
-        for chunk_idx in tqdm.tqdm(range(iterations)):
-            
-            pool = Pool(processes=NUM_PROC) 
-            unk_word_dict = pool.imap_unordered(
-                process_fn, self.audio_trans[chunk_idx * chunk_size: (chunk_idx + 1) * chunk_size]
-            )
+        with Pool(processes=NUM_PROC) as pool:
+            for chunk_idx in tqdm.tqdm(range(iterations)):
+           
+                unk_word_dict = pool.map(
+                    pool_fn, self.audio_trans[chunk_idx * chunk_size: (chunk_idx + 1) * chunk_size]
+                )
+                list_unk_dict.extend(unk_word_dict)
+
             pool.close()
             pool.join()
-            list_unk_dict.append(unk_word_dict)
 
         # combine the unk_word_dicts
-        #all_unk_dict = dict()
-        #for unk_word_dict in list_unk_dict:
-        #    for word in unk_word_dict:
-        #        all_unk_dict[word] = all_unk_dict.get(word, 0) + unk_word_dict[word]
+        all_unk_dict = dict()
+        for unk_word_dict in list_unk_dict:
+            for word in unk_word_dict:
+                all_unk_dict[word] = all_unk_dict.get(word, 0) + unk_word_dict[word]
         
         # write the unk_word_dict
-        #data_dir = os.path.split(data_json_path)[0]
-        #unk_dict_filename = "unk-words-dict_{}.json".format(str(date.today()))
-        #unk_dict_filename = os.path.join(data_dir, unk_words_filename)
-        #with open(unk_dict_filename, 'w') as fid:
-        #    json.dump(all_unk_dict, fid)
+        data_dir = os.path.split(data_json_path)[0]
+        unk_dict_filename = "unk-words-dict_{}.json".format(str(date.today()))
+        unk_dict_filename = os.path.join(data_dir, unk_words_filename)
+        with open(unk_dict_filename, 'w') as fid:
+            json.dump(all_unk_dict, fid)
+
+    def _process_sample(self,
+                        audio_transcript:Tuple[str, str], 
+                        data_json_path:str,
+                        force_convert:bool,
+                        min_duration:float, 
+                        max_duration:float,
+                        lex_dict:dict) -> dict:
+        """
+        Unfortunately, there are four ways this function can exit and return the unk_word_dict.
+        (1) if the audio_path doesn't exists, (2) if the convert.to_wave call fails, 
+        (3) if the unk_word_dict returned by self.process_text_mp is non-empty,
+        (4) if the unk_word_dict is empty. 
+        
+        The (4) path represents a successful function call, and the other three are provisions
+        for undesirable outcomes. In the single-process version, the first three return statements
+        were `continue` statements, which are now not applicable in a multi-process function.
+        
+        Args:
+            audio_transcript: Tuple of audio file and transcript, positional arg in multi-processing 
+            save_path: see argsparse description,  fixed arg using functools.partial
+            force_convert: see argsparse description,  fixed arg using functools.partial
+            min_duration: see argsparse description,  fixed arg using functools.partial
+            max_duration: see argsparse description,  fixed arg using functools.partial
+            lex_dict: see argsparse description,  fixed arg using functools.partial
+        Returns:
+            unk_word_dict: a dictionary of unknown with words as keys and counts as values
+        """
+        audio_path, transcript = audio_transcript
+        unk_words_dict = {}
+        with open(data_json_path, 'a+') as fid:
+            # skip the audio file if it doesn't exist
+            if not os.path.exists(audio_path):
+                print(f"file {audio_path} does not exists")
+                return unk_words_dict
+            
+            # create the path of the converted wav file
+            base, raw_ext = os.path.splitext(audio_path)
+            wav_path = base + os.path.extsep + "wav"
+
+            # if the wave file doesn't exist, convert to wave
+            if not os.path.exists(wav_path) or force_convert:
+                try:
+                    convert.to_wave(audio_path, wav_path)
+                except subprocess.CalledProcessError:
+                    # if the file can't be converted, skip the file by continuing
+                    print(f"Process Error converting file: {audio_path}")
+                    return unk_words_dict
+            
+            # filter by duration
+            dur = wave.wav_duration(wav_path)
+            if min_duration <= dur <= max_duration:
+
+                text, unk_word_dict = self.process_text_mp(transcript, lex_dict)
+                # if transcript has an unknown word, skip it
+                if unk_word_dict:
+                    return unk_word_dict
+                else: 
+                    datum = {
+                        'text' : text,
+                        'duration' : dur,
+                        'audio' : wav_path
+                    }
+                    json.dump(datum, fid)
+                    fid.write("\n")
+                    return unk_word_dict
 
 
     def process_text_mp(self, transcript:str, lex_dict:dict=None):
@@ -608,20 +616,21 @@ class SpeakTrainPreprocessor(DataPreprocessor):
         audio_dir = os.path.join(
             os.path.split(label_path)[0], "audio"
         )
-        audio_ext = ".m4a"
+        audio_ext = "m4a"
 
         with open(label_path, 'r') as tsv_file:
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
             header = next(tsv_reader)
-
             # header: id, text, lessonId, lineId, uid, date
             for row in tqdm.tqdm(tsv_reader):
-                audio_path = os.path.join(audio_dir, row[0] + audio_ext)
+                audio_path = os.path.join(audio_dir, row[0] + os.extsep + audio_ext)
                 # skip the file if it is in one of the speak test sets
                 if data_helpers.skip_file(audio_path, "speaktrain"):
                     continue
-                elif not os.path.exists(audio_path):
-                    continue
+                # no longer need to check if path exists when using trimmed data.tsv
+                # using this call makes the script very slow as it is IO (on disk) limited
+                #elif not os.path.exists(audio_path):
+                #    continue
                 else:
                     self.audio_trans.append((audio_path, row[1]))
 
@@ -651,7 +660,10 @@ class UnknownWords():
         self.word_count += len(text) - 1
         
         # if the word_phoneme_dict doesn't have an entry for 'word', it is an unknown word
-        line_unk = [word for word in text if word_phoneme_dict[word]==data_helpers.UNK_WORD_TOKEN]
+        line_unk = [
+            word for word in text 
+            if not word_phoneme_dict.get(word, data_helpers.UNK_WORD_TOKEN)
+        ]
         
         #if line_unk is empty, has_unknown is False
         self.has_unknown = bool(line_unk)

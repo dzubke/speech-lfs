@@ -35,17 +35,17 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str)->dict:
     if corpus_name not in corpus_names:
         raise ValueError("corpus_name not accepted")
     
-    lex_dict = defaultdict(lambda: UNK_WORD_TOKEN)
+    lex_dict = dict()
     with open(lexicon_path, 'r', encoding="ISO-8859-1") as fid:
         lexicon = (l.strip().lower().split() for l in fid)
         for line in lexicon: 
             word, phones = word_phone_split(line, corpus_name)
             phones = clean_phonemes(phones, corpus_name)
             # librispeech: the if-statement will ignore the second pronunciation with the same word
-            if lex_dict[word] == UNK_WORD_TOKEN:
+            if lex_dict.get(word, UNK_WORD_TOKEN)  == UNK_WORD_TOKEN:
                 lex_dict[word] = phones
     lex_dict = clean_dict(lex_dict, corpus_name)
-    assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
+    #assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
     return lex_dict
 
 def word_phone_split(line:list, corpus_name=str):
