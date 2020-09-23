@@ -35,17 +35,17 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str)->dict:
     if corpus_name not in corpus_names:
         raise ValueError("corpus_name not accepted")
     
-    lex_dict = defaultdict(lambda: UNK_WORD_TOKEN)
+    lex_dict = dict()
     with open(lexicon_path, 'r', encoding="ISO-8859-1") as fid:
         lexicon = (l.strip().lower().split() for l in fid)
         for line in lexicon: 
             word, phones = word_phone_split(line, corpus_name)
             phones = clean_phonemes(phones, corpus_name)
             # librispeech: the if-statement will ignore the second pronunciation with the same word
-            if lex_dict[word] == UNK_WORD_TOKEN:
+            if lex_dict.get(word, UNK_WORD_TOKEN)  == UNK_WORD_TOKEN:
                 lex_dict[word] = phones
     lex_dict = clean_dict(lex_dict, corpus_name)
-    assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
+    #assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
     return lex_dict
 
 def word_phone_split(line:list, corpus_name=str):
@@ -145,17 +145,19 @@ def create_lexicon(cmu_dict:dict, ted_dict:dict, lib_dict:dict, out_path:str='')
  
     return master_dict
 
+
+
 def skip_file(dataset_name:str, audio_path:str)->bool:
     """
     if the audio path is in one of the noted files with errors, return True
     """
 
-    sets_with_errors = ["tatoeba", "voxforge"]
+    sets_with_errors = ["tatoeba", "voxforge", "speaktrain"]
     # CK is directory name and min, max are the ranges of filenames
     tatoeba_errors = {"CK": {"min":6122903, "max": 6123834}}
-    skip = False
     voxforge_errors = {"DermotColeman-20111125-uom": "b0396"}
 
+    skip = False
     if dataset_name not in sets_with_errors:
         # jumping out of function to reduce operations
         return skip
@@ -166,13 +168,22 @@ def skip_file(dataset_name:str, audio_path:str)->bool:
             if dir_name == tat_dir_name:
                 if tatoeba_errors[tat_dir_name]["min"] <= int(file_name) <=tatoeba_errors[tat_dir_name]["max"]:
                     skip = True
-    if dataset_name == "voxforge":
+   
+    elif dataset_name == "voxforge":
         #example path: ~/data/voxforge/archive/DermotColeman-20111125-uom/wav/b0396.wv
         speaker_dir = os.path.basename(os.path.dirname(os.path.dirname(audio_path)))
         if speaker_dir in voxforge_errors.keys():
             file_name, ext = os.path.splitext(os.path.basename(audio_path))
             if file_name in voxforge_errors.values():
-                skip=True
+                skip = True
+    
+    elif dataset_name == "speaktrain":
+        # the speak files in the test sets cannot go into the training set
+        # so they will be skipped based on their firestore record id
+        speak_test_ids = set(get_speak_test_ids())
+        if file_name in speak_test_ids:
+            skip = True
+
     return skip
 
 
@@ -181,3 +192,28 @@ def get_files(root_dir:str, pattern:str):
     returns a list of the files in the root_dir that match the pattern
     """
     return glob.glob(os.path.join(root_dir, pattern))
+
+def get_speak_test_ids():
+    """
+    returns the document ids of the recordings in the old (2019-11-29) and new (2020-05-27) speak test set.
+    Two text files containing the ids must existing in the <main>/speech/utils/ directory.
+    """
+    abs_dir = os.path.dirname(os.path.abspath(__file__))
+
+    file_path_2019 = os.path.join(abs_dir, 'speak-test-ids_2019-11-29.txt')
+    file_path_2020 = os.path.join(abs_dir, 'speak-test-ids_2020-05-27.txt')
+
+    assert os.path.exists(file_path_2020), \
+        "speak-test-ids_2020-05-27.txt doesn't exist in <main>/speech/utils/"
+    assert os.path.exists(file_path_2019), \
+        "speak-test-ids_2019-11-29.txt doesn't exist in <main>/speech/utils/"
+
+    with open(file_path_2019, 'r') as id_file:
+        ids_2019 = id_file.readlines() 
+        ids_2019 = [i.strip() for i in ids_2019]
+
+    with open(file_path_2020, 'r') as id_file: 
+        ids_2020 = id_file.readlines() 
+        ids_2020 = [i.strip() for i in ids_2020] 
+
+    return ids_2019 + ids_2020
