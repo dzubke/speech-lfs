@@ -6,7 +6,9 @@ license: MIT
 # standard libary
 import argparse
 import os
+import re
 # third party libraries
+import matplotlib.pyplot as plt
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
@@ -72,6 +74,39 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
             # dropping the rows in drop_index
             in_df = in_df.drop(index=drop_index)
     return in_df, drop_row_count
+
+
+def assess_speak_train():
+    def _update_key(in_dict, key): 
+        in_dict[key] = in_dict.get(key, 0) + 1
+
+    def plot_count(count_dict:dict):
+        plt.plot(range(len(count_dict.values())), sorted(list(count_dict.values()), reverse=True))
+   
+    def stats(count_dict:dict):
+        values = list(count_dict.values())
+        mean = round(np.mean(values), 2)
+        std = round(np.std(values), 2)
+        max_val = round(max(values), 2)
+        min_val = round(min(values), 2)
+        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}")
+
+    tsv_path = "/home/dzubke/awni_speech/data/speak_train/train_data.tsv"
+    
+    lesson_dict = {} 
+    line_dict = {} 
+    user_dict ={} 
+    
+    with open(tsv_path, 'r') as tsv_file: 
+        tsv_reader = csv.reader(tsv_file, delimiter='\t')
+        header = next(tsv_reader) 
+        print(header) 
+        for row in tsv_reader: 
+            lesson_id, line_id, user_id = row[2], row[3], row[4] 
+            _update_key(lesson_dict, lesson_id) 
+            _update_key(line_dict, line_id) 
+            _update_key(user_dict, user_id) 
+     
 
 
 class DurationAssessor():
