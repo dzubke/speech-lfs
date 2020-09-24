@@ -45,6 +45,10 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     log_modulus = 5  # limits certain logging function to only log every "log_modulus" iterations
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0.0
+    
+    ##### ACCUM GRAD CHANGE
+    optimizer.zero_grad()
+    accum_steps = 4
 
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
@@ -57,7 +61,6 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 log_batchnorm_mean_std(model.state_dict(), logger)
  
         start_t = time.time()
-        optimizer.zero_grad()
         if use_log: logger.info(f"train: Optimizer zero_grad")
 
         loss = model.loss(temp_batch)
@@ -71,13 +74,16 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
                 plot_grad_flow_bar(model.named_parameters(),  get_logger_filename(logger))
                 log_param_grad_norms(model.named_parameters(), logger)
 
-        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200)
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
         loss = loss.item()
         if use_log: logger.info(f"train: loss reassigned ")
 
-        optimizer.step()
+        ### ACCUM GRAD CHANGE ####
+        if iter_count % accum_steps == 0 :
+            grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200)
+            optimizer.step()
+            optimizer.zero_grad()
         if use_log: logger.info(f"train: Optimizer step taken")
 
         prev_end_t = end_t
