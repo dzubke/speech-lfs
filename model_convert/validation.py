@@ -55,7 +55,7 @@ def main(model_name, num_frames):
     PARAMS = {
         "sample_rate": 16000,
         "feature_win_len": 512,
-        "feature_win_step":256,
+        "feature_win_step": 256,
         "feature_size":257,
         "chunk_size": 46,
         "n_context": 15
@@ -128,8 +128,8 @@ def full_audio_infer(model, preproc, PARAMS:dict, audio_dir)->dict:
     validation_tests=dict()
 
     for audio_file in os.listdir(audio_dir):
-        hidden_in = torch.zeros((5, 1, 512), dtype=torch.float32)
-        cell_in = torch.zeros((5, 1, 512), dtype=torch.float32)
+        hidden_in = torch.zeros((5, 1, 1024), dtype=torch.float32)
+        cell_in = torch.zeros((5, 1, 1024), dtype=torch.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
 
@@ -186,8 +186,8 @@ def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, 
     check_hidden = False # checks if the hidden and cell states across models are equal
 
     for audio_file in os.listdir(audio_dir):
-        test_h = np.zeros((5, 1, 512)).astype(np.float32)
-        test_c = np.zeros((5, 1, 512)).astype(np.float32)
+        test_h = np.zeros((5, 1, 1024)).astype(np.float32)
+        test_c = np.zeros((5, 1, 1024)).astype(np.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
         log_spec = log_spectrogram_from_file(audio_path)
@@ -293,13 +293,13 @@ def dict_to_json(input_dict, json_path):
 
 def gen_test_data(preproc, num_frames, freq_dim):
     test_x_zeros = np.zeros((1, num_frames, freq_dim)).astype(np.float32)
-    test_h_zeros = np.zeros((5, 1, 512)).astype(np.float32)
-    test_c_zeros = np.zeros((5, 1, 512)).astype(np.float32)
+    test_h_zeros = np.zeros((5, 1, 1024)).astype(np.float32)
+    test_c_zeros = np.zeros((5, 1, 1024)).astype(np.float32)
     test_zeros = [test_x_zeros, test_h_zeros, test_c_zeros]
 
     test_x_randn = np.random.randn(1, num_frames, freq_dim).astype(np.float32)
-    test_h_randn = np.random.randn(5, 1, 512).astype(np.float32)
-    test_c_randn = np.random.randn(5, 1, 512).astype(np.float32)
+    test_h_randn = np.random.randn(5, 1, 1024).astype(np.float32)
+    test_c_randn = np.random.randn(5, 1, 1024).astype(np.float32)
     test_randn = [test_x_randn, test_h_randn, test_c_randn]
 
     test_names = ["Speak_5_out", "Dustin-5-drz-test-20191202", "Dustin-5-plane-noise", 

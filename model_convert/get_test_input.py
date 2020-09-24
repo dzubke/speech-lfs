@@ -27,8 +27,8 @@ def generate_test_input(model_format:str ,model_name:str, time_dim: int, half_pr
                     )
         else:
             return (torch.randn(1,time_dim, 257, device=device).type(dtype),
-                    (torch.randn(layer_count * 1, 1, 512, device=device).type(dtype),
-                    torch.randn(layer_count * 1, 1, 512, device=device).type(dtype))
+                    (torch.randn(layer_count * 1, 1, 1024, device=device).type(dtype),
+                    torch.randn(layer_count * 1, 1, 1024, device=device).type(dtype))
                     )
     else: 
         raise ValueError("model_format parameters must be 'pytorch' or 'onnx'")
