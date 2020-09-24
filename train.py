@@ -12,7 +12,6 @@ import math
 import random
 import time
 # third-party libraries
-#import functions.ctc as ctc #awni hannun's ctc bindings
 #import apex
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,7 +35,8 @@ from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 BLANK_IDX = 0
 
 
-def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0, local_rank):
+def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0, local_rank,
+                loss_name):
     """
     Performs a forwards and backward pass through the model
     Args:
@@ -60,9 +60,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         model_module = model
 
     print('before loop')
+    print("tq type:", type(tq))
+    #print(f"first batch: {next(iter(train_ldr))}")
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
-        print("inside loop")
+        #print("inside loop")
         temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
 
         if use_log: 
@@ -78,15 +80,12 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
         inputs.cuda(local_rank)
         out, rnn_args = model(inputs, softmax=False)
- 
-        ############## Native loss code ############################################################
-        log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
-        loss_fn = torch.nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)         #     
-        loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
 
-        ############## Awni loss code  #############################################################
-        # loss_fn = ctc.CTCLoss()                                                                  #     
-        # loss = loss_fn(out, labels, input_lens, label_lens)                                      #     
+        if loss_name == "native":
+            loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+        elif loss_name == "awni":
+            loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+
         
         if use_log: logger.info(f"train: Loss calculated")
     
@@ -107,7 +106,10 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         # grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
         
         ############# non-amp change ##################################################################
-        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200).item()            #
+        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200)                          #
+
+        if isinstance(grad_norm, torch.Tensor):
+            grad_norm = grad_norm.item()
 
         if use_log: logger.info(f"train: Grad_norm clipped ")
 
@@ -160,8 +162,25 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
     return iter_count, avg_loss
 
+def native_loss(out, labels, input_lens, label_lens, blank_idx):
+    """
+    """
+    ############## Native loss code ############################################################
+    log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
+    loss_fn = torch.nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)         #     
+    loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
+    return loss
 
-def eval_dev(model, ldr, preproc,  logger):
+
+def awni_loss(out, labels, input_lens, label_lens, BLANK_IDX):
+    import functions.ctc as ctc #awni hannun's ctc bindings
+    ############## Awni loss code  #############################################################
+    loss_fn = ctc.CTCLoss(blank_label=BLANK_IDX)                                                                  #     
+    loss = loss_fn(out, labels, input_lens, label_lens)                                      #     
+    return loss
+
+
+def eval_dev(model, ldr, preproc,  logger, loss_name):
     losses = []; all_preds = []; all_labels = []
         
     model.set_eval()
@@ -181,10 +200,11 @@ def eval_dev(model, ldr, preproc,  logger):
             inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
             out, rnn_args = model(inputs, softmax=False)
 
-            ############## Native loss code ############################################################
-            log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
-            loss_fn = nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)              #     
-            loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
+
+            if loss_name == "native":
+                loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            elif loss_name == "awni":
+                loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
 
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
@@ -313,6 +333,8 @@ def run(local_rank, config):
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
 
+    loss_name = train_cfg['loss_name']
+
     # multi-gpu training
     if train_cfg["multi_gpu"]:
         assert torch.cuda.device_count() > 1, "multi_gpu selected but less than on GPU available"
@@ -358,7 +380,8 @@ def run(local_rank, config):
         
 
         try:
-            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, is_rank_0, local_rank)
+            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, 
+                                    *run_state, is_rank_0, local_rank, loss_name)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
@@ -395,7 +418,7 @@ def run(local_rank, config):
             for dev_name, dev_ldr in dev_ldr_dict.items():
                 print(f"evaluating devset: {dev_name}")
                 if use_log: logger.info(f"train: === evaluating devset: {dev_name} ==")
-                dev_loss, dev_per = eval_dev(model_module, dev_ldr, preproc, logger)
+                dev_loss, dev_per = eval_dev(model_module, dev_ldr, preproc, logger, loss_name)
 
                 dev_loss_dict.update({dev_name: dev_loss})
                 dev_per_dict.update({dev_name: dev_per})

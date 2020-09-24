@@ -30,8 +30,8 @@ class CTC_train(ctc_model.CTC):
         return self.forward_impl(x, rnn_args,  softmax=softmax)
 
     def forward_impl(self, x, rnn_args=None, softmax=False):
-        if self.is_cuda:
-            x = x.cuda()
+        #if self.is_cuda:
+        #    x = x.cuda()
 
         # padding is half the filters of the 3 conv layers. 
         # conv.children are: [Conv2d, BatchNorm2d, ReLU, Dropout, Conv2d, 
