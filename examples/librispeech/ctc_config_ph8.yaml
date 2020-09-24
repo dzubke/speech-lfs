@@ -67,7 +67,7 @@ model:
             layers: 5
 training: 
     multi_gpu: False
-    distributed: True
+    distributed: False
     use_spawn: False
     loss_name: awni
     apex: False
