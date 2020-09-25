@@ -47,7 +47,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     use_log = (logger is not None) and is_rank_0
     model_t = 0.0; data_t = 0.0
     end_t = time.time()
-    tq = tqdm.tqdm(train_ldr) if is_rank_0 else train_ldr
+    tq = tqdm.tqdm(train_ldr) # if is_rank_0 else train_ldr
     print("after tq instantiated")
     log_modulus = 100     # limits certain logging function to report less frequently
     exp_w = 0.985        # exponential weight for exponential moving average loss        
@@ -78,7 +78,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
         # calcuating the loss outside of model.loss to allow multi-gpu use
         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
-        inputs.cuda(local_rank)
+        inputs = inputs.cuda(local_rank)
         out, rnn_args = model(inputs, softmax=False)
 
         if loss_name == "native":

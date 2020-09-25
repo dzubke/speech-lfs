@@ -493,7 +493,7 @@ def make_ddp_loader(dataset_json,
                 num_workers=num_workers,
                 collate_fn=collate_fn,
                 drop_last=True,
-                pin_memory=True)
+                pin_memory=False)
     return loader
     
 def collate_fn(batch):
