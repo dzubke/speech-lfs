@@ -190,6 +190,9 @@ watch -d -n 0.5 nvidia-smi
 #setting default zone
 gcloud compute project-info add-metadata --metadata google-compute-default-region=us-central1,google-compute-default-zone=us-central1-c
 
+# how to change git lfs file to pointer
+git lfs pointer --file=filename > filename.pt
+mv filename.pt filename 
 
 
 
