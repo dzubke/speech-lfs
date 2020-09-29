@@ -185,6 +185,7 @@ def eval_dev(model, ldr, preproc,  logger):
             if use_log: logger.info(f"eval_dev: infer call")
             
             inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+            inputs = inputs.cuda(0)
             out, rnn_args = model(inputs, softmax=False)
 
             ############## Native loss code ############################################################
