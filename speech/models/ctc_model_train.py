@@ -69,6 +69,7 @@ class CTC_train(ctc_model.CTC):
     
     def infer(self, batch):
         x, y, x_lens, y_lens = self.collate(*batch)
+        x = x.cuda()
         probs, rnn_args = self.forward_impl(x, softmax=True)
         # convert the torch tensor into a numpy array
         probs = probs.data.cpu().numpy()

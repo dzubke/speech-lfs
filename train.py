@@ -61,10 +61,14 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
 
     print('before loop')
     print("tq type:", type(tq))
-    #print(f"first batch: {next(iter(train_ldr))}")
+    #train_iter = iter(train_ldr)
+    print("after iterator assigned")
+    print(f"first batch: {next(iter(train_ldr))}")
+    print(f"first batch: {next(iter(train_ldr))}")
+    print(f"first batch: {next(iter(train_ldr))}")
     for batch in tq:
-        if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
-        #print("inside loop")
+        #if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
+        print("inside loop")
         temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
 
         if use_log: 
@@ -198,6 +202,7 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             if use_log: logger.info(f"eval_dev: infer call")
             
             inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+            inputs = inputs.cuda()
             out, rnn_args = model(inputs, softmax=False)
 
 
@@ -246,7 +251,7 @@ def run(local_rank, config):
     if train_cfg['distributed']:
         #rank = train_cfg['rank'] * train_cfg['gpu_per_node'] + local_rank                       
         dist.init_process_group(                                   
-            backend='nccl',
+            backend='gloo',
             init_method='env://',
             world_size=train_cfg['world_size'],
             rank=train_cfg['rank']
