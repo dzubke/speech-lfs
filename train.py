@@ -25,18 +25,19 @@ import yaml
 import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
-from speech.utils.io import read_pickle, write_pickle, load_from_trained, load_config
+from speech.utils.io import read_pickle, get_names, load_from_trained, load_config, write_pickle
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
 from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
 from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 
 
 
-def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss):
+def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, chckpt_path):
     """
     Performs a forwards and backward pass through the model
     Arguments
         iter_count - int: count of iterations
+        chckpt_path (str): path for the model checkpoint
     """
     use_log = (logger is not None)
     model_t = 0.0; data_t = 0.0
@@ -45,10 +46,19 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     log_modulus = 5  # limits certain logging function to only log every "log_modulus" iterations
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0.0
+    batch_counter = 0
+    print("loader length", len(train_ldr))
+    
 
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
         
+        ##############  Mid-epoch checkpoint ###############
+        if batch_counter == len(train_ldr) // 2:
+            torch.save(model.state_dict(), chckpt_path)
+        batch_counter += 1
+        ####################################################
+
         temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
 
         if use_log: 
@@ -252,6 +262,11 @@ def run(config):
     print(f"optimizer: {optimizer}")
     print(f"config: {config}")
 
+    # define the model checkpoint path
+    chckpt_path, _  = get_names(config['save_path'])
+    base_path, ext = os.path.splitext(chckpt_path)
+    chckpt_path = base_path + "_ckpt" + ext
+
     for epoch in range(start_epoch, opt_cfg["epochs"]):
         if use_log: logger.info(f"Starting epoch: {epoch}")
         start = time.time()
@@ -261,7 +276,7 @@ def run(config):
         
 
         try:
-            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state)
+            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, chckpt_path)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
