@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200925/ph3
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200925/ph3/
 data: 
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak_2020-09-25_dd.json
     dev_sets: 
@@ -12,14 +12,14 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-09-25_ph3_large-model-mid-aug_lib-ted-cv-spk.log
+    log_file: logs/2020-09-25-09-28_ph3_large-model-mid-aug_lib-ted-cv-spk.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
     window_size: 32
     step_size: 16
     use_feature_normalize: True
-    augment_from_normal: Ture
+    augment_from_normal: True
     tempo_gain_pitch_perturb: True
     tempo_gain_pitch_prob: 0.5
     tempo_range: [0.80, 1.20]
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 10
-    run_state: [2411182, 56.613]
-    best_so_far: 0.34063
-    start_epoch: 23
+    run_state: [2595049, 37.07627]
+    best_so_far: 0.234
+    start_epoch: 24
     epochs: 100
     learning_rate: 0.0005
     momentum: 0.5
@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/model_state_dict.pth
+    trained_path: examples/librispeech/models/ctc_models/20200925/ph3/model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:

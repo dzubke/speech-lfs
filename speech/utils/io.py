@@ -26,6 +26,7 @@ def get_names(path:str, tag:str, get_config:bool=False, model_name:str=''):
         assert len(config_path) == 1, \
             f"no config or multiple config files found in directory {path}"
         output = (model_path, preproc_path, config_path[0])
+    
     else:
         output = (model_path, preproc_path)
 
@@ -166,4 +167,3 @@ def filter_state_dict(state_dict, remove_layers=[]):
         if key not in remove_layers}
         )
     return state_dict
-
