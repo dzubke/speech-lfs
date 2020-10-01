@@ -251,7 +251,7 @@ def run(local_rank, config):
     if train_cfg['distributed']:
         #rank = train_cfg['rank'] * train_cfg['gpu_per_node'] + local_rank                       
         dist.init_process_group(                                   
-            backend='gloo',
+            backend='nccl',
             init_method='env://',
             world_size=train_cfg['world_size'],
             rank=train_cfg['rank']
@@ -309,7 +309,7 @@ def run(local_rank, config):
                   start_and_end=data_cfg["start_and_end"])
     
     if train_cfg['distributed']:
-        train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
+        train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=0) #data_cfg["num_workers"])
     else: 
         train_ldr = loader.make_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])  
 
