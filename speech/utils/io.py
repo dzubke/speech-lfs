@@ -12,7 +12,7 @@ import torch
 MODEL = "model_state_dict.pth"
 PREPROC = "preproc.pyc"
 
-def get_names(path:str, tag:str, get_config:bool=False):
+def get_names(path:str, tag:str="", get_config:bool=False):
     tag = tag + "_" if tag else ""
     model_path = os.path.join(path, tag + MODEL)
     preproc_path = os.path.join(path, tag + PREPROC)
@@ -22,6 +22,7 @@ def get_names(path:str, tag:str, get_config:bool=False):
         assert len(config_path) == 1, \
             f"no config or multiple config files found in directory {path}"
         output = (model_path, preproc_path, config_path[0])
+    
     else:
         output = (model_path, preproc_path)
 
@@ -162,4 +163,3 @@ def filter_state_dict(state_dict, remove_layers=[]):
         if key not in remove_layers}
         )
     return state_dict
-
