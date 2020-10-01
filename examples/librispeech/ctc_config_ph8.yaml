@@ -73,6 +73,6 @@ training:
     apex: False
     opt_level: 'O0'
     n_node: 1
-    gpu_per_node: 4
+    gpu_per_node: 2
     master_addr: '10.128.0.25'
     master_port: '8888'
