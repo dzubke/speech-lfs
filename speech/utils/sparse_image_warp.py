@@ -178,7 +178,7 @@ def solve_interpolation(train_points, train_values, order, regularization_weight
 
     # Then, solve the linear system and unpack the results.
     
-    if torch.__version__ == "0.4.1.post2":
+    if torch.__version__ in ["0.4.1.post2", "0.4.1"]:
         X, LU = torch.gesv(rhs, lhs)
     else:
         X, LU = torch.solve(rhs, lhs)
@@ -301,7 +301,7 @@ def dense_image_warp(image, flow):
 
     # The flow is defined on the image grid. Turn the flow into a list of query
     # points in the grid space.
-    if torch.__version__ == "0.4.1.post2":
+    if torch.__version__ in ["0.4.1.post2", "0.4.1"]:
         grid_x, grid_y = torch.meshgrid((
             torch.arange(width), torch.arange(height)))
     else:
