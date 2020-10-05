@@ -88,7 +88,7 @@ class Preprocessor():
 
 
         # Make char map
-        chars = list(set(label for datum in data for label in datum['text']))
+        chars = sorted(list(set(label for datum in data for label in datum['text'])))
         if start_and_end:
             # START must be last so it can easily be
             # excluded in the output classes of a model.
