@@ -25,7 +25,11 @@ pip install --upgrade pip
 
 
 echo  -e "\n=========  installed git  =========\n"
-sudo apt-get -y install git
+sudo apt-get install python-software-properties software-properties-common
+sudo add-apt-repository ppa:git-core/ppa -y
+sudo apt-get update
+sudo apt-get install -y git
+
 
 
 echo  -e "\n========= cloning repo  =========\n"

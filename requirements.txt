@@ -26,3 +26,4 @@ numba==0.48.0
 tensorboardX==2.1
 future==0.18.2
 cython==0.29.21
+firebase-admin
