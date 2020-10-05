@@ -9,11 +9,15 @@ import yaml
 import torch
 # project libraries
 
-MODEL = "model_state_dict.pth"
-PREPROC = "preproc.pyc"
 
-def get_names(path:str, tag:str, get_config:bool=False):
+def get_names(path:str, tag:str, get_config:bool=False, model_name:str=''):
+    MODEL = "model_state_dict.pth"
+    PREPROC = "preproc.pyc"
+    
     tag = tag + "_" if tag else ""
+    # if model_name is non-empty, reassign the global variable MODEL
+    if model_name:      
+        MODEL = model_name
     model_path = os.path.join(path, tag + MODEL)
     preproc_path = os.path.join(path, tag + PREPROC)
 
@@ -22,6 +26,7 @@ def get_names(path:str, tag:str, get_config:bool=False):
         assert len(config_path) == 1, \
             f"no config or multiple config files found in directory {path}"
         output = (model_path, preproc_path, config_path[0])
+    
     else:
         output = (model_path, preproc_path)
 
@@ -63,7 +68,7 @@ def load_state_dict(model_path:str, device:torch.device)->OrderedDict:
     
     if isinstance(model_or_state_dict, OrderedDict):
         state_dict = model_or_state_dict
-    elif isinstance(model, torch.nn.Module):
+    elif isinstance(model_or_state_dict, torch.nn.Module):
         model = model_or_state_dict
         state_dict = model.state_dict()
     else:
@@ -162,4 +167,3 @@ def filter_state_dict(state_dict, remove_layers=[]):
         if key not in remove_layers}
         )
     return state_dict
-
