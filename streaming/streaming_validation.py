@@ -1,24 +1,25 @@
 # standard libraries
-import time, logging
 from datetime import datetime
 import threading, collections, queue, os, os.path, json
+import time, logging
 # third-party libraries
+import editdistance as ed
+import matplotlib.pyplot as plt
 import numpy as np
 import pyaudio
-import wave
 from scipy import signal
-import matplotlib.pyplot as plt
 import torch
-import editdistance as ed
+import wave
 # project libraries
 import speech
-from speech.utils.convert import to_numpy
-from speech.models.ctc_model import CTC
-from speech.loader import log_specgram_from_data, log_specgram_from_file
+from speech.loader import log_spectrogram_from_data, log_spectrogram_from_file
 from speech.models.ctc_decoder import decode as ctc_decode
+from speech.models.ctc_model import CTC
 from speech.utils.compat import normalize
-from speech.utils.wave import wav_duration, array_from_wave
+from speech.utils.convert import to_numpy
+from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 from speech.utils.stream_utils import make_full_window
+from speech.utils.wave import wav_duration, array_from_wave
 
 set_linewidth=160
 np.set_printoptions(linewidth=set_linewidth)
@@ -33,32 +34,52 @@ log_sample_len = 50     # number of data samples outputted to the log
 def main(ARGS):
 
     print('Initializing model...')
-    state_dict_model, preproc = speech.load(ARGS.model, tag='best')
-    
-    with open(ARGS.config, 'r') as fid:
-        config = json.load(fid)
-        model_config = config["model"]
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model = CTC(preproc.input_dim, preproc.vocab_size, model_config)
-    state_dict = state_dict_model.state_dict()
+    model_path, preproc_path, config_path = get_names(ARGS.model_dir, 
+                                                      tag=ARGS.tag, 
+                                                      get_config=True,
+                                                      model_name=ARGS.model_name)
+
+    print("model_path: ", model_path)
+    print("preproc_path: ", preproc_path)
+    print("config_path: ", config_path)
+
+    # load and update preproc
+    preproc = read_pickle(preproc_path)
+    preproc.update()
+
+    # load and assign config
+    config = load_config(config_path)
+    model_cfg = config['model']
+
+    # create model
+    model = CTC(preproc.input_dim,
+                preproc.vocab_size,
+                model_cfg)
+
+    # load the state-dict
+    state_dict = load_state_dict(model_path, device=device)
     model.load_state_dict(state_dict)
+
     model.eval()
 
     #initial states for LSTM layers
-    hidden_in = torch.zeros((5, 1, 512), dtype=torch.float32)
-    cell_in   = torch.zeros((5, 1, 512), dtype=torch.float32)
+    hidden_in = torch.zeros((5, 1, ARGS.hidden_units), dtype=torch.float32)
+    cell_in   = torch.zeros((5, 1, ARGS.hidden_units), dtype=torch.float32)
     lstm_states = (hidden_in, cell_in)
 
     PARAMS = {
-        "chunk_size": 46,
-        "n_context": 15,
-        "feature_window": 512,
-        "feature_step":256,
-        "feature_size":257,
-        "initial_padding":15,
-        "final_padding":0,
+        "chunk_size": 46,       # number of log_spec timesteps fed into the model
+        "n_context": 15,        # half-size of the convolutional layers
+        "feature_window": 512,  # number of audio frames into log_spec
+        "feature_step":256,     # number of audio frames in log_spec step
+        "feature_size":257,     # frequency dimension of log_spec
+        "initial_padding":15,   # padding of feature_buffer
+        "final_padding":13,      # finall padding of feature_buffer
         'fill_chunk_padding':7  #TODO hard-coded value that is calculatedd as fill_chunk_padding
     }
+    # stride of chunks across the log_spec output/ model input
     PARAMS['stride'] = PARAMS['chunk_size'] - 2*PARAMS['n_context']
 
     logging.warning(f"PARAMS dict: {PARAMS}")
@@ -68,7 +89,11 @@ def main(ARGS):
     lc_probs, lc_preds = list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS, ARGS)
 
     fa_probs, fa_preds = full_audio_infer(model, preproc, lstm_states, PARAMS, ARGS)
-
+    
+    logging.warning(f"stream probs shape: {stream_probs.shape}")
+    logging.warning(f"list chunk probs shape: {lc_probs.shape}")
+    logging.warning(f"full audio probs shape: {fa_probs.shape}")
+    
     np.testing.assert_allclose(stream_probs, lc_probs, rtol=1e-03, atol=1e-05)
     np.testing.assert_allclose(stream_probs, fa_probs, rtol=1e-03, atol=1e-05)
     np.testing.assert_allclose(lc_probs, fa_probs, rtol=1e-03, atol=1e-05)
@@ -83,7 +108,7 @@ def main(ARGS):
 def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
     """
     Performs streaming inference of an input wav file (if provided in ARGS) or from
-    the micropohone. Inference is performed my model and the preproc preprocessing
+    the micropohone. Inference is performed by the model and the preproc preprocessing
     object performs normalization.
     """
     begin_time = time.time()
@@ -97,14 +122,20 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
 
     hidden_in, cell_in = lstm_states
     wav_data = bytearray()
-    audio_buffer_size = 2   # two 16 ms steps in the features window
     stride_counter = 0      # used to stride the feature_buffer
-    features_buffer_size = PARAMS['chunk_size']
+    
+    # audio buffer contains audio signal that is few into the log_spec
+    audio_buffer_size = 2   # two 16 ms steps in the features window
     audio_ring_buffer = collections.deque(maxlen=audio_buffer_size)
+    
+    # feature buffer contains log_spec output and is fed into the model
+    features_buffer_size = PARAMS['chunk_size']
     features_ring_buffer = collections.deque(maxlen=features_buffer_size)
-    # add n_context zero frames as padding to the buffer
+    
+    # add n_context zero frames as padding to the feature buffer
     zero_frame = np.zeros((1,PARAMS['feature_size']), dtype=np.float32)
-    for _ in range(PARAMS['n_context']): features_ring_buffer.append(zero_frame)
+    for _ in range(PARAMS['n_context']): 
+        features_ring_buffer.append(zero_frame)
 
     predictions = list()
     probs_list  = list()
@@ -163,6 +194,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                 
                 numpy_buffer_time_start = time.time()
                 buffer_list = list(audio_ring_buffer)
+
                 # convert the buffer to numpy array
                 # a single frame has dims: (512,) and numpy buffer (2 frames) is: (512,)
                 # The dimension of numpy buffer is reduced by half because each 
@@ -170,16 +202,17 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                 numpy_buffer = np.concatenate(
                     (np.frombuffer(buffer_list[0], np.int16), 
                     np.frombuffer(buffer_list[1], np.int16)))
-                # calculate the features with dim: (1, 257)
                 numpy_buffer_time += time.time() - numpy_buffer_time_start
                 numpy_buffer_count += 1
 
                 features_time_start = time.time()
-                features_step = log_specgram_from_data(numpy_buffer, samp_rate=16000)
+                # calculate the features with dim: (1, 257)
+                features_step = log_spectrogram_from_data(numpy_buffer, samp_rate=16000)
                 features_time += time.time() - features_time_start
                 features_count += 1
                 
                 normalize_time_start = time.time()
+                # normalize the features
                 norm_features = normalize(preproc, features_step)
                 normalize_time += time.time() - normalize_time_start
                 normalize_count += 1
@@ -194,16 +227,19 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                 logging.info(f"stride modulus: {stride_counter % PARAMS['stride']}")
                 # ------------ logging ---------------
 
-                # fill up the features_ring_buffer and then feed into the model
+                # fill up the feature_buffer and then feed into the model
                 if len(features_ring_buffer) < features_buffer_size-1:
                     features_buffer_time_start = time.time()
                     features_ring_buffer.append(norm_features)
                     features_buffer_time += time.time() - features_buffer_time_start
                     features_buffer_count += 1
                 else:
-                    if stride_counter % PARAMS['stride'] !=0:
+                    # if stride_counter is an even multiple of the stride value run inference
+                    # on the buffer. Otherwise, append values to the buffer.
+                    if stride_counter % PARAMS['stride'] != 0:
                         features_ring_buffer.append(norm_features)
                         stride_counter += 1
+                    # run inference on the full feature_buffer
                     else:
                         stride_counter += 1
                         features_buffer_time_start = time.time()
@@ -281,7 +317,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                 (np.frombuffer(buffer_list[0], np.int16), 
                 np.frombuffer(buffer_list[1], np.int16)))
 
-            features_step = log_specgram_from_data(numpy_buffer, samp_rate=16000)
+            features_step = log_spectrogram_from_data(numpy_buffer, samp_rate=16000)
             norm_features = normalize(preproc, features_step)
             
 
@@ -381,7 +417,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
         if ARGS.savewav: wav_data.extend(frame)
 
         # process the final frames
-        logging.warning(f"length of final_frames: {len(final_sample)}")
+        #logging.warning(f"length of final_frames: {len(final_sample)}")
 
 
         decoder_time_start = time.time()
@@ -444,7 +480,7 @@ def list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS:dict, ARGS)
 
         audio_data = make_full_window(audio_data, PARAMS['feature_window'], PARAMS['feature_step'])
 
-        features = log_specgram_from_data(audio_data, samp_rate)
+        features = log_spectrogram_from_data(audio_data, samp_rate)
         norm_features = normalize(preproc, features)
         norm_features = np.expand_dims(norm_features, axis=0)
         torch_input = torch.from_numpy(norm_features)
@@ -461,7 +497,8 @@ def list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS:dict, ARGS)
             fill_chunk_padding = PARAMS['stride'] - fill_chunk_remainder
             fill_chunk_pad = torch.zeros(1, fill_chunk_padding, PARAMS['feature_size'], dtype=torch.float32, requires_grad=False)
             padded_input = torch.cat((padded_input, fill_chunk_pad),dim=1)
-
+        else:
+            fill_chunk_padding = 0
         # process last chunk with stride of zeros
         final_chunk_pad = torch.zeros(1, PARAMS['stride'], PARAMS['feature_size'], dtype=torch.float32, requires_grad=False)
         padded_input = torch.cat((padded_input, final_chunk_pad),dim=1)
@@ -571,7 +608,7 @@ def full_audio_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
         audio_data = make_full_window(audio_data, PARAMS['feature_window'], PARAMS['feature_step'])
 
         fa_features_time = time.time()
-        features = log_specgram_from_data(audio_data, samp_rate)
+        features = log_spectrogram_from_data(audio_data, samp_rate)
         fa_features_time = time.time() - fa_features_time
         
         fa_normalize_time = time.time()
@@ -658,7 +695,7 @@ def list_chunk_infer_fractional_chunks(model, preproc, lstm_states, PARAMS:dict,
         hidden_in, cell_in = lstm_states
         probs_list = list()
 
-        features = log_specgram_from_file(ARGS.file)
+        features = log_spectrogram_from_file(ARGS.file)
         norm_features = normalize(preproc, features)
         norm_features = np.expand_dims(norm_features, axis=0)
         torch_input = torch.from_numpy(norm_features)
@@ -877,22 +914,37 @@ if __name__ == '__main__':
 
     import argparse
     parser = argparse.ArgumentParser(description="Stream from microphone to DeepSpeech using VAD")
-    parser.add_argument('-w', '--savewav',
-                        help="Save .wav files of utterences to given directory")
-    parser.add_argument('-f', '--file',
-                        help="Read from .wav file instead of microphone")
-    parser.add_argument('-m', '--model',
-                        help="Path to the model (protocol buffer binary file, or entire directory containing all standard-named files for model)")
-    parser.add_argument('-c', '--config', type = str,
-                        help="Path to the config file for that model"),
-    parser.add_argument('-d', '--device', type=int, default=None,
-                        help="Device input index (Int) as listed by pyaudio.PyAudio.get_device_info_by_index(). If not provided, falls back to PyAudio.get_default_device().")
-    parser.add_argument('-r', '--rate', type=int, default=DEFAULT_SAMPLE_RATE,
-                        help=f"Input device sample rate. Default: {DEFAULT_SAMPLE_RATE}. Your device may require 44100.")
+    parser.add_argument(
+        '-w', '--savewav', help="Save .wav files of utterences to given directory"
+    )
+    parser.add_argument(
+        '-f', '--file', help="Read from .wav file instead of microphone"
+    )
+    parser.add_argument(
+        '-md', '--model-dir', help="Path to model directory that contains model, preproc, and config file."
+    )
+    parser.add_argument(
+        '-hu', '--hidden-units', type=int,  help="hidden unit size of the LSTM model"
+    )
+    parser.add_argument(
+        '-t', '--tag', type=str, default='', choices=['best', ''], help="tag if 'best' model is desired"
+    )
+    parser.add_argument(
+        '-mn', '--model-name', type=str, default='', help="name of model to override default in get_names method"
+    )
+    parser.add_argument(
+        '-d', '--device', type=int, default=None,
+        help="Device input index (Int) as listed by pyaudio.PyAudio.get_device_info_by_index(). If not provided, falls back to PyAudio.get_default_device()."
+    )
+    parser.add_argument(
+        '-r', '--rate', type=int, default=DEFAULT_SAMPLE_RATE,
+        help=f"Input device sample rate. Default: {DEFAULT_SAMPLE_RATE}. Your device may require 44100."
+    )
     # ctc decoder not currenlty used
     parser.add_argument('-bw', '--beam_width', type=int, default=BEAM_WIDTH,
                         help=f"Beam width used in the CTC decoder when building candidate transcriptions. Default: {BEAM_WIDTH}")
 
     ARGS = parser.parse_args()
-    if ARGS.savewav: os.makedirs(ARGS.savewav, exist_ok=True)
+    if ARGS.savewav: 
+        os.makedirs(ARGS.savewav, exist_ok=True)
     main(ARGS)
