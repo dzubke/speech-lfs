@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200924/ph7
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null
 data:
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/subsets/2020-09-08/cv-dev-dd_500_2020-09-08.json #lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
     dev_sets:

@@ -26,7 +26,7 @@ import yaml
 import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
-from speech.utils.io import read_pickle, write_pickle, load_from_trained, load_config
+from speech.utils.io import get_names, load_config, load_from_trained, read_pickle, write_pickle 
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
 from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
 from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
@@ -35,23 +35,35 @@ from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 BLANK_IDX = 0
 
 
-def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, is_rank_0, local_rank,
-                loss_name):
+def run_epoch(model, 
+              optimizer, 
+              train_ldr, 
+              logger, 
+              debug_mode:bool, 
+              tbX_writer, 
+              iter_count:int, 
+              avg_loss:float, 
+              is_rank_0:bool, 
+              local_rank:int, 
+              loss_name:str, 
+              chckpt_path:str):
     """
     Performs a forwards and backward pass through the model
     Args:
         iter_count - int: count of iterations
         is_rank_0 - bool: True if process rank is 0 in distributed trainig or if not using distributed training
+        chckpt_path (str): path for the model checkpoint
     """
-    print("in run_epoch")
     use_log = (logger is not None) and is_rank_0
     model_t = 0.0; data_t = 0.0
     end_t = time.time()
     tq = tqdm.tqdm(train_ldr) # if is_rank_0 else train_ldr
-    print("after tq instantiated")
     log_modulus = 100     # limits certain logging function to report less frequently
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0
+    # batch_counter is use to checkpoint the model after going through 50% of the dataset
+    batch_counter = 0
+    print("loader length", len(train_ldr))
 
     # model compatibility for using multiple gpu's 
     if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)): #, apex.parallel.DistributedDataParallel)): 
@@ -59,16 +71,22 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
     else: 
         model_module = model
 
-    print('before loop')
     print("tq type:", type(tq))
     #train_iter = iter(train_ldr)
-    print("after iterator assigned")
-    print(f"first batch: {next(iter(train_ldr))}")
-    print(f"first batch: {next(iter(train_ldr))}")
-    print(f"first batch: {next(iter(train_ldr))}")
+    #print("after iterator assigned")
+    #print(f"first batch: {next(iter(train_ldr))}")
+    #print(f"first batch: {next(iter(train_ldr))}")
+    #print(f"first batch: {next(iter(train_ldr))}")
     for batch in tq:
-        #if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
-        print("inside loop")
+        if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
+        #print("inside loop")
+        
+        ##############  Mid-epoch checkpoint ###############
+        if batch_counter == len(train_ldr) // 2:
+            torch.save(model_module.state_dict(), chckpt_path)
+        batch_counter += 1
+        ####################################################
+
         temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
 
         if use_log: 
@@ -251,7 +269,7 @@ def run(local_rank, config):
     if train_cfg['distributed']:
         #rank = train_cfg['rank'] * train_cfg['gpu_per_node'] + local_rank                       
         dist.init_process_group(                                   
-            backend='gloo',
+            backend='nccl',
             init_method='env://',
             world_size=train_cfg['world_size'],
             rank=train_cfg['rank']
@@ -361,6 +379,10 @@ def run(local_rank, config):
         model_module = model
         model.cuda() if use_cuda else model.cpu()
 
+    # define the model checkpoint path
+    chckpt_path, _  = get_names(config['save_path'])
+    base_path, ext = os.path.splitext(chckpt_path)
+    chckpt_path = base_path + "_ckpt" + ext
 
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")
@@ -386,7 +408,7 @@ def run(local_rank, config):
 
         try:
             run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, 
-                                    *run_state, is_rank_0, local_rank, loss_name)
+                                    *run_state, is_rank_0, local_rank, loss_name, chckpt_path)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
