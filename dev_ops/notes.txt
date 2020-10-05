@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200806/ph5/  --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200925/ph3/  --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -140,7 +140,4 @@ ffmpeg -y -i "$SRC_FILE" -ac 1 -ar 16000 -sample_fmt s16 -f wav "$DST_FILE"
 
 /home/dzubke/awni_speech/data/speak_train/constraint_test/test.tsv
 
-
-2020-09-24_ph7_large-model-no-aug_2P100_lib-ted-cv.
-
-2020-09-25_ph3_large-model-mid-aug_lib-ted-cv-spk.
+2020-09-25-09-28_ph3_large-model-mid-aug_lib-ted-cv-spk.
