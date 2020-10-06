@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200914/ph7/  --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200925/ph3/  --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -120,31 +120,24 @@ git config credential.helper 'cache --timeout 864000'
 # github password
 9!l2&YQCydRAkhr1f6%x
 
+
 0.4.1.post2
 
 {"text": ["ay", "w", "aa", "z", "dh", "ah", "ow", "n", "l", "iy", "p", "ey", "sh", "ah", "n", "t", "ih", "n", "dh", "ah", "w", "ey", "t", "ih", "ng", "r", "uw", "m"], "duration": 1.344, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/clips/common_voice_en_17932046.wv"}
 
 {"text": ["s", "ow", "dh", "ey", "k", "ae", "n", "k", "ah", "n", "t", "r", "ow", "l", "dh", "eh", "m", "f", "ao", "r", "dh", "eh", "r", "ow", "n", "p", "er", "s", "ih", "n", "ih", "l", "g", "ey", "n", "w", "iy", "eh", "l", "eh", "l", "k", "ao", "l", "ih", "t", "ih", "n", "s", "eh", "p", "sh", "ah", "n", "s", "ow"], "duration": 1.33, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/legacy/train/converted/wav/SteveRamirez_2013X_94.wv"}
 
-
-from google.cloud import storage 
-
-from google.cloud.storage.blob import Blob      
-
-client = storage.Client() 
-
-blob = Blob.from_string(path)
-
-with NamedTemporaryFile(suffix=".wav") as tmp_wav_file:
-    wav_filename = tmp_wave_file.name
-    with open(wav_filename, "wb") as file_obj:
-        blob.download_to_file(file_obj)
-
-
 nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-rank 0 &> ddp-rank2-localrank0.out &
-
-nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-rank 0 &> 2020-09-10_ph1-3_ddp_mid-model-no-aug_lib-ted-cv_r0lr0.out &
-
 
 echo $GOOGLE_APPLICATION_CREDENTIALS 
 
+ffmpeg -y -i "$SRC_FILE" -ac 1 -ar 16000 -sample_fmt s16 -f wav "$DST_FILE"
+
+
+2020-08-26-09-25_ph2_075-aug-prob-w-feat-norm_lib-ted-cv.
+
+2020-09-23_ph1_mid-model-mid-aug_accum-grad_lib-ted-cv.
+
+/home/dzubke/awni_speech/data/speak_train/constraint_test/test.tsv
+
+2020-09-25-09-28_ph3_large-model-mid-aug_lib-ted-cv-spk.

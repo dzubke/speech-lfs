@@ -123,7 +123,6 @@ cat train-clean-460.json train-other-500.json > ./train-other-960.json
 6. HOW TO INSTALL WIKIPEDIA DATASET SCRIPT
 ######
 
-
 # install mono
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 sudo apt install apt-transport-https ca-certificates
@@ -169,6 +168,12 @@ Version: 5:19.03.12~3-0~ubuntu-xenial
 # installed via pip 
 pip install git-filter-repo
 
+# update git, if necesssary
+sudo apt-get install -y python-software-properties software-properties-common
+sudo add-apt-repository ppa:git-core/ppa -y
+sudo apt-get update
+sudo apt-get install -y git
+
 # more info here: https://github.com/newren/git-filter-repo/blob/main/INSTALL.md
 
 
@@ -185,6 +190,9 @@ watch -d -n 0.5 nvidia-smi
 #setting default zone
 gcloud compute project-info add-metadata --metadata google-compute-default-region=us-central1,google-compute-default-zone=us-central1-c
 
+# how to change git lfs file to pointer
+git lfs pointer --file=filename > filename.pt
+mv filename.pt filename 
 
 
 

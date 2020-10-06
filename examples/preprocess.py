@@ -612,25 +612,30 @@ class SpeakTrainPreprocessor(DataPreprocessor):
             self.write_json_mp(json_path)
 
     def collect_audio_transcripts(self, label_path:str):
-
+        
         audio_dir = os.path.join(
             os.path.split(label_path)[0], "audio"
         )
         audio_ext = "m4a"
+        speaker_counter = dict()
 
         with open(label_path, 'r') as tsv_file:
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
-            header = next(tsv_reader)
             # header: id, text, lessonId, lineId, uid, date
-            for row in tqdm.tqdm(tsv_reader):
+            header = next(tsv_reader)
+            
+            for row in tqdm.tqdm(tsv_reader):                
                 audio_path = os.path.join(audio_dir, row[0] + os.extsep + audio_ext)
+                
                 # skip the file if it is in one of the speak test sets
                 if data_helpers.skip_file(audio_path, "speaktrain"):
                     continue
-                # no longer need to check if path exists when using trimmed data.tsv
-                # using this call makes the script very slow as it is IO (on disk) limited
+                
+                # no longer need to check if path exists when using trimmed_data.tsv
+                # the call below makes the script very slow as it is IO (disk) limited
                 #elif not os.path.exists(audio_path):
                 #    continue
+                
                 else:
                     self.audio_trans.append((audio_path, row[1]))
 
@@ -750,6 +755,7 @@ if __name__ == "__main__":
                                           config['lexicon_path'],
                                           config['force_convert'], 
                                           config['min_duration'], 
-                                          config['max_duration'])
+                                          config['max_duration'],
+                                          config['custom_args'])
     data_preprocessor.process_datasets()
 
