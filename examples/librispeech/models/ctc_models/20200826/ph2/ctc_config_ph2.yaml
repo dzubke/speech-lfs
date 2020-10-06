@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-08-26-09-10_ph2_075-aug-prob-w-feat-norm_lib-ted-cv.log
+    log_file: logs/2020-08-26-09-23_ph2_075-aug-prob-w-feat-norm_lib-ted-cv.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -21,31 +21,31 @@ preproc:
     use_feature_normalize: True
     augment_from_normal: True
     tempo_gain_pitch_perturb: True
-    tempo_gain_pitch_prob: 0.75
+    tempo_gain_pitch_prob: 1.0
     tempo_range: [0.80, 1.20]
     gain_range: [-5, 5]
     pitch_range: [-250, 250]
     synthetic_gaussian_noise: True
-    gauss_noise_prob: 0.75
+    gauss_noise_prob: 1.0
     gauss_snr_db_range: [15, 50]
     background_noise: True
     background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
-    background_noise_prob: 0.75
+    background_noise_prob: 1.0
     background_noise_range: [0.0, 0.5]
     spec_augment: True
-    spec_augment_prob: 0.75
+    spec_augment_prob: 1.0
     spec_augment_policy: 
         0: {W: 20, F: 30, m_F: 1, T: 18, m_T: 1}
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2} 
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
-    batch_size: 8
-    run_state: [2305506, 78.6209746]
+    batch_size: 16
+    run_state: [2724842, 65.8475]
     best_so_far: 0.33813
-    start_epoch: 22
+    start_epoch: 30
     epochs: 100
-    learning_rate: 0.0005
-    momentum: 0.9
+    learning_rate: 0.0002
+    momentum: 0.5
     dampening: 0.0
     sched_gamma: 1.0 
     sched_step: 1
@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path: ./examples/librispeech/models/ctc_models/20200826/ph2/best_model_state_dict.pth
+    trained_path: ./examples/librispeech/models/ctc_models/20200826/ph2/model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
