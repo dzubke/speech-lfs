@@ -755,6 +755,7 @@ if __name__ == "__main__":
                                           config['lexicon_path'],
                                           config['force_convert'], 
                                           config['min_duration'], 
-                                          config['max_duration'])
+                                          config['max_duration'],
+                                          config['custom_args'])
     data_preprocessor.process_datasets()
 
