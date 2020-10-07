@@ -54,7 +54,7 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
         
         ##############  Mid-epoch checkpoint ###############
-        if batch_counter == len(train_ldr) // 2:
+        if batch_counter == len(train_ldr) // 4 and batch_counter != 0:
             torch.save(model.state_dict(), chckpt_path)
         batch_counter += 1
         ####################################################
@@ -263,7 +263,7 @@ def run(config):
     print(f"config: {config}")
 
     # define the model checkpoint path
-    chckpt_path, _  = get_names(config['save_path'])
+    chckpt_path, _  = get_names(config['save_path'], tag='')
     base_path, ext = os.path.splitext(chckpt_path)
     chckpt_path = base_path + "_ckpt" + ext
 
