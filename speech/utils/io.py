@@ -105,11 +105,14 @@ def load_from_trained(model, model_cfg):
         model (torch model)
         model_cfg (dict)
     """
+    print("load_from_trained: mark 1")    
     trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
+    print("load_from_trained: mark 2")    
     if isinstance(trained_model, dict):
         trained_state_dict = trained_model
     else:
         trained_state_dict = trained_model.state_dict()
+    print("load_from_trained: mark 3")    
     trained_state_dict = filter_state_dict(trained_state_dict, remove_layers=model_cfg["remove_layers"])
     model_state_dict = model.state_dict()
     model_state_dict.update(trained_state_dict)

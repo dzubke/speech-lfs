@@ -91,7 +91,7 @@ class Preprocessor():
 
 
         # Make char map
-        chars = list(set(label for datum in data for label in datum['text']))
+        chars = sorted(list(set(label for datum in data for label in datum['text'])))
         if start_and_end:
             # START must be last so it can easily be
             # excluded in the output classes of a model.
@@ -496,7 +496,10 @@ def make_ddp_loader(dataset_json,
                 pin_memory=False)
     return loader
     
-def collate_fn(batch):
+def collate_fn(batch):  
+    """
+    this is an external function so that the loader can be serialized during multi-processing
+    """
     return zip(*batch)
 
 
