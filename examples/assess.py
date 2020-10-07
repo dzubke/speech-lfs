@@ -5,8 +5,13 @@ license: MIT
 """
 # standard libary
 import argparse
+import csv
 import os
+import re
 # third party libraries
+import matplotlib.pyplot as plt
+import matplotlib.ticker as tick
+import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
@@ -74,6 +79,91 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
     return in_df, drop_row_count
 
 
+def assess_speak_train(dataset_path:str):
+
+    def _update_key(in_dict, key): 
+        in_dict[key] = in_dict.get(key, 0) + 1
+
+
+    def _plot_count(ax, count_dict:dict, label:str):
+        ax.plot(range(len(count_dict.values())), sorted(list(count_dict.values()), reverse=True))
+        ax.set_title(label)
+        ax.set_xlabel(f"unique {label}")
+        ax.set_ylabel(f"utterance per {label}")
+        ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+        ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+
+
+    def reformat_large_tick_values(tick_val, pos):
+        """
+        Turns large tick values (in the billions, millions and thousands) such as 4500 into 4.5K and 
+        also appropriately turns 4000 into 4K (no zero after the decimal).
+        taken from: https://dfrieds.com/data-visualizations/how-format-large-tick-values.html
+        """
+        if tick_val >= 1000000000:
+            val = round(tick_val/1000000000, 1)
+            new_tick_format = '{:}B'.format(val)
+        elif tick_val >= 1000000:
+            val = round(tick_val/1000000, 1)
+            new_tick_format = '{:}M'.format(val)
+        elif tick_val >= 1000:
+            val = round(tick_val/1000, 1)
+            new_tick_format = '{:}K'.format(val)
+        elif tick_val < 1000:
+            new_tick_format = round(tick_val, 1)
+        else:
+            new_tick_format = tick_val
+        
+        return str(new_tick_format)
+
+
+    def _stats(count_dict:dict):
+        values = list(count_dict.values())
+        mean = round(np.mean(values), 2)
+        std = round(np.std(values), 2)
+        max_val = round(max(values), 2)
+        min_val = round(min(values), 2)
+        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}")
+    
+
+    # count dictionaries for the lesssons, lines, and users (speakers)
+    lesson_dict = {} 
+    line_dict = {} 
+    user_dict ={} 
+    
+    # create count_dicts for each
+    with open(dataset_path, 'r') as tsv_file: 
+        tsv_reader = csv.reader(tsv_file, delimiter='\t')
+        header = next(tsv_reader) 
+        print(header) 
+        for row in tsv_reader: 
+            lesson_id, line_id, user_id = row[2], row[3], row[4] 
+            _update_key(lesson_dict, lesson_id) 
+            _update_key(line_dict, line_id) 
+            _update_key(user_dict, user_id) 
+
+    # create the plots
+    fig, axs = plt.subplots(1,3)
+    fig.suptitle('Count')
+    
+    # put the labels and count_dicts in list of the for-loop
+    count_dicts = [lesson_dict, line_dict, user_dict]
+    labels = ["lessons", "lines", "speakers"]   
+
+    # plot and calculate stats of the count_dicts
+    for ax, c_dict, label in zip(axs, count_dicts, labels):
+        _plot_count(ax, c_dict, label)
+        print(f"{label} stats")
+        _stats(c_dict)
+        print()
+    plt.show()
+
+    print("unique lessons")
+    print(sorted(list(lesson_dict.keys()))[:200])
+    print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+
+
+
 class DurationAssessor():
 
     def __init__(self):
@@ -130,11 +220,9 @@ class TatoebaAssessor():
         # audio_eng_skill_df.drop_duplicates(subset='id').shape = (498959, 9)
         # audio_eng_sent_df.drop_duplicates(subset='id').shape = (498959, 6)
         # after drop_duplicates, audio_eng_skill_df[audio_eng_skill_df['user']=='\\N'].shape = (2, 9)
-    
-
-        """
+        r'''
         # skill may not be super helpful in filtering out sentences as nearly all sentences are by skill=5 users
-        In [89]: audio_eng_skill_df['skill'].value_counts(sort=True, ascending=False)                                                                                          
+        In [89]: audio_eng_skill_df['skill'].value_counts(sort=True, ascending=False) 
         Out[89]: 
         5     497693
         3         12
@@ -143,7 +231,7 @@ class TatoebaAssessor():
         Name: skill, dtype: int64
 
         # not all users are skill 5 in English. It may just be that skill=5 users are the ones recording Eng sentences
-        In [90]: eng_skill_df['skill'].value_counts(sort=True, ascending=False)                                                                                                
+        In [90]: eng_skill_df['skill'].value_counts(sort=True, ascending=False) 
         Out[90]: 
         5     4568
         4     2057
@@ -154,7 +242,7 @@ class TatoebaAssessor():
         0       43
 
         # like with the Tatoeba subset, CK is 99% of the sentences
-        In [91]: audio_eng_skill_df['user'].value_counts(sort=True, ascending=False)                                                                                           
+        In [91]: audio_eng_skill_df['user'].value_counts(sort=True, ascending=False)   
         Out[91]: 
         CK              494779
         papabear           877
@@ -186,22 +274,34 @@ class TatoebaAssessor():
 
 
         # review is not going to helpful because of the total reviews, 99% of them as positive
-        In [97]: sent_review_df['review'].value_counts(sort=True, ascending=False)                                                                                             
+        In [97]: sent_review_df['review'].value_counts(sort=True, ascending=False) 
         Out[97]: 
         1    1067165
         0       7180
         -1       2949
-        """
+        '''
 
     
 
-if __name__=="__main__":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="filters the validated.tsv file based on accent and sentence occurance")
-    parser.add_argument("--validated-path", type=str,
-        help="path to validated.tsv file to parse.")
-    parser.add_argument("--max-occurance", type=int,
-        help="max number of times a sentence can occur in output")
+        description="filters the validated.tsv file based on accent and sentence occurance"
+    )
+    parser.add_argument(
+        "--dataset-name", type=str, help="name of dataset to asses"
+    )
+    parser.add_argument(
+        "--dataset-path", type=str, help="path to data.tsv file to parse."
+    )
+    parser.add_argument(
+        "--max-occurance", type=int, default=20, 
+        help="max number of times a sentence can occur in output"
+    )
     args = parser.parse_args()
 
-    assess_commonvoice(args.validated_path, args.max_occurance)
+    if args.dataset_name.lower() == "commonvoice":
+        assess_commonvoice(args.dataset_path, args.max_occurance)
+    elif args.dataset_name.lower() == "speaktrain":
+        assess_speak_train(args.dataset_path)
+    else:
+        raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")

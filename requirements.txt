@@ -24,3 +24,6 @@ librosa==0.7.2
 scipy==1.4.1
 numba==0.48.0
 tensorboardX==2.1
+future==0.18.2
+cython==0.29.21
+firebase-admin

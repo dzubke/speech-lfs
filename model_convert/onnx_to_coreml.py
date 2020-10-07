@@ -41,9 +41,13 @@ def onnx_to_coreml(model_name:str, half_precision:bool, quarter_precision:bool, 
                             minimum_ios_deployment_target = '13')
 
     if half_precision:
-        coreml_model = quantization_utils.quantize_weights(coreml_model, nbits=16) 
+        coreml_model = quantization_utils.quantize_weights(coreml_model, nbits=16)
+        print("\n~~~~ Converted CoreML Model to half precision ~~~~\n")
     elif quarter_precision:
         coreml_model = quantization_utils.quantize_weights(coreml_model, nbits=8)
+        print("\n~~~~ Converted CoreML Model to quarter precision ~~~~\n")
+    else:
+        print("\n~~~~ CoreML Model kept at single precision ~~~~\n")
 
     if return_or_save == 'save':
         coreml_model.save(coreml_path)
