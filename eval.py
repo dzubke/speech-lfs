@@ -11,7 +11,8 @@ import tqdm
 # project libraries
 import speech
 import speech.loader as loader
-from speech.utils.io import read_data_json
+from speech.models.ctc_model_train import CTC_train
+from speech.utils.io import get_names, load_config, load_state_dict, read_data_json, read_pickle
 
 def eval_loop(model, ldr):
     all_preds = []; all_labels = []; all_preds_dist=[]
@@ -28,9 +29,15 @@ def eval_loop(model, ldr):
     return list(zip(all_labels, all_preds, all_confidence)) #, all_preds_dist
 
 
-def run(model_path, dataset_json, batch_size=8, tag="best", 
-    add_filename=False, add_maxdecode=False, formatted=False, 
-    config_path = None, out_file=None):
+def run(model_path, 
+        dataset_json, 
+        batch_size=8, 
+        tag="best", 
+        add_filename=False, 
+        add_maxdecode:bool=False, 
+        formatted=False, 
+        config_path = None, 
+        out_file=None):
     """
     calculates the  distance between the predictions from
     the model in model_path and the labels in dataset_json
@@ -38,28 +45,44 @@ def run(model_path, dataset_json, batch_size=8, tag="best",
     Arguments:
         tag - str: if best,  the "best_model" is used. if not, "model" is used. 
         add_filename - bool: if true, the filename is added to the output json
-        add_maxdecode - bool: if true, predictions from the max decoder will be added
     """
 
-    use_cuda = torch.cuda.is_available()
-    model, preproc = speech.load(model_path, tag=tag)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model_path, preproc_path, config_path = get_names(model_path, tag=tag, get_config=True)
+    
+    # load and update preproc
+    preproc = read_pickle(preproc_path)
     preproc.update()
 
-    if config_path is not None:
-        with open(config_path, 'r') as fid:
-            config = json.load(fid)
-        new_preproc = loader.Preprocessor(dataset_json, config["preproc"], start_and_end=config["data"]["start_and_end"])
-        new_preproc.mean, new_preproc.std = preproc.mean, preproc.std
-        new_preproc.int_to_char, new_preproc.char_to_int = preproc.int_to_char, preproc.char_to_int
-        print(f"preproc attr: {preproc}")
-        print(f"preproc sum of mean, std: {preproc.mean.shape},{preproc.std.shape}")
-        print(f"new_preproc sum of mean, std: {new_preproc.mean.sum()},{new_preproc.std.sum()}")
-        print(f"new preproc attr: {new_preproc}")
-        preproc = new_preproc
+    # load and assign config
+    config = load_config(config_path)
+    model_cfg = config['model']
+
+    # create model
+    model = CTC_train(preproc.input_dim,
+                        preproc.vocab_size,
+                        model_cfg)
+
+    state_dict = load_state_dict(model_path, device=device)
+    model.load_state_dict(state_dict)
+
+#    if config_path is not None:
+#        with open(config_path, 'r') as fid:
+#            config = json.load(fid)
+#        new_preproc = loader.Preprocessor(dataset_json, config["preproc"], start_and_end=config["data"]["start_and_end"])
+#        new_preproc.mean, new_preproc.std = preproc.mean, preproc.std
+#        new_preproc.int_to_char, new_preproc.char_to_int = preproc.int_to_char, preproc.char_to_int
+#        print(f"preproc attr: {preproc}")
+#        print(f"preproc sum of mean, std: {preproc.mean.shape},{preproc.std.shape}")
+#        print(f"new_preproc sum of mean, std: {new_preproc.mean.sum()},{new_preproc.std.sum()}")
+#        print(f"new preproc attr: {new_preproc}")
+#        preproc = new_preproc
     
     ldr =  loader.make_loader(dataset_json,
             preproc, batch_size)
-    model.cuda() if use_cuda else model.cpu()
+    
+    model.to(device)
     model.set_eval()
     print(f"preproc train_status before set_eval: {preproc.train_status}")
     preproc.set_eval()
@@ -93,11 +116,14 @@ def compile_save(results, dataset_json, out_file, formatted=False, add_filename=
         
 
 def format_save(results, dataset_json, out_file):
-    out_file = create_filename(out_file, "compare", "txt") 
+    out_file = create_filename(out_file, "compare", "txt")
+    out_file = os.path.join("predictions", out_file)
     print(f"file saved to: {out_file}")
     with open(out_file, 'w') as fid:
         write_list = list()
         for label, pred, conf in results:
+            lower_list = lambda x: list(map(str.lower, x))
+            label, pred = lower_list(label), lower_list(pred)
             filepath, order = match_filename(label, dataset_json, return_order=True)
             filename = os.path.splitext(os.path.split(filepath)[1])[0]
             PER, (dist, length) = speech.compute_cer([(label,pred)], verbose=False, dist_len=True)
@@ -107,12 +133,16 @@ def format_save(results, dataset_json, out_file):
             
         for write_dict in write_list: 
             fid.write(f"{write_dict['filename']}\n") 
-            fid.write(f"label: {' '.join(write_dict['label']).upper()}\n") 
-            fid.write(f"preds: {' '.join(write_dict['preds']).upper()}\n")
+            fid.write(f"label: {' '.join(write_dict['label'])}\n") 
+            fid.write(f"preds: {' '.join(write_dict['preds'])}\n")
+            
             PER, dist = write_dict['metrics']['PER'], write_dict['metrics']['dist'] 
             length, conf = write_dict['metrics']['len'], write_dict['metrics']['confidence']
             fid.write(f"metrics: PER: {PER}, dist: {dist}, len: {length}, conf: {conf}\n")
-            fid.write("\n") 
+            fid.write("\n")
+
+        for write_dict in write_list:
+            fid.write(f"{write_dict['filename']}, {write_dict['metrics']['PER']}\n")
 
 def json_save(results, dataset_json, out_file, add_filename):
     output_results = []
@@ -175,12 +205,12 @@ if __name__ == "__main__":
         help="A path to a stored model.")
     parser.add_argument("dataset",
         help="A json file with the dataset to evaluate.")
-    parser.add_argument("--last", action="store_true",
+    parser.add_argument("--batch-size", type=int, default=1,
+        help="Batch size during evaluation")
+    parser.add_argument("--last", action="store_true", default=False,
         help="Last saved model instead of best on dev set.")
     parser.add_argument("--save",
         help="Optional file to save predicted results.")
-    parser.add_argument("--maxdecode", action="store_true", default=False,
-        help="Include the filename for each sample in the json output.")
     parser.add_argument("--filename", action="store_true", default=False,
         help="Include the filename for each sample in the json output.")
     parser.add_argument("--formatted", action="store_true", default=False,
@@ -189,6 +219,11 @@ if __name__ == "__main__":
         help="Replace the preproc from model path a  preproc copy using the config file.")
     args = parser.parse_args()
 
-    run(args.model, args.dataset, tag=None if args.last else "best", 
-        add_filename=args.filename, add_maxdecode=args.maxdecode, 
-        formatted=args.formatted, config_path=args.config_path, out_file=args.save)
+    run(args.model, 
+        args.dataset, 
+        tag=None if args.last else "best",
+        batch_size = args.batch_size, 
+        add_filename=args.filename,  
+        formatted=args.formatted, 
+        config_path=args.config_path, 
+        out_file=args.save)

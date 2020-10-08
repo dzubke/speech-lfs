@@ -88,7 +88,7 @@ class Preprocessor():
 
 
         # Make char map
-        chars = list(set(label for datum in data for label in datum['text']))
+        chars = sorted(list(set(label for datum in data for label in datum['text'])))
         if start_and_end:
             # START must be last so it can easily be
             # excluded in the output classes of a model.
@@ -98,7 +98,22 @@ class Preprocessor():
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
     
     
-    def preprocess(self, wave_file, text):
+    def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
+        """
+        Arguments
+        ---------
+        wave_file: str
+            path to wav file
+        text: List[str]
+            a list of labels 
+        
+        Returns
+        --------
+        feature_data: numpy array
+            a feature array augmented and processed by a log-spec or mfcc transformation
+        targets: List[int]
+            a list of the integer-encoded labels
+        """
         if self.use_log: self.logger.info(f"preproc: ======= Entering preprocess =====")
         if self.use_log: self.logger.info(f"preproc: wave_file: {wave_file}")
         if self.use_log: self.logger.info(f"preproc: text: {text}") 
@@ -384,6 +399,7 @@ class BatchRandomSampler(tud.sampler.Sampler):
     def __len__(self):
         return len(self.data_source)
 
+
 def make_loader(dataset_json, preproc,
                 batch_size, num_workers=4):
     dataset = AudioDataset(dataset_json, preproc,
@@ -475,10 +491,18 @@ def log_spectrogram_from_data(audio: np.ndarray, samp_rate:int, window_size=32, 
             audio = audio.mean(axis=1, dtype='float32')  # multiple channels, average
     return log_spectrogram(audio, samp_rate, window_size, step_size, plot=plot)
 
-def log_spectrogram(audio, sample_rate, window_size=20,
-                 step_size=10, eps=1e-10, plot=False):
+def log_spectrogram(audio, 
+                    sample_rate, 
+                    window_size=20,
+                    step_size=10, 
+                    eps=1e-10, 
+                    plot=False):
+    """
+    Calculates the log spectrogram of an input numpy array.
+    The step size is converted into the overlap noverlap
+    """
     nperseg = int(window_size * sample_rate / 1e3)
-    noverlap = int(step_size * sample_rate / 1e3)
+    noverlap = int( (window_size - step_size) * sample_rate / 1e3)
     f, t, spec = scipy.signal.spectrogram(audio,
                     fs=sample_rate,
                     window='hann',
