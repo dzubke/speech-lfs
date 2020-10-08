@@ -1,5 +1,6 @@
 # standard libraries
 from collections import OrderedDict
+import glob
 import json 
 import os
 import pickle
@@ -7,16 +8,30 @@ import yaml
 # third-party libraries
 import torch
 # project libraries
-from speech.models.ctc_model_train import CTC_train
 
-MODEL = "model_state_dict.pth"
-PREPROC = "preproc.pyc"
 
-def get_names(path, tag):
+def get_names(path:str, tag:str, get_config:bool=False, model_name:str=''):
+    MODEL = "model_state_dict.pth"
+    PREPROC = "preproc.pyc"
+    
     tag = tag + "_" if tag else ""
-    model = os.path.join(path, tag + MODEL)
-    preproc = os.path.join(path, tag + PREPROC)
-    return model, preproc
+    # if model_name is non-empty, reassign the global variable MODEL
+    if model_name:      
+        MODEL = model_name
+    model_path = os.path.join(path, tag + MODEL)
+    preproc_path = os.path.join(path, tag + PREPROC)
+
+    if get_config:
+        config_path = glob.glob(os.path.join(path, "ctc_config*[.yaml, .json]"))
+        assert len(config_path) == 1, \
+            f"no config or multiple config files found in directory {path}"
+        output = (model_path, preproc_path, config_path[0])
+    
+    else:
+        output = (model_path, preproc_path)
+
+    return output
+
 
 def save(model, preproc, path, tag=""):
     model_n, preproc_n = get_names(path, tag)
@@ -24,29 +39,58 @@ def save(model, preproc, path, tag=""):
     with open(preproc_n, 'wb') as fid:
         pickle.dump(preproc, fid)
 
+
 def load(path, tag=""):
-    raise NotImplementedError
     model_n, preproc_n = get_names(path, tag)
     model = torch.load(model_n, map_location=torch.device('cpu'))
     with open(preproc_n, 'rb') as fid:
         preproc = pickle.load(fid)
     return model, preproc
 
+
 def load_pretrained(model_path):
     model = torch.load(model_path, map_location=torch.device('cpu'))
     return model
+
+
+def load_state_dict(model_path:str, device:torch.device)->OrderedDict:
+    """
+    returns the state dict of the model object or state dict specified
+    in `model_path`
+    Args:
+        model_path: path to model or state_dict object
+        device: torch device
+    Returns:
+        state_dict - OrderedDict: state dict of model
+    """
+
+    model_or_state_dict = torch.load(model_path, map_location=device)
+    
+    if isinstance(model_or_state_dict, OrderedDict):
+        state_dict = model_or_state_dict
+    elif isinstance(model_or_state_dict, torch.nn.Module):
+        model = model_or_state_dict
+        state_dict = model.state_dict()
+    else:
+        raise ValueError(f"model_path {model_path} does not point to model or state_dict object")
+    
+    return state_dict
+
 
 def save_dict(dct, path):
     with open(path, 'wb') as fid:
         pickle.dump(dct, fid)
 
+
 def export_state_dict(model_in_path, params_out_path):
     model = torch.load(model_in_path, map_location=torch.device('cpu'))
     pythtorch.save(model.state_dict(), params_out_path)
 
+
 def read_data_json(data_path):
     with open(data_path) as fid:
         return [json.loads(l) for l in fid]
+
 
 def write_data_json(dataset:list, write_path:str):
     """
@@ -57,16 +101,19 @@ def write_data_json(dataset:list, write_path:str):
             json.dump(example, fid)
             fid.write("\n")
 
+
 def read_pickle(pickle_path:str):
-    assert pickle_path != '', 'pickle_path is empty'
+    assert os.path.exists(pickle_path), f"path {pickle_path} doesn't exist"
     with open(pickle_path, 'rb') as fid:
         pickle_object = pickle.load(fid)
     return pickle_object
+
 
 def write_pickle(pickle_path:str, object_to_pickle):
     assert pickle_path != '', 'pickle_path is empty'
     with open(pickle_path, 'wb') as fid:
         pickle.dump(object_to_pickle, fid) 
+
 
 def load_config(config_path:str)->dict:
     """
@@ -84,6 +131,7 @@ def load_config(config_path:str)->dict:
         raise ValueError(f"config file extension {config_ext} not accepted")
     
     return config
+
 
 def load_from_trained(model, model_cfg):
     """
@@ -119,4 +167,3 @@ def filter_state_dict(state_dict, remove_layers=[]):
         if key not in remove_layers}
         )
     return state_dict
-
