@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-09-23_ph1_mid-model-mid-aug_accum-grad_lib-ted-cv.log
+    log_file: logs/2020-09-23-09-24_ph1_mid-model-mid-aug_accum-grad_lib-ted-cv.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer: 
     batch_size: 16
-    run_state: [2571000, 57.71]
+    run_state: [2623417, 64.051]
     best_so_far: 0.3496
-    start_epoch: 29
+    start_epoch: 30
     epochs: 100
     learning_rate: 0.0005
     momentum: 0.5
@@ -54,7 +54,7 @@ model:
     multi_gpu: False
     dropout: 0.4
     load_trained: True
-    trained_path: ./examples/librispeech/models/ctc_models/20200806/ph5/20200916/best_model_state_dict.pth
+    trained_path: ./examples/librispeech/models/ctc_models/20200923/ph1/model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:

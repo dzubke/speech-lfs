@@ -84,6 +84,10 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
             grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200)
             optimizer.step()
             optimizer.zero_grad()
+            ## moved to prevent grad_norm undefined error
+            avg_grad_norm = exp_w * avg_grad_norm + (1 - exp_w) * grad_norm
+            tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
+            
         if use_log: logger.info(f"train: Optimizer step taken")
 
         prev_end_t = end_t
@@ -97,13 +101,11 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
             avg_grad_norm = grad_norm
         else: 
             avg_loss = exp_w * avg_loss + (1 - exp_w) * loss
-            avg_grad_norm = exp_w * avg_grad_norm + (1 - exp_w) * grad_norm
         if use_log: logger.info(f"train: Avg loss: {avg_loss}")
         tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
         tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-        tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
         tq.set_postfix(iter=iter_count, loss=loss, 
-                avg_loss=avg_loss, grad_norm=grad_norm,
+                avg_loss=avg_loss,
                 model_time=model_t, data_time=data_t)
         
         if use_log: logger.info(f'train: loss is inf: {loss == float("inf")}')
