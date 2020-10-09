@@ -31,7 +31,7 @@ preproc:
     background_noise: false
     background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
     background_noise_prob: 0.5
-    background_noise_range: [0.0, 0.4]
+    background_noise_range: [0.0, 0.5]
     spec_augment: false
     spec_augment_prob: 0.5
     spec_augment_policy: 
@@ -42,7 +42,7 @@ optimizer:
     batch_size: 8
     run_state: [210000, 95.09]
     best_so_far: 0.4131
-    start_epoch: 2
+    start_epoch: 0
     epochs: 100
     learning_rate: 0.001
     momentum: 0.9 

@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-2M-2020-10-06_dd.json #LibriSpeech/train-clean-100_dd.json  #lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json #subsets/2020-09-08/cv-dev-dd_500_2020-09-08.json
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/train-clean-100_dd.json
     dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         #cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/subsets/2020-09-08/cv-dev-dd_500_2020-09-08.json
@@ -20,30 +20,30 @@ preproc:
     step_size: 16
     use_feature_normalize: True
     augment_from_normal: True
-    tempo_gain_pitch_perturb: False
-    tempo_gain_pitch_prob: 0.75
+    tempo_gain_pitch_perturb: True
+    tempo_gain_pitch_prob: 0.5
     tempo_range: [0.80, 1.20]
     gain_range: [-5, 5]
     pitch_range: [-250, 250]
-    synthetic_gaussian_noise: False
-    gauss_noise_prob: 0.75
+    synthetic_gaussian_noise: True
+    gauss_noise_prob: 0.5
     gauss_snr_db_range: [15, 50]
-    background_noise: False
+    background_noise: True
     background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
-    background_noise_prob: 0.75
+    background_noise_prob: 0.5
     background_noise_range: [0.0, 0.5]
-    spec_augment: False
-    spec_augment_prob: 0.75
+    spec_augment: True
+    spec_augment_prob: 0.5
     spec_augment_policy:
         0: {W: 20, F: 30, m_F: 1, T: 18, m_T: 1}
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2}
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
-    batch_size: 10
+    batch_size: 8
     run_state: [2411182, 56.613]
     best_so_far: 999
-    start_epoch: 23
-    epochs: 100
+    start_epoch: 0
+    epochs: 1
     learning_rate: 0.0005
     momentum: 0.5
     dampening: 0.0
