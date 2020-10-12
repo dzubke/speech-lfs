@@ -12,6 +12,7 @@ display_help(){
             -mp or --model-path:  is the path to the model directory
             -mn or --model-name: is the model name
             -nf or --num-frames: is the number of frames
+            -hs or --hidden-size: size of RNN hidden state
             --quarter-precision: for quarter precision
             --half-precision:    for half precision
             --best: to use the best_model in directory
@@ -37,6 +38,11 @@ do
         ;;
         -nf|--num-frames)
         NUM_FRAMES="$VALUE"
+        shift # past argument
+        shift # past value
+        ;;
+        -hs|--hidden-size)
+        HIDDEN_SIZE="$VALUE"
         shift # past argument
         shift # past value
         ;;
@@ -83,11 +89,12 @@ convert_model(){
     
     MODEL_NAME=$1
     NUM_FRAMES=$2
-    HALF_PRECISION=$3
-    QUARTER_PRECISION=$4
+    HIDDEN_SIZE=$3
+    HALF_PRECISION=$4
+    QUARTER_PRECISION=$5
 
     sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
-    python torch_to_onnx.py --model-name $MODEL_NAME --num-frames $NUM_FRAMES --use-state-dict 
+    python torch_to_onnx.py --model-name "$MODEL_NAME" --num-frames $NUM_FRAMES --hidden-size $HIDDEN_SIZE --use-state-dict 
     python onnx_to_coreml.py $MODEL_NAME $HALF_PRECISION $QUARTER_PRECISION
     python validation.py $MODEL_NAME --num-frames $NUM_FRAMES
     sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
@@ -114,7 +121,7 @@ trap cleanup SIGINT
 
 copy_files $MODEL_PATH $MODEL_NAME $BEST_TAG
 
-convert_model $MODEL_NAME $NUM_FRAMES $HALF_PRECISION $QUARTER_PRECISION
+convert_model $MODEL_NAME $NUM_FRAMES $HIDDEN_SIZE $HALF_PRECISION $QUARTER_PRECISION
 
 zip_files $MODEL_NAME
 
