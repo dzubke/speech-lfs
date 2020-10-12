@@ -57,15 +57,17 @@ def run_epoch(model,
         chkpt_per_epoch (int): # checkpoints for each epoch (including at the end of the epoch) that will be saved
     """
     use_log = (logger is not None) and is_rank_0
-    model_t = 0.0; data_t = 0.0
+    model_t, data_t = 0.0, 0.0
     end_t = time.time()
-    tq = tqdm.tqdm(train_ldr) # if is_rank_0 else train_ldr
+    tq = tqdm.tqdm(train_ldr)  if is_rank_0 else train_ldr
     log_modulus = 100     # limits certain logging function to report less frequently
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0
     # batch_counter is use to checkpoint the model after going through 50% of the dataset
     batch_counter = 0
-    print("loader length", len(train_ldr))
+    device = torch.device("cuda:" + str(local_rank))
+    print(f"rank {local_rank}: device: {device}")
+    print(f"rank {local_rank}: loader length", len(train_ldr))
 
     # model compatibility for using multiple gpu's 
     if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)): #, apex.parallel.DistributedDataParallel)): 
@@ -73,15 +75,15 @@ def run_epoch(model,
     else: 
         model_module = model
 
-    print("tq type:", type(tq))
+    print(f"rank {local_rank}:tq type:", type(tq))
     #train_iter = iter(train_ldr)
-    print("after iterator assigned")
+    print(f"rank {local_rank}: after iterator assigned")
     #print(f"first batch: {next(iter(train_ldr))}")
     #print(f"first batch: {next(iter(train_ldr))}")
     #print(f"first batch: {next(iter(train_ldr))}")
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
-        #print("inside loop")
+        #print(f"rank {local_rank}: inside loop")
         
         ##############  Mid-epoch checkpoint ###############
         if batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 and batch_counter != 0:
@@ -103,7 +105,9 @@ def run_epoch(model,
         #print(f'rank {local_rank}: after optimizer zero_grad')
         # calcuating the loss outside of model.loss to allow multi-gpu use
         inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
-        inputs = inputs.cuda(local_rank)
+        #print(f'rank {local_rank}: after collate')
+        inputs = inputs.cuda() #.to(device) #local_rank)
+        #print(f'rank {local_rank}: after inputs to cuda')
         out, rnn_args = model(inputs, softmax=False)
         #print(f'rank {local_rank}: after model inference')
 
@@ -133,7 +137,7 @@ def run_epoch(model,
         # grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
         
         ############# non-amp change ##################################################################
-        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200)                          #
+        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200) 
         #grad_norm = 0
         #print(f"rank {local_rank}: after grad_norm")
         #if isinstance(grad_norm, torch.Tensor):
@@ -204,8 +208,8 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
 def awni_loss(out, labels, input_lens, label_lens, BLANK_IDX):
     import functions.ctc as ctc #awni hannun's ctc bindings
     ############## Awni loss code  #############################################################
-    loss_fn = ctc.CTCLoss(blank_label=BLANK_IDX)                                                                  #     
-    loss = loss_fn(out, labels, input_lens, label_lens)                                      #     
+    loss_fn = ctc.CTCLoss(blank_label=BLANK_IDX)   
+    loss = loss_fn(out, labels, input_lens, label_lens)      
     return loss
 
 
