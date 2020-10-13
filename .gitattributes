@@ -19,3 +19,4 @@ examples/librispeech/models/ctc_models/20200925/ph3/best_model_state_dict.pth fi
 examples/librispeech/models/ctc_models/20200925/ph3/*/*.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20201006/*/*/*.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20201006/*/*.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph2/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
