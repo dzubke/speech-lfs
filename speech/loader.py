@@ -356,10 +356,6 @@ class AudioDataset(tud.Dataset):
         num_buckets = max_len // bucket_diff        # the number of buckets
         buckets = [[] for _ in range(num_buckets)]  # creating an empy list for the buckets
         
-        #def sort_fn(sample):
-        #    # using this instead of lambda fn to allow for pickling in multiprocessing
-        #    return (round(sample['duration'], 1), len(sample['text']))
-
         for sample in data:                          
             bucket_id = min(len(sample['text']) // bucket_diff, num_buckets - 1)
             buckets[bucket_id].append(sample)
@@ -372,6 +368,8 @@ class AudioDataset(tud.Dataset):
         # unpack the data in the buckets into a list
         data = [sample for bucket in buckets for sample in bucket]
         self.data = data
+        print(f"in AudioDataset: length of data: {len(data)}")
+
 
     def __len__(self):
         return len(self.data)
@@ -395,8 +393,9 @@ class BatchRandomSampler(tud.sampler.Sampler):
             raise ValueError("batch_size is greater than data length")
 
         it_end = len(data_source) - batch_size + 1
-        self.batches = [range(i, i + batch_size)
-                for i in range(0, it_end, batch_size)]
+        self.batches = [
+            range(i, i + batch_size) for i in range(0, it_end, batch_size)
+        ]
         self.data_source = data_source
 
     def __iter__(self):
@@ -415,10 +414,9 @@ class DistributedBatchRandomSampler(DistributedSampler):
 
     Args: 
         dataset: Dataset used for sampling.
-        num_replicas (optional): Number of processes participating in
-            distributed training.
-        rank (optional): Rank of the current process within num_replicas.
-        batch_size - int: number of samples in batch
+        num_replicas (int, optional): Number of processes participating in distributed training.
+        rank (int, optional): Rank of the current process within num_replicas.
+        batch_size (int): number of samples in batch
 
     Instructive to review parent class: 
         https://pytorch.org/docs/0.4.1/_modules/torch/utils/data/distributed.html#DistributedSampler
@@ -426,40 +424,52 @@ class DistributedBatchRandomSampler(DistributedSampler):
 
     def __init__(self, dataset, num_replicas=None, rank=None, batch_size=1):
         super().__init__(dataset=dataset, num_replicas=num_replicas, rank=rank)
+        
         if len(dataset) < batch_size:
             raise ValueError("batch_size is greater than data length")
         
-    
         self.batch_size = batch_size
         # here num_samples is the number of batches per replica
-        self.num_samples = int(math.ceil(len(self.dataset)//batch_size * 1.0 / self.num_replicas))
+        self.num_samples = math.floor( len(self.dataset) // batch_size * 1.0 / self.num_replicas)
         self.total_size = self.num_samples * self.num_replicas
         
+
         # leaves off the last unfilled batch. the last batch shouldn't be filled from the initial values 
         # because the audio lengths will be very different
         it_end = len(dataset) - batch_size + 1
-        self.batches = [range(i, i + batch_size)
-                for i in range(0, it_end, batch_size)]
+        self.batches = [
+            range(i, i + batch_size) for i in range(0, it_end, batch_size)
+        ]
     
-        print(f"in ddp_sampler: num_replicas: {self.num_replicas}")              
-        print(f"in ddp_sampler: rank: {self.rank}")              
+        #print(f"in DistBatchSamp: dataset size: {len(self.dataset)}")
+        #print(f"in DistBatchSamp: batch size: {batch_size}")
+        #print(f"in DistBatchSamp: num batches: {len(self.batches)}")
+        #print(f"in DistBatchSamp: num_replicas: {self.num_replicas}")
+        #print(f"in DistBatchSamp: batches per replica: {self.num_samples}")
+        #print(f"in DistBatchSamp: iterator_end: {it_end}")
+        #print(f"in ddp_sampler: rank: {self.rank}")              
         
     def __iter__(self):
         # deterministically shuffle based on epoch
-        print("in sampler: iterator: mark 1")
         g = torch.Generator()
         g.manual_seed(self.epoch)
         batch_indices = list(torch.randperm(len(self.batches), generator=g))
-        print("in sampler: iterator: mark 2")
+        #print(f"in DistBatchSamp: len batch_indices: {len(batch_indices)}")
+
         # add extra batches to make the total num batches evenly divisible by num_replicas
-        batch_indices += batch_indices[:(self.total_size - len(batch_indices))]
+        batch_indices = batch_indices[:self.total_size] #+= batch_indices[:(self.total_size - len(batch_indices))]
+        
         assert len(batch_indices) == self.total_size
 
         # subsample the batches for individual replica based on rank
         offset = self.num_samples * self.rank
         batch_indices = batch_indices[offset:offset + self.num_samples]
         assert len(batch_indices) == self.num_samples
-        print("in sampler: iterator: mark 3")
+        
+        #print(f"in DistBatchSamp: new len batch_indices: {len(batch_indices)}")
+        #print(f"in DistBatchSamp: total_size: {self.total_size}")
+        #print(f"in DistBatchSamp: rank: {self.rank} offset: {offset}")
+        
         return  (idx for batch_idx in batch_indices for idx in self.batches[batch_idx])
 
     def __len__(self):
@@ -484,16 +494,17 @@ def make_ddp_loader(dataset_json,
                     batch_size, 
                     num_workers=4):
     
-    dataset = AudioDataset(dataset_json, preproc,
-                           batch_size)
+    dataset = AudioDataset(dataset_json, preproc, batch_size)
     sampler = DistributedBatchRandomSampler(dataset, batch_size=batch_size)
-    loader = tud.DataLoader(dataset,
+    loader = tud.DataLoader(
+                dataset,
                 batch_size=batch_size,
                 sampler=sampler,
                 num_workers=num_workers,
                 collate_fn=collate_fn,
                 drop_last=True,
-                pin_memory=False)
+                pin_memory=False
+    )
     return loader
     
 def collate_fn(batch):  
