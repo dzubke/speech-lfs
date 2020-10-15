@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-10-13_large-model-mid-aug_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06_dd.log
+    log_file: logs/2020-10-14_large-model-mid-aug_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06_dd.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -39,10 +39,10 @@ preproc:
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2}
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
-    batch_size: 8 
+    batch_size: 9 
     run_state: [3317617, 19.9618]
     best_so_far: 0.18847
-    start_epoch: 27
+    start_epoch: 0
     epochs: 100
     learning_rate: 0.0005
     momentum: 0.5

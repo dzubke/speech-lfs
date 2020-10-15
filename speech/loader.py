@@ -429,57 +429,55 @@ class DistributedBatchRandomSampler(DistributedSampler):
             raise ValueError("batch_size is greater than data length")
         
         self.batch_size = batch_size
-        # here num_samples is the number of batches per replica
-        self.num_samples = math.floor( len(self.dataset) // batch_size * 1.0 / self.num_replicas)
-        self.total_size = self.num_samples * self.num_replicas
+        self.n_batch_per_replica = int(math.floor(len(self.dataset)//batch_size * 1.0 / self.num_replicas))
+        self.total_size = self.n_batch_per_replica * self.num_replicas
         
-
         # leaves off the last unfilled batch. the last batch shouldn't be filled from the initial values 
         # because the audio lengths will be very different
         it_end = len(dataset) - batch_size + 1
         self.batches = [
             range(i, i + batch_size) for i in range(0, it_end, batch_size)
         ]
-    
-        #print(f"in DistBatchSamp: dataset size: {len(self.dataset)}")
-        #print(f"in DistBatchSamp: batch size: {batch_size}")
-        #print(f"in DistBatchSamp: num batches: {len(self.batches)}")
-        #print(f"in DistBatchSamp: num_replicas: {self.num_replicas}")
-        #print(f"in DistBatchSamp: batches per replica: {self.num_samples}")
-        #print(f"in DistBatchSamp: iterator_end: {it_end}")
-        #print(f"in ddp_sampler: rank: {self.rank}")              
+        print(f"in DistBatchSamp: rank: {self.rank} dataset size: {len(self.dataset)}")
+        print(f"in DistBatchSamp: rank: {self.rank} batch size: {batch_size}")
+        print(f"in DistBatchSamp: rank: {self.rank} num batches: {len(self.batches)}")
+        print(f"in DistBatchSamp: rank: {self.rank} num_replicas: {self.num_replicas}")
+        print(f"in DistBatchSamp: rank: {self.rank} batches per replica: {self.n_batch_per_replica}")
+        print(f"in DistBatchSamp: rank: {self.rank} iterator_end: {it_end}")
         
     def __iter__(self):
         # deterministically shuffle based on epoch
         g = torch.Generator()
         g.manual_seed(self.epoch)
         batch_indices = list(torch.randperm(len(self.batches), generator=g))
-        #print(f"in DistBatchSamp: len batch_indices: {len(batch_indices)}")
+        print(f"in DistBatchSamp: rank: {self.rank} len batch_indices: {len(batch_indices)}")
 
         # add extra batches to make the total num batches evenly divisible by num_replicas
-        batch_indices = batch_indices[:self.total_size] #+= batch_indices[:(self.total_size - len(batch_indices))]
-        
+        batch_indices = batch_indices[:self.total_size]  #+= batch_indices[:(self.total_size - len(batch_indices))]
+        print(f"in DistBatchSamp: rank: {self.rank} new len batch_indices: {len(batch_indices)}")
         assert len(batch_indices) == self.total_size
 
         # subsample the batches for individual replica based on rank
-        offset = self.num_samples * self.rank
-        batch_indices = batch_indices[offset:offset + self.num_samples]
-        assert len(batch_indices) == self.num_samples
+        offset = self.n_batch_per_replica * self.rank
+        batch_indices = batch_indices[offset:offset + self.n_batch_per_replica]
+        assert len(batch_indices) == self.n_batch_per_replica
         
-        #print(f"in DistBatchSamp: new len batch_indices: {len(batch_indices)}")
-        #print(f"in DistBatchSamp: total_size: {self.total_size}")
-        #print(f"in DistBatchSamp: rank: {self.rank} offset: {offset}")
+        print(f"in DistBatchSamp: rank: {self.rank} batches per replica: {len(batch_indices)}")
+        print(f"in DistBatchSamp: rank: {self.rank} total_size: {self.total_size}")
+        print(f"in DistBatchSamp: rank: {self.rank} offset_begin: {offset} offset_end: {offset + self.n_batch_per_replica}")
         
+        #assert all([self.batch_size == len(batch) for batch in self.batches]),\
+        #    f"at least one batch is not of size: {self.batch_size}"
+
         return  (idx for batch_idx in batch_indices for idx in self.batches[batch_idx])
 
     def __len__(self):
-        return self.num_samples * self.batch_size
+        return self.n_batch_per_replica * self.batch_size
 
 
 def make_loader(dataset_json, preproc,
                 batch_size, num_workers=4):
-    dataset = AudioDataset(dataset_json, preproc,
-                           batch_size)
+    dataset = AudioDataset(dataset_json, preproc, batch_size)
     sampler = BatchRandomSampler(dataset, batch_size)
     loader = tud.DataLoader(dataset,
                 batch_size=batch_size,
