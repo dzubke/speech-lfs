@@ -403,11 +403,12 @@ def run(local_rank, config):
         logger.info(f"train: config: {config}")
 
     # printing to the output file
-    print(f"====== Model, loaders, optimimzer created =======")
-    print(f"model: {model}")
-    print(f"preproc: {preproc}")
-    print(f"optimizer: {optimizer}")
-    print(f"config: {config}")
+    if is_rank_0:
+        print(f"====== Model, loaders, optimimzer created =======")
+        print(f"model: {model}")
+        print(f"preproc: {preproc}")
+        print(f"optimizer: {optimizer}")
+        print(f"config: {config}")
 
     for epoch in range(start_epoch, opt_cfg["epochs"]):
         if use_log: logger.info(f"Starting epoch: {epoch}")
