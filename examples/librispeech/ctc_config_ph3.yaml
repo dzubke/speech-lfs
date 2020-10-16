@@ -63,6 +63,6 @@ model:
             - [128, 11, 21, 1, 1, 0, 10]
         rnn: 
             type: LSTM
-            dim: 1024
+   v            dim: 1024
             bidirectional: false
             layers: 5
