@@ -263,7 +263,7 @@ def run(config):
     print(f"config: {config}")
 
     # define the model checkpoint path
-    chckpt_path, _  = get_names(config['save_path'])
+    chckpt_path, _  = get_names(config['save_path'], tag='')
     base_path, ext = os.path.splitext(chckpt_path)
     chckpt_path = base_path + "_ckpt" + ext
 

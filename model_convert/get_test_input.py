@@ -2,11 +2,17 @@ import torch
 import numpy
 
 
-def generate_test_input(model_format:str ,model_name:str, time_dim: int, half_precision:bool=False):
-    """outputs a test input based on the model format ("pytorch" or "onnx") and the model name
-        
-        Arguments
-            time_dim: time_dimension into the model
+def generate_test_input(
+    model_format:str, 
+    model_name:str, 
+    time_dim: int, 
+    hidden_size:int=512,
+    half_precision:bool=False):
+    """
+    outputs a test input based on the model format ("pytorch" or "onnx") and the model name
+    Arguments
+        time_dim: time_dimension into the model
+        hidden_size (int): size of RNN/LSTM cell
     """
     batch_size = 1
     layer_count = 5 
@@ -27,8 +33,8 @@ def generate_test_input(model_format:str ,model_name:str, time_dim: int, half_pr
                     )
         else:
             return (torch.randn(1,time_dim, 257, device=device).type(dtype),
-                    (torch.randn(layer_count * 1, 1, 1024, device=device).type(dtype),
-                    torch.randn(layer_count * 1, 1, 1024, device=device).type(dtype))
+                    (torch.randn(layer_count * 1, 1, hidden_size, device=device).type(dtype),
+                    torch.randn(layer_count * 1, 1, hidden_size, device=device).type(dtype))
                     )
     else: 
         raise ValueError("model_format parameters must be 'pytorch' or 'onnx'")
