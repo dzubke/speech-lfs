@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200930/ph4/  --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201012/ph4/  --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -118,7 +118,21 @@ ps aux | grep tensorboard
 git config credential.helper 'cache --timeout 864000'
 
 # github password
-9!l2&YQCydRAkhr1f6%xvim 
+9!l2&YQCydRAkhr1f6%x
+
+
+# how to kill at GPU-related processes
+for i in $(sudo lsof /dev/nvidia0 | grep python  | awk '{print $2}' | sort -u); do kill -9 $i; done
+
+##  DDP launch commands
+nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-rank 0 &> ddp-rank2-localrank0.out &
+
+startddp "nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank # --local-rank # &> 2020-09-24-09-28_ph7_large-model-no-aug_2P100_lib-ted-cv_r#lr#.out &" 4
+
+python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="10.128.0.10" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
+
+
+gsutil -m mv gs://phoneme-vm-backup/models/ctc_models/20200630 gs://phoneme-vm-backup/models/ctc_models/20200630-old
 
 
 {"text": ["ay", "w", "aa", "z", "dh", "ah", "ow", "n", "l", "iy", "p", "ey", "sh", "ah", "n", "t", "ih", "n", "dh", "ah", "w", "ey", "t", "ih", "ng", "r", "uw", "m"], "duration": 1.344, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/clips/common_voice_en_17932046.wv"}
@@ -130,16 +144,13 @@ echo $GOOGLE_APPLICATION_CREDENTIALS
 
 ffmpeg -y -i "$SRC_FILE" -ac 1 -ar 16000 -sample_fmt s16 -f wav "$DST_FILE"
 
+gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-vm-backup/models/ctc_models/20200630-copy
 
-# how to kill at GPU-related processes
-for i in $(sudo lsof /dev/nvidia0 | grep python  | awk '{print $2}' | sort -u); do kill -9 $i; done
+ cat /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak_2020-09-25_dd.json /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_train/train-data_1M-examples_2020-10-05_dd > /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-2M-2020-09-25_dd.json
 
-kill $(ps aux | grep resnet_ddp.py | grep -v grep | awk '{print $2}')
+# problems using python 3.7 in environment
+  - numpy==1.13.3 -> python[version='>=2.7,<2.8.0a0|>=3.5,<3.6.0a0|>=3.6,<3.7.0a0|>=3.8,<3.9.0a0']
+  librosa==0.7.2
+  
 
 
-##  DDP launch commands
-nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-rank 0 &> ddp-rank2-localrank0.out &
-
-startddp "nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank # --local-rank # &> 2020-09-24-09-28_ph7_large-model-no-aug_2P100_lib-ted-cv_r#lr#.out &" 4
-
-python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="10.128.0.25" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
