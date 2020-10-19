@@ -115,13 +115,15 @@ def run_epoch(model,
             loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
         elif loss_name == "awni":
             loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+        elif loss_name == "naren":
+            loss =naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
         #print(f"rank {local_rank}: after loss calc")
         
         if use_log: logger.info(f"train: Loss calculated")
     
         ############# amp change ##################################################################
-        # with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
-        #    scaled_loss.backward()                                                                #
+        #with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
+        #   scaled_loss.backward()                                                                #
 
         ############# non-amp change  #############################################################
         loss.backward()                                                                           #
@@ -134,14 +136,14 @@ def run_epoch(model,
                 log_param_grad_norms(model_module.named_parameters(), logger)
 
         ############# amp change ##################################################################
-        # grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
+        #grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
         
         ############# non-amp change ##################################################################
         grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200) 
         #grad_norm = 0
         #print(f"rank {local_rank}: after grad_norm")
-        #if isinstance(grad_norm, torch.Tensor):
-        #    grad_norm = grad_norm.item()
+        if isinstance(grad_norm, torch.Tensor):
+            grad_norm = grad_norm.item()
 
         if use_log: logger.info(f"train: Grad_norm clipped ")
         #print(f"rank {local_rank}: before optimizer step")
@@ -200,17 +202,26 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
     """
     ############## Native loss code ############################################################
     log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
-    loss_fn = torch.nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)         #     
+    loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)         #     
     loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
     return loss
 
 
-def awni_loss(out, labels, input_lens, label_lens, BLANK_IDX):
+def awni_loss(out, labels, input_lens, label_lens, blank_idx):
     import functions.ctc as ctc #awni hannun's ctc bindings
     ############## Awni loss code  #############################################################
-    loss_fn = ctc.CTCLoss(blank_label=BLANK_IDX)   
+    loss_fn = ctc.CTCLoss(blank_label=blank_idx)   
     loss = loss_fn(out, labels, input_lens, label_lens)      
     return loss
+
+def naren_loss(out, labels, input_lens, label_lens, blank_idx):
+    from warpctc_pytorch import CTCLoss
+    loss_fn = CTCLoss(blank=blank_idx, size_average=True, length_average=False)
+    out = out.permute(1,0,2).float().cpu() #permuation for sean ctc
+    #print(f"out shape after permute: {float_out.size()}, sum: {torch.sum(float_out)}")
+    loss = loss_fn(out, labels, input_lens, label_lens)
+    return loss
+
 
 
 def eval_dev(model, ldr, preproc,  logger, loss_name):
@@ -239,6 +250,8 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
                 loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
             elif loss_name == "awni":
                 loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            elif loss_name == "naren":
+                loss = naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
 
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
@@ -380,8 +393,9 @@ def run(local_rank, config):
         model.cuda(local_rank)
     
         #if train_cfg['apex']:
-            ##model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
-            #model = apex.parallel.DistributedDataParallel(model)
+        #    model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
+        #    model = apex.parallel.DistributedDataParallel(model)
+        #else:
         model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
         
         model_module = model.module
@@ -544,6 +558,7 @@ if __name__ == "__main__":
     #train_cfg.update({'world_size': world_size})
     #train_cfg.update({'rank': args.rank})
 
+    os.environ['OMP_NUM_THREADS'] = str(train_cfg['OMP_NUM_THREADS'])
     #os.environ['MASTER_ADDR'] = train_cfg['master_addr']              
     #os.environ['MASTER_PORT'] = train_cfg['master_port']                      
     #print(train_cfg['master_addr'], train_cfg['master_port'])
