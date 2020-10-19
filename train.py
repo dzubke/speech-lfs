@@ -288,6 +288,7 @@ def run(local_rank, config):
         )
         torch.cuda.set_device(local_rank)
         is_rank_0 = (local_rank == 0) #train_cfg['rank'] == 0)
+        print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
     else:
         is_rank_0 = True
 
