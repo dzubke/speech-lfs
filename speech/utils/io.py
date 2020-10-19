@@ -56,7 +56,7 @@ def export_state_dict(model_in_path, params_out_path):
 def read_data_json(data_path):
     with open(data_path) as fid:
         dataset = [json.loads(l) for l in fid]
-        ulimit = 256    # target lengths cannot be longer than 256 for pytorch native loss
+        ulimit = float('inf') #256    # target lengths cannot be longer than 256 for pytorch native loss
         filtered_dataset = [datum for datum in dataset if len(datum['text']) <= ulimit]
         return filtered_dataset
 
@@ -105,18 +105,17 @@ def load_from_trained(model, model_cfg):
         model (torch model)
         model_cfg (dict)
     """
-    print("load_from_trained: mark 1")    
     trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
-    print("load_from_trained: mark 2")    
     if isinstance(trained_model, dict):
         trained_state_dict = trained_model
     else:
         trained_state_dict = trained_model.state_dict()
-    print("load_from_trained: mark 3")    
+    
     trained_state_dict = filter_state_dict(trained_state_dict, remove_layers=model_cfg["remove_layers"])
     model_state_dict = model.state_dict()
     model_state_dict.update(trained_state_dict)
     model.load_state_dict(model_state_dict)
+   
     return model
 
 

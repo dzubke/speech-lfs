@@ -26,7 +26,7 @@ import yaml
 import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
-from speech.utils.io import get_names, load_config, load_from_trained, read_pickle, write_pickle 
+from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
 from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
 from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
@@ -46,14 +46,14 @@ def run_epoch(model,
               is_rank_0:bool, 
               local_rank:int, 
               loss_name:str, 
-              chckpt_path:str,
-              chkpt_per_epoch):
+              save_path:str,
+              chkpt_per_epoch:int):
     """
     Performs a forwards and backward pass through the model
-    Args
-        iter_count - int: count of iterations
-        is_rank_0 - bool: True if process rank is 0 in distributed trainig or if not using distributed training
-        chckpt_path (str): path for the model checkpoint
+    Args:
+        iter_count (int): count of iterations
+        is_rank_0 (bool): True if process global rank is 0 in distributed trainig or if dist training not used
+        save_path (str): path to directory where model is saved
         chkpt_per_epoch (int): # checkpoints for each epoch (including at the end of the epoch) that will be saved
     """
     use_log = (logger is not None) and is_rank_0
@@ -86,8 +86,9 @@ def run_epoch(model,
         #print(f"rank {local_rank}: inside loop")
         
         ##############  Mid-epoch checkpoint ###############
-        if batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 and batch_counter != 0:
-            torch.save(model_module.state_dict(), chckpt_path)
+        if is_rank_0 and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 and batch_counter != 0:
+            preproc = train_ldr.dataset.preproc
+            save(model_module, preproc, save_path, tag='ckpt')
         batch_counter += 1
         ####################################################
 
@@ -390,11 +391,6 @@ def run(local_rank, config):
         model_module = model
         model.cuda() if use_cuda else model.cpu()
 
-    # define the model checkpoint path
-    chckpt_path, _  = get_names(config['save_path'])
-    base_path, ext = os.path.splitext(chckpt_path)
-    chckpt_path = base_path + "_ckpt" + ext
-
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")
         logger.info(f"train: model: {model}")
@@ -403,11 +399,12 @@ def run(local_rank, config):
         logger.info(f"train: config: {config}")
 
     # printing to the output file
-    print(f"====== Model, loaders, optimimzer created =======")
-    print(f"model: {model}")
-    print(f"preproc: {preproc}")
-    print(f"optimizer: {optimizer}")
-    print(f"config: {config}")
+    if is_rank_0:
+        print(f"====== Model, loaders, optimimzer created =======")
+        print(f"model: {model}")
+        print(f"preproc: {preproc}")
+        print(f"optimizer: {optimizer}")
+        print(f"config: {config}")
 
     for epoch in range(start_epoch, opt_cfg["epochs"]):
         if use_log: logger.info(f"Starting epoch: {epoch}")
@@ -419,7 +416,7 @@ def run(local_rank, config):
 
         try:
             run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, 
-                                    *run_state, is_rank_0, local_rank, loss_name, chckpt_path,
+                                    *run_state, is_rank_0, local_rank, loss_name, config['save_path'],
                                     train_cfg['checkpoints_per_epoch'])
         except Exception as err:
             if use_log: 
