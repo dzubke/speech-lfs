@@ -19,9 +19,16 @@ from .ctc_decoder_dist import decode_dist
 class CTC_train(ctc_model.CTC):
     def __init__(self, freq_dim, output_dim, config):
         super().__init__(freq_dim, output_dim, config)
+        
+        # blank_idx can be 'last' which will use the `output_dim` value or an int value
+        blank_idx = config['blank_idx']
+        assert blank_idx == 'last' or isinstance(blank_idx, int), \
+            f"blank_idx: {blank_idx} must be either 'last' or an integer"
 
-        # include the blank token
-        self.blank = 0  # set for native-loss fucntion  ## old value: output_dim
+        if blank_idx == 'last':
+            blank_idx = output_dim
+        self.blank = blank_idx
+
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
     def forward(self, x, rnn_args=None, softmax=False):
