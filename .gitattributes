@@ -22,3 +22,6 @@ examples/librispeech/models/ctc_models/20201006/*/*.pth filter=lfs diff=lfs merg
 examples/librispeech/models/ctc_models/20201006/ph2/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20201012/ph4/model_state_dict_ckpt.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20201012/ph4/*/*.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201012/ph2/*.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201012/ph2/model_state_dict_ckpt.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201012/ph2/*/*.pth filter=lfs diff=lfs merge=lfs -text
