@@ -295,6 +295,7 @@ def run(local_rank, config):
             #init_method='env://',
         )
         torch.cuda.set_device(local_rank)
+        print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
         is_rank_0 = (torch.distributed.get_rank() == 0)
     else:
         is_rank_0 = True
