@@ -43,7 +43,6 @@ def run_epoch(model,
               tbX_writer, 
               iter_count:int, 
               avg_loss:float, 
-              is_rank_0:bool, 
               local_rank:int, 
               loss_name:str, 
               save_path:str,
@@ -52,10 +51,10 @@ def run_epoch(model,
     Performs a forwards and backward pass through the model
     Args:
         iter_count (int): count of iterations
-        is_rank_0 (bool): True if process global rank is 0 in distributed trainig or if dist training not used
         save_path (str): path to directory where model is saved
         chkpt_per_epoch (int): # checkpoints for each epoch (including at the end of the epoch) that will be saved
     """
+    is_rank_0 = (torch.distributed.get_rank() == 0 )
     use_log = (logger is not None) and is_rank_0
     model_t, data_t = 0.0, 0.0
     end_t = time.time()
@@ -93,11 +92,11 @@ def run_epoch(model,
         ####################################################
 
         #print(f"rank {local_rank}: loop begins")
-        temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
+        batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
         #print(f"rank {local_rank}: after temp batch")
         if use_log: 
             if debug_mode:  
-                save_batch_log_stats(temp_batch, logger)
+                save_batch_log_stats(batch, logger)
                 log_batchnorm_mean_std(model_module.state_dict(), logger)
  
         start_t = time.time()
@@ -105,7 +104,7 @@ def run_epoch(model,
         if use_log: logger.info(f"train: Optimizer zero_grad")
         #print(f'rank {local_rank}: after optimizer zero_grad')
         # calcuating the loss outside of model.loss to allow multi-gpu use
-        inputs, labels, input_lens, label_lens = model_module.collate(*temp_batch)
+        inputs, labels, input_lens, label_lens = model_module.collate(*batch)
         #print(f'rank {local_rank}: after collate')
         inputs = inputs.cuda() #.to(device) #local_rank)
         #print(f'rank {local_rank}: after inputs to cuda')
@@ -116,13 +115,15 @@ def run_epoch(model,
             loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
         elif loss_name == "awni":
             loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+        elif loss_name == "naren":
+            loss =naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
         #print(f"rank {local_rank}: after loss calc")
         
         if use_log: logger.info(f"train: Loss calculated")
     
         ############# amp change ##################################################################
-        # with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
-        #    scaled_loss.backward()                                                                #
+        #with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
+        #   scaled_loss.backward()                                                                #
 
         ############# non-amp change  #############################################################
         loss.backward()                                                                           #
@@ -135,14 +136,14 @@ def run_epoch(model,
                 log_param_grad_norms(model_module.named_parameters(), logger)
 
         ############# amp change ##################################################################
-        # grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
+        #grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
         
         ############# non-amp change ##################################################################
         grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200) 
         #grad_norm = 0
         #print(f"rank {local_rank}: after grad_norm")
-        #if isinstance(grad_norm, torch.Tensor):
-        #    grad_norm = grad_norm.item()
+        if isinstance(grad_norm, torch.Tensor):
+            grad_norm = grad_norm.item()
 
         if use_log: logger.info(f"train: Grad_norm clipped ")
         #print(f"rank {local_rank}: before optimizer step")
@@ -185,7 +186,7 @@ def run_epoch(model,
             if use_log:
                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model_module.state_dict()}")
                 log_model_grads(model_module.named_parameters(), logger)
-                save_batch_log_stats(temp_batch, logger)
+                save_batch_log_stats(batch, logger)
                 log_param_grad_norms(model_module.named_parameters(), logger)
                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
             debug_mode = True
@@ -201,17 +202,26 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
     """
     ############## Native loss code ############################################################
     log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
-    loss_fn = torch.nn.CTCLoss(blank=BLANK_IDX, reduction='sum', zero_infinity=True)         #     
+    loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)         #     
     loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
     return loss
 
 
-def awni_loss(out, labels, input_lens, label_lens, BLANK_IDX):
+def awni_loss(out, labels, input_lens, label_lens, blank_idx):
     import functions.ctc as ctc #awni hannun's ctc bindings
     ############## Awni loss code  #############################################################
-    loss_fn = ctc.CTCLoss(blank_label=BLANK_IDX)   
+    loss_fn = ctc.CTCLoss(blank_label=blank_idx)   
     loss = loss_fn(out, labels, input_lens, label_lens)      
     return loss
+
+def naren_loss(out, labels, input_lens, label_lens, blank_idx):
+    from warpctc_pytorch import CTCLoss
+    loss_fn = CTCLoss(blank=blank_idx, size_average=True, length_average=False)
+    out = out.permute(1,0,2).float().cpu() #permuation for sean ctc
+    #print(f"out shape after permute: {float_out.size()}, sum: {torch.sum(float_out)}")
+    loss = loss_fn(out, labels, input_lens, label_lens)
+    return loss
+
 
 
 def eval_dev(model, ldr, preproc,  logger, loss_name):
@@ -226,12 +236,12 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
             if use_log: logger.info(f"eval_dev: =====Inside batch loop=====")
-            temp_batch = list(batch)
+            batch = list(batch)
             if use_log: logger.info(f"eval_dev: batch converted")
-            preds = model.infer(temp_batch)
+            preds = model.infer(batch)
             if use_log: logger.info(f"eval_dev: infer call")
             
-            inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+            inputs, labels, input_lens, label_lens = model.collate(*batch)
             inputs = inputs.cuda()
             out, rnn_args = model(inputs, softmax=False)
 
@@ -240,6 +250,8 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
                 loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
             elif loss_name == "awni":
                 loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            elif loss_name == "naren":
+                loss = naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
 
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
@@ -248,8 +260,8 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             #losses.append(loss.data[0])
             all_preds.extend(preds)
             if use_log: logger.info(f"eval_dev: preds: {preds}")
-            all_labels.extend(temp_batch[1])        #add the labels in the batch object
-            if use_log: logger.info(f"eval_dev: labels: {temp_batch[1]}")
+            all_labels.extend(batch[1])        #add the labels in the batch object
+            if use_log: logger.info(f"eval_dev: labels: {batch[1]}")
 
     model.set_train()
     preproc.set_train()
@@ -275,20 +287,16 @@ def run(local_rank, config):
     opt_cfg = config["optimizer"]
     model_cfg = config["model"]
     train_cfg = config['training']    
-    
 
     # setting up the distributed training environment
     if train_cfg['distributed']:
-        #rank = train_cfg['rank'] * train_cfg['gpu_per_node'] + local_rank                       
         dist.init_process_group(                                   
             backend='nccl'
             #init_method='env://',
-            #world_size=train_cfg['world_size'],
-            #rank=train_cfg['rank']
         )
         torch.cuda.set_device(local_rank)
-        is_rank_0 = (local_rank == 0) #train_cfg['rank'] == 0)
         print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
+        is_rank_0 = (torch.distributed.get_rank() == 0)
     else:
         is_rank_0 = True
 
@@ -365,6 +373,7 @@ def run(local_rank, config):
                     lr=learning_rate,   # from train_state or opt_config
                     momentum=opt_cfg["momentum"],
                     dampening=opt_cfg["dampening"])
+
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
@@ -382,8 +391,9 @@ def run(local_rank, config):
         model.cuda(local_rank)
     
         #if train_cfg['apex']:
-            ##model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
-            #model = apex.parallel.DistributedDataParallel(model)
+        #    model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
+        #    model = apex.parallel.DistributedDataParallel(model)
+        #else:
         model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
         
         model_module = model.module
@@ -417,7 +427,7 @@ def run(local_rank, config):
 
         try:
             run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, 
-                                    *run_state, is_rank_0, local_rank, loss_name, config['save_path'],
+                                    *run_state, local_rank, loss_name, config['save_path'],
                                     train_cfg['checkpoints_per_epoch'])
         except Exception as err:
             if use_log: 
@@ -478,8 +488,6 @@ def run(local_rank, config):
 
                         print(f"UPDATED: best_model based on PER {best_so_far} for {dev_name} devset")
                 
-
-            
             per_diff_dict = calc_per_difference(dev_per_dict) 
 
             tbX_writer.add_scalars('dev/loss', dev_loss_dict, epoch)
@@ -535,16 +543,8 @@ if __name__ == "__main__":
         torch.backends.cudnn.enabled = False
 
     train_cfg = config['training']    
-    #gpu_per_node = train_cfg['gpu_per_node']
-    #n_node = train_cfg['n_node']
-    #world_size = gpu_per_node * n_node
-    #print("world_size", world_size)
-    #train_cfg.update({'world_size': world_size})
-    #train_cfg.update({'rank': args.rank})
 
-    #os.environ['MASTER_ADDR'] = train_cfg['master_addr']              
-    #os.environ['MASTER_PORT'] = train_cfg['master_port']                      
-    #print(train_cfg['master_addr'], train_cfg['master_port'])
+    os.environ['OMP_NUM_THREADS'] = str(train_cfg['OMP_NUM_THREADS'])
 
     if train_cfg['distributed'] and train_cfg['use_spawn']:
         mp.spawn(run, nprocs=gpu_per_node, args=(config, ))
