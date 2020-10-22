@@ -98,12 +98,10 @@ def load_config(config_path:str)->dict:
     return config
 
 def load_from_trained(model, model_cfg):
-    """
-    loads the model with pretrained weights from the model in
-    model_cfg["trained_path"]
-    Arguments:
+    """loads the model with pretrained weights from the model in model_cfg["trained_path"]
+    Args:
         model (torch model)
-        model_cfg (dict)
+        model_cfg (dict): configuration for the model
     """
     trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
     if isinstance(trained_model, dict):
