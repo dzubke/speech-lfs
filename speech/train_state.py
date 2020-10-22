@@ -39,7 +39,6 @@ class TrainingState:
                  best_per:float=None,
                  dev_loss: Dict[str, List[float]], 
                  dev_per: Dict[str, List[float]],
-
                  config:dict=None):
         """
 
