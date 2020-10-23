@@ -54,7 +54,7 @@ model:
     dropout: 0.4
     blank_idx: 0
     load_trained: True 
-    trained_path: ./examples/librispeech/models/ctc_models/20201012/ph2/model_state_dict.pth
+    trained_path: ./examples/librispeech/models/ctc_models/20201012/ph2/ckpt_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
@@ -77,4 +77,4 @@ training:
     gpu_per_node: 4
     master_addr: '10.128.0.5'
     master_port: '8888'
-    checkpoints_per_epoch: 5
+    checkpoints_per_epoch: 12

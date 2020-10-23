@@ -501,10 +501,28 @@ def make_ddp_loader(dataset_json,
                 num_workers=num_workers,
                 collate_fn=collate_fn,
                 drop_last=True,
-                pin_memory=False
+                pin_memory=True
     )
     return loader
-    
+
+class CustomBatch:
+    """
+    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning
+    """
+    def __init__(self, data):
+        transposed_data = list(zip(*data))
+        self.inp = torch.stack(transposed_data[0], 0)
+        self.tgt = torch.stack(transposed_data[1], 0)
+
+    # custom memory pinning method on custom type
+    def pin_memory(self):
+        self.inp = self.inp.pin_memory()
+        self.tgt = self.tgt.pin_memory()
+        return self
+
+def collate_wrapper(batch):
+    return SimpleCustomBatch(batch)
+ 
 def collate_fn(batch):  
     """
     this is an external function so that the loader can be serialized during multi-processing
