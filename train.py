@@ -139,14 +139,12 @@ def run_epoch(model,
                 log_param_grad_norms(model_module.named_parameters(), logger)
 
         ############# amp change ##################################################################
-        #grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200).item()            #
+        #grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200)            #
         
         ############# non-amp change ##################################################################
         grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200) 
         #grad_norm = 0
         #print(f"rank {local_rank}: after grad_norm")
-        if isinstance(grad_norm, torch.Tensor):
-            grad_norm = grad_norm.item()
 
         if use_log: logger.info(f"train: Grad_norm clipped ")
         #print(f"rank {local_rank}: before optimizer step")
@@ -155,7 +153,7 @@ def run_epoch(model,
         #print(f"rank {local_rank}: after optimizer step")
         if is_rank_0:  # logging on rank_0 process
             #print("inside rank 0 logging")
-            loss = loss.item()
+
             if use_log: logger.info(f"train: loss reassigned ")
 
             prev_end_t = end_t
@@ -164,6 +162,11 @@ def run_epoch(model,
             data_t += start_t - prev_end_t
             if use_log: logger.info(f"train: time calculated ")
             #print("after time calc")
+            
+            if isinstance(grad_norm, torch.Tensor):
+                grad_norm = grad_norm.item()
+            if isinstance(loss, torch.Tensor):
+                loss = loss.item()
             if iter_count == 0:
                 avg_loss = loss
                 avg_grad_norm = grad_norm
@@ -201,7 +204,10 @@ def run_epoch(model,
     return iter_count, avg_loss
 
 def native_loss(out, labels, input_lens, label_lens, blank_idx):
-    """
+    """Calculates the loss using pytorch's native loss function. 
+    Only works with pytorch 1.X. The log_softmax is performed outside of
+    the loss function (unlike awni and naren's where the log_softmax is internal).
+    The `.permute(1,0,2).float()` transform puts the log_probs in the expected format.
     """
     ############## Native loss code ############################################################
     log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
@@ -211,6 +217,9 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
 
 
 def awni_loss(out, labels, input_lens, label_lens, blank_idx):
+    """Calculates the loss using awni hannun's warpctc bindings.
+    Only works with pytorch 0.4.
+    """
     import functions.ctc as ctc #awni hannun's ctc bindings
     ############## Awni loss code  #############################################################
     loss_fn = ctc.CTCLoss(blank_label=blank_idx)   
@@ -218,11 +227,17 @@ def awni_loss(out, labels, input_lens, label_lens, blank_idx):
     return loss
 
 def naren_loss(out, labels, input_lens, label_lens, blank_idx):
+    """Calculates the loss function using sean naren's warpctc bindings.
+    The `.permute(1,0,2).float().cpu()` section of the model output is meant
+    to match the expected format for the loss function. the `.cpu()` call is necessary
+    to calculate a non-zero loss value. 
+    """
     from warpctc_pytorch import CTCLoss
     loss_fn = CTCLoss(blank=blank_idx, size_average=True, length_average=False)
     out = out.permute(1,0,2).float().cpu() #permuation for sean ctc
     #print(f"out shape after permute: {float_out.size()}, sum: {torch.sum(float_out)}")
     loss = loss_fn(out, labels, input_lens, label_lens)
+    #print(f"naren loss is_cuda: {loss.is_cuda}")
     return loss
 
 
@@ -245,7 +260,7 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             if use_log: logger.info(f"eval_dev: infer call")
             
             inputs, labels, input_lens, label_lens = model.collate(*batch)
-            inputs = inputs.cuda()
+            inputs = inputs.cuda(non_blocking=True)
             out, rnn_args = model(inputs, softmax=False)
 
 
