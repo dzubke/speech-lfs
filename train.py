@@ -88,6 +88,9 @@ def run_epoch(model,
         if is_rank_0 and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
             save(model_module, preproc, save_path, tag='ckpt')
+            # save the run_sate
+            ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
+            write_pickle(ckpt_state_path, {'run_state': (iter_count, avg_loss)})
         batch_counter += 1
         ####################################################
 
@@ -106,7 +109,7 @@ def run_epoch(model,
         # calcuating the loss outside of model.loss to allow multi-gpu use
         inputs, labels, input_lens, label_lens = model_module.collate(*batch)
         #print(f'rank {local_rank}: after collate')
-        inputs = inputs.cuda(non_blocking=True) #.to(device) #local_rank)
+        inputs = inputs.cuda() #.to(device) #.cuda(local_rank)
         #print(f'rank {local_rank}: after inputs to cuda')
         out, rnn_args = model(inputs, softmax=False)
         #print(f'rank {local_rank}: after model inference')
