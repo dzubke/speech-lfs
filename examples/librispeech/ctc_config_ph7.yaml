@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201019/ph7/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201023/ph7/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-5M-2020-09-25_2020-10-05-06_dd.json
     dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/subsets/2020-09-08/cv-dev-dd_500_2020-09-08.json
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-10-22_naren-loss-large-model-mid-aug_lib-ted-cv.log
+    log_file: logs/2020-10-23_large-model-mid-aug_naren-loss_lib-ted-cv-speak-5M-2020-09-25_2020-10-05-06.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
     batch_size: 8
-    run_state: [39312, 84.41910]
-    best_so_far: 0.45835
-    start_epoch: 3
+    run_state: [3508901, 32.0]
+    best_so_far: 0.188478
+    start_epoch: 27
     epochs: 100
     learning_rate: 0.0003
     momentum: 0.9
@@ -54,7 +54,7 @@ model:
     dropout: 0.4
     blank_idx: 0
     load_trained: True
-    trained_path: ./examples/librispeech/models/ctc_models/20201019/ph7/best_model_state_dict.pth
+    trained_path: ./examples/librispeech/models/ctc_models/20201012/ph4/ckpt_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
