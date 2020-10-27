@@ -76,6 +76,8 @@ def filter_speak_train(
     # loop until the number of examples in dataset_size has been written
     with open(filter_json_path, 'w') as fid:
         while examples_written < dataset_size:
+            if examples_written % 100000 == 0 :
+                print(f"{examples_written} examples written")
             example = next(full_dataset)
             record_id = _extract_id(example['audio'])
             # if criteria is met, write the example

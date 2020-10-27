@@ -31,12 +31,11 @@ from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_st
 from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 
 
-
 def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_count, avg_loss, chckpt_path):
     """
     Performs a forwards and backward pass through the model
-    Arguments
-        iter_count - int: count of iterations
+    Args
+        iter_count (int): count of iterations
         chckpt_path (str): path for the model checkpoint
     """
     use_log = (logger is not None)
@@ -54,23 +53,23 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
         
         ##############  Mid-epoch checkpoint ###############
-        if batch_counter == len(train_ldr) // 2:
+        if batch_counter == len(train_ldr) // 4 and batch_counter != 0:
             torch.save(model.state_dict(), chckpt_path)
         batch_counter += 1
         ####################################################
 
-        temp_batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
+        batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
 
         if use_log: 
             if debug_mode:  
-                save_batch_log_stats(temp_batch, logger)
+                save_batch_log_stats(batch, logger)
                 log_batchnorm_mean_std(model.state_dict(), logger)
  
         start_t = time.time()
         optimizer.zero_grad()
         if use_log: logger.info(f"train: Optimizer zero_grad")
 
-        loss = model.loss(temp_batch)
+        loss = model.loss(batch)
         
         if use_log: logger.info(f"train: Loss calculated")
 
@@ -115,10 +114,10 @@ def run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, iter_
         
         if check_nan_params_grads(model.parameters()):
             if use_log:
-                inputs, labels, input_lens, label_lens = model.collate(*temp_batch)
+                inputs, labels, input_lens, label_lens = model.collate(*batch)
                 logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.state_dict()}")
                 log_model_grads(model.named_parameters(), logger)
-                save_batch_log_stats(temp_batch, logger)
+                save_batch_log_stats(batch, logger)
                 log_param_grad_norms(model_module.named_parameters(), logger)
                 plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
             debug_mode = True
@@ -143,11 +142,11 @@ def eval_dev(model, ldr, preproc,  logger):
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
             if use_log: logger.info(f"eval_dev: =====Inside batch loop=====")
-            temp_batch = list(batch)
+            batch = list(batch)
             if use_log: logger.info(f"eval_dev: batch converted")
-            preds = model.infer(temp_batch)
+            preds = model.infer(batch)
             if use_log: logger.info(f"eval_dev: infer call")
-            loss = model.loss(temp_batch)
+            loss = model.loss(batch)
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
             losses.append(loss.item())
@@ -155,8 +154,8 @@ def eval_dev(model, ldr, preproc,  logger):
             #losses.append(loss.data[0])
             all_preds.extend(preds)
             if use_log: logger.info(f"eval_dev: preds: {preds}")
-            all_labels.extend(temp_batch[1])        #add the labels in the batch object
-            if use_log: logger.info(f"eval_dev: labels: {temp_batch[1]}")
+            all_labels.extend(batch[1])        #add the labels in the batch object
+            if use_log: logger.info(f"eval_dev: labels: {batch[1]}")
 
     model.set_train()
     preproc.set_train()
@@ -263,7 +262,7 @@ def run(config):
     print(f"config: {config}")
 
     # define the model checkpoint path
-    chckpt_path, _  = get_names(config['save_path'])
+    chckpt_path, _  = get_names(config['save_path'], tag='')
     base_path, ext = os.path.splitext(chckpt_path)
     chckpt_path = base_path + "_ckpt" + ext
 
