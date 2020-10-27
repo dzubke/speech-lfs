@@ -13,10 +13,22 @@ from .ctc_decoder_dist import decode_dist
 
 class CTC(model.Model):
     def __init__(self, freq_dim, output_dim, config):
+        """
+        Args:
+            blank_idx (str, int): blank1 index can be 'last' which will use the output_dim value
+                otherwise, the int value like 0 will be used
+        """
         super().__init__(freq_dim, config)
 
-        # include the blank token
-        self.blank = output_dim
+        # blank_idx can be 'last' which will use the `output_dim` value or an int value
+        blank_idx = config['blank_idx']
+        assert blank_idx == 'last' or isinstance(blank_idx, int), \
+            f"blank_idx: {blank_idx} must be either 'last' or an integer"
+
+        if blank_idx == 'last':
+            blank_idx = output_dim
+            
+        self.blank = blank_idx
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
     def forward(self, x, rnn_args=None):

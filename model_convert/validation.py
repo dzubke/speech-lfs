@@ -40,7 +40,7 @@ logging.basicConfig(filename=None, filemode='w', level=log_level)
 np.random.seed(2020)
 torch.manual_seed(2020)
 
-def main(model_name, num_frames):
+def main(model_name, num_frames, hidden_size):
 
     model_fn, onnx_fn, coreml_fn, config_fn, preproc_fn, state_dict_path = validation_paths(model_name)
     
@@ -58,7 +58,8 @@ def main(model_name, num_frames):
         "feature_win_step": 256,
         "feature_size":257,
         "chunk_size": 46,
-        "n_context": 15
+        "n_context": 15,
+        "hidden_size": hidden_size
     }
     PARAMS['stride'] = PARAMS['chunk_size'] - 2*PARAMS['n_context']
 
@@ -86,7 +87,7 @@ def main(model_name, num_frames):
     onnx.checker.check_model(inferred_model)
 
     #creating the test data
-    data_dct = gen_test_data(preproc, num_frames, freq_dim)
+    data_dct = gen_test_data(preproc, num_frames, freq_dim, PARAMS['hidden_size'])
 
     #saving the preproc object as a dictionary
     # TODO change preproc methods to use the python object
@@ -98,7 +99,7 @@ def main(model_name, num_frames):
 
     audio_dir = '/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech/model_convert/audio_files/Validatio-audio_2020-05-21'
 
-    validate_all_models(model, onnx_fn, coreml_model, preproc, audio_dir, model_name, num_frames)
+    validate_all_models(model, onnx_fn, coreml_model, preproc, audio_dir, model_name, num_frames, PARAMS['hidden_size'])
 
     validation_tests = full_audio_infer(model, preproc, PARAMS, audio_dir)
     
@@ -120,16 +121,25 @@ def write_output_json(PARAMS:dict, preproc_dict:dict, validation_tests:dict, mod
         json.dump(output_json, fid)
 
  
-def full_audio_infer(model, preproc, PARAMS:dict, audio_dir)->dict:
+def full_audio_infer(
+    model, 
+    preproc, 
+    PARAMS:dict,
+    audio_dir:str
+)->dict:
     """
     conducts inference on all audio files in audio_dir and returns a dictionary
     of the probabilities and phoneme predictions
+    Args
+        model (torch.nn.Module) - pytorch model
+        preproc (speech.loader.Preprocessor) - model preprocessor object
+        PARAMS (dict): dict of model evaluation parameters
     """
     validation_tests=dict()
 
     for audio_file in os.listdir(audio_dir):
-        hidden_in = torch.zeros((5, 1, 1024), dtype=torch.float32)
-        cell_in = torch.zeros((5, 1, 1024), dtype=torch.float32)
+        hidden_in = torch.zeros((5, 1, PARAMS['hidden_size']), dtype=torch.float32)
+        cell_in = torch.zeros((5, 1, PARAMS['hidden_size']), dtype=torch.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
 
@@ -172,7 +182,20 @@ def full_audio_infer(model, preproc, PARAMS:dict, audio_dir)->dict:
     return validation_tests
 
 
-def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, model_name, num_frames)->None:
+def validate_all_models(
+    torch_model,
+    onnx_fn, 
+    coreml_model, 
+    preproc, 
+    audio_dir:str, 
+    model_name:str, 
+    num_frames:int,
+    hidden_size:int,
+)->None:
+    """
+    Args
+        hidden_size (int):
+    """
     BLANK_INDEX=39
     stream_test_name = "Speak-out.wav"
     predictions_dict= {}
@@ -186,8 +209,8 @@ def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, 
     check_hidden = False # checks if the hidden and cell states across models are equal
 
     for audio_file in os.listdir(audio_dir):
-        test_h = np.zeros((5, 1, 1024)).astype(np.float32)
-        test_c = np.zeros((5, 1, 1024)).astype(np.float32)
+        test_h = np.zeros((5, 1, hidden_size)).astype(np.float32)
+        test_c = np.zeros((5, 1, hidden_size)).astype(np.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
         log_spec = log_spectrogram_from_file(audio_path)
@@ -210,7 +233,6 @@ def validate_all_models(torch_model, onnx_fn, coreml_model, preproc, audio_dir, 
         ort_output = ort_session.run(None, ort_inputs)
         onnx_probs, onnx_h, onnx_c = [np.array(array) for array in ort_output]
         logging.debug("onnxruntime prediction complete") 
-
         coreml_input = {'input': test_x, 'hidden_prev': test_h, 'cell_prev': test_c}
         coreml_output = coreml_model.predict(coreml_input, useCPUOnly=True)
         coreml_probs = np.array(coreml_output['output'])
@@ -291,15 +313,15 @@ def dict_to_json(input_dict, json_path):
         json.dump(input_dict, fid)
 
 
-def gen_test_data(preproc, num_frames, freq_dim):
+def gen_test_data(preproc, num_frames, freq_dim, hidden_size):
     test_x_zeros = np.zeros((1, num_frames, freq_dim)).astype(np.float32)
-    test_h_zeros = np.zeros((5, 1, 1024)).astype(np.float32)
-    test_c_zeros = np.zeros((5, 1, 1024)).astype(np.float32)
+    test_h_zeros = np.zeros((5, 1, hidden_size)).astype(np.float32)
+    test_c_zeros = np.zeros((5, 1, hidden_size)).astype(np.float32)
     test_zeros = [test_x_zeros, test_h_zeros, test_c_zeros]
 
     test_x_randn = np.random.randn(1, num_frames, freq_dim).astype(np.float32)
-    test_h_randn = np.random.randn(5, 1, 1024).astype(np.float32)
-    test_c_randn = np.random.randn(5, 1, 1024).astype(np.float32)
+    test_h_randn = np.random.randn(5, 1, hidden_size).astype(np.float32)
+    test_c_randn = np.random.randn(5, 1, hidden_size).astype(np.float32)
     test_randn = [test_x_randn, test_h_randn, test_c_randn]
 
     test_names = ["Speak_5_out", "Dustin-5-drz-test-20191202", "Dustin-5-plane-noise", 

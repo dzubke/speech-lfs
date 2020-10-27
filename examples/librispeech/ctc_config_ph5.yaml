@@ -1,8 +1,8 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200806/ph5/
-data: 
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
-    dev_sets: 
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201006/ph5/
+data:
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-2M-2020-10-06_dd.json
+    dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
         libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-08-06-09-22_ph5_mid-aug-w-feat-norm_lib-ted-cv.log
+    log_file: logs/2020-10-07_ph5_large-model-mid-aug_lib-ted-cv-speak-2M-2020-10-06.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -31,38 +31,39 @@ preproc:
     background_noise: True
     background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
     background_noise_prob: 0.5
-    background_noise_range: [0.0, 0.4]
+    background_noise_range: [0.0, 0.5]
     spec_augment: True
     spec_augment_prob: 0.5
-    spec_augment_policy:
+    spec_augment_policy: 
         0: {W: 20, F: 30, m_F: 1, T: 18, m_T: 1}
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2} 
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
-optimizer: 
-    batch_size: 16
-    run_state: [2778101, 54.90977]
-    best_so_far: 0.34689
-    start_epoch: 33
+optimizer:
+    batch_size: 8
+    run_state: [2962783, 33.56917]
+    best_so_far: 0.202614
+    start_epoch: 26
     epochs: 100
-    learning_rate: 0.00025
+    learning_rate: 0.0005
     momentum: 0.5
     dampening: 0.0
-    sched_gamma: 1.0
+    sched_gamma: 1.0 
     sched_step: 1
-model:
+model: 
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     multi_gpu: False
     dropout: 0.4
+    blank_idx: last
     load_trained: True
-    trained_path: examples/librispeech/models/ctc_models/20200806/ph5/20200916/best_model_state_dict.pth
+    trained_path: ./examples/librispeech/models/ctc_models/20200925/ph3/model_state_dict_ckpt.pth
     remove_layers: []
     encoder: 
         conv:
-            - [32, 11, 41, 1, 2, 0, 20]
-            - [32, 11, 21, 1, 2, 0, 10]
-            - [96, 11, 21, 1, 1, 0, 10]
+            - [64, 11, 41, 1, 2, 0, 20]
+            - [64, 11, 21, 1, 2, 0, 10]
+            - [128, 11, 21, 1, 1, 0, 10]
         rnn: 
             type: LSTM
-            dim: 512
+            dim: 1024
             bidirectional: False
-            layers: 5
+            layers : 5

@@ -34,3 +34,21 @@ examples/librispeech/models/ctc_models/20200925/ph3/best_model_state_dict.pth fi
 examples/librispeech/models/ctc_models/20200925/ph3/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20200925/ph3/*/*.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20200925/ph3/model_state_dict_ckpt.pth filter=lfs diff=lfs merge=lfs -text
+<<<<<<< HEAD
+examples/librispeech/models/ctc_models/20201006/ph2/best_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph2/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph2/model_state_dict_ckpt.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph2/*/*.pth filter=lfs diff=lfs merge=lfs -text
+=======
+<<<<<<< HEAD
+examples/librispeech/models/ctc_models/20201006/ph6/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph6/best_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph6/model_state_dict_ckpt.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph6/*/*.pth filter=lfs diff=lfs merge=lfs -text
+=======
+examples/librispeech/models/ctc_models/20201006/ph5/best_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph5/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph5/model_state_dict_ckpt.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201006/ph5/*/*.pth filter=lfs diff=lfs merge=lfs -text
+>>>>>>> c8e3a448b0316716c2939603bce069581c8a2823
+>>>>>>> 3d156fe5856d832bf3364eef7ef96efb9e908c43
