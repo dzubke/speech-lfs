@@ -68,6 +68,7 @@ class CTC(model.Model):
         probs = probs.data.cpu().numpy()
         return [decode(p, beam_size=3, blank=self.blank)[0]
                     for p in probs]
+    
     def infer_confidence(self, batch):
         """
         returns the confidence value was well as the prediction
