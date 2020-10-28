@@ -16,7 +16,18 @@ from speech.utils.io import load_config, load_state_dict
 
 
 
-def torch_to_onnx(model_name:str, num_frames:int, use_state_dict:bool, return_models:bool=False):
+def torch_to_onnx(
+    model_name:str, 
+    num_frames:int, 
+<<<<<<< HEAD
+    use_state_dict:bool, 
+    return_models:bool=False)->None:
+=======
+    hidden_size:int,
+    use_state_dict:bool, 
+    return_models:bool=False
+)->None:
+>>>>>>> 549c2c5387ff970f3e3b16bb10e4c0aeae8bac49
     """
     Arguments
     -----------
@@ -24,9 +35,10 @@ def torch_to_onnx(model_name:str, num_frames:int, use_state_dict:bool, return_mo
         filename of the model
     num_frames: int
         number of feature frames that will fix the model's size
+    hidden_size (int): size of RNN/LSTM cell
     use_state_dict: bool
         if true, a new model will be created and the state_dict from the model in `torch_path` will loaded
-    return_models: bool, False
+    return_models (bool, False):
         if true, the function will return both the torch and onnx model objects
     """  
 
@@ -60,7 +72,11 @@ def torch_to_onnx(model_name:str, num_frames:int, use_state_dict:bool, return_mo
     
     torch_model.eval()    
     
-    input_tensor = generate_test_input("pytorch", model_name, time_dim) 
+<<<<<<< HEAD
+    hidden_size = model_cfg['encoder']['rnn']['dim']
+=======
+>>>>>>> 549c2c5387ff970f3e3b16bb10e4c0aeae8bac49
+    input_tensor = generate_test_input("pytorch", model_name, time_dim, hidden_size) 
     torch_onnx_export(torch_model, input_tensor, onnx_path)
     print(f"Torch model sucessfully converted to Onnx at {onnx_path}")
 
@@ -70,13 +86,36 @@ def torch_to_onnx(model_name:str, num_frames:int, use_state_dict:bool, return_mo
 
 
 if __name__ == "__main__":
-    # commmand format: python pytorch_to_onnx.py <model_name> --num_frames X --use_state_dict <True/False>
     parser = argparse.ArgumentParser(description="converts models in pytorch to onnx.")
-    parser.add_argument("--model-name", help="name of the model.")
-    parser.add_argument("--num-frames", type=int, help="number of input frames in time dimension hard-coded in onnx model")
-    parser.add_argument("--use-state-dict", action='store_true', default=False, 
-                        help="boolean whether to load model from state dict") 
+    parser.add_argument(
+        "--model-name", help="name of the model."
+    )
+    parser.add_argument(
+        "--num-frames", type=int, 
+        help="number of input frames in time dimension hard-coded in onnx model"
+    )
+    parser.add_argument(
+<<<<<<< HEAD
+=======
+        "--hidden-size", type=int,
+        help="hidden-size of RNN/LSTM unit"
+    )
+    parser.add_argument(
+>>>>>>> 549c2c5387ff970f3e3b16bb10e4c0aeae8bac49
+        "--use-state-dict", action='store_true', default=False,
+        help="boolean whether to load model from state dict"
+    ) 
     args = parser.parse_args()
 
     return_models = False
-    torch_to_onnx(args.model_name, args.num_frames, args.use_state_dict, return_models)
+
+    torch_to_onnx(
+        args.model_name, 
+        args.num_frames,
+<<<<<<< HEAD
+=======
+        args.hidden_size,
+>>>>>>> 549c2c5387ff970f3e3b16bb10e4c0aeae8bac49
+        args.use_state_dict, 
+        return_models
+    )

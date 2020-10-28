@@ -1,8 +1,8 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200907/ph6/
-data: 
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
-    dev_sets: 
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201006/ph6/
+data:
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_train/train-data_4M-examples_2020-10-05-06_dd.json
+    dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
         libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-09-07_ph6_large-model-high-aug_lib-ted-cv.log
+    log_file: logs/2020-10-07_ph5_large-model-mid-aug_speak-train-4M-2020-10-05-06.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -21,40 +21,41 @@ preproc:
     use_feature_normalize: True
     augment_from_normal: True
     tempo_gain_pitch_perturb: True
-    tempo_gain_pitch_prob: 0.75
+    tempo_gain_pitch_prob: 0.5
     tempo_range: [0.80, 1.20]
     gain_range: [-5, 5]
     pitch_range: [-250, 250]
     synthetic_gaussian_noise: True
-    gauss_noise_prob: 0.75
+    gauss_noise_prob: 0.5
     gauss_snr_db_range: [15, 50]
     background_noise: True
     background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
-    background_noise_prob: 0.75
+    background_noise_prob: 0.5
     background_noise_range: [0.0, 0.5]
     spec_augment: True
-    spec_augment_prob: 0.75
-    spec_augment_policy:
+    spec_augment_prob: 0.5
+    spec_augment_policy: 
         0: {W: 20, F: 30, m_F: 1, T: 18, m_T: 1}
-        1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2}
-        2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
+        1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2} 
+        2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
 optimizer:
     batch_size: 8
-    run_state: [1677344, 60.967165]
-    best_so_far: 0.34627
-    start_epoch: 16
+    run_state: [2962783, 33.56917]
+    best_so_far: 0.202614
+    start_epoch: 26
     epochs: 100
-    learning_rate: 0.001
-    momentum: 0.0
+    learning_rate: 0.0005
+    momentum: 0.5
     dampening: 0.0
-    sched_gamma: 1.0
+    sched_gamma: 1.0 
     sched_step: 1
 model: 
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     multi_gpu: False
     dropout: 0.4
+    blank_idx: last
     load_trained: True
-    trained_path: ./examples/librispeech/models/ctc_models/20200806/ph4/20200907/best_model_state_dict.pth
+    trained_path: ./examples/librispeech/models/ctc_models/20200925/ph3/model_state_dict_ckpt.pth
     remove_layers: []
     encoder: 
         conv:
@@ -65,4 +66,4 @@ model:
             type: LSTM
             dim: 1024
             bidirectional: False
-            layers: 5
+            layers : 5
