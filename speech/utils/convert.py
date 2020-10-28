@@ -17,7 +17,7 @@ def check_install(*args):
         subprocess.check_output(args,
                     stderr=subprocess.STDOUT)
         return True
-    except OSError as e:
+    except:
         return False
 
 def check_avconv():
