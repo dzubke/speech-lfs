@@ -11,8 +11,8 @@ import torch
 
 
 def get_names(path:str, tag:str, get_config:bool=False, model_name:str=''):
-    MODEL = "model_state_dict.pth"
-    PREPROC = "preproc.pyc"
+    MODEL = "ckpt_model_state_dict.pth"
+    PREPROC = "ckpt_preproc.pyc"
     
     tag = tag + "_" if tag else ""
     # if model_name is non-empty, reassign the global variable MODEL
