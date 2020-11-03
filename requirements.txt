@@ -27,3 +27,4 @@ tensorboardX==2.1
 future==0.18.2
 cython==0.29.21
 firebase-admin
+pyaudio==0.2.11
