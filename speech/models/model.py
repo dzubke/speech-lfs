@@ -95,8 +95,6 @@ class Model(nn.Module):
             in the model encoder config.
 
         """
-             
-        
         if self.use_conv:
             x = x.unsqueeze(1) 
             x = self.conv(x)
@@ -108,10 +106,9 @@ class Model(nn.Module):
             # Reshape x to be (batch, time, freq * channels)
             # for the RNN
         
-            b, t, f, c = x.data.size()
-            x = x.view((b, t, f*c)) 
-            #x = x.view((x.data.size()[0], x.data.size()[1], -1)) 
-
+            #b, t, f, c = x.data.size()
+            #x = x.view((b, t, f*c)) 
+            x = x.view((x.data.size()[0], x.data.size()[1], -1)) 
 
         if self.use_rnn:
             x, rnn_args = self.rnn(x, rnn_args)

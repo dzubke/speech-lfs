@@ -88,7 +88,7 @@ convert_model(){
     QUARTER_PRECISION=$4
 
     sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
-    python torch_to_onnx.py --model-name "$MODEL_NAME" --num-frames "$NUM_FRAMES" --use-state-dict 
+    python torch_to_onnx.py --model-name "$MODEL_NAME" --num-frames "$NUM_FRAMES"
     python onnx_to_coreml.py "$MODEL_NAME" $HALF_PRECISION $QUARTER_PRECISION
     python validation.py $MODEL_NAME --num-frames $NUM_FRAMES
     sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py

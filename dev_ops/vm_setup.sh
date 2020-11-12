@@ -101,6 +101,15 @@ sudo apt-get -y install make
 sudo apt-get -y install cmake
 make
 
+# build naren's loss function
+cd ~/awni_speech/speech-lfs/libs/
+git clone https://github.com/SeanNaren/warp-ctc.git warp-ctc-naren
+cd warp-ctc-naren
+mkdir build; cd build
+cmake ..
+
+
+
 
 echo  -e "\n=========  configuring data disk  =========\n"
 sudo mkdir -p /mnt/disks/data_disk
