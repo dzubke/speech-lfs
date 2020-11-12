@@ -23,7 +23,7 @@ from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models import ctc_model
 from speech.utils.compat import normalize
 from speech.utils.convert import to_numpy
-from speech.utils.io import load_config
+from speech.utils.io import load_config, load_state_dict
 from speech.utils.stream_utils import make_full_window
 from speech.utils.wave import array_from_wave
 
@@ -40,17 +40,21 @@ logging.basicConfig(filename=None, filemode='w', level=log_level)
 np.random.seed(2020)
 torch.manual_seed(2020)
 
-def main(model_name, num_frames, hidden_size):
+def main(model_name, num_frames):
 
     model_fn, onnx_fn, coreml_fn, config_fn, preproc_fn, state_dict_path = validation_paths(model_name)
     
     config = load_config(config_fn)
     model_cfg = config["model"]
     
-    with open(preproc_fn, 'rb') as fid:
-        preproc = pickle.load(fid)
+    #with open(preproc_fn, 'rb') as fid:
+    #    preproc = pickle.load(fid)
+
+    preproc = np.load(preproc_fn, allow_pickle=True)
 
     freq_dim = preproc.input_dim
+
+    hidden_size = model_cfg['encoder']['rnn']['dim']
 
     PARAMS = {
         "sample_rate": 16000,
@@ -68,12 +72,7 @@ def main(model_name, num_frames, hidden_size):
     #load models
     model = ctc_model.CTC(preproc.input_dim, preproc.vocab_size, model_cfg)
     
-    state_dict_model = torch.load(model_fn, map_location=torch.device('cpu'))
-    if isinstance(state_dict_model, dict):
-        state_dict = state_dict_model
-    elif isinstance(state_dict_model, torch.nn.Module):
-        state_dict = state_dict_model.state_dict()
-    torch.save(state_dict, state_dict_path)
+    state_dict = load_state_dict(model_fn, torch.device('cpu'))
     model.load_state_dict(state_dict)
 
     onnx_model = onnx.load(onnx_fn)
@@ -97,13 +96,14 @@ def main(model_name, num_frames, hidden_size):
 
     # make predictions 
 
-    audio_dir = '/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech/model_convert/audio_files/Validatio-audio_2020-05-21'
+    audio_dir = '/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech-lfs/model_convert/audio_files/Validatio-audio_2020-05-21'
 
     validate_all_models(model, onnx_fn, coreml_model, preproc, audio_dir, model_name, num_frames, PARAMS['hidden_size'])
 
     validation_tests = full_audio_infer(model, preproc, PARAMS, audio_dir)
     
     write_output_json(PARAMS, preproc_dict, validation_tests, model_name)
+
 
 def write_output_json(PARAMS:dict, preproc_dict:dict, validation_tests:dict, model_name:str, output_path:str=None):
     output_json = {
@@ -125,8 +125,7 @@ def full_audio_infer(
     model, 
     preproc, 
     PARAMS:dict,
-    audio_dir:str
-)->dict:
+    audio_dir:str)->dict:
     """
     conducts inference on all audio files in audio_dir and returns a dictionary
     of the probabilities and phoneme predictions
@@ -174,7 +173,6 @@ def full_audio_infer(
         probs = to_numpy(probs)
         int_labels = max_decode(probs[0], blank=39)
         predictions = preproc.decode(int_labels)
-
         validation_tests.update({audio_file: {"logits": probs[0].tolist(), "maxDecodePhonemes": predictions}})
         logging.info(f"probs dimension: {probs.shape}")
         logging.info(f"prediction len: {len(predictions)}")

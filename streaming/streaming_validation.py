@@ -50,6 +50,10 @@ def main(ARGS):
     preproc = read_pickle(preproc_path)
     preproc.update()
 
+    # if feature_norm is True, the streaming vs list_chunk and full_audio won't agree
+    # you can manually turn it off to make them agree, but then the predictions aren't very good. 
+    # preproc.use_feature_normalize = False
+
     # load and assign config
     config = load_config(config_path)
     model_cfg = config['model']
@@ -80,7 +84,7 @@ def main(ARGS):
         "feature_size": 257,     # frequency dimension of log_spec
         "initial_padding": 15,   # padding of feature_buffer
         "final_padding": 13,      # final padding of feature_buffer
-        'fill_chunk_padding': 7,  #TODO hard-coded value that is calculated as fill_chunk_padding
+        'fill_chunk_padding': 1,  #TODO hard-coded value that is calculated as fill_chunk_padding
         "blank_idx": model.blank
     }
     # stride of chunks across the log_spec output/ model input
@@ -88,23 +92,36 @@ def main(ARGS):
 
     logging.warning(f"PARAMS dict: {PARAMS}")
 
-    stream_probs, stream_preds, model_inputs = stream_infer(model, preproc, lstm_states, PARAMS, ARGS)
+    stream_probs, stream_preds, st_model_inputs = stream_infer(model, preproc, lstm_states, PARAMS, ARGS)
 
-    print(f"MODEL INPUTS shape: {model_inputs.shape}")
-    lc_probs, lc_preds = list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS, ARGS)
+    lc_probs, lc_preds, lc_model_inputs = list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS, ARGS)
 
-    fa_probs, fa_preds = full_audio_infer(model, preproc, lstm_states, PARAMS, ARGS)
-    
+    fa_probs, fa_preds, fa_model_inputs = full_audio_infer(model, preproc, lstm_states, PARAMS, ARGS)
+
+    print(f"Stream MODEL INPUTS shape: {st_model_inputs.shape}")
+    print(f"List chunk MODEL INPUTS shape: {lc_model_inputs.shape}")
+    print(f"Full audio MODEL INPUTS shape: {fa_model_inputs.shape}")
+
+    # saving the inputs to debugging in ipython
+    #np.save("./test_data/lc_input_2020-09-29_test.npy", lc_model_inputs)
+    #np.save("./test_data/st_input_2020-09-29_test.npy", st_model_inputs)
+
     logging.warning(f"stream probs shape: {stream_probs.shape}")
     logging.warning(f"list chunk probs shape: {lc_probs.shape}")
     logging.warning(f"full audio probs shape: {fa_probs.shape}")
+
+    # checks to see that the inputs to each implementation are the same. 
+    np.testing.assert_allclose(fa_model_inputs, lc_model_inputs, rtol=1e-03, atol=1e-05)
+    np.testing.assert_allclose(st_model_inputs, lc_model_inputs, rtol=1e-03, atol=1e-05)
+    np.testing.assert_allclose(st_model_inputs, fa_model_inputs, rtol=1e-03, atol=1e-05)
+
     
-    # np.testing.assert_allclose(stream_probs, lc_probs, rtol=1e-03, atol=1e-05)
-    # np.testing.assert_allclose(stream_probs, fa_probs, rtol=1e-03, atol=1e-05)
+    np.testing.assert_allclose(stream_probs, lc_probs, rtol=1e-03, atol=1e-05)
+    np.testing.assert_allclose(stream_probs, fa_probs, rtol=1e-03, atol=1e-05)
     np.testing.assert_allclose(lc_probs, fa_probs, rtol=1e-03, atol=1e-05)
 
-    # assert ed.eval(stream_preds, lc_preds)==0, "stream and list-chunk predictions are not the same"
-    # assert ed.eval(stream_preds, fa_preds)==0, "stream and full-audio predictions are not the same"
+    assert ed.eval(stream_preds, lc_preds)==0, "stream and list-chunk predictions are not the same"
+    assert ed.eval(stream_preds, fa_preds)==0, "stream and full-audio predictions are not the same"
     assert ed.eval(lc_preds, fa_preds)==0, "list-chunk and full-audio predictions are not the same"
 
     logging.warning(f"all probabilities and predictions are the same")
@@ -137,7 +154,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
     features_buffer_size = PARAMS['chunk_size']
     features_ring_buffer = collections.deque(maxlen=features_buffer_size)
     
-    saved_model_input = np.empty((1, PARAMS['chunk_size'], PARAMS['feature_size']))
+    #saved_model_input = np.empty((1, PARAMS['chunk_size'], PARAMS['feature_size']))
     # add `half_context` zero frames as padding to the feature buffer
     ## zero_frame is a single feature timestep with dims (1, feature_size)
     zero_frame = np.zeros((1, PARAMS['feature_size']), dtype=np.float32)
@@ -212,21 +229,23 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                 audio_ring_buffer.append(frame)
                 
                 #numpy_buffer_time_start = time.time()
-                buffer_list = list(audio_ring_buffer)
+                #buffer_list = list(audio_ring_buffer)
 
-                # convert the buffer to numpy array
-                # a single frame has dims: (512,) and numpy buffer (2 frames) is: (512,)
-                # The dimension of numpy buffer is reduced by half because each 
-                # integer in numpy buffer is encoded as 2 hexidecimal entries in original frame
+                # convert the audio buffer to numpy array
+                # a single audio frame has dims: (512,) which is reduced to (256,) in the numpy buffer
+                # The dimension of numpy buffer is reduced by half because integers in the audio_ring_buffer
+                # are encoded as two hexidecimal entries, which are reduced to a single integer in the numpy buffer
+                # two numpy buffers are then concatenated making the final `numpy_buffer` have dims: (512,)
                 numpy_buffer = np.concatenate(
-                    (np.frombuffer(buffer_list[0], np.int16), 
-                    np.frombuffer(buffer_list[1], np.int16)))
+                    (np.frombuffer(audio_ring_buffer[0], np.int16), 
+                    np.frombuffer(audio_ring_buffer[1], np.int16) )
+                )
 
                 #features_time_start = time.time()
                 # calculate the features with dim: (1, 257)
                 features_step = log_spectrogram_from_data(numpy_buffer, samp_rate=16000)
                 
-                #normalize_time_start = time.time()
+                # normalize_time_start = time.time()
                 # normalize the features
                 norm_features = normalize(preproc, features_step)
 
@@ -264,6 +283,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                         
                         # saved_model_input saves the inputs to the model
                         if stride_counter == 1:
+                            print(f"~~~~~~~ stride counter: {stride_counter} ~~~~~~~~~")
                             saved_model_input = conv_context
                         else: 
                             saved_model_input = np.concatenate((saved_model_input, conv_context), axis=0)
@@ -273,6 +293,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                             logging.debug(f"iter {count}: first {log_sample_len} of input: {conv_context.shape}\n {conv_context[0, 0, :log_sample_len]}")                        
                             logging.debug(f"iter {count}: first {log_sample_len} of hidden_in first layer: {hidden_in.shape}\n {hidden_in[0, :, :log_sample_len]}")
                             logging.debug(f"iter {count}: first {log_sample_len} of cell_in first layer: {cell_in.shape}\n {cell_in[0, :, :log_sample_len]}")
+                        
                         model_out = model(torch.from_numpy(conv_context), (hidden_in, cell_in))
 
                         #output_assign_time_start = time.time()
@@ -350,6 +371,14 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
             else:
                 features_ring_buffer.append(norm_features)
                 stride_counter += 1
+                
+                conv_context = np.concatenate(list(features_ring_buffer), axis=0)
+                # addding batch dimension: (1, 31, 257)
+                conv_context = np.expand_dims(conv_context, axis=0)
+                
+                # saved_model_input saves the inputs to the model for comparison with list_chunk and full_audio inputs
+                saved_model_input = np.concatenate((saved_model_input, conv_context), axis=0)
+
                 model_out = model(torch.from_numpy(conv_context), (hidden_in, cell_in))
                 probs, (hidden_out, cell_out) = model_out
                 logging.debug(f"iter {count}: first {log_sample_len} of prob output {probs.shape}:\n {probs[0, 0, :log_sample_len]}")                        
@@ -358,69 +387,72 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
                 probs = to_numpy(probs)
                 probs_list.append(probs)
             
-            padding_iterations = PARAMS["final_padding"] + PARAMS['fill_chunk_padding'] + PARAMS['stride']
-            for count, frame in enumerate(range(padding_iterations)):
-                logging.debug(f"---------- adding zeros at the end of audio sample ------------")
 
-                # -------------logging ----------------
-                logging.info(f"stride modulus: {stride_counter % PARAMS['stride']}")
-                # -------------logging ----------------
+        padding_iterations = PARAMS["final_padding"] + PARAMS['fill_chunk_padding'] + PARAMS['stride']
+        for count, frame in enumerate(range(padding_iterations)):
+            logging.debug(f"---------- adding zeros at the end of audio sample ------------")
 
-                if stride_counter % PARAMS['stride'] !=0:
-                    # zero_frame is (1, 257) numpy array of zeros
-                    features_ring_buffer.append(zero_frame)
-                    stride_counter += 1
-                else:
-                    stride_counter += 1
-                    features_buffer_time_start = time.time()
-                    features_ring_buffer.append(zero_frame)
-                    features_buffer_time += time.time() - features_buffer_time_start
-                    features_buffer_count += 1
+            # -------------logging ----------------
+            logging.info(f"stride modulus: {stride_counter % PARAMS['stride']}")
+            # -------------logging ----------------
 
-                    numpy_conv_time_start = time.time()
-                    # conv_context dim: (31, 257)
-                    conv_context = np.concatenate(list(features_ring_buffer), axis=0)
-                    # addding batch dimension: (1, 31, 257)
-                    conv_context = np.expand_dims(conv_context, axis=0)
-                    numpy_conv_time += time.time() - numpy_conv_time_start
-                    numpy_conv_count += 1
+            if stride_counter % PARAMS['stride'] !=0:
+                # zero_frame is (1, 257) numpy array of zeros
+                features_ring_buffer.append(zero_frame)
+                stride_counter += 1
+            else:
+                stride_counter += 1
+                features_buffer_time_start = time.time()
+                features_ring_buffer.append(zero_frame)
+                features_buffer_time += time.time() - features_buffer_time_start
+                features_buffer_count += 1
 
-                    model_infer_time_start = time.time()
-                    model_out = model(torch.from_numpy(conv_context), (hidden_in, cell_in))
-                    model_infer_time += time.time() - model_infer_time_start
-                    model_infer_count += 1
+                numpy_conv_time_start = time.time()
+                # conv_context dim: (31, 257)
+                conv_context = np.concatenate(list(features_ring_buffer), axis=0)
+                # addding batch dimension: (1, 31, 257)
+                conv_context = np.expand_dims(conv_context, axis=0)
+                numpy_conv_time += time.time() - numpy_conv_time_start
+                numpy_conv_count += 1
 
-                    output_assign_time_start = time.time()
-                    probs, (hidden_out, cell_out) = model_out
-                    
-                    # probs dim: (1, 1, 40)
-                    probs = to_numpy(probs)
-                    probs_list.append(probs)
-                    hidden_in, cell_in = hidden_out, cell_out
-                    output_assign_time += time.time() - output_assign_time_start
-                    output_assign_count += 1
+                # saved_model_input saves the inputs to the model for comparison with list_chunk and full_audio inputs
+                saved_model_input = np.concatenate((saved_model_input, conv_context), axis=0)
 
+                model_infer_time_start = time.time()
+                model_out = model(torch.from_numpy(conv_context), (hidden_in, cell_in))
+                model_infer_time += time.time() - model_infer_time_start
+                model_infer_count += 1
+
+                output_assign_time_start = time.time()
+                probs, (hidden_out, cell_out) = model_out
+                
+                # probs dim: (1, 1, 40)
+                probs = to_numpy(probs)
+                probs_list.append(probs)
+                hidden_in, cell_in = hidden_out, cell_out
+                output_assign_time += time.time() - output_assign_time_start
+                output_assign_count += 1
+
+                # ------------ logging ---------------
+                logging.info(f"conv_context shape: {conv_context.shape}")
+                logging.info(f"probs shape: {probs.shape}")
+                logging.info(f"probs_list len: {len(probs_list)}")
+                #logging.info(f"probs value: {probs}")
+                # ------------ logging ---------------
+        
+                # decoding every 20 time-steps
+                if count%20 ==0:
+                    decoder_time_start = time.time()
+                    probs_steps = np.concatenate(probs_list, axis=1)
+                    int_labels = max_decode(probs_steps[0], blank=PARAMS['blank_idx'])
+                    # int_labels, likelihood = ctc_decode(probs[0], beam_size=50, blank=PARAMS['blank_idx'])
+                    predictions = preproc.decode(int_labels)
+                    decoder_time += time.time() - decoder_time_start
+                    decoder_count += 1
                     
                     # ------------ logging ---------------
-                    logging.info(f"conv_context shape: {conv_context.shape}")
-                    logging.info(f"probs shape: {probs.shape}")
-                    logging.info(f"probs_list len: {len(probs_list)}")
-                    #logging.info(f"probs value: {probs}")
+                    logging.warning(f"predictions: {predictions}")
                     # ------------ logging ---------------
-            
-                    # decoding every 20 time-steps
-                    if count%20 ==0:
-                        decoder_time_start = time.time()
-                        probs_steps = np.concatenate(probs_list, axis=1)
-                        int_labels = max_decode(probs_steps[0], blank=PARAMS['blank_idx'])
-                        # int_labels, likelihood = ctc_decode(probs[0], beam_size=50, blank=PARAMS['blank_idx'])
-                        predictions = preproc.decode(int_labels)
-                        decoder_time += time.time() - decoder_time_start
-                        decoder_count += 1
-                        
-                        # ------------ logging ---------------
-                        logging.warning(f"predictions: {predictions}")
-                        # ------------ logging ---------------
         
                 total_count += 1
 
@@ -437,7 +469,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
         predictions = preproc.decode(int_labels)
         decoder_time += time.time() - decoder_time_start
         decoder_count += 1
-        logging.info(f"final predictions: {predictions}")
+        logging.warning(f"final predictions: {predictions}")
 
         
         audio.destroy()
@@ -466,6 +498,7 @@ def stream_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
         
         probs = np.concatenate(probs_list, axis=1)
 
+
         saved_model_input = remove_input_duplicates(saved_model_input, PARAMS['stride'])
 
 
@@ -488,7 +521,64 @@ def remove_input_duplicates(model_inputs:np.ndarray, stride:int)->np.ndarray:
             # concatenate this last segment along the `chunk_size` dimension
             dedup_inputs = np.concatenate((dedup_inputs, inp[-stride:, :]), axis=0)
     
+    assert dedup_inputs.shape[1] == 257, "second dedup_inputs dimension is not 257"
+
     return dedup_inputs
+
+
+def process_pad_audio(audio_file, preproc, PARAMS):
+    """
+    """
+
+    audio_data, samp_rate = array_from_wave(audio_file)
+    
+    # pads the audio data so that the data will be evenly divisble by the feature_step
+    audio_data = make_full_window(audio_data, PARAMS['feature_window'], PARAMS['feature_step'])
+
+    features_time = time.time()
+    features = log_spectrogram_from_data(audio_data, samp_rate)
+    features_time = time.time() - features_time
+    
+    normalize_time = time.time()
+    norm_features = normalize(preproc, features)
+    normalize_time = time.time() - normalize_time
+
+    convert_pad_time = time.time()
+
+    # adds the batch dimension (1, time, 257)
+    norm_features = np.expand_dims(norm_features, axis=0)
+    torch_input = torch.from_numpy(norm_features)
+    # paddings starts from the back, zero padding to freq, 15 padding to time
+    padding = (0, 0, PARAMS["initial_padding"], PARAMS["final_padding"])
+    padded_input = torch.nn.functional.pad(torch_input, padding, value=0)
+
+    # calculate the number of full chunks fed into the model
+    full_chunks = ( padded_input.shape[1] - PARAMS['chunk_size'] ) // PARAMS['stride']
+    # increament full_chunks by 1 to include the first chunk
+    full_chunks += 1   
+    # calculate the size of the partially filled chunk
+    fill_chunk_remainder = (padded_input.shape[1] - PARAMS['chunk_size']) % PARAMS['stride']
+
+    # if there is a remainder, pad the partial chunk until full
+    if fill_chunk_remainder != 0:
+        full_chunks += 1 # to include the filled chunk
+        fill_chunk_padding = PARAMS['stride'] - fill_chunk_remainder
+        fill_chunk_pad = torch.zeros(1, fill_chunk_padding, PARAMS['feature_size'], dtype=torch.float32, requires_grad=False)
+        padded_input = torch.cat((padded_input, fill_chunk_pad),dim=1)
+    else:
+        fill_chunk_padding = 0
+
+    print(f"fill_chunk_padding: {fill_chunk_padding}")
+    # process last chunk with stride of zeros
+    final_chunk_pad = torch.zeros(1, PARAMS['stride'], PARAMS['feature_size'], dtype=torch.float32, requires_grad=False)
+    padded_input = torch.cat((padded_input, final_chunk_pad),dim=1) 
+    full_chunks += 1 # to include the last chunk
+
+    convert_pad_time = time.time() - convert_pad_time
+
+    timers = [features_time, normalize_time, convert_pad_time]
+
+    return padded_input, timers, full_chunks
 
 
 def list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
@@ -591,63 +681,11 @@ def list_chunk_infer_full_chunks(model, preproc, lstm_states, PARAMS:dict, ARGS)
         logging.warning(f"total                time (s), count: {round(lc_total_time, acc)}, {lc_total_count}")
         logging.warning(f"Multiples faster than realtime      : {round(duration/lc_total_time, acc)}x")
 
-
+        # prepping the data to return
         probs = np.concatenate(probs_list, axis=1)
-        return probs, predictions
+        padded_input = to_numpy(torch.squeeze(padded_input))
 
-
-def process_pad_audio(audio_file, preproc, PARAMS):
-    """
-    """
-
-    audio_data, samp_rate = array_from_wave(audio_file)
-    
-    # pads the audio data so that the data will be evenly divisble by the feature_step
-    audio_data = make_full_window(audio_data, PARAMS['feature_window'], PARAMS['feature_step'])
-
-    features_time = time.time()
-    features = log_spectrogram_from_data(audio_data, samp_rate)
-    features_time = time.time() - features_time
-    
-    normalize_time = time.time()
-    norm_features = normalize(preproc, features)
-    normalize_time = time.time() - normalize_time
-
-    convert_pad_time = time.time()
-
-    # adds the batch dimension (1, time, 257)
-    norm_features = np.expand_dims(norm_features, axis=0)
-    torch_input = torch.from_numpy(norm_features)
-    # paddings starts from the back, zero padding to freq, 15 padding to time
-    padding = (0, 0, PARAMS["initial_padding"], PARAMS["final_padding"])
-    padded_input = torch.nn.functional.pad(torch_input, padding, value=0)
-
-    # calculate the number of full chunks fed into the model
-    full_chunks = (padded_input.shape[1] - PARAMS['chunk_size']) // PARAMS['stride']
-    # TODO(dustin), why is this incremented by one? 
-    full_chunks += 1   
-    # calculate the size of the partially filled chunk
-    fill_chunk_remainder = (padded_input.shape[1] - PARAMS['chunk_size']) % PARAMS['stride']
-
-    # if there is a remainder, add an additional chunk and pad the partial chunk until full
-    if fill_chunk_remainder != 0:
-        full_chunks += 1 # to include the filled chunk
-        fill_chunk_padding = PARAMS['stride'] - fill_chunk_remainder
-        fill_chunk_pad = torch.zeros(1, fill_chunk_padding, PARAMS['feature_size'], dtype=torch.float32, requires_grad=False)
-        padded_input = torch.cat((padded_input, fill_chunk_pad),dim=1)
-    else:
-        fill_chunk_padding = 0
-
-    # process last chunk with stride of zeros
-    final_chunk_pad = torch.zeros(1, PARAMS['stride'], PARAMS['feature_size'], dtype=torch.float32, requires_grad=False)
-    padded_input = torch.cat((padded_input, final_chunk_pad),dim=1) 
-    full_chunks += 1 # to include the last chunk
-
-    convert_pad_time = time.time() - convert_pad_time
-
-    timers = [features_time, normalize_time, convert_pad_time]
-
-    return padded_input, timers, full_chunks
+        return probs, predictions, padded_input
 
 
 def full_audio_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
@@ -709,11 +747,11 @@ def full_audio_infer(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
         logging.warning(f"decoder              time (s): {round(fa_decode_time, acc)}")
         logging.warning(f"total                time (s): {round(fa_total_time, acc)}")
         logging.warning(f"Multiples faster than realtime      : {round(duration/fa_total_time, acc)}x")
-
         # ------------ logging ---------------
 
+        padded_input = to_numpy(torch.squeeze(padded_input))
 
-        return probs, predictions
+        return probs, predictions, padded_input
 
 
 def list_chunk_infer_fractional_chunks(model, preproc, lstm_states, PARAMS:dict, ARGS)->tuple:
