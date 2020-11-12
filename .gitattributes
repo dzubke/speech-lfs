@@ -52,3 +52,4 @@ examples/librispeech/models/ctc_models/20201006/ph5/model_state_dict_ckpt.pth fi
 examples/librispeech/models/ctc_models/20201006/ph5/*/*.pth filter=lfs diff=lfs merge=lfs -text
 >>>>>>> c8e3a448b0316716c2939603bce069581c8a2823
 >>>>>>> 3d156fe5856d832bf3364eef7ef96efb9e908c43
+examples/librispeech/models/ctc_models/20201029/ph7/ckpt_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
