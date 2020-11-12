@@ -31,9 +31,9 @@ class CTC(model.Model):
         self.blank = blank_idx
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
-    def forward(self, x, rnn_args=None):
+    def forward(self, x, rnn_args=None, softmax=False):
        # x, y, x_lens, y_lens = self.collate(*batch)
-        return self.forward_impl(x, rnn_args,  softmax=True)
+        return self.forward_impl(x, rnn_args,  softmax=softmax)
 
     def forward_impl(self, x, rnn_args=None, softmax=False):
         if self.is_cuda:

@@ -6,11 +6,14 @@ import argparse
 import os
 import json
 # third-party libraries
+import matplotlib as plt
+import numpy as np
 import torch
 import tqdm
 # project libraries
 import speech
 import speech.loader as loader
+from speech.models.ctc_decoder import decode
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import get_names, load_config, load_state_dict, read_data_json, read_pickle
 
@@ -19,12 +22,16 @@ def eval_loop(model, ldr):
     all_confidence = []
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
-            temp_batch = list(batch)
-            preds, confidence = model.infer_confidence(temp_batch)
-            #preds_dist, prob_dist = model.infer_distribution(temp_batch, 5)
+            batch = list(batch)
+            inputs, targets, inputs_lens, targets_lens = model.collate(*batch)
+            probs, rnn_args = model(inputs, softmax=True)
+            probs = probs.data.cpu().numpy()
+            preds_confidence = [decode(p, beam_size=3, blank=model.blank) for p in probs]
+            preds = [x[0] for x in preds_confidence]
+            confidence = [x[1] for x in preds_confidence]
             all_preds.extend(preds)
             all_confidence.extend(confidence)
-            all_labels.extend(temp_batch[1])
+            all_labels.extend(batch[1])
             #all_preds_dist.extend(((preds_dist, temp_batch[1]),prob_dist))
     return list(zip(all_labels, all_preds, all_confidence)) #, all_preds_dist
 
@@ -197,6 +204,80 @@ def create_filename(base_fn, suffix, ext):
     return base_fn + "_" + suffix + os.path.extsep + ext  
 
 
+def plot_per_historgram(per_path:str, save_path:str=None):
+    """
+    This function plots PER values as a histogram. The plot is saved to `save_path`.
+    Args:
+        per_path (str): path to per csv file with one column as the sample_id and the other the per value
+        save_path (str): path to save the histrogram plot
+    """
+    import csv
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    with open(per_path, 'r') as fid:
+        reader = csv.reader(fid, delimiter=',')
+        per_list = [float(row[1]) for row in reader]
+
+    plt.hist(per_list, bins=10, range=(0.0, 1.0))
+    plt.title("histogram of 2020-10-29 model PER values")
+    plt.xlabel("PER bins")
+    plt.ylabel("# of records")
+    plt.xticks(np.arange(0, 1.1, step=0.1))
+    #plt.yticks(labels=per_list)
+    if save_path == None:
+        save_path = "PER_histogram.png" 
+    plt.savefig(save_path)
+
+def plot_all_hist():
+    """
+    This code can be run in iPython to produce histogram plots of several model PER values
+    """
+
+    per_path_08_06 = "/Users/dustin/Desktop/2020-08-06_PER.txt"
+    with open(per_path_08_06, 'r') as fid:
+        reader = csv.reader(fid, delimiter=',')
+        per_list_08_06 = [float(row[1]) for row in reader]
+
+    per_path_09_25 = "/Users/dustin/Desktop/2020-09-25_PER.txt"
+    with open(per_path_09_25, 'r') as fid:
+        reader = csv.reader(fid, delimiter=',')
+        per_list_09_25 = [float(row[1]) for row in reader]
+
+    per_path_10_29 = "/Users/dustin/Desktop/2020-10-29_PER.txt"
+    with open(per_path_10_29, 'r') as fid:
+        reader = csv.reader(fid, delimiter=',')
+        per_list_10_29 = [float(row[1]) for row in reader]
+
+
+    fig, axs = plt.subplots(3,1, constrained_layout=True)
+
+    axs[0].hist(per_list_10_29, bins=10, range=(0.0, 1.0), color='b')
+    axs[1].hist(per_list_09_25, bins=10, range=(0.0, 1.0), color='orange')
+    axs[2].hist(per_list_08_06, bins=10, range=(0.0, 1.0), color='g')
+
+
+    axs[0].set_yticks(np.arange(0, 40, step=5))
+    axs[1].set_yticks(np.arange(0, 40, step=5))
+    axs[2].set_yticks(np.arange(0, 40, step=5))
+
+    axs[0].set_xticks(np.arange(0, 1.1, step=0.1))
+    axs[1].set_xticks(np.arange(0, 1.1, step=0.1))
+    axs[2].set_xticks(np.arange(0, 1.1, step=0.1))
+
+    axs[2].set_xlabel("PER bins")
+
+    axs[0].set_ylabel("# of records")
+    axs[1].set_ylabel("# of records")
+    axs[2].set_ylabel("# of records")
+
+    axs[0].set_title("2020-10-29 model, 0.168 PER")
+    axs[1].set_title("2020-09-25 model, 0.24 PER")
+    axs[2].set_title("2020-08-06 model, 0.38 PER")
+
+    plt.savefig("PER_historgrams_2020-11-09.png")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description="Eval a speech model.")
@@ -207,8 +288,8 @@ if __name__ == "__main__":
         help="A json file with the dataset to evaluate.")
     parser.add_argument("--batch-size", type=int, default=1,
         help="Batch size during evaluation")
-    parser.add_argument("--last", action="store_true", default=False,
-        help="Last saved model instead of best on dev set.")
+    parser.add_argument("--best", action="store_true", default=False,
+        help="Use best model on dev set instead of last saved model.")
     parser.add_argument("--save",
         help="Optional file to save predicted results.")
     parser.add_argument("--filename", action="store_true", default=False,
@@ -221,7 +302,7 @@ if __name__ == "__main__":
 
     run(args.model, 
         args.dataset, 
-        tag=None if args.last else "best",
+        tag='best' if args.best else None,
         batch_size = args.batch_size, 
         add_filename=args.filename,  
         formatted=args.formatted, 

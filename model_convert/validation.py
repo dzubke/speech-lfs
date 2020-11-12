@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import pickle
+import sys
 # third-party libaries
 import coremltools
 import editdistance
@@ -33,8 +34,7 @@ np.set_printoptions(linewidth=set_linewidth)
 torch.set_printoptions(linewidth=set_linewidth)
 
 log_filename = "logs_probs-hiddencell_2020-05-20.log"
-log_level = 10
-logging.basicConfig(filename=None, filemode='w', level=log_level)
+logging.basicConfig(stream=sys.stdout, filename=None, filemode='w', level=logging.DEBUG)  
 # -----------------------------
 
 np.random.seed(2020)
@@ -54,21 +54,6 @@ def main(model_name, num_frames):
 
     freq_dim = preproc.input_dim
 
-    hidden_size = model_cfg['encoder']['rnn']['dim']
-
-    PARAMS = {
-        "sample_rate": 16000,
-        "feature_win_len": 512,
-        "feature_win_step": 256,
-        "feature_size":257,
-        "chunk_size": 46,
-        "n_context": 15,
-        "hidden_size": hidden_size
-    }
-    PARAMS['stride'] = PARAMS['chunk_size'] - 2*PARAMS['n_context']
-
-    logging.warning(f"PARAMS dict: {PARAMS}")
-    
     #load models
     model = ctc_model.CTC(preproc.input_dim, preproc.vocab_size, model_cfg)
     
@@ -79,6 +64,23 @@ def main(model_name, num_frames):
 
     coreml_model = coremltools.models.MLModel(coreml_fn)
 
+    # create PARAMS dict
+    hidden_size = model_cfg['encoder']['rnn']['dim']
+
+    PARAMS = {
+        "sample_rate": 16000,
+        "feature_win_len": 512,
+        "feature_win_step": 256,
+        "feature_size":257,
+        "chunk_size": 46,
+        "n_context": 15,
+        "blank_idx": model.blank,
+        "hidden_size": int(hidden_size)
+    }
+    PARAMS['stride'] = PARAMS['chunk_size'] - 2*PARAMS['n_context']
+
+    logging.warning(f"PARAMS dict: {PARAMS}")
+
     # prepping and checking models
     model.eval()
     onnx.checker.check_model(onnx_model)
@@ -86,7 +88,7 @@ def main(model_name, num_frames):
     onnx.checker.check_model(inferred_model)
 
     #creating the test data
-    data_dct = gen_test_data(preproc, num_frames, freq_dim, PARAMS['hidden_size'])
+    #data_dct = gen_test_data(preproc, num_frames, freq_dim, PARAMS['hidden_size'])
 
     #saving the preproc object as a dictionary
     # TODO change preproc methods to use the python object
@@ -96,9 +98,9 @@ def main(model_name, num_frames):
 
     # make predictions 
 
-    audio_dir = '/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech-lfs/model_convert/audio_files/Validatio-audio_2020-05-21'
+    audio_dir = '/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speech-lfs/model_convert/audio_files/Validatio-audio_2020-05-21/'
 
-    validate_all_models(model, onnx_fn, coreml_model, preproc, audio_dir, model_name, num_frames, PARAMS['hidden_size'])
+    validate_all_models(model, onnx_fn, coreml_model, preproc, audio_dir, model_name, num_frames, PARAMS)
 
     validation_tests = full_audio_infer(model, preproc, PARAMS, audio_dir)
     
@@ -171,7 +173,7 @@ def full_audio_infer(
 
         probs, (hidden_out, cell_out) = model_output
         probs = to_numpy(probs)
-        int_labels = max_decode(probs[0], blank=39)
+        int_labels = max_decode(probs[0], blank=PARAMS['blank_idx'])
         predictions = preproc.decode(int_labels)
         validation_tests.update({audio_file: {"logits": probs[0].tolist(), "maxDecodePhonemes": predictions}})
         logging.info(f"probs dimension: {probs.shape}")
@@ -188,13 +190,18 @@ def validate_all_models(
     audio_dir:str, 
     model_name:str, 
     num_frames:int,
-    hidden_size:int,
-)->None:
+    PARAMS:dict)->None:
+    """ This function compares the outputs of the torch, onnx, and coreml to ensure they are the same.
+    Args:
+        torch_model (torch.nn.Module)
+        onnx_fn (str): path to onnx model
+        coreml_model :
+        preproc (dict): preprocessing object
+        audio_dir (str): path to directory containing test audio files
+        model_name (str): name of model
+        num_frames (int): number of frames that the onnx and coreml models accept
+        PARAMS (dict): dictionary of hyperparameters
     """
-    Args
-        hidden_size (int):
-    """
-    BLANK_INDEX=39
     stream_test_name = "Speak-out.wav"
     predictions_dict= {}
 
@@ -206,9 +213,10 @@ def validate_all_models(
     check_probs = True  # checks if the probabilities across models are equal
     check_hidden = False # checks if the hidden and cell states across models are equal
 
+
     for audio_file in os.listdir(audio_dir):
-        test_h = np.zeros((5, 1, hidden_size)).astype(np.float32)
-        test_c = np.zeros((5, 1, hidden_size)).astype(np.float32)
+        test_h = np.zeros((5, 1, PARAMS['hidden_size'])).astype(np.float32)
+        test_c = np.zeros((5, 1, PARAMS['hidden_size'])).astype(np.float32)
 
         audio_path = os.path.join(audio_dir, audio_file)
         log_spec = log_spectrogram_from_file(audio_path)
@@ -219,8 +227,8 @@ def validate_all_models(
 
         torch_output = torch_model(torch.from_numpy(test_x),(torch.from_numpy(test_h), torch.from_numpy(test_c))) 
         torch_probs, torch_h, torch_c = to_numpy(torch_output[0]), to_numpy(torch_output[1][0]), to_numpy(torch_output[1][1])
-        torch_max_decoder = max_decode(torch_probs[0], blank=BLANK_INDEX)
-        torch_ctc_decoder = ctc_decode(torch_probs[0], beam_size=50, blank=BLANK_INDEX)
+        torch_max_decoder = max_decode(torch_probs[0], blank=PARAMS['blank_idx'])
+        torch_ctc_decoder = ctc_decode(torch_probs[0], beam_size=50, blank=PARAMS['blank_idx'])
        
         ort_session = onnxruntime.InferenceSession(onnx_fn)
         ort_inputs = {
@@ -236,8 +244,8 @@ def validate_all_models(
         coreml_probs = np.array(coreml_output['output'])
         coreml_h = np.array(coreml_output['hidden'])
         coreml_c = np.array(coreml_output['cell'])
-        coreml_max_decoder = max_decode(coreml_probs[0], blank=BLANK_INDEX)
-        coreml_ctc_decoder = ctc_decode(coreml_probs[0], beam_size=50,blank=BLANK_INDEX)
+        coreml_max_decoder = max_decode(coreml_probs[0], blank=PARAMS['blank_idx'])
+        coreml_ctc_decoder = ctc_decode(coreml_probs[0], beam_size=50, blank=PARAMS['blank_idx'])
         logging.debug("coreml prediction completed")
 
         if audio_file == stream_test_name:
