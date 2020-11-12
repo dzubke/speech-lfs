@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-10-26_large-model-mid-aug_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06.log
+    log_file: logs/2020-11-12_large-model-mid-aug_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06.log
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +40,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
     batch_size: 9
-    run_state: [3530866, 17.233064]
-    best_so_far: 0.18785
-    start_epoch: 2 
+    run_state: [3989377, 16.96569]
+    best_so_far: 0.16906
+    start_epoch: 6
     epochs: 100
     learning_rate: 0.0005
     momentum: 0.5
@@ -77,5 +77,5 @@ training:
     gpu_per_node: 4
     master_addr: '10.128.0.5'
     master_port: '8888'
-    checkpoints_per_epoch: 12
+    checkpoints_per_epoch: 10
     OMP_NUM_THREADS: 5
