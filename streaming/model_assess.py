@@ -25,11 +25,11 @@ INPUT_DIM = 257
 OUTPUT_DIM = 39
 
 
-def main():
+def main(no_cuda:bool=False):
 
     print('Initializing models...')
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+    device = torch.device("cuda" if torch.cuda.is_available() and not no_cuda else "cpu")
+    print(f"device: {device}")
     model_dict = initialize_models()
 
     audio_dur = 10 #seconds
@@ -39,6 +39,8 @@ def main():
 
     for model_name, model in model_dict.items():
         model.eval()
+        model.to(device)
+        dummy_data = dummy_data.to(device)
 
         infer_time = time.time()
         output = model(dummy_data)
@@ -410,13 +412,11 @@ class CNN_GRU(model.Model):
         return outputs
 
 if __name__ == '__main__':
-
-
-    # import argparse
-    # parser = argparse.ArgumentParser(description="Tests the timing for a variety of model architectures.")
-    # parser.add_argument(
-    #     '-f', '--file', help="Read from .wav file instead of microphone"
-    # )
-    # ARGS = parser.parse_args()
-    # main(ARGS)
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description="Tests the timing for a variety of model architectures.")
+    parser.add_argument(
+         '--no-cuda', action='store_true', help="uses the cpu even if cuda is available"
+    )
+    ARGS = parser.parse_args()
+    main(ARGS.no_cuda)
+    
