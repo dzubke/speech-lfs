@@ -25,6 +25,7 @@ import yaml
 # project libraries
 import speech
 import speech.loader as loader
+from speech.models.ctc_decoder import decode
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
 from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
@@ -92,7 +93,6 @@ def run_epoch(model,
         ####################################################
 
         #print(f"rank {local_rank}: loop begins")
-        batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
         #print(f"rank {local_rank}: after temp batch")
         if use_log: 
             if debug_mode:  
@@ -104,19 +104,19 @@ def run_epoch(model,
         if use_log: logger.info(f"train: Optimizer zero_grad")
         #print(f'rank {local_rank}: after optimizer zero_grad')
         # calcuating the loss outside of model.loss to allow multi-gpu use
-        inputs, labels, input_lens, label_lens = model_module.collate(*batch)
         #print(f'rank {local_rank}: after collate')
+        inputs, targets, input_sizes, target_sizes = batch
         inputs = inputs.cuda(non_blocking=True) #.to(device) #local_rank)
         #print(f'rank {local_rank}: after inputs to cuda')
-        out, rnn_args = model(inputs, softmax=False)
+        outputs, output_sizes, rnn_args = model(inputs, input_sizes)
         #print(f'rank {local_rank}: after model inference')
 
         if loss_name == "native":
-            loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            loss = native_loss(outputs, targets, output_sizes, target_sizes, BLANK_IDX)
         elif loss_name == "awni":
-            loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            loss = awni_loss(outputs, targets, output_sizes, target_sizes, BLANK_IDX)
         elif loss_name == "naren":
-            loss =naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            loss =naren_loss(outputs, targets, output_sizes, target_sizes, BLANK_IDX)
         #print(f"rank {local_rank}: after loss calc")
         
         if use_log: logger.info(f"train: Loss calculated")
@@ -209,7 +209,7 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
     ############## Native loss code ############################################################
     log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
     loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)         #     
-    loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
+    loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)        #
     return loss
 
 
@@ -253,20 +253,26 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             if use_log: logger.info(f"eval_dev: =====Inside batch loop=====")
             batch = list(batch)
             if use_log: logger.info(f"eval_dev: batch converted")
-            preds = model.infer(batch)
             if use_log: logger.info(f"eval_dev: infer call")
             
-            inputs, labels, input_lens, label_lens = model.collate(*batch)
+            inputs, targets, input_sizes, target_sizes = batch
             inputs = inputs.cuda(non_blocking=True)
-            out, rnn_args = model(inputs, softmax=False)
-
-
+            outputs, output_sizes, rnn_args = model(inputs, input_sizes)
+            
+            # calculate the loss
             if loss_name == "native":
-                loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+                loss = native_loss(outputs, targets, output_sizes, target_sizes, BLANK_IDX)
             elif loss_name == "awni":
-                loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+                loss = awni_loss(outputs, targets, output_sizes, target_sizes, BLANK_IDX)
             elif loss_name == "naren":
-                loss = naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+                loss = naren_loss(outputs, targets, output_sizes, target_sizes, BLANK_IDX)
+            
+            # make the predictions
+            probs = torch.nn.functional.softmax(outputs, dim=2)
+            probs = probs.data.cpu().numpy()
+            preds = [
+                decode(p, beam_size=3, blank=BLANK_IDX)[0]  for p in probs
+            ]
 
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
