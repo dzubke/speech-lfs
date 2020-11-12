@@ -19,7 +19,7 @@ class CTC(model.Model):
                 otherwise, the int value like 0 will be used
         """
         super().__init__(freq_dim, config)
-
+        
         # blank_idx can be 'last' which will use the `output_dim` value or an int value
         blank_idx = config['blank_idx']
         assert blank_idx == 'last' or isinstance(blank_idx, int), \
@@ -27,8 +27,8 @@ class CTC(model.Model):
 
         if blank_idx == 'last':
             blank_idx = output_dim
-            
         self.blank = blank_idx
+        
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
     def forward(self, x, rnn_args=None, softmax=False):
