@@ -21,13 +21,13 @@ class CTC_train(ctc_model.CTC):
         super().__init__(freq_dim, output_dim, config)
         
         # blank_idx can be 'last' which will use the `output_dim` value or an int value
-        blank_idx = config['blank_idx']
-        assert blank_idx == 'last' or isinstance(blank_idx, int), \
-            f"blank_idx: {blank_idx} must be either 'last' or an integer"
+        assert config['blank_idx'] in ['first', 'last'], \
+            f"blank_idx: {config['blank_idx']} must be either 'first' or 'last'"
 
-        if blank_idx == 'last':
-            blank_idx = output_dim
-        self.blank = blank_idx
+        if config['blank_idx'] == 'first':
+            self.blank = 0
+        else:   # if 'blank_idx' == 'last', see blank to end of vocab
+            self.blank = output_dim
 
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 

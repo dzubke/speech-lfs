@@ -16,6 +16,7 @@ logger:
     debug_mode: false
 preproc:
     preprocessor: log_spectrogram
+    blank_idx: last               # must be either 'first' for blank=0, or 'last' for blank=vocab_size
     window_size: 32
     step_size: 16
     use_feature_normalize: False
@@ -52,7 +53,6 @@ optimizer:
 model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     dropout: 0.4
-    blank_idx: 0
     load_trained: True 
     trained_path: examples/librispeech/models/ctc_models/20201029/ph7/best_model_state_dict.pth
     remove_layers: []
@@ -67,15 +67,9 @@ model:
             bidirectional: False
             layers: 5
 training:
-    multi_gpu: False
     distributed: True
-    use_spawn: False
     loss_name: naren
     apex: False
     opt_level: 'O0'
-    n_node: 1
-    gpu_per_node: 8
-    master_addr: '10.128.0.25'
-    master_port: '8888'
     checkpoints_per_epoch: 6
     OMP_NUM_THREADS: 7
