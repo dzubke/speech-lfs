@@ -62,6 +62,7 @@ if __name__ == "__main__":
     parser.add_argument("--half-precision", action='store_true', default=False,  help="converts the model to half precision.")
     parser.add_argument("--quarter-precision", action='store_true', default=False, help="converts the model to quarter precision.")
     args = parser.parse_args()
+    print(f"Args in onnx_to_coreml: {args}")
 
     return_or_save = 'save'
     onnx_to_coreml(args.model_name, args.half_precision, args.quarter_precision, return_or_save)

@@ -46,9 +46,18 @@ while read requirement; do conda install --yes $requirement || pip install $requ
     # location of CUDA archive - http://developer.download.nvidia.com/compute/cuda/repos/
     # source for below: https://developer.nvidia.com/cuda-92-download-archive?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1604&target_type=debnetwork & https://cloud.google.com/compute/docs/gpus/add-gpus#install-gpu-driver
 
-#Cuda 10
 echo  -e "\n=========  installing CUDA  =========\n"
-# cuda 10.0
+# driver website: https://www.nvidia.com/content/DriverDownload-March2009/confirmation.php?url=/tesla/396.82/NVIDIA-Linux-x86_64-396.82.run&lang=us&type=Tesla
+# installer download: https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers/cuda_9.2.148_396.37_linux
+
+# cuda 9.2
+#wget https://developer.nvidia.com/compute/cuda/9.2/Prod2/local_installers/cuda_9.2.148_396.37_linux
+#wget https://developer.nvidia.com/compute/cuda/9.2/Prod2/patches/1/cuda_9.2.148.1_linux
+#sudo sh cuda_9.2.148_396.37_linux
+#sudo sh cuda_9.2.148.1_linux
+# follow instructios here for help: https://www.pugetsystems.com/labs/hpc/How-to-install-CUDA-9-2-on-Ubuntu-18-04-1184/
+
+#cuda 10.0
 # curl -O http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.0.130-1_amd64.deb
 # sudo dpkg -i cuda-repo-ubuntu1604_10.0.130-1_amd64.deb
 # sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
@@ -78,9 +87,12 @@ echo 'set tabstop=8 softtabstop=0 expandtab shiftwidth=4 smarttab' >> ~/.vimrc
 
 
 echo  -e "\n=========  installing pytorch  =========\n"
-conda install -y pytorch=0.4.1 cuda100 -c pytorch
+conda install -y pytorch=0.4.1 cuda102 -c pytorch
 # pytoch 1.3 version for mac
-#conda install -y pytorch torchvision -c pytorch
+##conda install -y pytorch torchvision -c pytorch
+# using the `cudatoolkit=9.2` structure below doesn't seem to work as well as `cuda92`
+## conda install pytorch==1.5.1 torchvision==0.6.1 cudatoolkit=9.2 -c pytorch
+
 
 
 echo  -e "\n=========  making project libraries  =========\n"
@@ -88,6 +100,15 @@ cd ~/awni_speech/speech-lfs/
 sudo apt-get -y install make
 sudo apt-get -y install cmake
 make
+
+# build naren's loss function
+cd ~/awni_speech/speech-lfs/libs/
+git clone https://github.com/SeanNaren/warp-ctc.git warp-ctc-naren
+cd warp-ctc-naren
+mkdir build; cd build
+cmake ..
+
+
 
 
 echo  -e "\n=========  configuring data disk  =========\n"
