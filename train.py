@@ -115,11 +115,11 @@ def run_epoch(model,
         #print(f'rank {local_rank}: after model inference')
 
         if loss_name == "native":
-            loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            loss = native_loss(out, labels, input_lens, label_lens, model_module.blank)
         elif loss_name == "awni":
-            loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            loss = awni_loss(out, labels, input_lens, label_lens, model_module.blank)
         elif loss_name == "naren":
-            loss =naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+            loss =naren_loss(out, labels, input_lens, label_lens, model_module.blank)
         #print(f"rank {local_rank}: after loss calc")
         
         if use_log: logger.info(f"train: Loss calculated")
@@ -243,6 +243,11 @@ def naren_loss(out, labels, input_lens, label_lens, blank_idx):
 
 
 def eval_dev(model, ldr, preproc,  logger, loss_name):
+    """
+    Runs the devset evaluation loop.
+    Note: model is not a DDP wrapper, but the model itself, so there is no need
+        to create a `model_module` object as in `run_epoch`.
+    """
     losses = []; all_preds = []; all_labels = []
         
     model.set_eval()
@@ -265,11 +270,11 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
 
 
             if loss_name == "native":
-                loss = native_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+                loss = native_loss(out, labels, input_lens, label_lens, model.blank)
             elif loss_name == "awni":
-                loss = awni_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+                loss = awni_loss(out, labels, input_lens, label_lens, model.blank)
             elif loss_name == "naren":
-                loss = naren_loss(out, labels, input_lens, label_lens, BLANK_IDX)
+                loss = naren_loss(out, labels, input_lens, label_lens, model.blank)
 
             if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
             if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
@@ -379,6 +384,7 @@ def run(local_rank, config):
             dev_ldr_dict.update({dev_name: dev_ldr})
 
     # Model
+    model_cfg.update({'blank_idx': preproc_cfg['blank_idx']})   # add the blank_idx to model_cfg
     model = CTC_train(preproc.input_dim,
                         preproc.vocab_size,
                         model_cfg)
@@ -399,13 +405,7 @@ def run(local_rank, config):
     loss_name = train_cfg['loss_name']
 
     # multi-gpu training
-    if train_cfg["multi_gpu"]:
-        assert torch.cuda.device_count() > 1, "multi_gpu selected but less than on GPU available"
-        model = torch.nn.DataParallel(model)
-        model_module = model.module
-        model.cuda() if use_cuda else model.cpu()
-    
-    elif train_cfg['distributed']:
+    if train_cfg['distributed']:
         model.cuda(local_rank)
     
         #if train_cfg['apex']:
@@ -416,7 +416,7 @@ def run(local_rank, config):
         
         model_module = model.module
     else:
-        # allows for compatbility with data-parallel models
+        # allows for compatbility with distributed-data-parallel models
         model_module = model
         model.cuda() if use_cuda else model.cpu()
 
@@ -564,9 +564,7 @@ if __name__ == "__main__":
 
     os.environ['OMP_NUM_THREADS'] = str(train_cfg['OMP_NUM_THREADS'])
 
-    if train_cfg['distributed'] and train_cfg['use_spawn']:
-        mp.spawn(run, nprocs=gpu_per_node, args=(config, ))
-    elif train_cfg['distributed'] and not train_cfg['use_spawn']:
+    if train_cfg['distributed']:
         run(local_rank=args.local_rank, config=config)
     else:
         run(local_rank=0, config=config)

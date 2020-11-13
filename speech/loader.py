@@ -98,9 +98,18 @@ class Preprocessor():
             # excluded in the output classes of a model.
             chars.extend([self.END, self.START])
         self.start_and_end = start_and_end
-        self.int_to_char = dict(enumerate(chars, 1))  # start at 1 so zero can be blank for native loss
+
+        assert preproc_cfg['blank_idx'] in ['first', 'last'], \
+            f"blank_idx: {preproc_cfg['blank_idx']} must be either 'first' or 'last'"  
+        # if the blank_idx is 'first' then the int_to_char must start at 1 as 0 is already reserved
+        ## for the blank
+        if preproc_cfg['blank_idx'] == 'first':
+            start_idx = 1
+        else:   # if the blank_idx is 'last', then the int_to_char can start at 0
+            start_idx = 0
+
+        self.int_to_char = dict(enumerate(chars, start_idx))  # start at 1 so zero can be blank for native loss
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
-    
     
     def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
         """
