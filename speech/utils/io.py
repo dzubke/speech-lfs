@@ -32,7 +32,6 @@ def get_names(path:str, tag:str, get_config:bool=False, model_name:str=''):
 
     return output
 
-
 def save(model, preproc, path, tag=""):
     model_n, preproc_n = get_names(path, tag)
     torch.save(model.state_dict(), model_n)
@@ -89,7 +88,10 @@ def export_state_dict(model_in_path, params_out_path):
 
 def read_data_json(data_path):
     with open(data_path) as fid:
-        return [json.loads(l) for l in fid]
+        dataset = [json.loads(l) for l in fid]
+        ulimit = float('inf') #256    # target lengths cannot be longer than 256 for pytorch native loss
+        filtered_dataset = [datum for datum in dataset if len(datum['text']) <= ulimit]
+        return filtered_dataset
 
 
 def write_data_json(dataset:list, write_path:str):
@@ -134,22 +136,22 @@ def load_config(config_path:str)->dict:
 
 
 def load_from_trained(model, model_cfg):
-    """
-    loads the model with pretrained weights from the model in
-    model_cfg["trained_path"]
-    Arguments:
+    """loads the model with pretrained weights from the model in model_cfg["trained_path"]
+    Args:
         model (torch model)
-        model_cfg (dict)
+        model_cfg (dict): configuration for the model
     """
     trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
     if isinstance(trained_model, dict):
         trained_state_dict = trained_model
     else:
         trained_state_dict = trained_model.state_dict()
+    
     trained_state_dict = filter_state_dict(trained_state_dict, remove_layers=model_cfg["remove_layers"])
     model_state_dict = model.state_dict()
     model_state_dict.update(trained_state_dict)
     model.load_state_dict(model_state_dict)
+   
     return model
 
 
