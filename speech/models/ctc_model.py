@@ -13,15 +13,27 @@ from .ctc_decoder_dist import decode_dist
 
 class CTC(model.Model):
     def __init__(self, freq_dim, output_dim, config):
+        """
+        Args:
+            blank_idx (str, int): blank1 index can be 'last' which will use the output_dim value
+                otherwise, the int value like 0 will be used
+        """
         super().__init__(freq_dim, config)
 
-        # include the blank token
-        self.blank = output_dim
+        # blank_idx can be 'last' which will use the `output_dim` value or an int value
+        assert config['blank_idx'] in ['first', 'last'], \
+            f"blank_idx: {config['blank_idx']} must be either 'first' or 'last'"
+
+        if config['blank_idx'] == 'first':
+            self.blank = 0
+        else:   # if 'blank_idx' == 'last', see blank to end of vocab
+            self.blank = output_dim
+        
         self.fc = model.LinearND(self.encoder_dim, output_dim + 1)
 
-    def forward(self, x, rnn_args=None):
+    def forward(self, x, rnn_args=None, softmax=False):
        # x, y, x_lens, y_lens = self.collate(*batch)
-        return self.forward_impl(x, rnn_args,  softmax=True)
+        return self.forward_impl(x, rnn_args,  softmax=softmax)
 
     def forward_impl(self, x, rnn_args=None, softmax=False):
         if self.is_cuda:
@@ -56,6 +68,7 @@ class CTC(model.Model):
         probs = probs.data.cpu().numpy()
         return [decode(p, beam_size=3, blank=self.blank)[0]
                     for p in probs]
+    
     def infer_confidence(self, batch):
         """
         returns the confidence value was well as the prediction
