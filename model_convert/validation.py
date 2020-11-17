@@ -24,7 +24,7 @@ from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models import ctc_model
 from speech.utils.compat import normalize
 from speech.utils.convert import to_numpy
-from speech.utils.io import load_config, load_state_dict
+from speech.utils.io import load_config, load_state_dict, write_json
 from speech.utils.stream_utils import make_full_window
 from speech.utils.wave import array_from_wave
 
@@ -55,6 +55,7 @@ def main(model_name, num_frames):
     freq_dim = preproc.input_dim
 
     #load models
+    model_cfg.update({'blank_idx': config['preproc']['blank_idx']})
     model = ctc_model.CTC(preproc.input_dim, preproc.vocab_size, model_cfg)
     
     state_dict = load_state_dict(model_fn, torch.device('cpu'))
@@ -93,8 +94,9 @@ def main(model_name, num_frames):
     #saving the preproc object as a dictionary
     # TODO change preproc methods to use the python object
     preproc_dict = preproc_to_dict(preproc_fn, export=False)
-    preproc_json_path = preproc_fn[:-4]+".json"   
-    preproc_to_json(preproc_fn, preproc_json_path)
+    preproc_dict.update(PARAMS)
+    json_path = preproc_fn.replace('preproc.pyc', 'metadata.json')
+    write_json(json_path, preproc_dict)
 
     # make predictions 
 
@@ -288,9 +290,9 @@ def validate_all_models(
         # Compare torch and Coreml predictions
         if check_preds: 
             assert(torch_max_decoder==coreml_max_decoder), \
-                f"max decoder preds doesn't match, torch: {torch_max_decoder}, coreml: {coreml_max_decoder}"
+                f"max decoder preds doesn't match, torch: {torch_max_decoder}, coreml: {coreml_max_decoder} for file: {audio_path}"
             assert(torch_ctc_decoder[0]==coreml_ctc_decoder[0]), \
-                f"ctc decoder preds doesn't match, torch: {torch_ctc_decoder[0]}, coreml: {coreml_ctc_decoder[0]}"
+                f"ctc decoder preds doesn't match, torch: {torch_ctc_decoder[0]}, coreml: {coreml_ctc_decoder[0]} for file: {audio_path}"
             logging.debug("preds check passed")
 
         if check_probs:
