@@ -15,7 +15,7 @@ display_help(){
             -hs or --hidden-size: size of RNN hidden state
             --quarter-precision: for quarter precision
             --half-precision:    for half precision
-            --best: to use the best_model in directory
+            -t or --tag: can be 'best' or 'ckpt'
     "
 }
 
@@ -41,9 +41,10 @@ do
         shift # past argument
         shift # past value
         ;;
-        --best)
-        BEST_TAG="best_"
+        -t|--tag)
+        TAG="$VALUE"_
         shift # past argument
+        shift # past value
         ;;
         --half-precision)
         HALF_PRECISION="--half-precision"
@@ -72,11 +73,11 @@ copy_files(){
 
     MODEL_PATH=$1
     MODEL_NAME=$2
-    BEST_TAG=$3
-
-    cp ${MODEL_PATH}/${BEST_TAG}model_state_dict.pth ./torch_models/${MODEL_NAME}_model.pth
-    echo "copied ${MODEL_PATH}/${BEST_TAG}model_state_dict.pth to ./torch_models/${MODEL_NAME}_model.pth"
-    cp ${MODEL_PATH}/${BEST_TAG}preproc.pyc ./preproc/${MODEL_NAME}_preproc.pyc
+    TAG=$3
+    echo "tag is ${TAG}"
+    cp ${MODEL_PATH}/${TAG}model_state_dict.pth ./torch_models/${MODEL_NAME}_model.pth
+    echo "copied ${MODEL_PATH}/${TAG}model_state_dict.pth to ./torch_models/${MODEL_NAME}_model.pth"
+    cp ${MODEL_PATH}/${TAG}preproc.pyc ./preproc/${MODEL_NAME}_preproc.pyc
     cp ${MODEL_PATH}/*.yaml ./config/${MODEL_NAME}_config.yaml
 }
 
@@ -98,7 +99,7 @@ zip_files(){
     # $1 IS MODEL_NAME
 
     echo "Zipping $1.zip"
-    zip -j ./zips/$1.zip ./coreml_models/$1_model.mlmodel ./preproc/$1_preproc.json ./config/$1_config.yaml ./output/$1_output.json
+    zip -j ./zips/$1.zip ./coreml_models/$1_model.mlmodel ./preproc/$1_metadata.json ./config/$1_config.yaml ./output/$1_output.json
 }
 
 cleanup(){
@@ -113,7 +114,7 @@ cleanup(){
 # runs the cleanup finction if SIGINT is entered
 trap cleanup SIGINT
 
-copy_files $MODEL_PATH $MODEL_NAME $BEST_TAG
+copy_files $MODEL_PATH $MODEL_NAME $TAG
 
 convert_model $MODEL_NAME $NUM_FRAMES $HALF_PRECISION $QUARTER_PRECISION
 
