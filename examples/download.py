@@ -245,7 +245,7 @@ class SpeakTrainDownloader(Downloader):
 
         # create the first query based on the constant QUERY_LIMIT
         rec_ref = db.collection(u'recordings')
-        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+        next_query = rec_ref.order_by(u'info.date').limit(QUERY_LIMIT)
         
         start_time = time.time()
         query_count = 0 
@@ -460,18 +460,15 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
         db = firestore.client()
 
+
+        now = datetime.datetime.utcnow()
+        week_range = datetime.timedelta(days = 7)
+        week_ago = now - week_range
+        week_ago = week_ago.isoformat("T") + "Z"
+
         # create the first query based on the constant QUERY_LIMIT
         rec_ref = db.collection(u'recordings')
         next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
-
-        # there are roughly 10K unique lessons, 1M unique lines, and 100K unique speakers
-        # lets just say that any less, line, or speaker can't be more than 5% of the dataset
-        max_constraint = int(self.num_examples * 0.05)
-        constraints = {
-            'speaker': {'max': max_constraint},
-            'lesson': {'max': max_constraint},
-            'line':{'max': max_constraint}
-        }
 
         example_count = 0
         # loop through the queries until the example_count is at least the num_examples
