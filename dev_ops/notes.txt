@@ -113,7 +113,7 @@ gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev 
 # can kill the tunnel on local by look for process here:
 ps aux | grep tensorboard
 
-
+gsutil -m cp -r gs://phoneme-vm-backup/models/ctc_models/20201029/ph7/  examples/librispeech/models/ctc_models/20201029/
 # will cache password in memory for 10 days
 git config credential.helper 'cache --timeout 864000'
 
@@ -154,8 +154,8 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
   librosa==0.7.2
 
 
-2020-11-06_large-model-mid-aug_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06.
 
-/tmp/file7Tok3J
 
-/etc/ssh/sshd_config
+ERROR: google-cloud-core 1.4.3 has requirement google-api-core<2.0.0dev,>=1.19.0, but you'll have google-api-core 1.17.0 which is incompatible.
+ERROR: google-cloud-firestore 2.0.1 has requirement google-api-core[grpc]<2.0.0dev,>=1.22.1, but you'll have google-api-core 1.17.0 which is incompatible.
+ERROR: google-api-python-client 1.12.8 has requirement google-api-core<2dev,>=1.21.0, but you'll have google-api-core 1.17.0 which is incompatible.

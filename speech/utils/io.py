@@ -117,6 +117,22 @@ def write_pickle(pickle_path:str, object_to_pickle):
         pickle.dump(object_to_pickle, fid) 
 
 
+def write_json(json_path:str, dict_to_write:dict)->None:
+    """This function writes a dictionary to json at `json_path`.
+    Args:
+        json_path (str): path where json will be written
+        dict_to_write (dict): dictionary to be written to json
+    Returns:
+        None
+    """
+    assert json_path != '', f'json_path: {json_path} is empty'
+    assert isinstance(dict_to_write, dict), \
+        f'dict_to_write is type: {type(dict_to_write)}, not dict'
+
+    with open(json_path, 'w') as fid:
+        json.dump(dict_to_write, fid)
+
+
 def load_config(config_path:str)->dict:
     """
     loads the config file in json or yaml format
