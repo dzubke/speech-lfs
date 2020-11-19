@@ -88,11 +88,25 @@ convert_model(){
     HALF_PRECISION=$3
     QUARTER_PRECISION=$4
 
-    sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
+    echo "precision used: " $HALF_PRECISION $QUARTER_PRECISION
+
+    # the `sed` commands were used when the import was include in the model class. they are not needed anymore
+    #sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
     python torch_to_onnx.py --model-name "$MODEL_NAME" --num-frames "$NUM_FRAMES"
     python onnx_to_coreml.py "$MODEL_NAME" $HALF_PRECISION $QUARTER_PRECISION
+
+    # print a warning about `validation.py` if half or quarter precision is used
+    if [ "$HALF_PRECISION" = "--half-precision" ] || [ "$QUARTER_PRECISION" = "--quarter-precision" ]
+    then
+    echo "
+    ~~~ CoreML model converted to lower precision. Probabilities in validation.py may not fully agree. ~~~
+    "
+    fi
+    # validate the model conversion
     python validation.py $MODEL_NAME --num-frames $NUM_FRAMES
-    sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
+
+    # the `sed` commands were used when the import was include in the model class. they are not needed anymore
+    #sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
 }
 
 zip_files(){
