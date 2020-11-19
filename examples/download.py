@@ -1,6 +1,7 @@
 # standard libraries
 import argparse
 import csv
+import datetime
 import glob
 from multiprocessing import Pool
 import os
@@ -18,7 +19,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 # project libraries
 from speech.utils.convert import to_wave
-
+from speech.utils.io import read_data_json
 
 
 class Downloader(object):
@@ -167,8 +168,6 @@ class TatoebaV2Downloader(Downloader):
         return save_dir
 
 
-
-
 class CommonvoiceDownloader(Downloader):
 
     def __init__(self, output_dir, dataset_name):
@@ -181,7 +180,6 @@ class CommonvoiceDownloader(Downloader):
             "data":"https://voice-prod-bundler-ee1969a6ce8178826482b88e843c335139bd3fb4.s3.amazonaws.com/cv-corpus-5.1-2020-06-22/en.tar.gz"
         }
         self.data_dirname = "clips"
-    
 
 
 class WikipediaDownloader(Downloader):
@@ -410,6 +408,189 @@ class SpeakTrainDownloader(Downloader):
                     doc_dict['info']['date']
                 ]
                 tsv_writer.writerow(tsv_row)
+
+
+
+class SpeakEvalDownloader(SpeakTrainDownloader):
+    """
+    This class creates a small evaluation dataset from the Speak firestore database.
+    """
+
+    def __init__(self, output_dir, dataset_name, num_examples):
+        """
+        
+        """
+        super.__init__(output_dir, dataset_name)
+        self.num_examples = num_examples
+
+    def download_dataset(self):
+        """
+        This method loops through the firestore document database using paginated queries based on
+        the document id. It filters out documents where `target != guess` and saves the audio file
+        and target text into separate files. 
+
+        The approach to index the queries based on the document `id` is based on the approach
+        outlined here: 
+        https://firebase.google.com/docs/firestore/query-data/query-cursors#paginate_a_query
+            
+        """
+
+        PROJECT_ID = 'speak-v2-2a1f1'
+        QUERY_LIMIT = 10000
+        AUDIO_EXT = '.m4a'
+        audio_dir = os.path.join(self.output_dir, "audio")
+
+        # verify and set the credientials
+        CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
+        assert os.path.exists(CREDENTIAL_PATH), "Credential file does not exist or is in the wrong location."
+        # set the enviroment variable that `firebase_admin.credentials` will use
+        os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
+
+        # create the data-label path and initialize the tsv headers 
+        self.data_label_path = os.path.join(self.output_dir, "train_data.tsv")
+        with open(self.data_label_path, 'w', newline='\n') as tsv_file:
+            tsv_writer = csv.writer(tsv_file, delimiter='\t')
+            header = [
+                "id", "text", "lessonId", "lineId", "uid", "redWords_score", "date"
+            ]
+            tsv_writer.writerow(header)
+
+        # initialize the credentials and firebase db client
+        cred = credentials.ApplicationDefault()
+        firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
+        db = firestore.client()
+
+        # create the first query based on the constant QUERY_LIMIT
+        rec_ref = db.collection(u'recordings')
+        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+
+        # there are roughly 10K unique lessons, 1M unique lines, and 100K unique speakers
+        # lets just say that any less, line, or speaker can't be more than 5% of the dataset
+        max_constraint = int(self.num_examples * 0.05)
+        constraints = {
+            'speaker': {'max': max_constraint},
+            'lesson': {'max': max_constraint},
+            'line':{'max': max_constraint}
+        }
+
+        example_count = 0
+        # loop through the queries until the example_count is at least the num_examples
+
+        train_test_set = self.get_train_test_ids()
+
+        while example_count <= self.num_examples:
+            
+            # convert the generator to a list to retrieve the last doc_id
+            docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
+            last_id = docs[-1][u'id']
+
+            # converting generator to list to it can be referenced mutliple times
+            # the documents are converted to_dict so they can be pickled in multiprocessing
+            for doc in  docs:
+                # check that the document is from the last week
+                if self.within_last_week(doc):
+                    # check that the document isn't in the speak training or test sets
+                    if doc['id'] in train_test_set:
+                        print(f"id: {doc['id']} found in train or test set")
+                    else:
+                        speaker_id = doc['user']['uid']
+                        lesson_id = doc['info']['lessonId'] 
+                        line_id = doc['info']['lineId']
+                    
+                        # check that the speaker, lesson, and line constraints are all satisfied               
+                        if constraints['speaker'].get(speaker_id, 0) < constraints['speaker']['max'] \
+                        and constraints['lesson'].get(lesson_id, 0) < constraints['lesson']['max'] \ 
+                        and constraints['line'].get(line_id, 0) < constraints['line']['max']:
+                            # update the speaker, lesson, line counts
+                            constraints['speaker'][speaker_id] = constraints['speaker'].get(speaker_id, 0) + 1
+                            constraints['lesson'][lesson_id] = constraints['lesson'].get(lesson_id, 0) + 1
+                            constraints['line'][line_id] = constraints['line'].get(line_id, 0) + 1
+                             
+                            # save the audio file from the link in the document
+                            audio_url = doc['result']['audioDownloadUrl']
+                            audio_save_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
+                            try:
+                                urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+                            except (ValueError, urllib.error.URLError) as e:
+                                print(f"unable to download url: {audio_url} due to exception: {e}")
+                                continue
+                            
+                            
+            # create the next query starting after the last_id 
+            next_query = (
+                rec_ref
+                .order_by(u'id')
+                .start_after({
+                    u'id': last_id
+                })
+                .limit(QUERY_LIMIT))
+
+    @staticmethod
+    def within_last_week(doc:dict)->bool:
+        """
+        This function takes in a Speak recording document and returns a boolean if the recording
+        occurred within the last 7 days.
+        Args:
+            doc (dict): dictionary of Speak recording document
+        Returns:
+            bool: true if the date of the doc occured in the last 7 days
+        """
+        # checks if date of doc is within the last 7 days
+        today = datetime.datetime.today()
+        week_range = datetime.timedelta(days = 7)
+        
+        # parse out the date string
+        import google.api_core.datetime_helpers
+        date_type = google.api_core.datetime_helpers.DatetimeWithNanoseconds
+        if isinstance(doc['info']['date'], date_type):
+            date = doc['info']['date'].rfc3339()
+        elif isinstance(doc['info']['date'], str):
+            date = doc['info']['date']
+        else:
+            raise TypeError(f'unknown date type: {type(doc['info']['date'])}')
+        # the date str looks like '2019-10-13T09:52:50.557448Z'
+        date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        return (today - week_range < date)
+    
+    @staticmethod
+    def get_train_test_ids():
+        """
+        This function returns a set of ids for records that are ioncluded in the speak training and
+        test sets. The paths to the training and test sets are hardcoded to the paths on the cloud VM's. 
+        """
+        
+        def _get_id(path:str):
+        """This function returns the record id from a inputted path."""
+            return os.path.splitext(os.path.basename(path))[0]
+        
+        train_path = "/home/dzubke/awni_speech/data/speak_train/train_data_trim_2020-09-22.json"
+        test_path = "/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json"
+        
+        train_data = read_data_json(train_path)
+        test_data = read_data_json(test_path)
+        
+        train_test_ids = set([_get_id(datum['audio']) for datum in train_data])
+        train_test_ids.update([_get_id(datum['audio']) for datum in test_data])
+
+        return train_test_ids
+    
+    @staticmethod
+    def _doc_trim_to_dict(doc)->dict:
+        """This function converts a document into a dict and removes certain keys
+        if the keys exist in the dict.
+        Args:
+            doc: firestore document
+        Returns:
+            dict: trimmed dictionary of document
+        """
+        doc = doc.to_dict()
+        # remove large and unnecessary parts of the doc_dict
+        if 'asrResults' in doc['result']:
+            del doc['result']['asrResults']
+        if 'processingResult' in doc['result']:
+            del doc['result']['processingResult']
+        return doc
 
 
 class Chime1Downloader(Downloader):
