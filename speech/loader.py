@@ -273,6 +273,7 @@ class Preprocessor():
         turns off the data augmentation for evaluation
         """
         self.train_status = False
+        self.use_log = False
 
     def set_train(self):
         """
