@@ -3,8 +3,10 @@ import argparse
 import csv
 import datetime
 import glob
+import json
 from multiprocessing import Pool
 import os
+import random
 import re
 from shutil import copyfile
 import tarfile
@@ -218,7 +220,6 @@ class SpeakTrainDownloader(Downloader):
             
         """
 
-
         PROJECT_ID = 'speak-v2-2a1f1'
         QUERY_LIMIT = 10000
         NUM_PROC = 100
@@ -416,12 +417,12 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
     This class creates a small evaluation dataset from the Speak firestore database.
     """
 
-    def __init__(self, output_dir, dataset_name, num_examples):
+    def __init__(self, output_dir, dataset_name):
         """
         
         """
         super.__init__(output_dir, dataset_name)
-        self.num_examples = num_examples
+        self.num_examples = 400
 
     def download_dataset(self):
         """
@@ -436,8 +437,9 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         """
 
         PROJECT_ID = 'speak-v2-2a1f1'
-        QUERY_LIMIT = 10000
-        AUDIO_EXT = '.m4a'
+        QUERY_LIMIT = 2000              # max size of query
+        SAMPLES_PER_QUERY = 200
+        AUDIO_EXT = '.m4a'              # extension of downloaded audio
         audio_dir = os.path.join(self.output_dir, "audio")
 
         # verify and set the credientials
@@ -446,81 +448,96 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         # set the enviroment variable that `firebase_admin.credentials` will use
         os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
 
-        # create the data-label path and initialize the tsv headers 
-        self.data_label_path = os.path.join(self.output_dir, "train_data.tsv")
-        with open(self.data_label_path, 'w', newline='\n') as tsv_file:
-            tsv_writer = csv.writer(tsv_file, delimiter='\t')
-            header = [
-                "id", "text", "lessonId", "lineId", "uid", "redWords_score", "date"
-            ]
-            tsv_writer.writerow(header)
-
         # initialize the credentials and firebase db client
         cred = credentials.ApplicationDefault()
         firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
         db = firestore.client()
 
-
         now = datetime.datetime.utcnow()
         week_range = datetime.timedelta(days = 7)
         week_ago = now - week_range
         week_ago = week_ago.isoformat("T") + "Z"
+        
+        # create the data-label path and initialize the tsv headers 
+        date = datetime.date.today().isoformat()
+        self.data_label_path = os.path.join(self.output_dir, "train_data_" + date + ".tsv")
+        self.metadata_path = os.path.join(self.output_dir, "metadata_" + date + ".json")
+        with open(self.data_label_path, 'w', newline='\n') as tsv_file:
+            tsv_writer = csv.writer(tsv_file, delimiter='\t')
+            header = [
+                "id", "target", "guess", "lessonId", "lineId", "uid", "redWords_score", "date"
+            ]
+            tsv_writer.writerow(header)        
 
-        # create the first query based on the constant QUERY_LIMIT
-        rec_ref = db.collection(u'recordings')
-        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+            # create the first query based on the constant QUERY_LIMIT
+            rec_ref = db.collection(u'recordings')
+            next_query = rec_ref.where(u'info.date', u'>', week_ago).order_by(u'info.date').limit(QUERY_LIMIT)
 
-        example_count = 0
-        # loop through the queries until the example_count is at least the num_examples
+            example_count = 0
+            # loop through the queries until the example_count is at least the num_examples
 
-        train_test_set = self.get_train_test_ids()
+            train_test_set = self.get_train_test_ids()
 
-        while example_count <= self.num_examples:
-            
-            # convert the generator to a list to retrieve the last doc_id
-            docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
-            last_id = docs[-1][u'id']
+            while example_count <= self.num_examples:
+                
+                # convert the generator to a list to retrieve the last doc_id
+                docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
+                
+                try:
+                    # this `id` will be used to start the next query
+                    last_id = docs[-1][u'id']
+                # if the docs list is empty, there are no new documents
+                # and an IndexError will be raised and break the while loop
+                except IndexError:
+                    print("Exiting while loop")
+                    break
 
-            # converting generator to list to it can be referenced mutliple times
-            # the documents are converted to_dict so they can be pickled in multiprocessing
-            for doc in  docs:
-                # check that the document is from the last week
-                if self.within_last_week(doc):
-                    # check that the document isn't in the speak training or test sets
+                # selects a random sample from the total queries
+                docs = random.sample(docs, SAMPLES_PER_QUERY)
+
+                for doc in  docs:
                     if doc['id'] in train_test_set:
                         print(f"id: {doc['id']} found in train or test set")
                     else:
-                        speaker_id = doc['user']['uid']
-                        lesson_id = doc['info']['lessonId'] 
-                        line_id = doc['info']['lineId']
-                    
-                        # check that the speaker, lesson, and line constraints are all satisfied               
-                        if constraints['speaker'].get(speaker_id, 0) < constraints['speaker']['max'] \
-                        and constraints['lesson'].get(lesson_id, 0) < constraints['lesson']['max'] \ 
-                        and constraints['line'].get(line_id, 0) < constraints['line']['max']:
-                            # update the speaker, lesson, line counts
-                            constraints['speaker'][speaker_id] = constraints['speaker'].get(speaker_id, 0) + 1
-                            constraints['lesson'][lesson_id] = constraints['lesson'].get(lesson_id, 0) + 1
-                            constraints['line'][line_id] = constraints['line'].get(line_id, 0) + 1
-                             
-                            # save the audio file from the link in the document
-                            audio_url = doc['result']['audioDownloadUrl']
-                            audio_save_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
-                            try:
-                                urllib.request.urlretrieve(audio_url, filename=audio_save_path)
-                            except (ValueError, urllib.error.URLError) as e:
-                                print(f"unable to download url: {audio_url} due to exception: {e}")
-                                continue
-                            
-                            
-            # create the next query starting after the last_id 
-            next_query = (
-                rec_ref
-                .order_by(u'id')
-                .start_after({
-                    u'id': last_id
-                })
-                .limit(QUERY_LIMIT))
+
+
+                        # save the audio file from the link in the document
+                        audio_url = doc['result']['audioDownloadUrl']
+                        audio_save_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
+                        try:
+                            urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+                        except (ValueError, urllib.error.URLError) as e:
+                            print(f"unable to download url: {audio_url} due to exception: {e}")
+                            continue
+                        
+                        # save the target in a tsv row
+                        # tsv header: "id", "target", "guess", "lessonId", "lineId", "uid", "date"
+                        tsv_row =[
+                            doc['id'], 
+                            doc['info']['target'],
+                            doc['result']['guess'],
+                            doc['info']['lessonId'],
+                            doc['info']['lineId'],
+                            doc['user']['uid'],
+                            doc['result']['score'],
+                            doc['info']['date']
+                        ]
+                        tsv_writer.writerow(tsv_row)
+                        # save all the metadata in a separate file
+                        with open(self.metadata_path, 'a') as jsonfile:
+                            json.dump(doc, jsonfile)
+                            fid.write("\n")
+                                
+                # create the next query starting after the last_id 
+                next_query = (
+                    rec_ref.where(
+                        u'info.date', u'>', week_ago
+                    )
+                    .order_by(u'info.date')
+                    .start_after({
+                        u'info.date': last_time
+                    })
+                    .limit(QUERY_LIMIT))
 
     @staticmethod
     def within_last_week(doc:dict)->bool:
