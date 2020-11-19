@@ -421,7 +421,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         """
         
         """
-        super.__init__(output_dir, dataset_name)
+        super().__init__(output_dir, dataset_name)
         self.num_examples = 400
 
     def download_dataset(self):
@@ -441,6 +441,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         SAMPLES_PER_QUERY = 200
         AUDIO_EXT = '.m4a'              # extension of downloaded audio
         audio_dir = os.path.join(self.output_dir, "audio")
+        os.makedirs(audio_dir, exist_ok=True)
 
         # verify and set the credientials
         CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
@@ -460,8 +461,8 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         
         # create the data-label path and initialize the tsv headers 
         date = datetime.date.today().isoformat()
-        self.data_label_path = os.path.join(self.output_dir, "train_data_" + date + ".tsv")
-        self.metadata_path = os.path.join(self.output_dir, "metadata_" + date + ".json")
+        self.data_label_path = os.path.join(self.output_dir, "eval1_data_" + date + ".tsv")
+        self.metadata_path = os.path.join(self.output_dir, "eval1_metadata_" + date + ".json")
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
@@ -478,14 +479,14 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
 
             train_test_set = self.get_train_test_ids()
 
-            while example_count <= self.num_examples:
-                
+            while example_count < self.num_examples:
+                print("another loop")                
                 # convert the generator to a list to retrieve the last doc_id
                 docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
                 
                 try:
                     # this `id` will be used to start the next query
-                    last_id = docs[-1][u'id']
+                    last_time = docs[-1]['info']['date']
                 # if the docs list is empty, there are no new documents
                 # and an IndexError will be raised and break the while loop
                 except IndexError:
@@ -526,8 +527,9 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         # save all the metadata in a separate file
                         with open(self.metadata_path, 'a') as jsonfile:
                             json.dump(doc, jsonfile)
-                            fid.write("\n")
-                                
+                            jsonfile.write("\n")
+                        
+                        example_count += 1        
                 # create the next query starting after the last_id 
                 next_query = (
                     rec_ref.where(
@@ -561,7 +563,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         elif isinstance(doc['info']['date'], str):
             date = doc['info']['date']
         else:
-            raise TypeError(f'unknown date type: {type(doc['info']['date'])}')
+            raise TypeError(f"unknown date type: {type(doc['info']['date'])}")
         # the date str looks like '2019-10-13T09:52:50.557448Z'
         date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
 
@@ -575,7 +577,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         """
         
         def _get_id(path:str):
-        """This function returns the record id from a inputted path."""
+            """This function returns the record id from a inputted path."""
             return os.path.splitext(os.path.basename(path))[0]
         
         train_path = "/home/dzubke/awni_speech/data/speak_train/train_data_trim_2020-09-22.json"
@@ -604,6 +606,8 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             del doc['result']['asrResults']
         if 'processingResult' in doc['result']:
             del doc['result']['processingResult']
+        if 'asrResultData' in doc['result']:
+            del doc['result']['asrResultData']
         return doc
 
 
