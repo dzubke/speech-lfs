@@ -55,7 +55,7 @@ echo  -e "\n=========  installing CUDA  =========\n"
 #wget https://developer.nvidia.com/compute/cuda/9.2/Prod2/patches/1/cuda_9.2.148.1_linux
 #sudo sh cuda_9.2.148_396.37_linux
 #sudo sh cuda_9.2.148.1_linux
-# follow instructios here for help: https://www.pugetsystems.com/labs/hpc/How-to-install-CUDA-9-2-on-Ubuntu-18-04-1184/
+# follow instructions here for help: https://www.pugetsystems.com/labs/hpc/How-to-install-CUDA-9-2-on-Ubuntu-18-04-1184/
 
 #cuda 10.0
 # curl -O http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_10.0.130-1_amd64.deb

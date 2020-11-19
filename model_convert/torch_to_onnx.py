@@ -39,6 +39,7 @@ def torch_to_onnx(
     vocab_size = 39
     time_dim = num_frames
     
+    model_cfg.update({'blank_idx': config['preproc']['blank_idx']})
     torch_model = CTC_model(freq_dim, vocab_size, model_cfg) 
 
     state_dict = load_state_dict(torch_path, device=device)
