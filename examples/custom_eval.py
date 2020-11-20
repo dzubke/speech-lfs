@@ -129,6 +129,17 @@ def visual_eval(config:dict)->None:
             out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
             out_file.write("\n\n")
 
+def text_to_phonemes(output_dict:dict):
+    """
+    This function takes in the output_dict and updates the dict to include the phoneme labels 
+    of the target and guess sentences
+    Args:
+        output_dict (dict): keys are `record_id` and values are `target` and `guess` sentences
+    Returns:
+        dict: updated `output_dict` with phoneme labels for `target` and `guess`
+    """
+    
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
