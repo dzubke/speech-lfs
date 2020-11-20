@@ -1,43 +1,46 @@
 # standard libraries
+from collections import OrderedDict
+import os
 import csv 
 # third-party libraries
 import torch
 # project libraries
+from speech.models.ctc_decoder import decode
+from speech.models.ctc_model import CTC as CTC_model
+from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
 
 
-def visual_eval(
-        model_1_path:str,
-        model_2_path:str,
-        model_3_path:str,
-        dataset_path:str, 
-        batch_size:int=8, 
-        out_file:str=None
-    ):
+def visual_eval(config:dict)->None:
     """
     This function takes in three different models and writes their predictions along with other information,
     like the target, guess, and their respective phoneme transcriptions to a formatted txt file. 
 
-    Arguments:
-        tag - str: if best,  the "best_model" is used. if not, "model" is used. 
-        add_filename - bool: if true, the filename is added to the output json
+    Config contains:
+        model_1 through model_3 with name, path, tag, and model_name for the `get_names` function
+        dataset_path (str): path to evaluation dataset
+        save_path (str): path where the formatted txt file will be saved
     Return:
         None
     """
 
-    def _load_model(model_path:str)->Tuple[torch.nn.Module, dict]:
+    def _load_model(model_params:str, device)->Tuple[torch.nn.Module, dict]:
         """
-        This function will load the model, config, and preprocessing object
+        This function will load the model, config, and preprocessing object and prepare the model and preproc for evaluation
         Args:
-            model_path (str): direct path to model
+            model_path (dict): dict containing model path, tag, and filename
+            device (torch.device): torch processing device
         Returns:
             torch.nn.Module: torch model
-
+            preprocessing object (speech.loader.Preprocessor): preprocessing object
         """
 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        model_path, preproc_path, config_path = get_names(model_path, tag=tag, get_config=True)
+        model_path, preproc_path, config_path = get_names(
+            model_params['path'], 
+            tag=model_params['tag'], 
+            get_config=True,
+            model_name=model_params['filename']
+        )
         
         # load and update preproc
         preproc = read_pickle(preproc_path)
@@ -46,9 +49,10 @@ def visual_eval(
         # load and assign config
         config = load_config(config_path)
         model_cfg = config['model']
+        model_cfg.update({'blank_idx': config['preproc']['blank_idx']}) # creat `blank_idx` in model_cfg section
 
         # create model
-        model = CTC_train(
+        model = CTC_model(
             preproc.input_dim,
             preproc.vocab_size,
             model_cfg
@@ -63,48 +67,67 @@ def visual_eval(
         preproc.set_eval()
 
         return model, preproc
-    # load all of the models
 
-    model_dict = {
-        "model_0406": model_1_path,
-        "model_0902": model_2_path, 
-        "model_1111": model_3_path
-    }
+    # unpack the config
+    model_params = config['models']
+    dataset_path = config['dataset_path']
+    output_path = config['output_path']
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
+    # load the models and preproc objects
+    print(f"model_dict contains: {model_dict}")
+
     model_preproc = {
-        model_name: _load_model(model_path) for model_name, model_path in model_dict.items()
+        model_name: _load_model(params, device) for model_name, params in model_params.items()
     }
 
+    output_dict = {}     # dictionary containing the printed outputs
 
+    # open the tsv file that contains the data on each example
     with open(dataset_path, 'r') as tsv_file:
         tsv_reader = csv.reader(tsv_file, delimiter='\t')
         header = next(tsv_reader)
         tsv_dataset = list(tsv_reader)
-    
-    for xmpl in tsv_dataset:
-        
+        # tsv header is: "id", "target", "guess", "lessonId", "lineId", "uid", "redWords_score", "date"
+        for xmpl in tsv_dataset:
+            output_dict.update({
+                xmpl[0]:{               # record id
+                    "target": xmpl[1],
+                    "guess": xmpl[2]
+                }
+            })
+
+    # directory where audio paths are stored
+    audio_dir = os.paths.join(os.path.dirname(dataset_path), "audio")
+
+    # loop through each output file and perform inference for the 3 models
+    for rec_id in output_dict.keys():
+        audio_path = os.path.join(audio_dir, rec_id + ".wav")
+        dummy_target = []   # dummy target list fed into the preprocessor, not used
+
+        for model_name, (model, preproc) in model_preproc.items():
+            with torch.no_grad():    # no gradients calculated to speed up inference
+                inputs, dummy_target = preproc.preprocessor(audio_path, dummy_target)
+                inputs = torch.unsqueeze(inputs, axis=0).to(device)   # add the batch dim and push to `device`
+                probs, _ = model(inputs, softmax=True)      # don't need rnn_args output in `_`
+                probs = probs.data.cpu().numpy()
+                preds = decode(probs, beam_size=3, blank=self.blank)[0] 
+                preds = preproc.decode(preds)
+                output_dict[rec_id].update({model_name: preds})
 
 
-
-#     ldr =  loader.make_loader(dataset_json, preproc, batch_size)
-
-
-#     results = eval_loop(model, ldr)
-#     print(f"number of examples: {len(results)}")
-#     #results_dist = [[(preproc.decode(pred[0]), preproc.decode(pred[1]), prob)] 
-#     #                for example_dist in results_dist
-#     #                for pred, prob in example_dist]
-#     results = [(preproc.decode(label), preproc.decode(pred), conf)
-#                for label, pred, conf in results]
-#     #maxdecode_results = [(preproc.decode(label), preproc.decode(pred))
-#     #           for label, pred in results]
-#     cer = speech.compute_cer(results, verbose=True)
-
-#     print("PER {:.3f}".format(cer))
-    
-#     if out_file is not None:
-#         compile_save(results, dataset_json, out_file, formatted, add_filename)
-
+    # sort the dictionary to ease of matching audio file with formatted output
+    output_dict = OrderedDict(sorted(output_dict.items()))
+    with open(output_path, 'w') as out_file:  
+        for rec_id in output_dict.keys():  
+            out_file.write(f"rec_id:\t\t\t {rec_id}\n")
+            out_file.write(f"target:\t\t\t {output_dict[rec_id]['target']}\n")
+            out_file.write(f"guess:\t\t\t {output_dict[rec_id]['guess']}\n")
+            out_file.write(f"2020-11-11:\t\t {output_dict[rec_id]['model_1111']}\n")
+            out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")
+            out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
+            out_file.write("\n\n")
 
 
 if __name__ == "__main__":
@@ -112,29 +135,7 @@ if __name__ == "__main__":
             description="Eval a speech model."
     )
     parser.add_argument(
-        "model_1_path", help="Path to oldest model."
-    )
-    parser.add_argument(
-        "model_2_path", help="Path to older model."
-    )
-    parser.add_argument(
-        "model_3_path", help="Path to newest model."
-    )
-    parser.add_argument(
-        "dataset_path", help="A json file with the dataset to evaluate."
-        )
-    parser.add_argument(
-        "--batch-size", type=int, default=1, help="Batch size during evaluation"
-    )
-    parser.add_argument(
-        "--save-path", help="File to save predicted results."
+        "--config", help="Path to config file containing the necessary inputs"
     )
     args = parser.parse_args()
-    run(
-        args.model_1_path,
-        args.model_2_path,
-        args.model_3_path,
-        args.dataset, 
-        batch_size = args.batch_size, 
-        out_file=args.save
-    )
+    visual_eval(config)
