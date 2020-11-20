@@ -11,6 +11,7 @@ import tqdm
 import speech.loader
 from speech.models.ctc_decoder import decode
 from speech.models.ctc_model_train import CTC_train as CTC_model
+from speech.utils.datahelpers import lexicon_to_dict, text_to_phonemes
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
 
@@ -19,11 +20,11 @@ def visual_eval(config:dict)->None:
     """
     This function takes in three different models and writes their predictions along with other information,
     like the target, guess, and their respective phoneme transcriptions to a formatted txt file. 
-    Args:
-        config (dict): contains model_1 through model_3 with name, path, tag, and model_name 
-            for the `get_names` function
+    Config contains:
+        models: contains model_1 through model_3 with name, path, tag, and model_name  for the `get_names` function
         dataset_path (str): path to evaluation dataset
         save_path (str): path where the formatted txt file will be saved
+        lexicon_path (str): path to lexicon
     Return:
         None
     """
@@ -58,6 +59,8 @@ def visual_eval(config:dict)->None:
                 }
             })
 
+    output_dict = add_phonemes(output_dict, config['lexicon_path']
+
     # directory where audio paths are stored
     audio_dir = os.path.join(os.path.dirname(dataset_path), "audio")
 
@@ -84,13 +87,15 @@ def visual_eval(config:dict)->None:
         for rec_id in output_dict.keys():  
             out_file.write(f"rec_id:\t\t\t {rec_id}\n")
             out_file.write(f"target:\t\t\t {output_dict[rec_id]['target']}\n")
+            out_file.write(f"tar_phones:\t\t {output_dict[rec_id]['tar_phones']}\n")
             out_file.write(f"guess:\t\t\t {output_dict[rec_id]['guess']}\n")
+            out_file.write(f"ges_phones:\t\t {output_dict[rec_id]['ges_phones']}\n")
             out_file.write(f"2020-11-18:\t\t {output_dict[rec_id]['model_1118']}\n")
             out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")
             out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
             out_file.write("\n\n")
 
-def text_to_phonemes(output_dict:dict):
+def add_phonemes(output_dict:dict, lexicon_path:str):
     """
     This function takes in the output_dict and updates the dict to include the phoneme labels 
     of the target and guess sentences
@@ -99,7 +104,17 @@ def text_to_phonemes(output_dict:dict):
     Returns:
         dict: updated `output_dict` with phoneme labels for `target` and `guess`
     """
-    
+    lexicon = lexicon_to_dict(lexicon_path)
+    for xmpl in output_dict.keys():
+        output_dict[xmpl]['tar_phones'] = text_to_phonemes(output_dict[xmpl]['target'], 
+                                                            lexicon,
+                                                            unk_token="<UNK>"
+        )
+        output_dict[xmpl]['ges_phones'] = text_to_phonemes(output_dict[xmpl]['guess'], 
+                                                            lexicon,
+                                                            unk_token="<UNK>"
+        )
+    return output_dict
 
 
 
