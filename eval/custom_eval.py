@@ -10,7 +10,7 @@ import tqdm
 # project libraries
 import speech.loader
 from speech.models.ctc_decoder import decode
-from speech.models.ctc_model import CTC as CTC_model
+from speech.models.ctc_model_train import CTC_train as CTC_model
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
 
