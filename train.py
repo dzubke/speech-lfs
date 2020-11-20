@@ -268,7 +268,6 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             inputs = inputs.cuda(non_blocking=True)
             out, rnn_args = model(inputs, softmax=False)
 
-
             if loss_name == "native":
                 loss = native_loss(out, labels, input_lens, label_lens, model.blank)
             elif loss_name == "awni":
