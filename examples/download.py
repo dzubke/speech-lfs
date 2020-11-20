@@ -504,7 +504,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
 
                         # save the audio file from the link in the document
                         audio_url = doc['result']['audioDownloadUrl']
-                        audiopath = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
+                        audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
                         try:
                             urllib.request.urlretrieve(audio_url, filename=audio_path)
                         except (ValueError, urllib.error.URLError) as e:
@@ -515,11 +515,11 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         # usually, this is done in the preprocessing step.
                         base, raw_ext = os.path.splitext(audio_path)
                         # sometimes using the ".wv" extension so that original .wav files can be converted
-                        wav_path = base + os.path.extsep + ".wav"
+                        wav_path = base + os.path.extsep + "wav"
                         # if the wave file doesn't exist, convert to wav
                         if not os.path.exists(wav_path):
                             try:
-                                convert.to_wave(audio_path, wav_path)
+                                to_wave(audio_path, wav_path)
                             except subprocess.CalledProcessError:
                                 # if the file can't be converted, skip the file by continuing
                                 logging.info(f"Process Error converting file: {audio_path}")
