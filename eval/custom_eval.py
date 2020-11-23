@@ -94,17 +94,17 @@ def visual_eval(config:dict)->None:
             out_file.write(f"rec_id:\t\t\t{rec_id}\n")
             out_file.write(f"target:\t\t\t{output_dict[rec_id]['target']}\n")
             out_file.write(f"guess:\t\t\t{output_dict[rec_id]['guess']}\n")
-            out_file.write(f"tar_phones:\t\t{output_dict[rec_id]['tar_phones']}\n")
-            out_file.write(f"ges_phones:\t\t{output_dict[rec_id]['ges_phones']}\n")
+            out_file.write(f"tar_phones:\t\t{' '.join(output_dict[rec_id]['tar_phones'])}\n")
+            out_file.write(f"ges_phones:\t\t{' '.join(output_dict[rec_id]['ges_phones'])}\n")
             # loop through the models and the top beams for each model
             for model_name in output_dict[rec_id]['infer'].keys():
                 top_beam=True
                 for preds, confid in output_dict[rec_id]['infer'][model_name]:
                     if top_beam:
-                        out_file.write(f"{model_name}:\t({round(confid, 2)})\t{preds}\n")
+                        out_file.write(f"{model_name}:\t({round(confid, 2)})\t{' '.join(preds)}\n")
                         top_beam = False
                     else:
-                        out_file.write(f"\t   \t({round(confid, 2)})\t{preds}\n")
+                        out_file.write(f"\t   \t({round(confid, 2)})\t{' '.join(preds)}\n")
             #out_file.write(f"2020-11-18:\t\t {output_dict[rec_id]['model_1118']}\n")
             #out_file.write(f"2020-09-25:\t\t {output_dict[rec_id]['model_0925']}\n")
             #out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")
