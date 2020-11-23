@@ -156,6 +156,6 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
 
 
 
-ERROR: google-cloud-core 1.4.3 has requirement google-api-core<2.0.0dev,>=1.19.0, but you'll have google-api-core 1.17.0 which is incompatible.
-ERROR: google-cloud-firestore 2.0.1 has requirement google-api-core[grpc]<2.0.0dev,>=1.22.1, but you'll have google-api-core 1.17.0 which is incompatible.
-ERROR: google-api-python-client 1.12.8 has requirement google-api-core<2dev,>=1.21.0, but you'll have google-api-core 1.17.0 which is incompatible.
+{'start_epoch': 12, 'run_state': (4309248, 15.318887852869732), 'best_so_far': 0.16217908578584847, 'learning_rate': 0.00023}
+
+2020-11-19_mid-model-mid-aug-no-feat-norm_naren-loss_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06.
