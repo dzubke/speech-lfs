@@ -18,6 +18,7 @@ preproc:
     preprocessor: log_spectrogram
     window_size: 32
     step_size: 16
+    blank_idx: last
     use_feature_normalize: True
     augment_from_normal: True
     tempo_gain_pitch_perturb: True
