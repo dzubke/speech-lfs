@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 # standard libraries
 import os
+import glob
 import subprocess
 # third-party libaries
 import numpy as np
@@ -47,6 +48,14 @@ def to_wave(audio_file, wave_file, use_avconv=USE_AVCONV):
     prog = AVCONV if use_avconv else FFMPEG
     args = [prog, "-y", "-i", audio_file, "-ac", "1", "-ar", "16000", "-sample_fmt", "s16", "-f", "wav", wave_file]
     subprocess.check_output(args, stderr=subprocess.STDOUT)
+
+def convert_full_set(path, pattern, new_ext="wav", **kwargs):
+    pattern = os.path.join(path, pattern)
+    audio_files = glob.glob(pattern)
+    for af in tqdm.tqdm(audio_files):
+        base, ext = os.path.splitext(af)
+        wav = base + os.path.extsep + new_ext
+        to_wave(af, wav, **kwargs)
 
 def convert_2channels(audio_file:str, max_channels:int=1):
     """
