@@ -9,7 +9,7 @@ import torch
 import tqdm
 # project libraries
 import speech.loader
-from speech.models.ctc_decoder import decode
+from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models.ctc_model_train import CTC_train as CTC_model
 from speech.utils.datahelpers import lexicon_to_dict, text_to_phonemes
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
@@ -76,7 +76,7 @@ def visual_eval(config:dict)->None:
                 inputs = torch.unsqueeze(inputs, axis=0).to(device)   # add the batch dim and push to `device`
                 probs, _ = model(inputs, softmax=True)      # don't need rnn_args output in `_`
                 probs = probs.data.cpu().numpy().squeeze() # convert to numpy and remove batch-dim
-                preds = decode(probs, beam_size=3, blank=model.blank)[0] 
+                preds = ctc_decode(probs, beam_size=3, blank=model.blank)[0] 
                 preds = preproc.decode(preds)
                 output_dict[rec_id].update({model_name: preds})
 
