@@ -230,6 +230,7 @@ def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
         
     phonemes = list()
     transcript = clean_text(transcript)
+    transcript = transcript.split()
     for word in transcript:
         phonemes.extend(lexicon.get(word, unk_token))
     
