@@ -11,7 +11,6 @@ import torch.nn as nn
 from speech.models import ctc_model
 from speech.models import model
 from .ctc_decoder import decode
-from .ctc_decoder_dist import decode_dist
 
 
 
@@ -79,21 +78,15 @@ class CTC_train(ctc_model.CTC):
         probs, rnn_args = self.forward_impl(x, softmax=True)
         # convert the torch tensor into a numpy array
         probs = probs.data.cpu().numpy()
-        return 
+        return [decode(p, beam_size=3, blank=self.blank)[0]
+                    for p in probs]
         
     def infer_maxdecode(self, batch):
         x, y, x_lens, y_lens = self.collate(*batch)
         probs, rnn_args = self.forward_impl(x, softmax=True)
         # convert the torch tensor into a numpy array
         probs = probs.data.cpu().numpy()
-        return [decode(p, blank=self.blank) for p in probs]
-    
-    def infer_distribution(self, batch, num_results):
-        x, y, x_lens, y_lens = self.collate(*batch)
-        probs, rnn_args = self.forward_impl(x, softmax=True)
-        probs = probs.data.cpu().numpy()
-        return [decode_dist(p, beam_size=3, blank=self.blank)
-                    for p in probs]
+        return [max_decode(p, blank=self.blank) for p in probs]
 
     @staticmethod
     def max_decode(pred, blank):
