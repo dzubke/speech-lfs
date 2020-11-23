@@ -5,28 +5,6 @@ import torch
 
 
 
-class ResultState:
-    def __init__(self, 
-                 loss_results:Dict[str, List[float]], 
-                 per_results:Dict[str, List[float]]):
-        self.dev_loss = loss_results
-        self.dev_per = per_results
-
-    def add_results(self,
-                    epoch,
-                    loss_result,
-                    wer_result,
-                    cer_result):
-        self.loss_results[epoch] = loss_result
-        self.wer_results[epoch] = wer_result
-        self.cer_results[epoch] = cer_result
-
-    def serialize_state(self):
-        return {
-            'loss_results': self.loss_results,
-            'wer_results': self.wer_results,
-            'cer_results': self.cer_results
-        }
 
 
 class TrainingState:
@@ -53,13 +31,20 @@ class TrainingState:
         self.dev_per = dev.per
 
 
-    def add_results(self, epoch:int, dev_loss:dict, dev_per:dict):
+    def update(self, name_val_dict:dict):
+        # checks that the update names (keys in name_val_dict) are all
+        # attribute names of the train_state object
+        attr_names = self.__dict__.keys()
+        wrong_names = []
+        for update_name in name_val_dict.keys():
+            if update_name not in attr_names:
+                wrong_names.append(update_name)
+        assert len(wrong_names)== 0,\
+            f"update names {wrong_names} don't match train_state attribute names"
 
-        for dev_name, dev_loss_value in dev_loss.items():
-            self.dev_loss.get(dev_name).append(dev_loss_value)
-        
-        for dev_name, dev_per_value in dev_per.items():
-            self.dev_per.get(dev_name).append(dev_per_value)
+        # update the object's attributes
+        self.__dict__.update(name_val_dict)
+
 
 
     def serialize_state(self, epoch, (iteration, avg_loss) ):
@@ -103,24 +88,20 @@ class TrainingState:
 
 
 
-    def set_model_state(self, model):
-        self.model_state = model.state_dict()
     
-    def set_optim_state(self, optimizer):
-        self.optim_state = optimizer.state_dict()
 
-    def set_epoch(self, epoch):
-        self.epoch = epoch
+    def print_attr_names(self):
+        return " ".join(list(self.__dict__.keys()))
+    
 
-    def set_best_wer(self, wer):
-        self.best_wer = wer
+    def add_results(self, epoch:int, dev_loss:dict, dev_per:dict):
 
-    def set_training_step(self, training_step):
-        self.training_step = training_step
-
-    def reset_training_step(self):
-        self.training_step = 0
-
+        for dev_name, dev_loss_value in dev_loss.items():
+            self.dev_loss.get(dev_name).append(dev_loss_value)
+        
+        for dev_name, dev_per_value in dev_per.items():
+            self.dev_per.get(dev_name).append(dev_per_value)
+    
     def reset_avg_loss(self):
         self.avg_loss = 0
 
@@ -133,5 +114,27 @@ class TrainingState:
     def _reset_epoch(self):
         self.epoch = 0
 
-    def _reset_best_wer(self):
-        self.best_wer = None
+
+#class ResultState:
+#    def __init__(self, 
+#                 loss_results:Dict[str, List[float]], 
+#                 per_results:Dict[str, List[float]]):
+#        self.dev_loss = loss_results
+#        self.dev_per = per_results
+#
+#    def add_results(self,
+#                    epoch,
+#                    loss_result,
+#                    wer_result,
+#                    cer_result):
+#        self.loss_results[epoch] = loss_result
+#        self.wer_results[epoch] = wer_result
+#        self.cer_results[epoch] = cer_result
+#
+#    def serialize_state(self):
+#        return {
+#            'loss_results': self.loss_results,
+#            'wer_results': self.wer_results,
+#            'cer_results': self.cer_results
+#        }
+
