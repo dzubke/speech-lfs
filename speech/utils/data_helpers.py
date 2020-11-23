@@ -1,36 +1,26 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-import glob
-import os
-import tqdm
+# standard libraries
 from collections import defaultdict
-import string
-import re
+import glob
 import json
-
+import os
+import re
+import string
+import tqdm
+# third-party libraries
+# project libraries
 from speech.utils import convert
 
 UNK_WORD_TOKEN = list()
 
-def convert_full_set(path, pattern, new_ext="wav", **kwargs):
-    pattern = os.path.join(path, pattern)
-    audio_files = glob.glob(pattern)
-    for af in tqdm.tqdm(audio_files):
-        base, ext = os.path.splitext(af)
-        wav = base + os.path.extsep + new_ext
-        convert.to_wave(af, wav, **kwargs)
 
-
-def lexicon_to_dict(lexicon_path:str, corpus_name:str)->dict:
+def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
     This function reads the librispeech-lexicon.txt file which is a mapping of words in the
     librispeech corpus to phoneme labels and represents the file as a dictionary.
     The digit accents are removed from the file name. 
     """
     corpus_names = [
-        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain"
+        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None
     ]
     if corpus_name not in corpus_names:
         raise ValueError("corpus_name not accepted")
@@ -47,6 +37,7 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str)->dict:
     lex_dict = clean_dict(lex_dict, corpus_name)
     #assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
     return lex_dict
+
 
 def word_phone_split(line:list, corpus_name=str):
     """
@@ -75,6 +66,7 @@ def clean_dict(lex_dict, corpus_name):
                 {key: value for key, value in lex_dict.items() if not re.search("\(\d\)$", key)})
     else: 
         return lex_dict
+
 
 def combine_lexicons(lex1_dict:dict, lex2_dict:dict)->(dict, dict):
     """
@@ -146,7 +138,6 @@ def create_lexicon(cmu_dict:dict, ted_dict:dict, lib_dict:dict, out_path:str='')
     return master_dict
 
 
-
 def skip_file(dataset_name:str, audio_path:str)->bool:
     """
     if the audio path is in one of the noted files with errors, return True
@@ -193,6 +184,7 @@ def get_files(root_dir:str, pattern:str):
     """
     return glob.glob(os.path.join(root_dir, pattern))
 
+
 def get_speak_test_ids():
     """
     returns the document ids of the recordings in the old (2019-11-29) and new (2020-05-27) speak test set.
@@ -217,3 +209,56 @@ def get_speak_test_ids():
         ids_2020 = [i.strip() for i in ids_2020] 
 
     return ids_2019 + ids_2020
+
+
+def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
+    """
+    The function takes in a string of text, cleans the text, and outputs a list of phoneme 
+    labels from the `lexicon_dict`. 
+    Args:
+        transcript (str): string of words
+        lexicon (dict): lexicon mapping of words (keys) to a list of phonemes (values)
+    Returns:
+        (list): a list of phoneme strings
+    """
+    if isinstance(unk_token, str):
+        unk_token = [unk_token]
+    elif isinstance(unk_token, list):
+        pass
+    else:
+        raise TypeError(f"unk_token has type {type(unk_token)}, not str or list")
+        
+    phonemes = list()
+    transcript = clean_text(transcript)
+    for word in transcript:
+        phonemes.extend(lexicon.get(word, unk_token))
+    
+    return phonemes
+    
+
+def clean_text(transcript:str)->str:
+    """
+    This function removes anything that is not alphanumeric, a space, or apostrophe from
+    the input `transcript`.
+    Args:
+        transcript (str): input transcript to be clean
+    Returns:
+        (str): cleaned transcript
+    """
+    # allows for alphanumeric characters, space, and apostrophe
+    accepted_char = '[^A-Za-z0-9 \']+'
+    # replacing weird encodings with apostrophe
+    transcript = transcript.replace(chr(8217), "'")
+    # filters out unaccepted characters, lowers the case
+    try:
+        transcript = transcript.strip().lower()
+        transcript = re.sub(accepted_char, '', transcript)
+    except TypeError:
+        print(f"Type Error with: {transcript}")
+    # check that all punctuation (minus apostrophe) has been removed 
+    punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+    for punc in punct_noapost:
+        if punc in transcript:
+            raise ValueError(f"unwanted punctuation {punc} in transcript")
+    
+    return transcript 
