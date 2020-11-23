@@ -11,7 +11,7 @@ import tqdm
 import speech.loader
 from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models.ctc_model_train import CTC_train as CTC_model
-from speech.utils.datahelpers import lexicon_to_dict, text_to_phonemes
+from speech.utils.data_helpers import lexicon_to_dict, text_to_phonemes
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
 
@@ -59,7 +59,7 @@ def visual_eval(config:dict)->None:
                 }
             })
 
-    output_dict = add_phonemes(output_dict, config['lexicon_path']
+    output_dict = add_phonemes(output_dict, config['lexicon_path'])
 
     # directory where audio paths are stored
     audio_dir = os.path.join(os.path.dirname(dataset_path), "audio")
@@ -87,10 +87,11 @@ def visual_eval(config:dict)->None:
         for rec_id in output_dict.keys():  
             out_file.write(f"rec_id:\t\t\t {rec_id}\n")
             out_file.write(f"target:\t\t\t {output_dict[rec_id]['target']}\n")
-            out_file.write(f"tar_phones:\t\t {output_dict[rec_id]['tar_phones']}\n")
             out_file.write(f"guess:\t\t\t {output_dict[rec_id]['guess']}\n")
+            out_file.write(f"tar_phones:\t\t {output_dict[rec_id]['tar_phones']}\n")
             out_file.write(f"ges_phones:\t\t {output_dict[rec_id]['ges_phones']}\n")
             out_file.write(f"2020-11-18:\t\t {output_dict[rec_id]['model_1118']}\n")
+            out_file.write(f"2020-09-25:\t\t {output_dict[rec_id]['model_0925']}\n")
             out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")
             out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
             out_file.write("\n\n")
