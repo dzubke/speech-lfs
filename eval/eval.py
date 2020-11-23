@@ -44,8 +44,7 @@ def eval_loop(model, ldr, device):
             all_preds.extend(preds)
             all_confidence.extend(confidence)
             all_labels.extend(batch[1])
-            #all_preds_dist.extend(((preds_dist, temp_batch[1]),prob_dist))
-    return list(zip(all_labels, all_preds, all_confidence)) #, all_preds_dist
+    return list(zip(all_labels, all_preds, all_confidence))
 
 
 def run(model_path, 

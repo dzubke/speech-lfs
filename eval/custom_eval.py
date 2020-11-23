@@ -68,6 +68,7 @@ def visual_eval(config:dict)->None:
     for rec_id in tqdm.tqdm(output_dict.keys()):
         audio_path = os.path.join(audio_dir, rec_id + ".wav")
         dummy_target = []   # dummy target list fed into the preprocessor, not used
+        output_dict[rec_id]['infer'] = {}   # initialize a dict for the inference outputs
 
         for model_name, (model, preproc) in model_preproc.items():
             with torch.no_grad():    # no gradients calculated to speed up inference
@@ -76,9 +77,9 @@ def visual_eval(config:dict)->None:
                 inputs = torch.unsqueeze(inputs, axis=0).to(device)   # add the batch dim and push to `device`
                 probs, _ = model(inputs, softmax=True)      # don't need rnn_args output in `_`
                 probs = probs.data.cpu().numpy().squeeze() # convert to numpy and remove batch-dim
-                preds = ctc_decode(probs, beam_size=3, blank=model.blank)[0] 
-                preds = preproc.decode(preds)
-                output_dict[rec_id].update({model_name: preds})
+                top_beams = ctc_decode(probs, beam_size=3, blank=model.blank, n_top_beams=3)
+                top_beams = [(preproc.decode(preds), probs) for preds, probs in top_beams]
+                output_dict[rec_id]['infer'].update({model_name: top_beams})
 
 
     # sort the dictionary to ease of matching audio file with formatted output
@@ -90,10 +91,14 @@ def visual_eval(config:dict)->None:
             out_file.write(f"guess:\t\t\t {output_dict[rec_id]['guess']}\n")
             out_file.write(f"tar_phones:\t\t {output_dict[rec_id]['tar_phones']}\n")
             out_file.write(f"ges_phones:\t\t {output_dict[rec_id]['ges_phones']}\n")
-            out_file.write(f"2020-11-18:\t\t {output_dict[rec_id]['model_1118']}\n")
-            out_file.write(f"2020-09-25:\t\t {output_dict[rec_id]['model_0925']}\n")
-            out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")
-            out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
+            # loop through the models and the top beams for each model
+            for model_name in output_dict[rec_id]['infer'].keys():
+                for preds, confid in output_dict[rec_id]['infer'][model_name]:
+                    out_file.write(f"{model_name}:\t{confid}\t{preds}\n")
+            #out_file.write(f"2020-11-18:\t\t {output_dict[rec_id]['model_1118']}\n")
+            #out_file.write(f"2020-09-25:\t\t {output_dict[rec_id]['model_0925']}\n")
+            #out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")
+            #out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
             out_file.write("\n\n")
 
 def add_phonemes(output_dict:dict, lexicon_path:str):
