@@ -17,13 +17,25 @@ from speech.models.ctc_decoder import decode
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import get_names, load_config, load_state_dict, read_data_json, read_pickle
 
-def eval_loop(model, ldr):
+def eval_loop(model, ldr, device):
+    """Runs the evaluation loop on the input data `ldr`.
+    
+    Args:
+        model (torch.nn.Module): model to be evaluated
+        ldr (torch.utils.data.DataLoader): evaluation data loader
+        device (torch.device): device inference will be run on
+
+    Returns:
+        list: list of labels, predictions, and confidence levels for each example in
+            the dataloader
+    """
     all_preds = []; all_labels = []; all_preds_dist=[]
     all_confidence = []
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
             batch = list(batch)
             inputs, targets, inputs_lens, targets_lens = model.collate(*batch)
+            inputs = inputs.to(device)
             probs, rnn_args = model(inputs, softmax=True)
             probs = probs.data.cpu().numpy()
             preds_confidence = [decode(p, beam_size=3, blank=model.blank) for p in probs]
@@ -97,7 +109,7 @@ def run(model_path,
     print(f"preproc train_status after set_eval: {preproc.train_status}")
 
 
-    results = eval_loop(model, ldr)
+    results = eval_loop(model, ldr, device)
     print(f"number of examples: {len(results)}")
     #results_dist = [[(preproc.decode(pred[0]), preproc.decode(pred[1]), prob)] 
     #                for example_dist in results_dist
