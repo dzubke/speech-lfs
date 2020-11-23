@@ -8,7 +8,6 @@ import torch.autograd as autograd
 
 from . import model
 from .ctc_decoder import decode
-from .ctc_decoder_dist import decode_dist
 
 
 class CTC(model.Model):
@@ -84,12 +83,6 @@ class CTC(model.Model):
         confidence = [x[1] for x in preds_confidence]
         return preds, confidence    
     
-    def infer_distribution(self, batch, num_results):
-        x, y, x_lens, y_lens = self.collate(*batch)
-        probs, rnn_args = self.forward_impl(x, softmax=True)
-        probs = probs.data.cpu().numpy()
-        return [decode_dist(p, beam_size=3, blank=self.blank)
-                    for p in probs]
 
     @staticmethod
     def max_decode(pred, blank):
