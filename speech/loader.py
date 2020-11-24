@@ -3,7 +3,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 # standard libraries
+import copy
 import json
+import math
 import random
 from typing import List, Tuple
 # third-party libraries
@@ -14,6 +16,7 @@ import scipy.signal
 import torch
 import torch.autograd as autograd
 import torch.utils.data as tud
+from torch.utils.data.distributed import DistributedSampler
 # project libraries
 from speech.utils.wave import array_from_wave
 from speech.utils.io import read_data_json
@@ -28,7 +31,8 @@ class Preprocessor():
     END = "</s>"
     START = "<s>"
 
-    def __init__(self, data_json, preproc_cfg, logger=None, max_samples=1000, start_and_end=False):
+    def __init__(self, data_json:list, preproc_cfg:dict, logger=None, max_samples:int=1000,
+                 start_and_end=False):
         """
         Builds a preprocessor from a dataset.
         Arguments:
@@ -88,15 +92,24 @@ class Preprocessor():
 
 
         # Make char map
-        chars = list(set(label for datum in data for label in datum['text']))
+        chars = sorted(list(set(label for datum in data for label in datum['text'])))
         if start_and_end:
             # START must be last so it can easily be
             # excluded in the output classes of a model.
             chars.extend([self.END, self.START])
         self.start_and_end = start_and_end
-        self.int_to_char = dict(enumerate(chars))
+
+        assert preproc_cfg['blank_idx'] in ['first', 'last'], \
+            f"blank_idx: {preproc_cfg['blank_idx']} must be either 'first' or 'last'"  
+        # if the blank_idx is 'first' then the int_to_char must start at 1 as 0 is already reserved
+        ## for the blank
+        if preproc_cfg['blank_idx'] == 'first':
+            start_idx = 1
+        else:   # if the blank_idx is 'last', then the int_to_char can start at 0
+            start_idx = 0
+
+        self.int_to_char = dict(enumerate(chars, start_idx))  # start at 1 so zero can be blank for native loss
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
-    
     
     def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
         """
@@ -215,7 +228,10 @@ class Preprocessor():
         return [self.char_to_int[t] for t in text]
 
     def decode(self, seq):
-        text = [self.int_to_char[s] for s in seq]
+        try:
+            text = [self.int_to_char[s] for s in seq]
+        except KeyError:
+            raise KeyError(f"Key Error in {seq}")
         if not self.start_and_end:
             return text
 
@@ -257,6 +273,7 @@ class Preprocessor():
         turns off the data augmentation for evaluation
         """
         self.train_status = False
+        self.use_log = False
 
     def set_train(self):
         """
@@ -352,19 +369,21 @@ class AudioDataset(tud.Dataset):
         max_len = max(len(x['text']) for x in data) # max number of phoneme labels in data
         num_buckets = max_len // bucket_diff        # the number of buckets
         buckets = [[] for _ in range(num_buckets)]  # creating an empy list for the buckets
+        
         for sample in data:                          
             bucket_id = min(len(sample['text']) // bucket_diff, num_buckets - 1)
             buckets[bucket_id].append(sample)
 
-        # Sort by input length followed by output length
-        sort_fn = lambda x : (round(x['duration'], 1),
-                              len(x['text']))
+        sort_fn = lambda x: (round(x['duration'], 1), len(x['text']))
+
         for bucket in buckets:
             bucket.sort(key=sort_fn)
         
         # unpack the data in the buckets into a list
         data = [sample for bucket in buckets for sample in bucket]
         self.data = data
+        print(f"in AudioDataset: length of data: {len(data)}")
+
 
     def __len__(self):
         return len(self.data)
@@ -388,8 +407,9 @@ class BatchRandomSampler(tud.sampler.Sampler):
             raise ValueError("batch_size is greater than data length")
 
         it_end = len(data_source) - batch_size + 1
-        self.batches = [range(i, i + batch_size)
-                for i in range(0, it_end, batch_size)]
+        self.batches = [
+            range(i, i + batch_size) for i in range(0, it_end, batch_size)
+        ]
         self.data_source = data_source
 
     def __iter__(self):
@@ -399,18 +419,129 @@ class BatchRandomSampler(tud.sampler.Sampler):
     def __len__(self):
         return len(self.data_source)
 
+
+class DistributedBatchRandomSampler(DistributedSampler):
+    """
+    Batches the data consecutively and randomly samples
+    by batch without replacement with distributed data parallel
+    compatibility.
+
+    Args: 
+        dataset: Dataset used for sampling.
+        num_replicas (int, optional): Number of processes participating in distributed training.
+        rank (int, optional): Rank of the current process within num_replicas.
+        batch_size (int): number of samples in batch
+
+    Instructive to review parent class: 
+        https://pytorch.org/docs/0.4.1/_modules/torch/utils/data/distributed.html#DistributedSampler
+    """
+
+    def __init__(self, dataset, num_replicas=None, rank=None, batch_size=1):
+        super().__init__(dataset=dataset, num_replicas=num_replicas, rank=rank)
+        
+        if len(dataset) < batch_size:
+            raise ValueError("batch_size is greater than data length")
+        
+        self.batch_size = batch_size
+        self.n_batch_per_replica = int(math.floor(len(self.dataset)//batch_size * 1.0 / self.num_replicas))
+        self.total_size = self.n_batch_per_replica * self.num_replicas
+        
+        # leaves off the last unfilled batch. the last batch shouldn't be filled from the initial values 
+        # because the audio lengths will be very different
+        it_end = len(dataset) - batch_size + 1
+        self.batches = [
+            range(i, i + batch_size) for i in range(0, it_end, batch_size)
+        ]
+        print(f"in DistBatchSamp: rank: {self.rank} dataset size: {len(self.dataset)}")
+        print(f"in DistBatchSamp: rank: {self.rank} batch size: {batch_size}")
+        print(f"in DistBatchSamp: rank: {self.rank} num batches: {len(self.batches)}")
+        print(f"in DistBatchSamp: rank: {self.rank} num_replicas: {self.num_replicas}")
+        print(f"in DistBatchSamp: rank: {self.rank} batches per replica: {self.n_batch_per_replica}")
+        print(f"in DistBatchSamp: rank: {self.rank} iterator_end: {it_end}")
+        
+    def __iter__(self):
+        # deterministically shuffle based on epoch
+        g = torch.Generator()
+        g.manual_seed(self.epoch)
+        batch_indices = list(torch.randperm(len(self.batches), generator=g))
+        print(f"in DistBatchSamp: rank: {self.rank} len batch_indices: {len(batch_indices)}")
+
+        # add extra batches to make the total num batches evenly divisible by num_replicas
+        batch_indices = batch_indices[:self.total_size]  #+= batch_indices[:(self.total_size - len(batch_indices))]
+        print(f"in DistBatchSamp: rank: {self.rank} new len batch_indices: {len(batch_indices)}")
+        assert len(batch_indices) == self.total_size
+
+        # subsample the batches for individual replica based on rank
+        offset = self.n_batch_per_replica * self.rank
+        batch_indices = batch_indices[offset:offset + self.n_batch_per_replica]
+        assert len(batch_indices) == self.n_batch_per_replica
+        
+        print(f"in DistBatchSamp: rank: {self.rank} batches per replica: {len(batch_indices)}")
+        print(f"in DistBatchSamp: rank: {self.rank} total_size: {self.total_size}")
+        print(f"in DistBatchSamp: rank: {self.rank} offset_begin: {offset} offset_end: {offset + self.n_batch_per_replica}")
+        
+        #assert all([self.batch_size == len(batch) for batch in self.batches]),\
+        #    f"at least one batch is not of size: {self.batch_size}"
+
+        return  (idx for batch_idx in batch_indices for idx in self.batches[batch_idx])
+
+    def __len__(self):
+        return self.n_batch_per_replica * self.batch_size
+
+
 def make_loader(dataset_json, preproc,
                 batch_size, num_workers=4):
-    dataset = AudioDataset(dataset_json, preproc,
-                           batch_size)
+    dataset = AudioDataset(dataset_json, preproc, batch_size)
     sampler = BatchRandomSampler(dataset, batch_size)
     loader = tud.DataLoader(dataset,
                 batch_size=batch_size,
                 sampler=sampler,
                 num_workers=num_workers,
-                collate_fn=lambda batch : zip(*batch),
+                collate_fn=collate_fn,
                 drop_last=True)
     return loader
+
+def make_ddp_loader(dataset_json, 
+                    preproc,
+                    batch_size, 
+                    num_workers=4):
+    
+    dataset = AudioDataset(dataset_json, preproc, batch_size)
+    sampler = DistributedBatchRandomSampler(dataset, batch_size=batch_size)
+    loader = tud.DataLoader(
+                dataset,
+                batch_size=batch_size,
+                sampler=sampler,
+                num_workers=num_workers,
+                collate_fn=collate_fn,
+                drop_last=True,
+                pin_memory=True
+    )
+    return loader
+
+class CustomBatch:
+    """
+    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning
+    """
+    def __init__(self, data):
+        transposed_data = list(zip(*data))
+        self.inp = torch.stack(transposed_data[0], 0)
+        self.tgt = torch.stack(transposed_data[1], 0)
+
+    # custom memory pinning method on custom type
+    def pin_memory(self):
+        self.inp = self.inp.pin_memory()
+        self.tgt = self.tgt.pin_memory()
+        return self
+
+def collate_wrapper(batch):
+    return SimpleCustomBatch(batch)
+ 
+def collate_fn(batch):  
+    """
+    this is an external function so that the loader can be serialized during multi-processing
+    """
+    return zip(*batch)
 
 
 def mfcc_from_data(audio: np.ndarray, samp_rate:int, window_size=20, step_size=10):
@@ -430,6 +561,7 @@ def mfcc_from_data(audio: np.ndarray, samp_rate:int, window_size=20, step_size=1
             audio = audio.mean(axis=1, dtype='float32')  # multiple channels, average
    
     return create_mfcc(audio, samp_rate, window_size, step_size)
+
 
 def create_mfcc(audio, sample_rate: int, window_size, step_size, esp=1e-10):
     """Calculates the mfcc using python_speech_features and can return the mfcc's and its derivatives, if desired. 
@@ -490,10 +622,18 @@ def log_spectrogram_from_data(audio: np.ndarray, samp_rate:int, window_size=32, 
             audio = audio.mean(axis=1, dtype='float32')  # multiple channels, average
     return log_spectrogram(audio, samp_rate, window_size, step_size, plot=plot)
 
-def log_spectrogram(audio, sample_rate, window_size=20,
-                 step_size=10, eps=1e-10, plot=False):
+def log_spectrogram(audio, 
+                    sample_rate, 
+                    window_size=20,
+                    step_size=10, 
+                    eps=1e-10, 
+                    plot=False):
+    """
+    Calculates the log spectrogram of an input numpy array.
+    The step size is converted into the overlap noverlap
+    """
     nperseg = int(window_size * sample_rate / 1e3)
-    noverlap = int(step_size * sample_rate / 1e3)
+    noverlap = int( (window_size - step_size) * sample_rate / 1e3)
     f, t, spec = scipy.signal.spectrogram(audio,
                     fs=sample_rate,
                     window='hann',
@@ -571,5 +711,3 @@ def plot_spectrogram(f, t, Sxx):
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.show()
-
-

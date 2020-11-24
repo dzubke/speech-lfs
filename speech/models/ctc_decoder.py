@@ -35,7 +35,7 @@ def logsumexp(*args):
                       for a in args))
   return a_max + lsp
 
-def decode(probs, beam_size=10, blank=0):
+def decode(probs, beam_size=10, blank=0, n_top_beams=1):
   """
   Performs inference for the given output probabilities.
 
@@ -44,10 +44,14 @@ def decode(probs, beam_size=10, blank=0):
       time step. Should be an array of shape (time x output dim).
     beam_size (int): Size of the beam to use during inference.
     blank (int): Index of the CTC blank label.
+    n_top_beams (int): number of top beams to output
 
   Returns the output label sequence and the corresponding negative
   log-likelihood estimated by the decoder.
   """
+  assert beam_size >= n_top_beams, \
+    f"beam_size {beam_size} is less than number of top beams {n_top_beams}"
+  
   T, S = probs.shape
   probs = np.log(probs)
 
@@ -109,8 +113,12 @@ def decode(probs, beam_size=10, blank=0):
             reverse=True)
     beam = beam[:beam_size]
 
-  best = beam[0]
-  return best[0], -logsumexp(*best[1])
+  # each beam is Tuple[preds, probs]
+  best_beams = beam[0:n_top_beams]
+  # transform the probs to log-sum-exp space
+  best_beams = [(preds, -logsumexp(*probs)) for (preds, probs) in best_beams]
+  return best_beams
+
 
 if __name__ == "__main__":
   np.random.seed(3)

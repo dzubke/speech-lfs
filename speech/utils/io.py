@@ -9,24 +9,28 @@ import yaml
 import torch
 # project libraries
 
-MODEL = "model_state_dict.pth"
-PREPROC = "preproc.pyc"
 
-def get_names(path:str, tag:str, get_config:bool=False):
+def get_names(path:str, tag:str, get_config:bool=False, model_name:str=''):
+    MODEL = "model_state_dict.pth"
+    PREPROC = "preproc.pyc"
+    
     tag = tag + "_" if tag else ""
+    # if model_name is non-empty, reassign the global variable MODEL
+    if model_name:      
+        MODEL = model_name
     model_path = os.path.join(path, tag + MODEL)
     preproc_path = os.path.join(path, tag + PREPROC)
 
     if get_config:
         config_path = glob.glob(os.path.join(path, "ctc_config*[.yaml, .json]"))
         assert len(config_path) == 1, \
-            f"no config or multiple config files found in directory {path}"
+            f"{len(config_path)} config files found in directory: {path}"
         output = (model_path, preproc_path, config_path[0])
+    
     else:
         output = (model_path, preproc_path)
 
     return output
-
 
 def save(model, preproc, path, tag=""):
     model_n, preproc_n = get_names(path, tag)
@@ -63,7 +67,7 @@ def load_state_dict(model_path:str, device:torch.device)->OrderedDict:
     
     if isinstance(model_or_state_dict, OrderedDict):
         state_dict = model_or_state_dict
-    elif isinstance(model, torch.nn.Module):
+    elif isinstance(model_or_state_dict, torch.nn.Module):
         model = model_or_state_dict
         state_dict = model.state_dict()
     else:
@@ -84,7 +88,10 @@ def export_state_dict(model_in_path, params_out_path):
 
 def read_data_json(data_path):
     with open(data_path) as fid:
-        return [json.loads(l) for l in fid]
+        dataset = [json.loads(l) for l in fid]
+        ulimit = float('inf') #256    # target lengths cannot be longer than 256 for pytorch native loss
+        filtered_dataset = [datum for datum in dataset if len(datum['text']) <= ulimit]
+        return filtered_dataset
 
 
 def write_data_json(dataset:list, write_path:str):
@@ -110,6 +117,22 @@ def write_pickle(pickle_path:str, object_to_pickle):
         pickle.dump(object_to_pickle, fid) 
 
 
+def write_json(json_path:str, dict_to_write:dict)->None:
+    """This function writes a dictionary to json at `json_path`.
+    Args:
+        json_path (str): path where json will be written
+        dict_to_write (dict): dictionary to be written to json
+    Returns:
+        None
+    """
+    assert json_path != '', f'json_path: {json_path} is empty'
+    assert isinstance(dict_to_write, dict), \
+        f'dict_to_write is type: {type(dict_to_write)}, not dict'
+
+    with open(json_path, 'w') as fid:
+        json.dump(dict_to_write, fid)
+
+
 def load_config(config_path:str)->dict:
     """
     loads the config file in json or yaml format
@@ -129,22 +152,22 @@ def load_config(config_path:str)->dict:
 
 
 def load_from_trained(model, model_cfg):
-    """
-    loads the model with pretrained weights from the model in
-    model_cfg["trained_path"]
-    Arguments:
+    """loads the model with pretrained weights from the model in model_cfg["trained_path"]
+    Args:
         model (torch model)
-        model_cfg (dict)
+        model_cfg (dict): configuration for the model
     """
     trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
     if isinstance(trained_model, dict):
         trained_state_dict = trained_model
     else:
         trained_state_dict = trained_model.state_dict()
+    
     trained_state_dict = filter_state_dict(trained_state_dict, remove_layers=model_cfg["remove_layers"])
     model_state_dict = model.state_dict()
     model_state_dict.update(trained_state_dict)
     model.load_state_dict(model_state_dict)
+   
     return model
 
 
@@ -162,4 +185,3 @@ def filter_state_dict(state_dict, remove_layers=[]):
         if key not in remove_layers}
         )
     return state_dict
-

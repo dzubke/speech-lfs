@@ -177,7 +177,12 @@ def solve_interpolation(train_points, train_values, order, regularization_weight
     rhs = torch.cat((f, rhs_zeros), 1)  # [b, n + d + 1, k]
 
     # Then, solve the linear system and unpack the results.
-    X, LU = torch.gesv(rhs, lhs)
+    
+    if torch.__version__ in ["0.4.1.post2", "0.4.1"]:
+        X, LU = torch.gesv(rhs, lhs)
+    else:
+        X, LU = torch.solve(rhs, lhs)
+    
     w = X[:, :n, :]
     v = X[:, n:, :]
 
@@ -296,8 +301,12 @@ def dense_image_warp(image, flow):
 
     # The flow is defined on the image grid. Turn the flow into a list of query
     # points in the grid space.
-    grid_x, grid_y = torch.meshgrid([
-        torch.arange(width), torch.arange(height)])
+    if torch.__version__ in ["0.4.1.post2", "0.4.1"]:
+        grid_x, grid_y = torch.meshgrid((
+            torch.arange(width), torch.arange(height)))
+    else:
+        grid_x, grid_y = torch.meshgrid(
+            torch.arange(width), torch.arange(height))
 
     stacked_grid = torch.stack((grid_y, grid_x), dim=2).float()
 
@@ -372,7 +381,7 @@ def interpolate_bilinear(grid,
 
         # alpha has the same type as the grid, as we will directly use alpha
         # when taking linear combinations of pixel values from the image.
-        alpha = torch.tensor(queries - floor, dtype=grid_type)
+        alpha = torch.as_tensor(queries - floor, dtype=grid_type)
         min_alpha = torch.tensor(0.0, dtype=grid_type)
         max_alpha = torch.tensor(1.0, dtype=grid_type)
         alpha = torch.min(torch.max(min_alpha, alpha), max_alpha)

@@ -12,9 +12,10 @@ display_help(){
             -mp or --model-path:  is the path to the model directory
             -mn or --model-name: is the model name
             -nf or --num-frames: is the number of frames
+            -hs or --hidden-size: size of RNN hidden state
             --quarter-precision: for quarter precision
             --half-precision:    for half precision
-            --best: to use the best_model in directory
+            -t or --tag: can be 'best' or 'ckpt'
     "
 }
 
@@ -40,9 +41,10 @@ do
         shift # past argument
         shift # past value
         ;;
-        --best)
-        BEST_TAG="best_"
+        -t|--tag)
+        TAG="$VALUE"_
         shift # past argument
+        shift # past value
         ;;
         --half-precision)
         HALF_PRECISION="--half-precision"
@@ -71,11 +73,11 @@ copy_files(){
 
     MODEL_PATH=$1
     MODEL_NAME=$2
-    BEST_TAG=$3
-
-    cp ${MODEL_PATH}/${BEST_TAG}model_state_dict.pth ./torch_models/${MODEL_NAME}_model.pth
-    echo "copied ${MODEL_PATH}/${BEST_TAG}model_state_dict.pth to ./torch_models/${MODEL_NAME}_model.pth"
-    cp ${MODEL_PATH}/${BEST_TAG}preproc.pyc ./preproc/${MODEL_NAME}_preproc.pyc
+    TAG=$3
+    echo "tag is ${TAG}"
+    cp ${MODEL_PATH}/${TAG}model_state_dict.pth ./torch_models/${MODEL_NAME}_model.pth
+    echo "copied ${MODEL_PATH}/${TAG}model_state_dict.pth to ./torch_models/${MODEL_NAME}_model.pth"
+    cp ${MODEL_PATH}/${TAG}preproc.pyc ./preproc/${MODEL_NAME}_preproc.pyc
     cp ${MODEL_PATH}/*.yaml ./config/${MODEL_NAME}_config.yaml
 }
 
@@ -86,18 +88,32 @@ convert_model(){
     HALF_PRECISION=$3
     QUARTER_PRECISION=$4
 
-    sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
-    python torch_to_onnx.py --model-name $MODEL_NAME --num-frames $NUM_FRAMES --use-state-dict 
-    python onnx_to_coreml.py $MODEL_NAME $HALF_PRECISION $QUARTER_PRECISION
+    echo "precision used: " $HALF_PRECISION $QUARTER_PRECISION
+
+    # the `sed` commands were used when the import was include in the model class. they are not needed anymore
+    #sed -i '' 's/import functions\.ctc/#import functions\.ctc/g' ../speech/models/ctc_model_train.py
+    python torch_to_onnx.py --model-name "$MODEL_NAME" --num-frames "$NUM_FRAMES"
+    python onnx_to_coreml.py "$MODEL_NAME" $HALF_PRECISION $QUARTER_PRECISION
+
+    # print a warning about `validation.py` if half or quarter precision is used
+    if [ "$HALF_PRECISION" = "--half-precision" ] || [ "$QUARTER_PRECISION" = "--quarter-precision" ]
+    then
+    echo "
+    ~~~ CoreML model converted to lower precision. Probabilities in validation.py may not fully agree. ~~~
+    "
+    fi
+    # validate the model conversion
     python validation.py $MODEL_NAME --num-frames $NUM_FRAMES
-    sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
+
+    # the `sed` commands were used when the import was include in the model class. they are not needed anymore
+    #sed -i '' 's/#import functions\.ctc/import functions\.ctc/g' ../speech/models/ctc_model_train.py
 }
 
 zip_files(){
     # $1 IS MODEL_NAME
 
     echo "Zipping $1.zip"
-    zip -j ./zips/$1.zip ./coreml_models/$1_model.mlmodel ./preproc/$1_preproc.json ./config/$1_config.yaml ./output/$1_output.json
+    zip -j ./zips/$1.zip ./coreml_models/$1_model.mlmodel ./preproc/$1_metadata.json ./config/$1_config.yaml ./output/$1_output.json
 }
 
 cleanup(){
@@ -112,7 +128,7 @@ cleanup(){
 # runs the cleanup finction if SIGINT is entered
 trap cleanup SIGINT
 
-copy_files $MODEL_PATH $MODEL_NAME $BEST_TAG
+copy_files $MODEL_PATH $MODEL_NAME $TAG
 
 convert_model $MODEL_NAME $NUM_FRAMES $HALF_PRECISION $QUARTER_PRECISION
 
