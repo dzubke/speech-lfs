@@ -306,6 +306,7 @@ class DataPreprocessor(object):
 
 
 ###################   COMMON VOICE       #######################
+
 class CommonvoicePreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
                         force_convert, min_duration, max_duration):
@@ -347,6 +348,7 @@ class CommonvoicePreprocessor(DataPreprocessor):
 
 
 ###################     TEDLIUM       ###################### 
+
 class TedliumPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
                         force_convert, min_duration, max_duration):
@@ -457,7 +459,8 @@ class TedliumPreprocessor(DataPreprocessor):
 
 
 
-###################     VOXFORGE       ######################            
+###################     VOXFORGE       ######################  
+         
 class VoxforgePreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
                         force_convert, min_duration, max_duration):
@@ -540,7 +543,8 @@ class VoxforgePreprocessor(DataPreprocessor):
         return audio_path
 
 
-###################   TATOEBA       ######################        
+###################   TATOEBA       ######################  
+
 class TatoebaPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
                         force_convert, min_duration, max_duration):
@@ -588,12 +592,14 @@ class TatoebaPreprocessor(DataPreprocessor):
 
 
 ###################   SPEAK TRAIN       ###################### 
+
 class SpeakTrainPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
                         force_convert, min_duration, max_duration):
         super(SpeakTrainPreprocessor, self).__init__(dataset_dir, dataset_files,
                                                       dataset_name, lexicon_path,
                                                       force_convert, min_duration, max_duration)
+
 
     def process_datasets(self):
         for set_name, label_name in self.dataset_dict.items():
@@ -610,6 +616,7 @@ class SpeakTrainPreprocessor(DataPreprocessor):
             json_path = root + os.path.extsep + "json"
             logging.info(f"entering write_json for {set_name}. writing json to {json_path}")
             self.write_json_mp(json_path)
+
 
     def collect_audio_transcripts(self, label_path:str):
         
