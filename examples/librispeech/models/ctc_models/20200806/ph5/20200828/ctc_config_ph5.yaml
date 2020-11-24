@@ -52,6 +52,7 @@ optimizer:
 model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     multi_gpu: False
+    blank_idx: last
     dropout: 0.4
     load_trained: True
     trained_path: examples/librispeech/models/ctc_models/20200806/ph5/20200812/best_model.pth
