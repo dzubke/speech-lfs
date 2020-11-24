@@ -505,29 +505,49 @@ def make_ddp_loader(dataset_json,
     )
     return loader
 
-class CustomBatch:
-    """
-    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning
-    """
-    def __init__(self, data):
-        transposed_data = list(zip(*data))
-        self.inp = torch.stack(transposed_data[0], 0)
-        self.tgt = torch.stack(transposed_data[1], 0)
-
-    # custom memory pinning method on custom type
-    def pin_memory(self):
-        self.inp = self.inp.pin_memory()
-        self.tgt = self.tgt.pin_memory()
-        return self
-
-def collate_wrapper(batch):
-    return SimpleCustomBatch(batch)
+#class CustomBatch:
+#    """
+#    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning
+#    """
+#    def __init__(self, data):
+#        transposed_data = list(zip(*data))
+#        self.inp = torch.stack(transposed_data[0], 0)
+#        self.tgt = torch.stack(transposed_data[1], 0)
+#
+#    # custom memory pinning method on custom type
+#    def pin_memory(self):
+#        self.inp = self.inp.pin_memory()
+#        self.tgt = self.tgt.pin_memory()
+#        return self
+#
+#def collate_wrapper(batch):
+#    return SimpleCustomBatch(batch)
  
 def collate_fn(batch):  
     """
     this is an external function so that the loader can be serialized during multi-processing
     """
-    return zip(*batch)
+    inputs, targets = list(zip(*batch))
+    max_t = max(i.shape[0] for i in inputs)
+    input_sizes = torch.IntTensor([max_t] * len(inputs))
+    inputs = torch.FloatTensor(zero_pad_concat(inputs))
+    target_sizes = torch.IntTensor([len(t) for t in targets])
+    targets = torch.IntTensor([t for target in targets for t in target])
+    batch = [inputs, targets, input_sizes, target_sizes]
+    return batch
+
+def zero_pad_concat(inputs):
+    """this loops over all of the examples in inputs and adds them 
+    to the zero's array input_mat so that for examples with length less 
+    than the max have zero's from the end of the example until max_t
+    """
+    max_t = max(inp.shape[0] for inp in inputs)
+    shape = (len(inputs), max_t, inputs[0].shape[1])
+    input_mat = np.zeros(shape, dtype=np.float32)
+
+    for e, inp in enumerate(inputs):
+        input_mat[e, :inp.shape[0], :] = inp
+    return input_mat
 
 
 def mfcc_from_data(audio: np.ndarray, samp_rate:int, window_size=20, step_size=10):
