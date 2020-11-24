@@ -18,6 +18,7 @@ preproc:
     preprocessor: log_spectrogram
     window_size: 32
     step_size: 16
+    blank_idx: last
     use_feature_normalize: True
     augment_from_normal: True
     tempo_gain_pitch_perturb: True
@@ -53,6 +54,7 @@ model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     multi_gpu: False
     dropout: 0.4
+    blank_idx: last
     load_trained: True
     trained_path: examples/librispeech/models/ctc_models/20200925/ph3/model_state_dict.pth
     remove_layers: []
