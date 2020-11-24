@@ -23,39 +23,55 @@ class Model(nn.Module):
         self.input_dim = input_dim
 
         encoder_cfg = config["encoder"]
+        self.use_conv = encoder_cfg.get('use_conv', True)
         conv_cfg = encoder_cfg["conv"]
 
-        convs = []
-        in_c = 1
-        for out_c, h, w, s_h, s_w, p_h, p_w in conv_cfg:     
-            conv = nn.Conv2d(in_channels=in_c, 
-                             out_channels=out_c, 
-                             kernel_size=(h, w),
-                             stride=(s_h, s_w), 
-                             padding=(p_h, p_w))
-            batch_norm =  nn.BatchNorm2d(out_c)
-            convs.extend([conv, batch_norm, nn.ReLU()])
-            #convs.extend([conv, nn.ReLU()])
-            if config["dropout"] != 0:
-                convs.append(nn.Dropout(p=config["dropout"]))
-            in_c = out_c
+        if self.use_conv:
+            convs = []
+            in_c = 1
+            for out_c, h, w, s_h, s_w, p_h, p_w in conv_cfg:     
+                conv = nn.Conv2d(in_channels=in_c, 
+                                out_channels=out_c, 
+                                kernel_size=(h, w),
+                                stride=(s_h, s_w), 
+                                padding=(p_h, p_w))
+                batch_norm =  nn.BatchNorm2d(out_c)
+                convs.extend([conv, batch_norm, nn.ReLU()])
+                #convs.extend([conv, nn.ReLU()])
+                if config["dropout"] != 0:
+                    convs.append(nn.Dropout(p=config["dropout"]))
+                in_c = out_c
 
-        self.conv = nn.Sequential(*convs)
-        conv_out = out_c * self.conv_out_size(self.input_dim, 1)
+            self.conv = nn.Sequential(*convs)
+            conv_out = out_c * self.conv_out_size(self.input_dim, 1)
 
-        assert conv_out > 0, \
-          "Convolutional ouptut frequency dimension is negative."
+            assert conv_out > 0, \
+                "Convolutional ouptut frequency dimension is negative."
+
 
         rnn_cfg = encoder_cfg["rnn"]
-        assert rnn_cfg["type"] == "GRU" or rnn_cfg["type"] == "LSTM", "RNN type in config not supported"
+        self.use_rnn = rnn_cfg.get('use_rnn', True)
 
-        self.rnn = eval("nn."+rnn_cfg["type"])(
-                        input_size=conv_out,
-                        hidden_size=rnn_cfg["dim"],
-                        num_layers=rnn_cfg["layers"],
-                        batch_first=True, dropout=config["dropout"],
-                        bidirectional=rnn_cfg["bidirectional"])
-        self._encoder_dim = rnn_cfg["dim"]
+        if self.use_rnn:
+            assert rnn_cfg["type"] in ["GRU", "LSTM", "RNN"],\
+                f"only GRU, LSTM, and RNN rnn types supported. {rnn_cfg['type']} not supported"
+
+            if self.use_conv:
+                rnn_input_size = conv_out
+            else:
+                rnn_input_size = self.input_dim
+            
+            self.rnn = eval("nn."+rnn_cfg["type"])(
+                            input_size=rnn_input_size,
+                            hidden_size=rnn_cfg["dim"],
+                            num_layers=rnn_cfg["layers"],
+                            batch_first=True, 
+                            dropout=config["dropout"],
+                            bidirectional=rnn_cfg["bidirectional"])
+            self._encoder_dim = rnn_cfg["dim"]
+
+        else:
+            self._encoder_dim = conv_out
 
     def conv_out_size(self, n, dim):
         for c in self.conv.children():
@@ -79,26 +95,27 @@ class Model(nn.Module):
             in the model encoder config.
 
         """
-        x = x.unsqueeze(1)      
+        if self.use_conv:
+            x = x.unsqueeze(1) 
+            x = self.conv(x)
+            # At this point x should have shape
+            # (batch, channels, time, freq)
         
-        x = self.conv(x)
-        # At this point x should have shape
-        # (batch, channels, time, freq)
+            x = torch.transpose(x, 1, 2).contiguous()
         
-        x = torch.transpose(x, 1, 2).contiguous()
+            # Reshape x to be (batch, time, freq * channels)
+            # for the RNN
         
-        # Reshape x to be (batch, time, freq * channels)
-        # for the RNN
-        
-        b, t, f, c = x.data.size()
-        x = x.view((b, t, f*c)) 
-        #x = x.view((x.data.size()[0], x.data.size()[1], -1)) 
+            #b, t, f, c = x.data.size()
+            #x = x.view((b, t, f*c)) 
+            x = x.view((x.data.size()[0], x.data.size()[1], -1)) 
 
-        x, rnn_args = self.rnn(x, rnn_args)
+        if self.use_rnn:
+            x, rnn_args = self.rnn(x, rnn_args)
         
-        # if self.rnn.bidirectional:
-        #     half = x.size()[-1] // 2
-        #     x = x[:, :, :half] + x[:, :, half:]
+            # if self.rnn.bidirectional:
+            #     half = x.size()[-1] // 2
+            #     x = x[:, :, :half] + x[:, :, half:]
 
         return x, rnn_args
 

@@ -5,10 +5,15 @@ license: MIT
 """
 # standard libary
 import argparse
+from collections import Counter
+from functools import partial
 import csv
 import os
 import re
 # third party libraries
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
 import numpy as np
@@ -16,6 +21,7 @@ import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
 from speech.utils import wave, data_helpers
+from speech.utils.io import write_pickle
 
 
 def assess_commonvoice(validated_path:str, max_occurance:int):
@@ -78,6 +84,79 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
             in_df = in_df.drop(index=drop_index)
     return in_df, drop_row_count
 
+
+
+def assess_iphone_models(save_path:str)->None:
+    """This function seeks to identify the distribution of iphone models across a random sample of 
+    Speak's userbase. A historgram will be created of the number of users on each iphone model. 
+    Args:
+        save_path (str): path where iphone count will be saved as pickle
+    """
+    PROJECT_ID = 'speak-v2-2a1f1'
+    QUERY_LIMIT = 10000
+    
+    # verify and set the credientials
+    CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
+    # CREDENTIAL_PATH = "/Users/dustin/CS/consulting/firstlayerai/phoneme_classification/src/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
+    # set the enviroment variable that `firebase_admin.credentials` will use
+    os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
+
+    # initialize the credentials and firebase db client
+    cred = credentials.ApplicationDefault()
+    firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
+    db = firestore.client()
+
+    rec_ref = db.collection(u'recordings')
+    iphone_model_count = Counter()
+    n_iphone_models = 100000
+
+    while sum(iphone_model_count.values()) < n_iphone_models:
+        print("inside while loop")
+        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+        for doc in next_query.stream():
+            doc = doc.to_dict()
+            # only select dates in 2020
+            rec_date = doc.get('info', {}).get('date', None)
+            if isinstance(rec_date, str):
+                if rec_date.startswith('2020'):
+                    # get the iphone model
+                    iphone_model = doc.get('user', {}).get('deviceModelIdentifier', None)
+                    if iphone_model is not None:
+                        # iphone_model has the formate 'iPad8,2', so splitting off second half
+                        iphone_model = iphone_model.split(',')[0]
+                        iphone_model_count[iphone_model] += 1 
+
+    #iphone_model_count = dict(iphone_model_count)
+    write_pickle(save_path, iphone_model_count)
+
+    # plot the iphone model counts
+    model_names, model_counts = list(zip(*iphone_model_count.most_common()))
+    plt.plot(model_names, model_counts)
+    plt.xticks(model_names, model_names, rotation=45)
+
+    fig, ax = plt.subplots(constrained_layout=True)
+    ax.bar(model_names, model_counts)
+    plt.xticks(model_names, model_names, rotation=45)
+    total = sum(model_counts)
+    
+    # plot the aggregate and percent of total values on both axes
+    def _agg2percent_forward(x, total):
+        return x/total
+
+    def _agg2percent_backward(x, total):
+        return x*total
+
+    # create the forward and backward transforms for the axis
+    forward_transform = partial(_agg2percent_forward, total=total)
+    backward_transform = partial(_agg2percent_backward, total=total)
+    # create the secondary axis
+    secaxy = ax.secondary_yaxis('right', functions=(forward_transform,
+                                                    backward_transform))
+
+    # add the plot labels for each axis
+    ax.set_ylabel("Device model count")
+    secaxy.set_ylabel("Percent of total device count")
+    plt.xlabel("Device names")
 
 def assess_speak_train(dataset_path:str):
 
@@ -303,5 +382,7 @@ if __name__ == "__main__":
         assess_commonvoice(args.dataset_path, args.max_occurance)
     elif args.dataset_name.lower() == "speaktrain":
         assess_speak_train(args.dataset_path)
+    elif args.dataset_name.lower() == "speakiphone":
+        assess_iphone_models(args.dataset_path)
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")

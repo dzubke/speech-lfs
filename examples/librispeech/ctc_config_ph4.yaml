@@ -1,19 +1,19 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200806/ph4/
-data: 
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv/train_lib-ted-cv-v5_2020-07-17_dd.json
-    dev_sets: 
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201012/ph4/
+data:
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-5M-2020-09-25_2020-10-05-06_dd.json
+    dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
         libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
         ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
     dev_set_save_reference: speak
-    start_and_end: False
+    start_and_end: false
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-08-06-09-28_ph4_large-model-w-aug-w-feat-norm_lib-ted-cv.log
-    debug_mode: False
+    log_file: logs/2020-10-19_large-model-mid-aug_lib-ted-cv-speak-5M-2020-09-25_2020-10-05-06.log
+    debug_mode: false
 preproc:
     preprocessor: log_spectrogram
     window_size: 32
@@ -34,27 +34,27 @@ preproc:
     background_noise_range: [0.0, 0.5]
     spec_augment: True
     spec_augment_prob: 0.5
-    spec_augment_policy: 
+    spec_augment_policy:
         0: {W: 20, F: 30, m_F: 1, T: 18, m_T: 1}
-        1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2} 
-        2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3} 
-optimizer: 
-    batch_size: 10
-    run_state: [2495049, 46.7093]
-    best_so_far: 0.34063
-    start_epoch: 24
+        1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2}
+        2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
+optimizer:
+    batch_size: 9
+    run_state: [3387617, 13.3]
+    best_so_far: 0.188478
+    start_epoch: 27
     epochs: 100
     learning_rate: 0.0005
     momentum: 0.5
     dampening: 0.0
     sched_gamma: 1.0
     sched_step: 1
-model: 
+model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
-    multi_gpu: False
     dropout: 0.4
-    load_trained: True
-    trained_path:  examples/librispeech/models/ctc_models/20200806/ph4/model_state_dict.pth
+    blank_idx: 0
+    load_trained: False
+    trained_path: ./examples/librispeech/models/ctc_models/20201012/ph4/model_state_dict_ckpt.pth
     remove_layers: []
     encoder: 
         conv:
@@ -66,3 +66,16 @@ model:
             dim: 1024
             bidirectional: False
             layers: 5
+training:
+    multi_gpu: False
+    distributed: True
+    use_spawn: False
+    loss_name: awni
+    apex: False
+    opt_level: 'O0'
+    n_node: 1
+    gpu_per_node: 4
+    master_addr: '10.128.0.10'
+    master_port: '8888'
+    checkpoints_per_epoch: 7
+    OMP_NUM_THREADS: 10
