@@ -7,4 +7,4 @@ dataset_name: SpeakTrain
 # number of examples in filtered dataset
 dataset_size: 1000000
 # max number of utterances for a single speaker
-max_speaker_count: 500 
+max_speaker_count: 500

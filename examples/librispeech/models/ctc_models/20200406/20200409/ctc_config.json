@@ -12,6 +12,7 @@
         "preprocessor": "log_spec",
         "window_size": 32,
         "step_size": 16,
+        "blank_idx": "last",
         "use_spec_augment": true,
         "inject_noise": false,
         "noise_directory": "/home/dzubke/awni_speech/data/background_noise/",

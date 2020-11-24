@@ -37,7 +37,7 @@ class DataPreprocessor(object):
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
         if lexicon_path !='':
-            self.lex_dict = data_helpers.lexicon_to_dict(lexicon_path, dataset_name.lower())
+            self.lex_dict = q
         else: 
             self.lex_dict = None
         # list of tuples of audio_path and transcripts
@@ -755,6 +755,7 @@ if __name__ == "__main__":
                                           config['lexicon_path'],
                                           config['force_convert'], 
                                           config['min_duration'], 
-                                          config['max_duration'])
+                                          config['max_duration'],
+                                          config['custom_args'])
     data_preprocessor.process_datasets()
 
