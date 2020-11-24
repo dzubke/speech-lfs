@@ -20,7 +20,7 @@ model_0406:	(3.64)	b ah t ih r aa z f ah n
 rec_id:			00F931A9-6EA9-4233-85B4-94015A257352
 target:			He's pretty short.
 guess:			He's a pretty's short
-tar_phones:		hh iy z p r ih t iy sh ao r t
+tar_phones:		hh iy z *p* r ih t iy sh ao r t
 ges_phones:		hh iy z ah p r ih t iy z sh ao r t
 model_1118:	(0.36)	hh iy z p r ih t iy sh ao r t
 	   	(1.81)	hh ih z p r ih t iy sh ao r t
@@ -39,7 +39,7 @@ model_0406:	(2.36)	hh ih z f r iy l iy sh aa r t
 rec_id:			012C1AC5-13E0-4337-B6CC-BFD58A12A8BC
 target:			Could you tell me where the bathroom is?
 guess:			Could you tell me where are the best
-tar_phones:		k uh d y uw t eh l m iy w eh r dh ah b ae th r uw m ih z
+tar_phones:		k uh d y uw t eh *l* m iy w eh r dh ah b ae th r uw m ih z
 ges_phones:		k uh d y uw t eh l m iy w eh r aa r dh ah b eh s t
 model_1118:	(2.08)	k uh d y uw t eh l m iy w eh r dh ah b ae th r uw
 	   	(2.25)	k uh d y uw t eh l m iy w eh r dh ah b ae th r uw uw
@@ -191,7 +191,7 @@ model_0406:	(14.24)	y uw zh ah y uw sh uh d ah t sh uh r d aa k t er
 rec_id:			054C13A4-9499-453F-90A0-950DA50C4576
 target:			I read neither newspapers nor magazines.
 guess:			I need a read a neither a newspapers a nor a i
-tar_phones:		ay r eh d n iy dh er n uw z p ey p er z n ao r m ae g ah z iy n z
+tar_phones:		ay *r* eh d n iy dh er n uw z p ey p er z n ao r m ae g ah z iy n z
 ges_phones:		ay n iy d ah r eh d ah n iy dh er ah n uw z p ey p er z ah n ao r ah ay
 model_1118:	(15.82)	ay l ih d ay r eh d n iy dh er n y uw z p ey p er z ow n ow m eh
 	   	(16.05)	ay l ih d ay r eh d n iy dh er n y uw z p ey p er z ow n ow eh
@@ -609,7 +609,7 @@ model_0406:	(10.97)	ay v ao l ey z l ay t uw t r ay f t ay d ay v ih ng
 rec_id:			16895C3F-1165-44CC-89B8-A812A200234D
 target:			It's over there across the street from the gym.
 guess:			It's over there across the street from the scene
-tar_phones:		ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah jh ih m
+tar_phones:		ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah *jh* ih m
 ges_phones:		ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah s iy n
 model_1118:	(0.39)	ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah jh ih m
 	   	(3.53)	ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah d ih m
@@ -706,7 +706,7 @@ target:			Would you have said no?
 guess:			Would you have said no
 tar_phones:		w uh d y uw hh ae v s eh d n ow
 ges_phones:		w uh d y uw hh ae v s eh d n ow
-model_1118:	(0.54)	w uh d y uw hh ae v s eh d ih n ow
+model_1118:	(0.54)	w uh d y uw hh ae v s eh d *ih* n ow
 	   	(3.01)	w uh d y uw hh ae v s eh d ih n ah
 	   	(3.22)	w uh d y uw hh ae v s eh d n ow
 model_0925:	(3.93)	w uh d y uw hh ae v s eh t ih n ah m
@@ -778,7 +778,7 @@ model_0406:	(11.08)	ah f ay v eh r y ih r ay d ah t r ah b ah l aa n ah l ao n
 
 
 rec_id:			1B9643B4-75FF-4E5C-8737-306551A36741
-target:			Could you give me a few more minutes, please?
+target:			*Could* you give me a few more minutes, please?
 guess:			Can I have cry have a few more minutes please
 tar_phones:		k uh d y uw g ih v m iy ah f y uw m ao r m ih n ah t s p l iy z
 ges_phones:		k ae n ay hh ae v k r ay hh ae v ah f y uw m ao r m ih n ah t s p l iy z
@@ -804,7 +804,7 @@ ges_phones:		ay r eh d dh ah n iy dh er ah n uw z p ey p er z dh ah n iy dh er a
 model_1118:	(16.44)	ay r eh d n iy dh er n uw s p er f er z ah n n ih r ao m eh r iy ah jh iy s ah
 	   	(16.47)	ay r eh d n iy dh er n uw s p er f er z ah n n ih r ao m eh r iy ah jh iy z ah
 	   	(16.65)	ay r eh d n iy dh er n uw s p er f er z ah n n ih r ao m eh r iy ah jh ih s ah
-model_0925:	(16.78)	ay r eh d ah n iy dh ah dh uw s ah p ah p er z uw n ih r aa r m eh g ah t ih s
+model_0925:	(16.78)	ay r eh d *ah* n iy dh ah dh uw s *ah* p ah p er z uw n ih r aa r m eh g ah t ih s
 	   	(16.78)	ay r eh d ah n iy dh ah dh uw s ah p ah p er z uw n ih r ao r m eh g ah t ih s
 	   	(16.85)	ay r eh d ah n iy dh ah dh uw s ah p ah p er s uw n ih r aa r m eh g ah t ih s
 model_0902:	(19.86)	ay r iy dh ah n iy d ow d ih s ah p eh p er s ah n iy ah r m eh v ah jh ah s ah
@@ -856,7 +856,7 @@ model_0406:	(23.91)	ay d b uw d d iy p d iy d d iy d er s p ih k ih ng s ih p p 
 rec_id:			1DC83F33-A033-49EC-B087-A04421E252B9
 target:			I eat out every other week.
 guess:			I eat a out a every a other a week
-tar_phones:		ay iy t aw t eh v er iy ah dh er w iy k
+tar_phones:		ay *iy* t aw t eh v er iy ah dh er w iy k
 ges_phones:		ay iy t ah aw t ah eh v er iy ah ah dh er ah w iy k
 model_1118:	(2.11)	ay iy t aw t eh v er iy ah dh er w iy k
 	   	(3.26)	ay iy t aw t eh v er iy ah ah dh er w iy k
@@ -894,7 +894,7 @@ model_0406:	(0.91)	ay m ay t g ow
 rec_id:			1F3FAE4A-DFA3-41A9-A50C-494944C9BEFA
 target:			For appetizer, I'll have the soup.
 guess:			For a appetizer a the a have the soup
-tar_phones:		f ao r ae p ah t ay z er ay l hh ae v dh ah s uw p
+tar_phones:		f ao r ae p ah t ay z er ay l hh ae v dh ah s uw *p*
 ges_phones:		f ao r ah ae p ah t ay z er ah dh ah ah hh ae v dh ah s uw p
 model_1118:	(2.37)	f ao r ae p ah t ay z er ay w ih l hh ae v dh ah f uw th
 	   	(2.43)	f ao r ae p ah t ay z er ay w ih l hh ae v dh ah f uw
@@ -951,7 +951,7 @@ model_0406:	(3.65)	ay s p ow k t ah m ay f r ah n d
 rec_id:			1FDCD134-800F-49D3-AA47-84B9ECF1DC69
 target:			I showed my phone to my friend.
 guess:			I showed my phone to my a friend
-tar_phones:		ay sh ow d m ay f ow n t uw m ay f r eh n d
+tar_phones:		ay sh ow *d* m ay f ow n t uw m ay f r eh n d
 ges_phones:		ay sh ow d m ay f ow n t uw m ay ah f r eh n d
 model_1118:	(2.68)	ay y sh uh r m ay f ow n t uw m ay f r eh n d
 	   	(2.9)	ay y uw sh uh r m ay f ow n t uw m ay f r eh n d
@@ -989,7 +989,7 @@ model_0406:	(2.46)	ay d uw y uw b er
 rec_id:			225E7426-7485-41F0-864A-DA811DDF7B23
 target:			We might have to live with my mom at first.
 guess:			We might have to live with my mom and at first
-tar_phones:		w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ae t f er s t
+tar_phones:		w iy m ay t hh ae v t uw l ay v *w ih dh* m ay m aa m ae t f er s t
 ges_phones:		w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ah n d ae t f er s t
 model_1118:	(1.06)	w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ah n d ae t f er s t
 	   	(2.43)	w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ah n d ae d f er s t
@@ -1046,7 +1046,7 @@ model_0406:	(7.38)	y eh s v iy ey z
 rec_id:			234DD0F7-62B2-4E64-B612-2226FFD59D5D
 target:			Could I have a glass of water, please?
 guess:			Can I have a glass of water please
-tar_phones:		k uh d ay hh ae v ah g l ae s ah v w ao t er p l iy z
+tar_phones:		*k uh d ay* hh ae v ah g l ae s ah v w ao t er p l iy z
 ges_phones:		k ae n ay hh ae v ah g l ae s ah v w ao t er p l iy z
 model_1118:	(1.69)	g uh d ay hh ae v ah g l ae s ah v w ao t er p l iy z
 	   	(2.02)	g d ay hh ae v ah g l ae s ah v w ao t er p l iy z
@@ -1065,7 +1065,7 @@ model_0406:	(7.39)	k r ay d hh ae b ah l g l eh s dh ah b w ao t er p l iy z
 rec_id:			2383C84F-938C-4CAA-9E0F-FD453BE4F69F
 target:			Rent is cheap.
 guess:			Rent it cheap
-tar_phones:		r eh n t ih z ch iy p
+tar_phones:		r eh n t ih *z* ch iy p
 ges_phones:		r eh n t ih t ch iy p
 model_1118:	(1.68)	r eh n t iy ch iy p
 	   	(2.0)	r eh n t ih ch iy p
@@ -1157,7 +1157,7 @@ model_0406:	(15.65)	ah k ao l d p ae s t ah s k uw l
 	   	(16.15)	ih k ao l d p ae s t ah s k uw l
 
 
-rec_id:			26D1570B-35CC-43C6-90F8-AAE8841D712F
+rec_id:				
 target:			I've been thinking about going to Rio.
 guess:			I'm thinking about going to Rio Bravo
 tar_phones:		ay v b ih n th ih ng k ih ng ah b aw t g ow ih ng t uw r iy ow
@@ -1274,7 +1274,7 @@ model_0406:	(6.99)	ah m aw ey z ih n ah hh er iy t uw iy b r ae k f ah s t
 rec_id:			29D6DE39-3207-4B37-9071-3DAB7EB262FA
 target:			She'll soon start telling me what to wear and what to eat.
 guess:			So I'll see you start telling me what to wear and want to eat
-tar_phones:		sh iy l s uw n s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w ah t t uw iy t
+tar_phones:		*sh iy l s uw n* s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w ah t t uw iy t
 ges_phones:		s ow ay l s iy y uw s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w aa n t t uw iy t
 model_1118:	(6.58)	s ow w ah t s iy n s t aa r t eh l ih ng m iy w ah t t uw w eh r ih n w ah t t uw iy t
 	   	(7.64)	s ow w ah t s iy n s t aa r t t eh l ih ng m iy w ah t t uw w eh r ih n w ah t t uw iy t
@@ -1312,7 +1312,7 @@ model_0406:	(10.72)	k ay f ih n b ay th ih ng t ao r d
 rec_id:			2B411043-B9CD-4C24-B8F2-6E2D1870202F
 target:			I eat either bananas or apples.
 guess:			I eat the eat the bananas the or a apples
-tar_phones:		ay iy t iy dh er b ah n ae n ah z ao r ae p ah l z
+tar_phones:		ay iy t iy dh er b ah n ae n ah z ao r ae *p* ah l z
 ges_phones:		ay iy t dh ah iy t dh ah b ah n ae n ah z dh ah ao r ah ae p ah l z
 model_1118:	(1.75)	ay iy t t uw iy dh er b ah n ae n ah z ao r ae f er z
 	   	(2.08)	ay iy t t uw iy dh er b ah n ae n ah z ao r ae f er l z
@@ -1426,7 +1426,7 @@ model_0406:	(2.79)	hh iy
 rec_id:			2F7CD1CA-1F1B-4CE6-94A6-6FB6D2D88515
 target:			I rarely eat breakfast.
 guess:			I rarely it breakfast
-tar_phones:		ay r eh r l iy iy t b r eh k f ah s t
+tar_phones:		ay r eh *r* l iy iy t b r eh k f ah s t
 ges_phones:		ay r eh r l iy ih t b r eh k f ah s t
 model_1118:	(0.3)	ay r eh r l iy iy t b r eh k f ah s t
 	   	(3.05)	ay r eh r l iy iy t b r eh k t ah s t
@@ -1481,7 +1481,7 @@ model_0406:	(23.03)	s p ey n y uw s ah l iy s k r ae f t ey k aw t f ao r d ih z
 
 
 rec_id:			311D3F80-FE18-4557-AE6E-92BCC323EB5C
-target:			I wanted to check out the Picasso Museum.
+target:			I wanted to check out the *Picasso* Museum.
 guess:			I want to check out the pictures of the pickles
 tar_phones:		ay w ao n t ih d t uw ch eh k aw t dh ah p ih k aa s ow m y uw z iy ah m
 ges_phones:		ay w aa n t t uw ch eh k aw t dh ah p ih k ch er z ah v dh ah p ih k ah l z
@@ -1635,7 +1635,7 @@ model_0406:	(8.84)	m eh n iy b iy l n iy t ah s ey m m ah n iy
 rec_id:			34244070-1737-4DCE-94FA-76CC0543631E
 target:			I'm free all weekend.
 guess:			I free artist weekend
-tar_phones:		ay m f r iy ao l w iy k eh n d
+tar_phones:		ay m f r iy *ao l* w iy k eh n d
 ges_phones:		ay f r iy aa r t ih s t w iy k eh n d
 model_1118:	(1.88)	ay m f r iy ao l d ey s w iy k eh n d
 	   	(3.83)	ay m f r iy ao l d s w iy k eh n d
@@ -1770,10 +1770,10 @@ target:			How's your job?
 guess:			How's your job with her
 tar_phones:		hh aw z y ao r jh aa b
 ges_phones:		hh aw z y ao r jh aa b w ih dh hh er
-model_1118:	(6.69)	hh aw s y ao r jh aa b t ah
+model_1118:	(6.69)	hh aw s y ao r jh aa b *t ah*
 	   	(6.76)	hh aw s y ao r jh aa b t er
 	   	(6.83)	hh aw s sh ao r jh aa b t ah
-model_0925:	(7.15)	hh aw sh uh r jh aa b dh eh
+model_0925:	(7.15)	hh aw sh uh r jh aa b *dh eh*
 	   	(7.17)	hh aw sh uh r jh aa b ah dh eh
 	   	(7.18)	hh ah sh uh r jh aa b dh eh
 model_0902:	(4.18)	sh uh r ch aa b ah t er
@@ -1823,7 +1823,7 @@ model_0406:	(8.29)	ay l ah v t uw w ae t s n eh f er n ih k s w ih dh ah f r eh 
 
 
 rec_id:			388F9518-0E77-4CC6-A743-A225FF20DA42
-target:			Yes. I'm still at Naver.
+target:			Yes. I'm *still* at Naver.
 guess:			Yes I'm still at neighbor
 tar_phones:		y eh s ay m s t ih l ae t n ey v er
 ges_phones:		y eh s ay m s t ih l ae t n ey b er
@@ -1842,7 +1842,7 @@ model_0406:	(4.66)	y eh s ay m t eh r ae t n ey b er
 
 
 rec_id:			397A600B-2753-4734-98AD-0FBBA7EB81A3
-target:			We might have to live with my mom at first.
+target:			We might have to live with my mom at *first*.
 guess:			Remind have to live with my mom and post
 tar_phones:		w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ae t f er s t
 ges_phones:		r iy m ay n d hh ae v t uw l ay v w ih dh m ay m aa m ah n d p ow s t
@@ -2015,7 +2015,7 @@ model_0406:	(6.1)	k ae n ay d th r ao y uw ah n d ao z b eh n t s
 rec_id:			3F553895-5053-4508-B46B-ED0353C326F5
 target:			I wouldn’t have met my boyfriend.
 guess:			I wouldn't have met my boyfriend
-tar_phones:		ay w uh d ah n t hh ae v m eh t m ay b oy f r eh n d
+tar_phones:		ay *w* uh d ah n t hh ae v m eh t m ay b oy f r eh n d
 ges_phones:		ay w uh d ah n t hh ae v m eh t m ay b oy f r eh n d
 model_1118:	(0.27)	ay w uh d n t hh ae v m eh t m ay b oy f r eh n d
 	   	(4.3)	ay w uh d ah n t hh ae v m eh t m ay b oy f r eh n d
@@ -2167,7 +2167,7 @@ model_0406:	(3.41)	ih s ih z t k
 rec_id:			46F82565-F953-448C-B66A-83E657351367
 target:			How's the weather?
 guess:			How's the weather
-tar_phones:		hh aw z dh ah w eh dh er
+tar_phones:		hh aw z *dh* ah w eh *dh* er
 ges_phones:		hh aw z dh ah w eh dh er
 model_1118:	(0.01)	hh aw z dh ah w eh dh er
 	   	(7.05)	hh aw z dh ah w eh dh er ih
@@ -2205,7 +2205,7 @@ model_0406:	(6.64)	hh ow l d dh ah k l er
 rec_id:			496D952A-57EE-400E-90F8-99FAB5FC2D6D
 target:			I've always dreamed of traveling around the world.
 guess:			I've always dreamed of traveling around the world
-tar_phones:		ay v ao l w ey z d r iy m d ah v t r ae v ah l ih ng er aw n d dh ah w er l d
+tar_phones:		ay v ao *l* w ey z d r iy m d ah v t r ae v ah *l* ih ng er aw n d dh ah w er l d
 ges_phones:		ay v ao l w ey z d r iy m d ah v t r ae v ah l ih ng er aw n d dh ah w er l d
 model_1118:	(1.38)	ay v ao l w ey z d r iy m d ah v t r ae v ah l ih ng er aw n d dh ah w er l d
 	   	(2.42)	ay v ao l w ey z d r iy m d ah v t r ae v ah l ih ng er aw n d dh w er l d
@@ -2376,7 +2376,7 @@ model_0406:	(16.9)	k uh d ah l iy p ey s ah p aa b ah l iy
 rec_id:			4EBF9BEF-CDDE-42CC-9D00-B538848A31ED
 target:			I spent most of the weekend cleaning the house.
 guess:			I spend most of the weekend cleaning the house
-tar_phones:		ay s p eh n t m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
+tar_phones:		ay s p eh n t m ow s t ah v dh ah w iy k eh n d k l iy n ih ng *dh* ah hh aw s
 ges_phones:		ay s p eh n d m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
 model_1118:	(0.3)	ay s p eh n t m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
 	   	(4.33)	ay s p eh n d m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
@@ -2526,7 +2526,7 @@ model_0406:	(0.92)	w iy aa r n t t ay er d
 
 
 rec_id:			53646E61-CE54-41AB-A970-4D2AF1D4A535
-target:			look for a job abroad
+target:			look for a job *abroad*
 guess:			Look for a job a abroad
 tar_phones:		l uh k f ao r ah jh aa b ah b r ao d
 ges_phones:		l uh k f ao r ah jh aa b ah ah b r ao d
@@ -2564,7 +2564,7 @@ model_0406:	(1.25)	ay d ah n r ay k g ow ih ng aw t
 
 
 rec_id:			54748997-5146-41E0-BDAF-FE55EC192C87
-target:			I have a sore throat.
+target:			I *have* a sore *throat*.
 guess:			I had a sore a throat
 tar_phones:		ay hh ae v ah s ao r th r ow t
 ges_phones:		ay hh ae d ah s ao r ah th r ow t
