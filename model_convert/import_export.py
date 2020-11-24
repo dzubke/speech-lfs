@@ -55,12 +55,15 @@ def preproc_to_dict(preproc_path_in, preproc_path_out=None, export=False):
 
 def preproc_to_json(preproc_path, json_path):
     preproc_dict = preproc_to_dict(preproc_path, export=False)
-
+    
+    # add some additional metadata to the dict
+    preproc_dict.update({
+        "sample_rate": 16000, 
+        "feature_win_len": 32, 
+        "feature_win_step": 16
+    })
     with open(json_path, 'w') as fid:
         json.dump(preproc_dict, fid)
-
-def export_metadata_json(json_path:str):
-    pass
 
 
 def export_state_dict(model_path, state_dict_path):

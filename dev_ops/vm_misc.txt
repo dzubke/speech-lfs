@@ -147,11 +147,11 @@ sudo apt-get install bc
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
 sudo apt-get install git-lfs
 
-# how to pull all large files from git lfs
-git lfs pull
-
 # how to pull a single file from git lfs
 git lfs pull --include <file_path>
+
+# how to pull all large files from git lfs
+git lfs pull
 
 #########
 8. INSTALL DOCKER
@@ -169,7 +169,7 @@ Version: 5:19.03.12~3-0~ubuntu-xenial
 pip install git-filter-repo
 
 # update git, if necesssary
-sudo apt-get install -y python-software-properties software-properties-common
+sudo apt-get install -y1 python-software-properties software-properties-common
 sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get update
 sudo apt-get install -y git
