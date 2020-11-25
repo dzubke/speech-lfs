@@ -423,6 +423,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         """
         super().__init__(output_dir, dataset_name)
         self.num_examples = 400
+        self.target_eq_guess = True
 
     def download_dataset(self):
         """
@@ -461,8 +462,10 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         
         # create the data-label path and initialize the tsv headers 
         date = datetime.date.today().isoformat()
+
         self.data_label_path = os.path.join(self.output_dir, "eval1_data_" + date + ".tsv")
         self.metadata_path = os.path.join(self.output_dir, "eval1_metadata_" + date + ".json")
+
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
@@ -500,51 +503,63 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     if doc['id'] in train_test_set:
                         print(f"id: {doc['id']} found in train or test set")
                     else:
-
-
-                        # save the audio file from the link in the document
-                        audio_url = doc['result']['audioDownloadUrl']
-                        audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
-                        try:
-                            urllib.request.urlretrieve(audio_url, filename=audio_path)
-                        except (ValueError, urllib.error.URLError) as e:
-                            print(f"unable to download url: {audio_url} due to exception: {e}")
-                            continue
-                        
-                        # convert the downloaded file to .wav format
-                        # usually, this is done in the preprocessing step.
-                        base, raw_ext = os.path.splitext(audio_path)
-                        # sometimes using the ".wv" extension so that original .wav files can be converted
-                        wav_path = base + os.path.extsep + "wav"
-                        # if the wave file doesn't exist, convert to wav
-                        if not os.path.exists(wav_path):
-                            try:
-                                to_wave(audio_path, wav_path)
-                            except subprocess.CalledProcessError:
-                                # if the file can't be converted, skip the file by continuing
-                                logging.info(f"Process Error converting file: {audio_path}")
+                        # set `self.target_eq_guess` to True in `init` if you want 
+                        ## to filter by `target`==`guess`
+                        if self.target_eq_guess:
+                            # process the target and guess and remove apostrophe's for comparison
+                            target = self.process_text(doc_dict['info']['target'])
+                            guess = self.process_text(doc_dict['result']['guess'])
+                            target_no_apostrophe = target.replace("'", "")
+                            guess_no_apostrophe = guess.replace("'", "")
+                            # if targ != guess, skip the record
+                            if target_no_apostrophe != guess_no_apostrophe:
                                 continue
+                        # else, no filtering on `target==guess`
+                        else:
+                            # save the audio file from the link in the document
+                            audio_url = doc['result']['audioDownloadUrl']
+                            audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
+                            try:
+                                urllib.request.urlretrieve(audio_url, filename=audio_path)
+                            except (ValueError, urllib.error.URLError) as e:
+                                print(f"unable to download url: {audio_url} due to exception: {e}")
+                                continue
+                            
+                            # convert the downloaded file to .wav format
+                            # usually, this is done in the preprocessing step.
+                            base, raw_ext = os.path.splitext(audio_path)
+                            # sometimes using the ".wv" extension so that original .wav files can be converted
+                            wav_path = base + os.path.extsep + "wav"
+                            # if the wave file doesn't exist, convert to wav
+                            if not os.path.exists(wav_path):
+                                try:
+                                    to_wave(audio_path, wav_path)
+                                except subprocess.CalledProcessError:
+                                    # if the file can't be converted, skip the file by continuing
+                                    logging.info(f"Process Error converting file: {audio_path}")
+                                    continue
 
 
-                        # save the target in a tsv row
-                        # tsv header: "id", "target", "guess", "lessonId", "lineId", "uid", "date"
-                        tsv_row =[
-                            doc['id'], 
-                            doc['info']['target'],
-                            doc['result']['guess'],
-                            doc['info']['lessonId'],
-                            doc['info']['lineId'],
-                            doc['user']['uid'],
-                            doc['result']['score'],
-                            doc['info']['date']
-                        ]
-                        tsv_writer.writerow(tsv_row)
-                        # save all the metadata in a separate file
-                        with open(self.metadata_path, 'a') as jsonfile:
-                            json.dump(doc, jsonfile)
-                            jsonfile.write("\n")
-                        
-                        example_count += 1        
+                            # save the target in a tsv row
+                            # tsv header: "id", "target", "guess", "lessonId", "lineId", "uid", "date"
+                            tsv_row =[
+                                doc['id'], 
+                                doc['info']['target'],
+                                doc['result']['guess'],
+                                doc['info']['lessonId'],
+                                doc['info']['lineId'],
+                                doc['user']['uid'],
+                                doc['result']['score'],
+                                doc['info']['date']
+                            ]
+                            tsv_writer.writerow(tsv_row)
+                            # save all the metadata in a separate file
+                            with open(self.metadata_path, 'a') as jsonfile:
+                                json.dump(doc, jsonfile)
+                                jsonfile.write("\n")
+                            
+                            example_count += 1
+                
                 # create the next query starting after the last_id 
                 next_query = (
                     rec_ref.where(
