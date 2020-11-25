@@ -48,10 +48,10 @@ def filter_speak_train(
     """
 
     # re-calculate the constraints as integer counts based on the `dataset_size`
-    constraints = {name: int(contraints[name] * dataset_size) for name in constraints.keys()}
+    constraints = {name: int(constraints[name] * dataset_size) for name in constraints.keys()}
     # constraint_names will help to ensure the dict keys created later are consistent.
     constraint_names = ['lesson', 'line', 'speaker']
-    assert constraint_names == list(constraint.keys()), \
+    assert constraint_names == list(constraints.keys()), \
         f"names of constraints do not match: {constraint_names}, {list(constraint.keys())}"
     print("constraints: ", constraints)
 
@@ -119,7 +119,7 @@ def filter_speak_train(
                     examples_written += 1
 
 def check_update_contraints(record_id:int, 
-                            record_id_map:dict,
+                            record_ids_map:dict,
                             id_counter:dict, 
                             constraints:dict)->bool:
     """Checks if the counts for the `record_id` is less than the constraints. If the
@@ -135,9 +135,9 @@ def check_update_contraints(record_id:int,
         bool: true if the count of utterances per speaker, lesson, and line are all
             below the max value in `constraints`
     """
-    pass_contraint = True
+    pass_constraint = True
     # constraint_names = ['lesson', 'line', 'speaker']
-    constraint_names = list(constraint.keys())
+    constraint_names = list(constraints.keys())
 
     for name in constraint_names:
         constraint_id = record_ids_map[record_id][name]
