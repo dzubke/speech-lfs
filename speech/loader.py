@@ -230,8 +230,8 @@ class Preprocessor():
     def decode(self, seq):
         try:
             text = [self.int_to_char[s] for s in seq]
-        except KeyError:
-            raise KeyError(f"Key Error in {seq}")
+        except KeyError as e:
+            raise KeyError(f"Key Error in {seq} as {e}")
         if not self.start_and_end:
             return text
 
