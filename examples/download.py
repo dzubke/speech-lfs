@@ -483,7 +483,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             train_test_set = self.get_train_test_ids()
 
             while example_count < self.num_examples:
-                print(f"another loop with {example_counts} examples written")                
+                print(f"another loop with {example_count} examples written")                
                 # convert the generator to a list to retrieve the last doc_id
                 docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
                 
@@ -514,7 +514,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                             # if targ != guess, skip the record
                             if target_no_apostrophe != guess_no_apostrophe:
                                 continue
-
+                        
                         # save the audio file from the link in the document
                         audio_url = doc['result']['audioDownloadUrl']
                         audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
