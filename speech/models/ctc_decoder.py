@@ -117,10 +117,6 @@ def decode(probs, beam_size=10, blank=0, n_top_beams=1):
   best_beams = beam[0:n_top_beams]
   # transform the probs to log-sum-exp space
   best_beams = [(preds, -logsumexp(*probs)) for (preds, probs) in best_beams]
-   
-  # backward compatibility 
-  if n_top_beams == 1:
-    best_beams = best_beams[0]
   
   return best_beams
 
