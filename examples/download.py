@@ -423,6 +423,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         """
         super().__init__(output_dir, dataset_name)
         self.num_examples = 400
+        self.target_eq_guess = True
 
     def download_dataset(self):
         """
@@ -461,8 +462,10 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         
         # create the data-label path and initialize the tsv headers 
         date = datetime.date.today().isoformat()
+
         self.data_label_path = os.path.join(self.output_dir, "eval1_data_" + date + ".tsv")
         self.metadata_path = os.path.join(self.output_dir, "eval1_metadata_" + date + ".json")
+
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
@@ -480,7 +483,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             train_test_set = self.get_train_test_ids()
 
             while example_count < self.num_examples:
-                print("another loop")                
+                print(f"another loop with {example_count} examples written")                
                 # convert the generator to a list to retrieve the last doc_id
                 docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
                 
@@ -500,8 +503,18 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     if doc['id'] in train_test_set:
                         print(f"id: {doc['id']} found in train or test set")
                     else:
-
-
+                        # set `self.target_eq_guess` to True in `init` if you want 
+                        ## to filter by `target`==`guess`
+                        if self.target_eq_guess:
+                            # process the target and guess and remove apostrophe's for comparison
+                            target = self.process_text(doc['info']['target'])
+                            guess = self.process_text(doc['result']['guess'])
+                            target_no_apostrophe = target.replace("'", "")
+                            guess_no_apostrophe = guess.replace("'", "")
+                            # if targ != guess, skip the record
+                            if target_no_apostrophe != guess_no_apostrophe:
+                                continue
+                        
                         # save the audio file from the link in the document
                         audio_url = doc['result']['audioDownloadUrl']
                         audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
@@ -544,7 +557,8 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                             json.dump(doc, jsonfile)
                             jsonfile.write("\n")
                         
-                        example_count += 1        
+                        example_count += 1
+                
                 # create the next query starting after the last_id 
                 next_query = (
                     rec_ref.where(
