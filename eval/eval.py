@@ -38,7 +38,7 @@ def eval_loop(model, ldr, device):
             inputs = inputs.to(device)
             probs, rnn_args = model(inputs, softmax=True)
             probs = probs.data.cpu().numpy()
-            preds_confidence = [decode(p, beam_size=3, blank=model.blank) for p in probs]
+            preds_confidence = [decode(p, beam_size=3, blank=model.blank)[0] for p in probs]
             preds = [x[0] for x in preds_confidence]
             confidence = [x[1] for x in preds_confidence]
             all_preds.extend(preds)
