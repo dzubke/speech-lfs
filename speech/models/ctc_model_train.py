@@ -78,7 +78,8 @@ class CTC_train(ctc_model.CTC):
         probs, rnn_args = self.forward_impl(x, softmax=True)
         # convert the torch tensor into a numpy array
         probs = probs.data.cpu().numpy()
-        return [decode(p, beam_size=3, blank=self.blank)[0]
+        # decode returns a list of tuples. `[0][0]` grabs the sequence in the first tuple of the list
+        return [decode(p, beam_size=3, blank=self.blank)[0][0]
                     for p in probs]
         
     def infer_maxdecode(self, batch):
