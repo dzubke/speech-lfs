@@ -28,6 +28,6 @@ models:
         tag: best
         filename: model
 dataset_path: /home/dzubke/awni_speech/data/speak_test_data/eval/eval1_400/eval1_data_2020-11-20.tsv
-output_path: /home/dzubke/awni_speech/speech-lfs/eval/eval1_only-top-beam_2020-11-27.txt
+output_path: /home/dzubke/awni_speech/speech-lfs/eval/eval1_7-model_2020-11-27.txt
 lexicon_path: /home/dzubke/awni_speech/speech-lfs/examples/master-lexicon_2020-08-05.txt
 n_top_beams: 1
