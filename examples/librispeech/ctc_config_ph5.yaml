@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-11-24_large-model-mid-aug-no-feat-norm-naren-loss_lib-ted-cv-speak-100K-2020-11-24.log
+    log_file: logs/2020-11-24-11-28_large-model-mid-aug-no-feat-norm-naren-loss_lib-ted-cv-speak-100K-2020-11-24.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -41,9 +41,9 @@ preproc:
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
     batch_size: 9
-    run_state: [0, 0]
-    best_so_far: 0.25
-    start_epoch: 0
+    run_state: [108987, 51.5643]
+    best_so_far: 0.34
+    start_epoch: 4
     epochs: 100
     learning_rate: 0.0003
     momentum: 0.9
@@ -54,7 +54,7 @@ model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     dropout: 0.4
     load_trained: True 
-    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
+    trained_path: examples/librispeech/models/ctc_models/20201124/ph5/ckpt_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
