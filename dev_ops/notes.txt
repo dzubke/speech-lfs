@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201125/ph5/  --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201130/ph4/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -113,7 +113,7 @@ gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev 
 # can kill the tunnel on local by look for process here:
 ps aux | grep tensorboard
 
-gsutil -m cp -r gs://phoneme-vm-backup/models/ctc_models/20201029/ph7/  examples/librispeech/models/ctc_models/20201029/
+gsutil -m cp -r gs://phoneme-vm-backup/models/ctc_models/20201130/ph4/  examples/librispeech/models/ctc_models/20201029/
 # will cache password in memory for 10 days
 git config credential.helper 'cache --timeout 864000'
 
@@ -157,3 +157,6 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
 2020-11-24_large-model-mid-aug-no-feat-norm-naren-loss_speak-25K-2020-11-24
 
 speak_train/train-data_25K-examples_2020-11-24_dd.json
+
+2020-11-30_large-model-mid-aug-no-feat-norm-naren-loss_spk-25hr.
+

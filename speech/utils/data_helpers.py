@@ -12,6 +12,11 @@ from speech.utils import convert
 
 UNK_WORD_TOKEN = list()
 
+def path_to_id(record_path:str)->str:
+        #returns the basename of the path without the extension
+        return os.path.basename(
+            os.path.splitext(record_path)[0]
+        )
 
 def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
