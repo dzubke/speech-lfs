@@ -10,6 +10,7 @@ from functools import partial
 import csv
 import os
 import re
+from typing import List
 # third party libraries
 import firebase_admin
 from firebase_admin import credentials
@@ -20,7 +21,7 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils import wave, data_helpers
+from speech.utils.data_helpers import path_to_id
 from speech.utils.io import write_pickle
 
 
@@ -158,9 +159,19 @@ def assess_iphone_models(save_path:str)->None:
     secaxy.set_ylabel("Percent of total device count")
     plt.xlabel("Device names")
 
-def assess_speak_train(dataset_path:str):
 
-    def _update_key(in_dict, key): 
+
+def assess_speak_train(dataset_paths:List[str], tsv_path:str)->None:
+    """This function creates counts of the speaker, lesson, and line ids in a speak training dataset
+    Args:
+        dataset_path (str): path to speak training dataset
+        tsv_path (str): path to tsv file that contains speaker, line, and lesson ids 
+    Returns:
+        None
+    """
+
+
+    def _increment_key(in_dict, key): 
         in_dict[key] = in_dict.get(key, 0) + 1
 
 
@@ -205,41 +216,81 @@ def assess_speak_train(dataset_path:str):
         print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}")
     
 
-    # count dictionaries for the lesssons, lines, and users (speakers)
-    lesson_dict = {} 
-    line_dict = {} 
-    user_dict ={} 
-    
-    # create count_dicts for each
-    with open(dataset_path, 'r') as tsv_file: 
-        tsv_reader = csv.reader(tsv_file, delimiter='\t')
-        header = next(tsv_reader) 
-        print(header) 
-        for row in tsv_reader: 
-            lesson_id, line_id, user_id = row[2], row[3], row[4] 
-            _update_key(lesson_dict, lesson_id) 
-            _update_key(line_dict, line_id) 
-            _update_key(user_dict, user_id) 
+
+
+    # use this logic for a tsv file
+    count_tsv=False
+    if count_tsv:
+        # count dictionaries for the lesssons, lines, and users (speakers)
+        lesson_dict = {} 
+        line_dict = {} 
+        user_dict ={} 
+        # create count_dicts for each
+        with open(dataset_path, 'r') as tsv_file: 
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            header = next(tsv_reader) 
+            print(header) 
+            for row in tsv_reader: 
+                lesson_id, line_id, user_id = row[2], row[3], row[4] 
+                _increment_key(lesson_dict, lesson_id) 
+                _increment_key(line_dict, line_id) 
+                _increment_key(user_dict, user_id) 
+
+        # put the labels and count_dicts in list of the for-loop
+        constraint_names = ["lesson", "line", "speaker"]
+        counter = {
+            "lesson": lesson_dict, 
+            "line": line_dict, 
+            "speaker": user_dict
+        }
+
+    # use this logic for a json file supported by a tsv-file
+    count_json = True
+    if count_json:
+        # create mapping from record_id to speaker, line, and lesson ids
+        rec_ids_map = dict()
+        constraint_names = ['lesson', 'line', 'speaker']
+        counter = {name: dict() for name in constraint_names}
+        with open(tsv_path, 'r') as tsv_file: 
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            # header: id, text, lessonId, lineId, uid(speaker_id), date
+            header = next(tsv_reader)
+            for row in tsv_reader:
+                rec_ids_map.update({
+                    row[0]: {
+                        constraint_names[0]: row[2],   # lesson
+                        constraint_names[1]: row[3],    # line
+                        constraint_names[2]: row[4]     # speaker
+                    }
+                }
+
+        # iterate through the datasets
+        for dataset_path in dataset_paths:
+            dataset = read_data_json(dataset_path)
+            # iterate through the exmaples in the dataset
+            for xmpl in dataset:
+                rec_id = path_to_id(xmpl['audio'])
+                for name in constraint_names:
+                    constraint_id = rec_ids_map[rec_id][name]
+                    _increment_key(counter[name], constraint_id)
+
 
     # create the plots
     fig, axs = plt.subplots(1,3)
     fig.suptitle('Count')
-    
-    # put the labels and count_dicts in list of the for-loop
-    count_dicts = [lesson_dict, line_dict, user_dict]
-    labels = ["lessons", "lines", "speakers"]   
 
     # plot and calculate stats of the count_dicts
-    for ax, c_dict, label in zip(axs, count_dicts, labels):
-        _plot_count(ax, c_dict, label)
-        print(f"{label} stats")
-        _stats(c_dict)
+    for ax, name in zip(axs, constraint_names):
+        _plot_count(ax, counter[name], name)
+        print(f"{name} stats")
+        _stats(counter[name])
         print()
     plt.show()
 
-    print("unique lessons")
-    print(sorted(list(lesson_dict.keys()))[:200])
-    print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+    #print("unique lessons")
+    #print(sorted(list(lesson_dict.keys()))[:200])
+    #print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+
 
 
 
@@ -370,18 +421,22 @@ if __name__ == "__main__":
         "--dataset-name", type=str, help="name of dataset to asses"
     )
     parser.add_argument(
-        "--dataset-path", type=str, help="path to data.tsv file to parse."
+        "--dataset-path", type=str, nargs='*', help="path to json file(s) to parse"
     )
     parser.add_argument(
         "--max-occurance", type=int, default=20, 
         help="max number of times a sentence can occur in output"
+    )
+    parser.add_argument(
+        "--tsv-path", type=str, 
+        help="path to tsv file that contains speaker, line, and lesson ids for speaktrain"
     )
     args = parser.parse_args()
 
     if args.dataset_name.lower() == "commonvoice":
         assess_commonvoice(args.dataset_path, args.max_occurance)
     elif args.dataset_name.lower() == "speaktrain":
-        assess_speak_train(args.dataset_path)
+        assess_speak_train(args.dataset_path, args.tsv_path)
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     else:
