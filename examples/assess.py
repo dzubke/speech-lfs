@@ -22,7 +22,7 @@ import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
 from speech.utils.data_helpers import path_to_id
-from speech.utils.io import write_pickle
+from speech.utils.io import read_data_json, write_pickle
 
 
 def assess_commonvoice(validated_path:str, max_occurance:int):
@@ -161,7 +161,7 @@ def assess_iphone_models(save_path:str)->None:
 
 
 
-def assess_speak_train(dataset_paths:List[str], tsv_path:str)->None:
+def assess_speak_train(dataset_paths: List[str], tsv_path:str)->None:
     """This function creates counts of the speaker, lesson, and line ids in a speak training dataset
     Args:
         dataset_path (str): path to speak training dataset
@@ -182,7 +182,7 @@ def assess_speak_train(dataset_paths:List[str], tsv_path:str)->None:
         ax.set_ylabel(f"utterance per {label}")
         ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
         ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-
+        plt.tight_layout()
 
     def reformat_large_tick_values(tick_val, pos):
         """
@@ -207,13 +207,14 @@ def assess_speak_train(dataset_paths:List[str], tsv_path:str)->None:
         return str(new_tick_format)
 
 
-    def _stats(count_dict:dict):
+    def _print_stats(count_dict:dict):
         values = list(count_dict.values())
         mean = round(np.mean(values), 2)
         std = round(np.std(values), 2)
         max_val = round(max(values), 2)
         min_val = round(min(values), 2)
-        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}")
+        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}, total_unique: {len(count_dict)}")
+        print(f"sample of 5 values: {list(count_dict.keys())[0:5]}")
     
 
 
@@ -262,11 +263,13 @@ def assess_speak_train(dataset_paths:List[str], tsv_path:str)->None:
                         constraint_names[1]: row[3],    # line
                         constraint_names[2]: row[4]     # speaker
                     }
-                }
+                })
 
         # iterate through the datasets
         for dataset_path in dataset_paths:
             dataset = read_data_json(dataset_path)
+            print(f"dataset {dataset_path} size is: {len(dataset)}")
+
             # iterate through the exmaples in the dataset
             for xmpl in dataset:
                 rec_id = path_to_id(xmpl['audio'])
@@ -277,15 +280,14 @@ def assess_speak_train(dataset_paths:List[str], tsv_path:str)->None:
 
     # create the plots
     fig, axs = plt.subplots(1,3)
-    fig.suptitle('Count')
 
     # plot and calculate stats of the count_dicts
     for ax, name in zip(axs, constraint_names):
         _plot_count(ax, counter[name], name)
         print(f"{name} stats")
-        _stats(counter[name])
+        _print_stats(counter[name])
         print()
-    plt.show()
+    plt.savefig('./test.png')
 
     #print("unique lessons")
     #print(sorted(list(lesson_dict.keys()))[:200])
