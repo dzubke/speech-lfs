@@ -17,6 +17,7 @@ from typing import List
 import yaml
 # project libs
 from speech.utils.io import read_data_json
+from speech.utils.data_helpers import check_update_contraints, path_to_id
 
 def filter_speak_train(
     full_json_path:str, 
@@ -65,27 +66,22 @@ def filter_speak_train(
         tsv_reader = csv.reader(tsv_file, delimiter='\t')
         # header: id, text, lessonId, lineId, uid(speaker_id), date
         header = next(tsv_reader)
-        record_ids_map = {
-            row[0]: {
-                constraint_names[0]: row[2],   # lesson
-                constraint_names[1]: row[3],    # line
-                constraint_names[2]: row[4]     # speaker
+        for row in tsv_reader:
+            record_ids_map.update({
+                row[0]: {
+                    constraint_names[0]: row[2],   # lesson
+                    constraint_names[1]: row[3],    # line
+                    constraint_names[2]: row[4]     # speaker
+                }
             }
-        for row in tsv_reader}
 
     # create a set of all the record_id's in the excluded datasets that will not
     ## be included in the filtered dataset
-    def _extract_id(record_path:str)->str:
-        #returns the basename of the path without the extension
-        return os.path.basename(
-            os.path.splitext(record_path)[0]
-        )
-    
     excluded_record_ids = set()
     for ex_dataset_path in excluded_datasets:
         ex_dataset = read_data_json(ex_dataset_path)
         # extracts the record_ids from the excluded datasets
-        record_ids = [_extract_id(example['audio']) for example in ex_dataset]
+        record_ids = [path_to_id(example['audio']) for example in ex_dataset]
         excluded_record_ids.update(record_ids)    
             
     # id_counter keeps track of the counts for each speaker, lesson, and line ids
@@ -102,7 +98,7 @@ def filter_speak_train(
             if examples_written % 50000 == 0 :
                 print(f"{examples_written} examples written")
             example = next(full_dataset)
-            record_id = _extract_id(example['audio'])
+            record_id = path_to_id(example['audio'])
             # check if record_id is already in an excluded dataset
             if record_id not in excluded_record_ids:
                 # check if the record_id pass the speaker, line, lesson constraints
@@ -118,41 +114,6 @@ def filter_speak_train(
                     # increment counters
                     examples_written += 1
 
-def check_update_contraints(record_id:int, 
-                            record_ids_map:dict,
-                            id_counter:dict, 
-                            constraints:dict)->bool:
-    """Checks if the counts for the `record_id` is less than the constraints. If the
-    count is less (constraint passes) increment the `id_counter`
-  
-    Args:
-        record_id (int): id of the record
-        record_id_map (dict): dict that maps record_ids to speaker, lesson, and line ids
-        id_counter (dict): dict of counts of speaker, lesson, and line ids
-        constraints (dict): dict of 3 ints specifying the max number of utterances
-            per speaker, line, and lesson
-    Returns:
-        bool: true if the count of utterances per speaker, lesson, and line are all
-            below the max value in `constraints`
-    """
-    pass_constraint = True
-    # constraint_names = ['lesson', 'line', 'speaker']
-    constraint_names = list(constraints.keys())
-
-    for name in constraint_names:
-        constraint_id = record_ids_map[record_id][name]
-        count = id_counter[name].get(constraint_id, 0)
-        if count > constraints[name]:
-            pass_constraint = False
-            break
-    
-    # if `record_id` passes the constraint, update the `id_counter`
-    if pass_constraint:
-        for name in constraint_names:
-            constraint_id = record_ids_map[record_id][name]
-            id_counter[name][constraint_id] = id_counter[name].get(constraint_id, 0) + 1
-
-    return pass_constraint
 
 
 
