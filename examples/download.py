@@ -11,7 +11,7 @@ import re
 from shutil import copyfile
 import tarfile
 import time
-from typing import List
+from typing import List, Set
 import urllib
 from zipfile import ZipFile
 # third party libraries
@@ -21,7 +21,8 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 # project libraries
 from speech.utils.convert import to_wave
-from speech.utils.io import read_data_json
+from speech.utils.data_helpers import check_update_contraints, process_text
+from speech.utils.io import load_config, path_to_id, read_data_json
 
 
 class Downloader(object):
@@ -69,7 +70,7 @@ class Downloader(object):
 
 class VoxforgeDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         super(VoxforgeDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = {
             "data": "https://s3.us-east-2.amazonaws.com/common-voice-data-download/voxforge_corpus_v1.0.0.tar.gz",
@@ -96,7 +97,7 @@ class VoxforgeDownloader(Downloader):
 
 class TatoebaDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         super(TatoebaDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = { 
             "data": "https://downloads.tatoeba.org/audio/tatoeba_audio_eng.zip"
@@ -137,7 +138,7 @@ class TatoebaDownloader(Downloader):
 
 class TatoebaV2Downloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         super(TatoebaDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = { 
             "data": "",
@@ -172,7 +173,7 @@ class TatoebaV2Downloader(Downloader):
 
 class CommonvoiceDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         """
         A previous version of common voice (v4) can be downloaded here:
         "data":"https://voice-prod-bundler-ee1969a6ce8178826482b88e843c335139bd3fb4.s3.amazonaws.com/cv-corpus-4-2019-12-10/en.tar.gz"
@@ -186,7 +187,7 @@ class CommonvoiceDownloader(Downloader):
 
 class WikipediaDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         """
         """
         super(WikipediaDownloader, self).__init__(output_dir, dataset_name)
@@ -199,7 +200,7 @@ class WikipediaDownloader(Downloader):
 
 class SpeakTrainDownloader(Downloader):
     
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         """
         Downloading the Speak Train Data is significantly different than other datasets
         because the Speak data is not pre-packaged into a zip file. Therefore, the 
@@ -246,7 +247,7 @@ class SpeakTrainDownloader(Downloader):
 
         # create the first query based on the constant QUERY_LIMIT
         rec_ref = db.collection(u'recordings')
-        next_query = rec_ref.order_by(u'info.date').limit(QUERY_LIMIT)
+        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
         
         start_time = time.time()
         query_count = 0 
@@ -293,26 +294,6 @@ class SpeakTrainDownloader(Downloader):
             # used for debugging with fixed number of loops
             #loop_iterations -= 1
 
-    @staticmethod 
-    def process_text(transcript:str):
-        # allows for alphanumeric characters, space, and apostrophe
-        accepted_char = '[^A-Za-z0-9 \']+'
-        # replacing apostrophe's with weird encodings
-        transcript = transcript.replace(chr(8217), "'")
-        # filters out unaccepted characters, lowers the case
-        try:
-            transcript = transcript.strip().lower()
-            transcript = re.sub(accepted_char, '', transcript)
-        except TypeError:
-            print(f"Type Error with: {transcript}")
-        # check that all punctuation (minus apostrophe) has been removed 
-        punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
-        for punc in punct_noapost:
-            if punc in transcript:
-                raise ValueError(f"unwanted punctuation {punc} in transcript")
-      
-        return transcript    
-
     def singleprocess_download(self, docs_list:list):
         """
         Downloads the audio file associated with the record and records the transcript and various metadata
@@ -335,10 +316,10 @@ class SpeakTrainDownloader(Downloader):
          
                 # some of the guess's don't include apostrophes
                 # so the filter criterion will not use apostrophes
-                target = self.process_text(doc_dict['info']['target'])
+                target = process_text(doc_dict['info']['target'])
                 target_no_apostrophe = target.replace("'", "")
                 
-                guess = self.process_text(doc_dict['result']['guess'])
+                guess = process_text(doc_dict['result']['guess'])
                 guess_no_apostrophe = guess.replace("'", "")
 
                 if target_no_apostrophe == guess_no_apostrophe:
@@ -349,7 +330,7 @@ class SpeakTrainDownloader(Downloader):
                         urllib.request.urlretrieve(audio_url, filename=audio_save_path)
                     except (ValueError, urllib.error.URLError) as e:
                         print(f"unable to download url: {audio_url} due to exception: {e}")
-                        continue          
+                        continue
 
                     # save the target in a tsv row
                     # tsv header: "id", "text", "lessonId", "lineId", "uid", "date"
@@ -382,10 +363,10 @@ class SpeakTrainDownloader(Downloader):
 
             # some of the guess's don't include apostrophes
             # so the filter criterion will not use apostrophes
-            target = self.process_text(doc_dict['info']['target'])
+            target = process_text(doc_dict['info']['target'])
             target_no_apostrophe = target.replace("'", "")
 
-            guess = self.process_text(doc_dict['result']['guess'])
+            guess = process_text(doc_dict['result']['guess'])
             guess_no_apostrophe = guess.replace("'", "")
 
             if target_no_apostrophe == guess_no_apostrophe:
@@ -417,29 +398,31 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
     This class creates a small evaluation dataset from the Speak firestore database.
     """
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         """
-        
+        Properties:
+            num_examples (int): number of examples to be downloaded
+            target_eq_guess (bool): if True, the target == guess criterion will filter the downloaded files
         """
         super().__init__(output_dir, dataset_name)
-        self.num_examples = 400
-        self.target_eq_guess = True
+        config = load_config(config_path)
+        self.num_examples = config['num_examples']
+        self.target_eq_guess = config['target_eq_guess']
+        self.check_constraints = config['check_constraints']
+        self.constraints = config['constraints']
+        self.days_from_day = config['days_from_day']
+
 
     def download_dataset(self):
         """
         This method loops through the firestore document database using paginated queries based on
-        the document id. It filters out documents where `target != guess` and saves the audio file
-        and target text into separate files. 
-
-        The approach to index the queries based on the document `id` is based on the approach
-        outlined here: 
-        https://firebase.google.com/docs/firestore/query-data/query-cursors#paginate_a_query
-            
+        the document id. It filters out documents where `target != guess` if `self.target_eq_guess` is True
+        and saves the audio file and target text into separate files. 
         """
 
         PROJECT_ID = 'speak-v2-2a1f1'
         QUERY_LIMIT = 2000              # max size of query
-        SAMPLES_PER_QUERY = 200
+        SAMPLES_PER_QUERY = 200         # number of random samples downloaded per query
         AUDIO_EXT = '.m4a'              # extension of downloaded audio
         audio_dir = os.path.join(self.output_dir, "audio")
         os.makedirs(audio_dir, exist_ok=True)
@@ -455,31 +438,43 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
         db = firestore.client()
 
-        now = datetime.datetime.utcnow()
-        week_range = datetime.timedelta(days = 7)
-        week_ago = now - week_range
-        week_ago = week_ago.isoformat("T") + "Z"
-        
+
         # create the data-label path and initialize the tsv headers 
         date = datetime.date.today().isoformat()
+        self.data_label_path = os.path.join(self.output_dir, "eval2_data_" + date + ".tsv")
+        self.metadata_path = os.path.join(self.output_dir, "eval2_metadata_" + date + ".json")
 
-        self.data_label_path = os.path.join(self.output_dir, "eval1_data_" + date + ".tsv")
-        self.metadata_path = os.path.join(self.output_dir, "eval1_metadata_" + date + ".json")
+        # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
+        self.constraints = {
+            name: int(self.constraints[name] * dataset_size) for name in self.constraints.keys()
+        }
+        # constraint_names will help to ensure the dict keys created later are consistent.
+        constraint_names = list(self.constraints.keys())
+        print("constraints: ", constraints)
+
+        # id_counter keeps track of the counts for each speaker, lesson, and line ids
+        id_counter = {name: dict() for name in constraint_names}
+
+        # creating a data range from `self.days_from_today` in the correct format
+        now = datetime.datetime.utcnow()
+        day_delta = datetime.timedelta(days = self.days_from_today)
+        day_range = now - day_delta
+        day_range = day_range.isoformat("T") + "Z"
 
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
-                "id", "target", "guess", "lessonId", "lineId", "uid", "redWords_score", "date"
+                "id", "target", "guess", "lessonId", "target_id", "lineId", "uid", "redWords_score", "date"
             ]
             tsv_writer.writerow(header)        
 
             # create the first query based on the constant QUERY_LIMIT
             rec_ref = db.collection(u'recordings')
-            next_query = rec_ref.where(u'info.date', u'>', week_ago).order_by(u'info.date').limit(QUERY_LIMIT)
+            next_query = rec_ref.where(u'info.date', u'>', day_range).order_by(u'info.date').limit(QUERY_LIMIT)
 
-            example_count = 0
             # loop through the queries until the example_count is at least the num_examples
-
+            example_count = 0
+            # get the ids from the training and testsets to ensure the downloaded set is disjoint
             train_test_set = self.get_train_test_ids()
 
             while example_count < self.num_examples:
@@ -488,7 +483,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
                 
                 try:
-                    # this `id` will be used to start the next query
+                    # this time will be used to start the next query
                     last_time = docs[-1]['info']['date']
                 # if the docs list is empty, there are no new documents
                 # and an IndexError will be raised and break the while loop
@@ -496,7 +491,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     print("Exiting while loop")
                     break
 
-                # selects a random sample from the total queries
+                # selects a random sample of `SAMPLES_PER_QUERY` from the total queries
                 docs = random.sample(docs, SAMPLES_PER_QUERY)
 
                 for doc in  docs:
@@ -507,14 +502,35 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         ## to filter by `target`==`guess`
                         if self.target_eq_guess:
                             # process the target and guess and remove apostrophe's for comparison
-                            target = self.process_text(doc['info']['target'])
-                            guess = self.process_text(doc['result']['guess'])
+                            target = process_text(doc['info']['target'])
+                            guess = process_text(doc['result']['guess'])
+                            # removing apostrophes for comparison
                             target_no_apostrophe = target.replace("'", "")
                             guess_no_apostrophe = guess.replace("'", "")
                             # if targ != guess, skip the record
                             if target_no_apostrophe != guess_no_apostrophe:
                                 continue
                         
+                        # if `True` constraints on the records downloaded will be checked
+                        if self.check_constraints:
+                            # create a mapping to feed into `check_update_constraints`
+                            record_ids_map = {
+                                doc['id']: {
+                                    'lesson': doc['info']['lessonId'],
+                                    'line': target,         # using processed target as id 
+                                    'speaker': doc['user']['uid']
+                                }
+                            }
+                            pass_constraint = check_update_contraints(
+                                doc['id'], 
+                                record_ids_map, 
+                                id_counter, 
+                                self.constraints
+                            )
+                            # if the record doesn't pass the constraints, continue to the next record
+                            if not pass_constraint:
+                                continue
+
                         # save the audio file from the link in the document
                         audio_url = doc['result']['audioDownloadUrl']
                         audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
@@ -523,11 +539,13 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         except (ValueError, urllib.error.URLError) as e:
                             print(f"unable to download url: {audio_url} due to exception: {e}")
                             continue
-                        
+
                         # convert the downloaded file to .wav format
-                        # usually, this is done in the preprocessing step.
+                        # usually, this conversion done in the preprocessing step 
+                        # but some eval sets don't need PER labels, and so this removes the need to 
+                        # preprocess the evalset. 
                         base, raw_ext = os.path.splitext(audio_path)
-                        # sometimes using the ".wv" extension so that original .wav files can be converted
+                        # use the `.wv` extension if the original file is a `.wav`
                         wav_path = base + os.path.extsep + "wav"
                         # if the wave file doesn't exist, convert to wav
                         if not os.path.exists(wav_path):
@@ -538,14 +556,14 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                                 logging.info(f"Process Error converting file: {audio_path}")
                                 continue
 
-
                         # save the target in a tsv row
-                        # tsv header: "id", "target", "guess", "lessonId", "lineId", "uid", "date"
+                        # tsv header: "id", "target", "guess", "lessonId", "target_id", "lineId", "uid", "date"
                         tsv_row =[
                             doc['id'], 
                             doc['info']['target'],
                             doc['result']['guess'],
                             doc['info']['lessonId'],
+                            target,     # using this to replace lineId
                             doc['info']['lineId'],
                             doc['user']['uid'],
                             doc['result']['score'],
@@ -569,65 +587,44 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         u'info.date': last_time
                     })
                     .limit(QUERY_LIMIT))
-
-    @staticmethod
-    def within_last_week(doc:dict)->bool:
-        """
-        This function takes in a Speak recording document and returns a boolean if the recording
-        occurred within the last 7 days.
-        Args:
-            doc (dict): dictionary of Speak recording document
-        Returns:
-            bool: true if the date of the doc occured in the last 7 days
-        """
-        # checks if date of doc is within the last 7 days
-        today = datetime.datetime.today()
-        week_range = datetime.timedelta(days = 7)
-        
-        # parse out the date string
-        import google.api_core.datetime_helpers
-        date_type = google.api_core.datetime_helpers.DatetimeWithNanoseconds
-        if isinstance(doc['info']['date'], date_type):
-            date = doc['info']['date'].rfc3339()
-        elif isinstance(doc['info']['date'], str):
-            date = doc['info']['date']
-        else:
-            raise TypeError(f"unknown date type: {type(doc['info']['date'])}")
-        # the date str looks like '2019-10-13T09:52:50.557448Z'
-        date = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
-
-        return (today - week_range < date)
     
+
     @staticmethod
-    def get_train_test_ids():
+    def get_train_test_ids()->Set[str]:
         """
-        This function returns a set of ids for records that are ioncluded in the speak training and
+        This function returns a set of ids for records that are included in the speak training and
         test sets. The paths to the training and test sets are hardcoded to the paths on the cloud VM's. 
+        Returns:
+            Set[str]: a set of record_ids for the training and test recordings
         """
+        # train_data_trim_2020-09-22.json is the entire 7M recordings in the full speak training set
+        train_test_paths = [
+            "/home/dzubke/awni_speech/data/speak_train/train_data_trim_2020-09-22.json",
+            "/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json",
+            "/home/dzubke/awni_speech/data/speak_test_data/2019-11-29/speak-test_2019-11-29.json"
+        ]
         
-        def _get_id(path:str):
-            """This function returns the record id from a inputted path."""
-            return os.path.splitext(os.path.basename(path))[0]
+        datasets = [read_data_json(path) for path in train_test_paths]
         
-        train_path = "/home/dzubke/awni_speech/data/speak_train/train_data_trim_2020-09-22.json"
-        test_path = "/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json"
-        
-        train_data = read_data_json(train_path)
-        test_data = read_data_json(test_path)
-        
-        train_test_ids = set([_get_id(datum['audio']) for datum in train_data])
-        train_test_ids.update([_get_id(datum['audio']) for datum in test_data])
+        train_test_ids = set()
+
+        # loop throug the datasets and add the id's output from `path_to_id` to the set
+        for dataset in datasets:
+            train_test_ids.update([path_to_id(datum['audio']) for datum in dataset])
 
         return train_test_ids
     
+
     @staticmethod
     def _doc_trim_to_dict(doc)->dict:
-        """This function converts a document into a dict and removes certain keys
-        if the keys exist in the dict.
+        """This function converts a document into a dict and removes certain keys if the keys
+           exist in the dict. The removed keys have very large arrays for values that aren't necessary 
+            and take up alot of memory. 
+
         Args:
             doc: firestore document
         Returns:
-            dict: trimmed dictionary of document
+            dict: trimmed dictionary of the input document
         """
         doc = doc.to_dict()
         # remove large and unnecessary parts of the doc_dict
@@ -637,21 +634,21 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             del doc['result']['processingResult']
         if 'asrResultData' in doc['result']:
             del doc['result']['asrResultData']
+
         return doc
 
 
 class Chime1Downloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         super(Chime1Downloader, self).__init__(output_dir, dataset_name)
         # original dataset is in 2-channel. 
         # in this case, I have downloaded and transfered the data to the VM myself. 
 
 
-
 class DemandDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name):
+    def __init__(self, output_dir, dataset_name, config_path=None)):
         """
         Limitations: 
             - feed_model_dir, the directory where the noise is fed to the model, is hard-coded
@@ -745,8 +742,10 @@ if __name__ == "__main__":
         help="The dataset is saved in <output-dir>/<dataset-name>.")
     parser.add_argument("--dataset-name", type=str,
         help="Name of dataset with a capitalized first letter.")
+    parser.add_argument("--config-path", type=str, default=None,
+        help="Path to config file.")
     args = parser.parse_args()
 
-    downloader = eval(args.dataset_name+"Downloader")(args.output_dir, args.dataset_name)
+    downloader = eval(args.dataset_name+"Downloader")(args.output_dir, args.dataset_name, args.config_path)
     print(f"type: {type(downloader)}")
     downloader.download_dataset()

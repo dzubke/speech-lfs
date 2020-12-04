@@ -268,3 +268,70 @@ def clean_text(transcript:str)->str:
             raise ValueError(f"unwanted punctuation {punc} in transcript")
     
     return transcript 
+
+
+def check_update_contraints(record_id:int, 
+                            record_ids_map:dict,
+                            id_counter:dict, 
+                            constraints:dict)->bool:
+    """This function is used by downloading and filtering code primarily on speak data
+    to constrain the number of recordings per speaker, line, and/or lesson.
+    It checks if the counts for the `record_id` is less than the constraints in `constraints. 
+    If the count is less, the constraint passes and the `id_counter` is incremented.
+  
+    Args:
+        record_id (int): id of the record
+        record_id_map (dict): dict that maps record_ids to speaker, lesson, and line ids
+        id_counter (dict): dict of counts of speaker, lesson, and line ids
+        constraints (dict): dict of 3 ints specifying the max number of utterances
+            per speaker, line, and lesson
+    Returns:
+        bool: true if the count of utterances per speaker, lesson, and line are all
+            below the max value in `constraints`
+    """
+    pass_constraint = True
+    # constraint_names = ['lesson', 'line', 'speaker']
+    constraint_names = list(constraints.keys())
+
+    for name in constraint_names:
+        constraint_id = record_ids_map[record_id][name]
+        count = id_counter[name].get(constraint_id, 0)
+        if count > constraints[name]:
+            pass_constraint = False
+            break
+    
+    # if `record_id` passes the constraint, update the `id_counter`
+    if pass_constraint:
+        for name in constraint_names:
+            constraint_id = record_ids_map[record_id][name]
+            id_counter[name][constraint_id] = id_counter[name].get(constraint_id, 0) + 1
+
+    return pass_constraint
+
+
+    def process_text(transcript:str)->str:
+        """This function removes punctuation (except apostrophe's) and extra space
+        from the input `transcript` string and lowers the case. 
+
+        Args:
+            transcript (str): input string to be processed
+        Returns:
+            (str): processed string
+        """
+        # allows for alphanumeric characters, space, and apostrophe
+        accepted_char = '[^A-Za-z0-9 \']+'
+        # replacing apostrophe's with weird encodings
+        transcript = transcript.replace(chr(8217), "'")
+        # filters out unaccepted characters, lowers the case
+        try:
+            transcript = transcript.strip().lower()
+            transcript = re.sub(accepted_char, '', transcript)
+        except TypeError:
+            print(f"Type Error with: {transcript}")
+        # check that all punctuation (minus apostrophe) has been removed 
+        punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+        for punc in punct_noapost:
+            if punc in transcript:
+                raise ValueError(f"unwanted punctuation {punc} in transcript")
+      
+        return transcript
