@@ -21,8 +21,8 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 # project libraries
 from speech.utils.convert import to_wave
-from speech.utils.data_helpers import check_update_contraints, process_text
-from speech.utils.io import load_config, path_to_id, read_data_json
+from speech.utils.data_helpers import check_update_contraints, path_to_id, process_text
+from speech.utils.io import load_config, read_data_json
 
 
 class Downloader(object):
@@ -70,7 +70,7 @@ class Downloader(object):
 
 class VoxforgeDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         super(VoxforgeDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = {
             "data": "https://s3.us-east-2.amazonaws.com/common-voice-data-download/voxforge_corpus_v1.0.0.tar.gz",
@@ -97,7 +97,7 @@ class VoxforgeDownloader(Downloader):
 
 class TatoebaDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         super(TatoebaDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = { 
             "data": "https://downloads.tatoeba.org/audio/tatoeba_audio_eng.zip"
@@ -138,7 +138,7 @@ class TatoebaDownloader(Downloader):
 
 class TatoebaV2Downloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         super(TatoebaDownloader, self).__init__(output_dir, dataset_name)
         self.download_dict = { 
             "data": "",
@@ -173,7 +173,7 @@ class TatoebaV2Downloader(Downloader):
 
 class CommonvoiceDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         """
         A previous version of common voice (v4) can be downloaded here:
         "data":"https://voice-prod-bundler-ee1969a6ce8178826482b88e843c335139bd3fb4.s3.amazonaws.com/cv-corpus-4-2019-12-10/en.tar.gz"
@@ -187,7 +187,7 @@ class CommonvoiceDownloader(Downloader):
 
 class WikipediaDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         """
         """
         super(WikipediaDownloader, self).__init__(output_dir, dataset_name)
@@ -200,7 +200,7 @@ class WikipediaDownloader(Downloader):
 
 class SpeakTrainDownloader(Downloader):
     
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         """
         Downloading the Speak Train Data is significantly different than other datasets
         because the Speak data is not pre-packaged into a zip file. Therefore, the 
@@ -398,7 +398,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
     This class creates a small evaluation dataset from the Speak firestore database.
     """
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         """
         Properties:
             num_examples (int): number of examples to be downloaded
@@ -410,7 +410,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         self.target_eq_guess = config['target_eq_guess']
         self.check_constraints = config['check_constraints']
         self.constraints = config['constraints']
-        self.days_from_day = config['days_from_day']
+        self.days_from_today = config['days_from_today']
 
 
     def download_dataset(self):
@@ -446,11 +446,11 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
 
         # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
         self.constraints = {
-            name: int(self.constraints[name] * dataset_size) for name in self.constraints.keys()
+            name: int(self.constraints[name] * self.num_examples) for name in self.constraints.keys()
         }
         # constraint_names will help to ensure the dict keys created later are consistent.
         constraint_names = list(self.constraints.keys())
-        print("constraints: ", constraints)
+        print("constraints: ", self.constraints)
 
         # id_counter keeps track of the counts for each speaker, lesson, and line ids
         id_counter = {name: dict() for name in constraint_names}
@@ -495,6 +495,9 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 docs = random.sample(docs, SAMPLES_PER_QUERY)
 
                 for doc in  docs:
+                    # if num_examples is reached, break
+                    if example_count >= self.num_examples:
+                        break
                     if doc['id'] in train_test_set:
                         print(f"id: {doc['id']} found in train or test set")
                     else:
@@ -580,7 +583,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 # create the next query starting after the last_id 
                 next_query = (
                     rec_ref.where(
-                        u'info.date', u'>', week_ago
+                        u'info.date', u'>', day_range
                     )
                     .order_by(u'info.date')
                     .start_after({
@@ -648,7 +651,7 @@ class Chime1Downloader(Downloader):
 
 class DemandDownloader(Downloader):
 
-    def __init__(self, output_dir, dataset_name, config_path=None)):
+    def __init__(self, output_dir, dataset_name, config_path=None):
         """
         Limitations: 
             - feed_model_dir, the directory where the noise is fed to the model, is hard-coded
