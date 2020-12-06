@@ -446,7 +446,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
 
         # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
         self.constraints = {
-            name: int(self.constraints[name] * dataset_size) for name in self.constraints.keys()
+            name: int(self.constraints[name] * self.num_examples) for name in self.constraints.keys()
         }
         # constraint_names will help to ensure the dict keys created later are consistent.
         constraint_names = list(self.constraints.keys())
@@ -495,6 +495,10 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 docs = random.sample(docs, SAMPLES_PER_QUERY)
 
                 for doc in  docs:
+                    # if num_examples is reached, break
+                    if example_count >= self.num_examples:
+                        break
+
                     if doc['id'] in train_test_set:
                         print(f"id: {doc['id']} found in train or test set")
                     else:
