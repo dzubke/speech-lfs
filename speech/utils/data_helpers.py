@@ -309,29 +309,29 @@ def check_update_contraints(record_id:int,
     return pass_constraint
 
 
-    def process_text(transcript:str)->str:
-        """This function removes punctuation (except apostrophe's) and extra space
-        from the input `transcript` string and lowers the case. 
+def process_text(transcript:str)->str:
+    """This function removes punctuation (except apostrophe's) and extra space
+    from the input `transcript` string and lowers the case. 
 
-        Args:
-            transcript (str): input string to be processed
-        Returns:
-            (str): processed string
-        """
-        # allows for alphanumeric characters, space, and apostrophe
-        accepted_char = '[^A-Za-z0-9 \']+'
-        # replacing apostrophe's with weird encodings
-        transcript = transcript.replace(chr(8217), "'")
-        # filters out unaccepted characters, lowers the case
-        try:
-            transcript = transcript.strip().lower()
-            transcript = re.sub(accepted_char, '', transcript)
-        except TypeError:
-            print(f"Type Error with: {transcript}")
-        # check that all punctuation (minus apostrophe) has been removed 
-        punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
-        for punc in punct_noapost:
-            if punc in transcript:
-                raise ValueError(f"unwanted punctuation {punc} in transcript")
-      
-        return transcript
+    Args:
+        transcript (str): input string to be processed
+    Returns:
+        (str): processed string
+    """
+    # allows for alphanumeric characters, space, and apostrophe
+    accepted_char = '[^A-Za-z0-9 \']+'
+    # replacing apostrophe's with weird encodings
+    transcript = transcript.replace(chr(8217), "'")
+    # filters out unaccepted characters, lowers the case
+    try:
+        transcript = transcript.strip().lower()
+        transcript = re.sub(accepted_char, '', transcript)
+    except TypeError:
+        print(f"Type Error with: {transcript}")
+    # check that all punctuation (minus apostrophe) has been removed 
+    punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+    for punc in punct_noapost:
+        if punc in transcript:
+            raise ValueError(f"unwanted punctuation {punc} in transcript")
+  
+    return transcript
