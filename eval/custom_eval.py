@@ -8,9 +8,10 @@ from typing import Tuple
 import torch
 import tqdm
 # project libraries
+from evaluate.eval import run_eval
 import speech.loader
 from speech.models.ctc_decoder import decode as ctc_decode
-from speech.models.ctc_model_train import CTC_train as CTC_model
+from speech.models.ctc_model_train import CTC_train as CTC_train
 from speech.utils.data_helpers import lexicon_to_dict, text_to_phonemes
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
@@ -18,10 +19,10 @@ from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
 def visual_eval(config:dict)->None:
     """
-    This function takes in three different models and writes their predictions along with other information,
+    This function takes in set of models and writes their predictions along with other information,
     like the target, guess, and their respective phoneme transcriptions to a formatted txt file. 
     Config contains:
-        models: contains model_1 through model_3 with name, path, tag, and model_name  for the `get_names` function
+        models: contains dict of models with name, path, tag, and model_name for the `get_names` function
         dataset_path (str): path to evaluation dataset
         save_path (str): path where the formatted txt file will be saved
         lexicon_path (str): path to lexicon
@@ -65,7 +66,7 @@ def visual_eval(config:dict)->None:
     # directory where audio paths are stored
     audio_dir = os.path.join(os.path.dirname(dataset_path), "audio")
 
-    # loop through each output file and perform inference for the 3 models
+    # loop through each output file and perform inference on each model
     for rec_id in tqdm.tqdm(output_dict.keys()):
         audio_path = os.path.join(audio_dir, rec_id + ".wav")
         dummy_target = []   # dummy target list fed into the preprocessor, not used
@@ -86,6 +87,8 @@ def visual_eval(config:dict)->None:
                 top_beams = [(preproc.decode(preds), probs) for preds, probs in top_beams]
                 output_dict[rec_id]['infer'].update({model_name: top_beams})
 
+
+    # write the PER predictions to a txt file
 
     # sort the dictionary to ease of matching audio file with formatted output
     output_dict = OrderedDict(sorted(output_dict.items()))
@@ -111,6 +114,50 @@ def visual_eval(config:dict)->None:
             #out_file.write(f"2020-04-06:\t\t {output_dict[rec_id]['model_0406']}\n")
             out_file.write("\n\n")
 
+
+def per_eval(config:dict)->None:
+    """This function takes in set of models and calculates the PER values across several datasets. 
+    Config contains:
+        models (dict): dict with model names as keys and values of path, tag, and model_name
+            for the `get_names` function
+        datasets (dict): dict with dataset names as keys and dataset paths as values
+        save_path (str): path where the output file will be saved
+        lexicon_path (str): path to lexicon
+    Return:
+        None
+    """
+
+    # unpack the config
+    model_params = config['models']
+    datasets = config['datasets']
+    output_path = config['output_path']
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
+    # load the models and preproc objects
+    print(f"model_params contains: {model_params}")
+
+    # dict to contain all of the per values for each model
+    per_dict = dict()
+    # loop through the models and datasets the calculate a per for each combo
+    for model_name, params in model_params.items():
+        per_dict[model_name] = dict()   # initialize the new key in the per_dict
+        for data_name, data_path in datasets.items():
+            per = run_eval(
+                model_path=params['path'],
+                dataset_json = data_path,
+                batch_size = 1,
+                tag = params['tag'],
+                model_name = params['filename']
+            )
+            per_dict[model_name][data_name] = per
+
+
+    print(per_dict)
+
+
+
+
 def add_phonemes(output_dict:dict, lexicon_path:str):
     """
     This function takes in the output_dict and updates the dict to include the phoneme labels 
@@ -121,15 +168,19 @@ def add_phonemes(output_dict:dict, lexicon_path:str):
         dict: updated `output_dict` with phoneme labels for `target` and `guess`
     """
     lexicon = lexicon_to_dict(lexicon_path)
+
     for xmpl in output_dict.keys():
-        output_dict[xmpl]['tar_phones'] = text_to_phonemes(output_dict[xmpl]['target'], 
-                                                            lexicon,
-                                                            unk_token="<UNK>"
+        output_dict[xmpl]['tar_phones'] = text_to_phonemes(
+            output_dict[xmpl]['target'], 
+            lexicon,
+            unk_token="<UNK>"
         )
-        output_dict[xmpl]['ges_phones'] = text_to_phonemes(output_dict[xmpl]['guess'], 
-                                                            lexicon,
-                                                            unk_token="<UNK>"
+        output_dict[xmpl]['ges_phones'] = text_to_phonemes(
+            output_dict[xmpl]['guess'], 
+            lexicon,
+            unk_token="<UNK>"
         )
+
     return output_dict
 
 
@@ -162,7 +213,7 @@ def _load_model(model_params:str, device)->Tuple[torch.nn.Module, speech.loader.
     model_cfg.update({'blank_idx': config['preproc']['blank_idx']}) # creat `blank_idx` in model_cfg section
 
     # create model
-    model = CTC_model(
+    model = CTC_train(
         preproc.input_dim,
         preproc.vocab_size,
         model_cfg
@@ -189,4 +240,9 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     config = load_config(args.config)
-    visual_eval(config)
+    if config['eval_type'] == "eval1":
+        visual_eval(config)
+    elif config['eval_type'] == 'eval2':
+        per_eval(config)
+    else:
+        raise ValueError(f'eval types must be either "eval1" or "eval2", not {config['eval_type']}')
