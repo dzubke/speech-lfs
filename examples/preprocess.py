@@ -640,7 +640,7 @@ class SpeakTrainPreprocessor(DataPreprocessor):
                     continue
                 
                 # no longer need to check if path exists when using trimmed_data.tsv
-                # the call below makes the script very slow as it is IO (disk) limited
+                # the `elif` call below makes the script very slow as it is IO (disk) limited
                 #elif not os.path.exists(audio_path):
                 #    continue
                 

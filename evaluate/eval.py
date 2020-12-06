@@ -17,6 +17,7 @@ from speech.models.ctc_decoder import decode
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import get_names, load_config, load_state_dict, read_data_json, read_pickle
 
+
 def eval_loop(model, ldr, device):
     """Runs the evaluation loop on the input data `ldr`.
     
@@ -47,22 +48,37 @@ def eval_loop(model, ldr, device):
     return list(zip(all_labels, all_preds, all_confidence))
 
 
-def run(model_path, 
+def run_eval(
+        model_path, 
         dataset_json, 
         batch_size=8, 
         tag="best", 
+        model_name="model_state_dict.pth",
         add_filename=False, 
         add_maxdecode:bool=False, 
         formatted=False, 
         config_path = None, 
-        out_file=None):
+        out_file=None)->int:
     """
     calculates the  distance between the predictions from
     the model in model_path and the labels in dataset_json
 
-    Arguments:
-        tag - str: if best,  the "best_model" is used. if not, "model" is used. 
-        add_filename - bool: if true, the filename is added to the output json
+    Args:
+        model_path (str): path to the directory that contains the model,
+        dataset_json (str): path to the dataset json file
+        batch_size (int): number of examples to be fed into the model at once
+        tag (str): string that prefixes the model_name.  if best,  the "best_model" is used
+        model_name (str): name of the model, likely either "model_state_dict.pth" or "model"
+        add_filename (bool): if true, the filename is added to each example in `save_json`
+        add_maxdecode (bool): if true, the predictions using max decoding will be added in addition 
+            to the predictions from the ctc_decoder
+        formatted (bool): if true, the `format_save` will be used instead of `json_save` where 
+            `format_save` outputs a more human-readable output file
+        config_path (bool): specific path to the config file, if the one in `model_path` is not desired
+        out_file (str): path where the output file will be saved
+    
+    Returns:
+        (int): returns the computed error rate of the model on the dataset
     """
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -84,18 +100,6 @@ def run(model_path,
 
     state_dict = load_state_dict(model_path, device=device)
     model.load_state_dict(state_dict)
-
-#    if config_path is not None:
-#        with open(config_path, 'r') as fid:
-#            config = json.load(fid)
-#        new_preproc = loader.Preprocessor(dataset_json, config["preproc"], start_and_end=config["data"]["start_and_end"])
-#        new_preproc.mean, new_preproc.std = preproc.mean, preproc.std
-#        new_preproc.int_to_char, new_preproc.char_to_int = preproc.int_to_char, preproc.char_to_int
-#        print(f"preproc attr: {preproc}")
-#        print(f"preproc sum of mean, std: {preproc.mean.shape},{preproc.std.shape}")
-#        print(f"new_preproc sum of mean, std: {new_preproc.mean.sum()},{new_preproc.std.sum()}")
-#        print(f"new preproc attr: {new_preproc}")
-#        preproc = new_preproc
     
     ldr =  loader.make_loader(dataset_json,
             preproc, batch_size)
@@ -115,7 +119,7 @@ def run(model_path,
     #                for pred, prob in example_dist]
     results = [(preproc.decode(label), preproc.decode(pred), conf)
                for label, pred, conf in results]
-    #maxdecode_results = [(preproc.decode(label), preproc.decode(pred))
+    # maxdecode_results = [(preproc.decode(label), preproc.decode(pred))
     #           for label, pred in results]
     cer = speech.compute_cer(results, verbose=True)
 
@@ -123,9 +127,14 @@ def run(model_path,
     
     if out_file is not None:
         compile_save(results, dataset_json, out_file, formatted, add_filename)
+    
+    return round(cer, 3)
 
 
 def compile_save(results, dataset_json, out_file, formatted=False, add_filename=False):
+    """This function compiles the results and saved in to two different formats:
+        a simple json format or a human-readable output. 
+    """
     output_results = []
     if formatted:
         format_save(results, dataset_json, out_file)
@@ -134,6 +143,8 @@ def compile_save(results, dataset_json, out_file, formatted=False, add_filename=
         
 
 def format_save(results, dataset_json, out_file):
+    """This function writes the results to a file in a human-readable format.
+    """
     out_file = create_filename(out_file, "compare", "txt")
     out_file = os.path.join("predictions", out_file)
     print(f"file saved to: {out_file}")
@@ -163,6 +174,8 @@ def format_save(results, dataset_json, out_file):
             fid.write(f"{write_dict['filename']}, {write_dict['metrics']['PER']}\n")
 
 def json_save(results, dataset_json, out_file, add_filename):
+    """This function writes the results into a json format.
+    """
     output_results = []
     for label, pred, conf in results: 
         if add_filename:
@@ -311,11 +324,13 @@ if __name__ == "__main__":
         help="Replace the preproc from model path a  preproc copy using the config file.")
     args = parser.parse_args()
 
-    run(args.model, 
+    run_eval(
+        args.model, 
         args.dataset, 
         tag='best' if args.best else None,
         batch_size = args.batch_size, 
         add_filename=args.filename,  
         formatted=args.formatted, 
         config_path=args.config_path, 
-        out_file=args.save)
+        out_file=args.save
+    )
