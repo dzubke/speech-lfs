@@ -54,6 +54,7 @@ def run_eval(
         batch_size=8, 
         tag="best", 
         model_name="model_state_dict.pth",
+        device = None,
         add_filename=False, 
         add_maxdecode:bool=False, 
         formatted=False, 
@@ -69,6 +70,7 @@ def run_eval(
         batch_size (int): number of examples to be fed into the model at once
         tag (str): string that prefixes the model_name.  if best,  the "best_model" is used
         model_name (str): name of the model, likely either "model_state_dict.pth" or "model"
+        device (torch.device): device that the evaluation should run on
         add_filename (bool): if true, the filename is added to each example in `save_json`
         add_maxdecode (bool): if true, the predictions using max decoding will be added in addition 
             to the predictions from the ctc_decoder
@@ -81,7 +83,8 @@ def run_eval(
         (int): returns the computed error rate of the model on the dataset
     """
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if device is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model_path, preproc_path, config_path = get_names(model_path, tag=tag, model_name=model_name, get_config=True)
     
@@ -103,8 +106,11 @@ def run_eval(
     state_dict = load_state_dict(model_path, device=device)
     model.load_state_dict(state_dict)
     
-    ldr =  loader.make_loader(dataset_json,
-            preproc, batch_size)
+    ldr =  loader.make_loader(
+        dataset_json,
+        preproc, 
+        batch_size
+    )
     
     model.to(device)
     model.set_eval()
