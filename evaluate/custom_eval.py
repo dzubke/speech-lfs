@@ -150,9 +150,10 @@ def per_eval(config:dict)->None:
                 tag = params['tag'],
                 model_name = params['filename']
             )
+            print(f"PER value is: {per}")
             per_dict[model_name][data_name] = per
 
-
+    print("final per dict: ")
     print(per_dict)
 
 
