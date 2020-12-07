@@ -83,7 +83,7 @@ def run_eval(
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    model_path, preproc_path, config_path = get_names(model_path, tag=tag, get_config=True)
+    model_path, preproc_path, config_path = get_names(model_path, tag=tag, model_name=model_name, get_config=True)
     
     # load and update preproc
     preproc = read_pickle(preproc_path)
@@ -92,6 +92,8 @@ def run_eval(
     # load and assign config
     config = load_config(config_path)
     model_cfg = config['model']
+    model_cfg.update({'blank_idx': config['preproc']['blank_idx']}) # creat `blank_idx` in model_cfg section
+
 
     # create model
     model = CTC_train(preproc.input_dim,
