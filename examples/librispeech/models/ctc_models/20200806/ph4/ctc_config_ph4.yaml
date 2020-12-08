@@ -17,6 +17,7 @@ logger:
 preproc:
     preprocessor: log_spectrogram
     window_size: 32
+    blank_idx: last
     step_size: 16
     use_feature_normalize: True
     augment_from_normal: True
