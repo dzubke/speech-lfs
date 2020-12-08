@@ -465,6 +465,17 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         self.data_label_path = os.path.join(self.output_dir, "eval2-v4_data_" + date + ".tsv")
         self.metadata_path = os.path.join(self.output_dir, "eval2-v4_metadata_" + date + ".json")
 
+        # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
+        self.constraints = {
+            name: int(self.constraints[name] * self.num_examples) for name in self.constraints.keys()
+        }
+        # constraint_names will help to ensure the dict keys created later are consistent.
+        constraint_names = list(self.constraints.keys())
+        print("constraints: ", self.constraints)
+
+        # id_counter keeps track of the counts for each speaker, lesson, and line ids
+        id_counter = {name: dict() for name in constraint_names}
+
         # create a mapping from record_id to lesson, line, and speaker ids
         disjoint_ids_map = dict()
         with open(self.disjoint_metadata_tsv, 'r') as tsv_file:
@@ -479,12 +490,12 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 tar_sentence = process_text(row[1])
                 disjoint_ids_map.update({
                     row[0]: {
-                        "record": row[0]                    # adding record for disjoint_check
+                        "record": row[0],                    # adding record for disjoint_check
                         constraint_names[0]: row[2],        # lesson
                         constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
                         constraint_names[2]: row[4]         # speaker
                     }
-                }
+                })
 
         # create a dict of sets of all the ids in the disjoint datasets that will not
         # be included in the filtered dataset
@@ -496,20 +507,8 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             # loop through each record id
             for record_id in record_ids:
                 # loop through each id_name and update the disjoint_id_sets
-                for disjoint_id_name, disjoint_id_set for disjoint_id_sets.items():
+                for disjoint_id_name, disjoint_id_set in disjoint_id_sets.items():
                     disjoint_id_set.add(disjoint_ids_map[record_id][disjoint_id_name])
-
-
-        # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
-        self.constraints = {
-            name: int(self.constraints[name] * self.num_examples) for name in self.constraints.keys()
-        }
-        # constraint_names will help to ensure the dict keys created later are consistent.
-        constraint_names = list(self.constraints.keys())
-        print("constraints: ", self.constraints)
-
-        # id_counter keeps track of the counts for each speaker, lesson, and line ids
-        id_counter = {name: dict() for name in constraint_names}
 
         # creating a data range from `self.days_from_today` in the correct format
         now = datetime.datetime.utcnow()
@@ -527,9 +526,9 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             # create the first query based on the constant QUERY_LIMIT
             rec_ref = db.collection(u'recordings')
 
-            next_query = rec_ref
-                .where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))
-                .order_by(u'user.uid')
+            next_query = rec_ref\
+                .where(u'user.uid', u'not-in', list(disjoint_id_sets['speaker']))\
+                .order_by(u'user.uid')\
                 .limit(QUERY_LIMIT)
 
             # loop through the queries until the example_count is at least the num_examples
@@ -642,10 +641,10 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         example_count += 1
                 
                 # create the next query starting after the last_id 
-                next_query = (rec_ref
-                    .where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))
-                    .order_by(u'user.uid')
-                    .start_after({u'user.uid': last_id})
+                next_query = (rec_ref\
+                    .where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))\
+                    .order_by(u'user.uid')\
+                    .start_after({u'user.uid': last_id})\
                     .limit(QUERY_LIMIT)
                 )
     
