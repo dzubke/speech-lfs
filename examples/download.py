@@ -396,6 +396,25 @@ class SpeakTrainDownloader(Downloader):
 class SpeakEvalDownloader(SpeakTrainDownloader):
     """
     This class creates a small evaluation dataset from the Speak firestore database.
+
+
+    ##### LIST OF PREVIOUS QUERIES ######
+
+    ## querying only by day_range
+    next_query = rec_ref.where(u'info.date', u'>', day_range).order_by(u'info.date').limit(QUERY_LIMIT)
+
+    last_time = docs[-1]['info']['date']
+
+    next_query = (
+        rec_ref.where(
+            u'info.date', u'>', day_range
+        )
+        .order_by(u'info.date')
+        .start_after({
+            u'info.date': last_time
+        })
+        .limit(QUERY_LIMIT)
+    )
     """
 
     def __init__(self, output_dir, dataset_name, config_path=None):
@@ -411,6 +430,9 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         self.check_constraints = config['check_constraints']
         self.constraints = config['constraints']
         self.days_from_today = config['days_from_today']
+        self.disjoint_metadata_tsv = config['disjoint_metadata_tsv']
+        self.disjoint_id_names = config['disjoint_id_names']
+        self.disjoint_datasets = config['disjoint_datasets']
 
 
     def download_dataset(self):
@@ -438,11 +460,45 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
         db = firestore.client()
 
-
         # create the data-label path and initialize the tsv headers 
         date = datetime.date.today().isoformat()
-        self.data_label_path = os.path.join(self.output_dir, "eval2_data_" + date + ".tsv")
-        self.metadata_path = os.path.join(self.output_dir, "eval2_metadata_" + date + ".json")
+        self.data_label_path = os.path.join(self.output_dir, "eval2-v4_data_" + date + ".tsv")
+        self.metadata_path = os.path.join(self.output_dir, "eval2-v4_metadata_" + date + ".json")
+
+        # create a mapping from record_id to lesson, line, and speaker ids
+        record_ids_map = dict()
+        with open(self.disjoint_metadata_tsv, 'r') as tsv_file:
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            header = next(tsv_reader)
+            print("header: ", header)
+            # this assert helps to ensure the row indexing below is correct
+            assert len(header) == 7, \
+                f"metadata header is not expected length. Expected 7, got {len(header)}."
+            # header: id, text, lessonId, lineId, uid(speaker_id), redWords score, date
+            for row in tsv_reader:
+                tar_sentence = process_text(row[1])
+                record_ids_map.update({
+                    row[0]: {
+                        "record": row[0]                    # adding record for disjoint_check
+                        constraint_names[0]: row[2],        # lesson
+                        constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
+                        constraint_names[2]: row[4]         # speaker
+                    }
+                }
+
+        # create a dict of sets of all the ids in the disjoint datasets that will not
+        # be included in the filtered dataset
+        disjoint_id_sets = {name: set() for name in self.disjoint_id_names}
+        for disj_dataset_path in self.disjoint_datasets:
+            disj_dataset = read_data_json(disj_dataset_path)
+            # extracts the record_ids from the excluded datasets
+            record_ids = [path_to_id(example['audio']) for example in disj_dataset]
+            # loop through each record id
+            for record_id in record_ids:
+                # loop through each id_name and update the disjoint_id_sets
+                for disjoint_id_name, disjoint_id_set for disjoint_id_sets.items():
+                    disjoint_id_set.add(record_ids_map[record_id][disjoint_id_name])
+
 
         # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
         self.constraints = {
@@ -470,7 +526,10 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
 
             # create the first query based on the constant QUERY_LIMIT
             rec_ref = db.collection(u'recordings')
+
             next_query = rec_ref.where(u'info.date', u'>', day_range).order_by(u'info.date').limit(QUERY_LIMIT)
+
+
 
             # loop through the queries until the example_count is at least the num_examples
             example_count = 0

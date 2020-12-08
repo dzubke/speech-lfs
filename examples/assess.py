@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import path_to_id
+from speech.utils.data_helpers import path_to_id, process_text
 from speech.utils.io import read_data_json, write_pickle
 
 
@@ -251,18 +251,20 @@ def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->No
     if count_json:
         # create mapping from record_id to speaker, line, and lesson ids
         rec_ids_map = dict()
-        constraint_names = ['lesson', 'line', 'speaker']
+        constraint_names = ['lesson', 'line', 'speaker', 'target_sent']
         counter = {name: dict() for name in constraint_names}
         with open(tsv_path, 'r') as tsv_file: 
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
             # header: id, text, lessonId, lineId, uid(speaker_id), date
             header = next(tsv_reader)
             for row in tsv_reader:
+                target_sent = process_text(row[1])
                 rec_ids_map.update({
                     row[0]: {
                         constraint_names[0]: row[2],   # lesson
                         constraint_names[1]: row[3],    # line
                         constraint_names[2]: row[4],    # speaker
+                        constraint_names[3]: target_sent,  # target-sentence
                         "date": row[6]                  # date
                     }
                 })
@@ -298,7 +300,8 @@ def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->No
                 
     
     # create the plots
-    fig, axs = plt.subplots(1,3)
+    fig, axs = plt.subplots(1,len(constraint_names))
+    fig.set_size_inches(8, 6)
 
     # plot and calculate stats of the count_dicts
     for ax, name in zip(axs, constraint_names):
