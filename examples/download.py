@@ -466,7 +466,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         self.metadata_path = os.path.join(self.output_dir, "eval2-v4_metadata_" + date + ".json")
 
         # create a mapping from record_id to lesson, line, and speaker ids
-        record_ids_map = dict()
+        disjoint_ids_map = dict()
         with open(self.disjoint_metadata_tsv, 'r') as tsv_file:
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
             header = next(tsv_reader)
@@ -477,7 +477,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             # header: id, text, lessonId, lineId, uid(speaker_id), redWords score, date
             for row in tsv_reader:
                 tar_sentence = process_text(row[1])
-                record_ids_map.update({
+                disjoint_ids_map.update({
                     row[0]: {
                         "record": row[0]                    # adding record for disjoint_check
                         constraint_names[0]: row[2],        # lesson
@@ -497,7 +497,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             for record_id in record_ids:
                 # loop through each id_name and update the disjoint_id_sets
                 for disjoint_id_name, disjoint_id_set for disjoint_id_sets.items():
-                    disjoint_id_set.add(record_ids_map[record_id][disjoint_id_name])
+                    disjoint_id_set.add(disjoint_ids_map[record_id][disjoint_id_name])
 
 
         # re-calculate the constraints in the `config` as integer counts based on the `dataset_size`
@@ -527,9 +527,10 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             # create the first query based on the constant QUERY_LIMIT
             rec_ref = db.collection(u'recordings')
 
-            next_query = rec_ref.where(u'info.date', u'>', day_range).order_by(u'info.date').limit(QUERY_LIMIT)
-
-
+            next_query = rec_ref
+                .where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))
+                .order_by(u'user.uid')
+                .limit(QUERY_LIMIT)
 
             # loop through the queries until the example_count is at least the num_examples
             example_count = 0
@@ -543,7 +544,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 
                 try:
                     # this time will be used to start the next query
-                    last_time = docs[-1]['info']['date']
+                    last_id = docs[-1]['user']['uid']
                 # if the docs list is empty, there are no new documents
                 # and an IndexError will be raised and break the while loop
                 except IndexError:
@@ -641,15 +642,12 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         example_count += 1
                 
                 # create the next query starting after the last_id 
-                next_query = (
-                    rec_ref.where(
-                        u'info.date', u'>', day_range
-                    )
-                    .order_by(u'info.date')
-                    .start_after({
-                        u'info.date': last_time
-                    })
-                    .limit(QUERY_LIMIT))
+                next_query = (rec_ref
+                    .where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))
+                    .order_by(u'user.uid')
+                    .start_after({u'user.uid': last_id})
+                    .limit(QUERY_LIMIT)
+                )
     
 
     @staticmethod
