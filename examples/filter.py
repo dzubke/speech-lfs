@@ -76,12 +76,14 @@ def filter_speak_train(
         record_ids_map = dict()
         for row in tsv_reader:
             tar_sentence = process_text(row[1])
-            record_ids_map[row[0]] = {
-                "record": row[0],                  # adding record for disjoint_check
-                constraint_names[0]: row[2],        # lesson
-                constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
-                constraint_names[2]: row[4]         # speaker
-            }
+            record_ids_map.update({
+                row[0]: {
+                    "record": row[0],                    # adding record for disjoint_check
+                    constraint_names[0]: row[2],        # lesson
+                    constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
+                    constraint_names[2]: row[4]         # speaker
+                }
+            })
 
     # create a dict of sets of all the ids in the disjoint datasets that will not
     # be included in the filtered dataset
