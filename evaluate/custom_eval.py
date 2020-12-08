@@ -142,7 +142,9 @@ def per_eval(config:dict)->None:
     # loop through the models and datasets the calculate a per for each combo
     for model_name, params in model_params.items():
         per_dict[model_name] = dict()   # initialize the new key in the per_dict
+        print(f"calculating per for model: {model_name}")
         for data_name, data_path in datasets.items():
+            print(f"calculating per for dataset: {data_name}")
             per = run_eval(
                 model_path=params['path'],
                 dataset_json = data_path,
@@ -153,7 +155,7 @@ def per_eval(config:dict)->None:
             print(f"PER value is: {per}")
             per_dict[model_name][data_name] = per
 
-    print("final per dict: ")
+    print("full per_dict values: ")
     print(per_dict)
 
 
@@ -246,4 +248,4 @@ if __name__ == "__main__":
     elif config['eval_type'] == 'eval2':
         per_eval(config)
     else:
-        raise ValueError(f'eval types must be either "eval1" or "eval2", not {config['eval_type']}')
+        raise ValueError(f'eval types must be either "eval1" or "eval2", not {config["eval_type"]}')
