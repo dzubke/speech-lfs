@@ -526,10 +526,14 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             # create the first query based on the constant QUERY_LIMIT
             rec_ref = db.collection(u'recordings')
 
+            # this is the final record_id that was downloaded from the speak training set
+            speak_train_last_id = 'SR9TIlF8bSWApZa1tqEBIHOQs5z1-1583920255'
+
             next_query = rec_ref\
-                .where(u'user.uid', u'not-in', list(disjoint_id_sets['speaker']))\
-                .order_by(u'user.uid')\
-                .limit(QUERY_LIMIT)
+                #.where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))\
+                .order_by(u'id')\
+                .start_after({u'id': speak_train_last_id})\
+                .limit(QUERY_LIMIT)\
 
             # loop through the queries until the example_count is at least the num_examples
             example_count = 0
@@ -543,7 +547,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 
                 try:
                     # this time will be used to start the next query
-                    last_id = docs[-1]['user']['uid']
+                    last_id = docs[-1]['id']
                 # if the docs list is empty, there are no new documents
                 # and an IndexError will be raised and break the while loop
                 except IndexError:
@@ -551,16 +555,15 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     break
 
                 # selects a random sample of `SAMPLES_PER_QUERY` from the total queries
-                docs = random.sample(docs, SAMPLES_PER_QUERY)
+                #docs = random.sample(docs, SAMPLES_PER_QUERY)
 
                 for doc in  docs:
                     # if num_examples is reached, break
                     if example_count >= self.num_examples:
                         break
                     
-                    if doc['id'] in train_test_set:
-                        print(f"id: {doc['id']} found in train or test set")
-                    else:
+                    # if doc['id'] in train_test_set: 
+                    if doc['user']['uid'] not in distjoint_id_sets['speaker']:
                         # set `self.target_eq_guess` to True in `init` if you want 
                         ## to filter by `target`==`guess`
                         if self.target_eq_guess:
@@ -642,9 +645,9 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                 
                 # create the next query starting after the last_id 
                 next_query = (rec_ref\
-                    .where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))\
-                    .order_by(u'user.uid')\
-                    .start_after({u'user.uid': last_id})\
+                    #.where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))\
+                    .order_by(u'id')\
+                    .start_after({u'id': last_id})\
                     .limit(QUERY_LIMIT)
                 )
     
