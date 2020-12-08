@@ -76,12 +76,12 @@ def filter_speak_train(
             tar_sentence = process_text(row[1])
             record_ids_map.update({
                 row[0]: {
-                    "record": row[0]                    # adding record for disjoint_check
+                    "record": row[0],                    # adding record for disjoint_check
                     constraint_names[0]: row[2],        # lesson
                     constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
                     constraint_names[2]: row[4]         # speaker
                 }
-            }
+            })
 
     # create a dict of sets of all the ids in the disjoint datasets that will not
     # be included in the filtered dataset
@@ -93,7 +93,7 @@ def filter_speak_train(
         # loop through each record id
         for record_id in record_ids:
             # loop through each id_name and update the disjoint_id_sets
-            for disjoint_id_name, disjoint_id_set for disjoint_id_sets.items():
+            for disjoint_id_name, disjoint_id_set in disjoint_id_sets.items():
                 disjoint_id_set.add(record_ids_map[record_id][disjoint_id_name])
 
     # id_counter keeps track of the counts for each speaker, lesson, and line ids
