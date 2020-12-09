@@ -701,6 +701,81 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
 
         return doc
 
+class SpeakTestDownloader(SpeakTrainDownloader):
+    """
+    This class queries the firestore database and writes a tsv file with the metadata from the speak testsets. 
+    This class does not download audio files like the `SpeakTrain` and `SpeakEval` Downloader classes. 
+    """
+
+    def __init__(self, output_dir, dataset_name, config_path=None):
+        """
+        Properties:
+            num_examples (int): number of examples to be downloaded
+            target_eq_guess (bool): if True, the target == guess criterion will filter the downloaded files
+        """
+        super().__init__(output_dir, dataset_name)
+        config = load_config(config_path)
+        lists_of_ids = [
+            get_dataset_ids(data_path) for data_path in config['datasets']
+        ]
+        self.record_ids = [ids for ids in list_of_ids for list_of_ids in lists_of_ids]
+
+    def download_dataset(self):
+        """
+        This method doesn't download an audio dataset like in other Downloader classes. It writes the metadata
+        of a set of recordings to a tsv file. 
+        """
+
+        PROJECT_ID = 'speak-v2-2a1f1'
+        QUERY_LIMIT = 2000              # max size of query
+        SAMPLES_PER_QUERY = 200         # number of random samples downloaded per query
+
+        # verify and set the credientials
+        CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
+        assert os.path.exists(CREDENTIAL_PATH), "Credential file does not exist or is in the wrong location."
+        # set the enviroment variable that `firebase_admin.credentials` will use
+        os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
+
+        # initialize the credentials and firebase db client
+        cred = credentials.ApplicationDefault()
+        firebase_admin.initialize_app(cred, {'projectId': PROJECT_ID})
+        db = firestore.client()
+        # select the recordings collection
+        rec_ref = db.collection(u'recordings')
+
+        data_label_path = os.path.join(self.output_dir, "speak-test_metadata_2020-12-09.tsv")
+
+        with open(data_label_path, 'w', newline='\n') as tsv_file:
+            tsv_writer = csv.writer(tsv_file, delimiter='\t')
+            header = [
+                "id", "target", "guess", "lessonId", "target_sentence", "lineId", "uid", "redWords_score", "date"
+            ]
+            tsv_writer.writerow(header) 
+
+            # take the record_ids in batches of 10
+            # the firestore `in` operater can take only a list of 10 elements
+            for idx_10 for range(0, len(self.record_ids), 10):  
+
+                batch_10_ids = self.record_ids[idx_10: idx_10 + 10]
+
+                next_query = rec_ref.where(u'id', u'in, batch_10_ids)                    
+
+                for doc in next_query.stream():
+                    doc = doc.to_dict()
+                
+                    target = process_text(doc['info']['target'])
+
+                    tsv_writer.writerow([
+                        doc['id'], 
+                        doc['info']['target'],
+                        doc['result']['guess'],
+                        doc['info']['lessonId'],
+                        target,     # using this to replace lineId
+                        doc['info']['lineId'],
+                        doc['user']['uid'],
+                        doc['result']['score'],
+                        doc['info']['date']
+                    ])
 
 class Chime1Downloader(Downloader):
 
