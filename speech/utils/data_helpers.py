@@ -309,35 +309,35 @@ def check_update_contraints(record_id:int,
     return pass_constraint
 
 
-    def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:dict)->bool:
-        """This function checks if the record_id contains any common ids with the disjoint datasets.
-        If a common ids is found, the check fails.
+def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:dict)->bool:
+    """This function checks if the record_id contains any common ids with the disjoint datasets.
+    If a common ids is found, the check fails.
 
-        This function is used in filter.py.
+    This function is used in filter.py.
 
-        Args:
-            record_ids (str): record id for a recording.
-            disjoint_id_sets (Dict[str, Set[str]]): dictionary that maps the ids along which the output dataset
-                will be disjoint to the set of ids included in the `disjoint_datasets`. 
-            record_ids_map (Dict[str, Dict[str, str]]): dictionary to maps record_id to other ids like
-                speaker, lesson, line (or target-sentence).
-            
-        Returns:
-            (bool): True if the ids associated with the record_id are not contained in any of 
-                the `disjoint_ids_sets`. Otherwise, False.
-        """
-        # assumes the check passes (not the safest initial assumption but it makes the logic cleaner)
-        pass_check = True
-        # names of the ids along which the output dataset will be disjoint
-        disjoint_id_names = list(distjoint_id_sets.keys())
-        for name in disjoint_id_names:
-            disjoint_id = record_ids_map[record_id][name]
-            # if the id is contained in the id_set of the disjoint_datasets, the check fails
-            if disjoint_id in disjoint_ids_sets[name]:
-                pass_check = False
-                break
+    Args:
+        record_ids (str): record id for a recording.
+        disjoint_id_sets (Dict[str, Set[str]]): dictionary that maps the ids along which the output dataset
+            will be disjoint to the set of ids included in the `disjoint_datasets`. 
+        record_ids_map (Dict[str, Dict[str, str]]): dictionary to maps record_id to other ids like
+            speaker, lesson, line (or target-sentence).
         
-        return pass_check
+    Returns:
+        (bool): True if the ids associated with the record_id are not contained in any of 
+            the `disjoint_ids_sets`. Otherwise, False.
+    """
+    # assumes the check passes (not the safest initial assumption but it makes the logic cleaner)
+    pass_check = True
+    # names of the ids along which the output dataset will be disjoint
+    disjoint_id_names = list(disjoint_id_sets.keys())
+    for name in disjoint_id_names:
+        disjoint_id = record_ids_map[record_id][name]
+        # if the id is contained in the id_set of the disjoint_datasets, the check fails
+        if disjoint_id in disjoint_id_sets[name]:
+            pass_check = False
+            break
+    
+    return pass_check
 
 
 def process_text(transcript:str)->str:
