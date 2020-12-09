@@ -67,11 +67,13 @@ def filter_speak_train(
     with open(metadata_path, 'r') as tsv_file:
         tsv_reader = csv.reader(tsv_file, delimiter='\t')
         header = next(tsv_reader)
+        # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
         print("header: ", header)
         # this assert helps to ensure the row indexing below is correct
         assert len(header) == 7, \
             f"metadata header is not expected length. Expected 7, got {len(header)}."
-        # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
+        # mapping from record_id to other ids like lesson, speaker, and line
+        record_ids_map = dict()
         for row in tsv_reader:
             tar_sentence = process_text(row[1])
             record_ids_map.update({
@@ -94,7 +96,12 @@ def filter_speak_train(
         for record_id in record_ids:
             # loop through each id_name and update the disjoint_id_sets
             for disjoint_id_name, disjoint_id_set in disjoint_id_sets.items():
-                disjoint_id_set.add(record_ids_map[record_id][disjoint_id_name])
+                if record_id in record_ids_map:
+                    disjoint_id_set.add(record_ids_map[record_id][disjoint_id_name])
+                # for record_id's not in the metadata.tsv (e.g. the speak testsets)
+                # only add the record_id as the line and lesson idea are not available
+                else:
+                    disjoint_id_sets['record'].add(record_id)
 
     # id_counter keeps track of the counts for each speaker, lesson, and line ids
     id_counter = {
@@ -107,9 +114,13 @@ def filter_speak_train(
     # loop until the number of examples in dataset_size has been written
     with open(filter_json_path, 'w') as fid:
         while examples_written < dataset_size:
-            if examples_written % 250 == 0 :
+            if examples_written != 0 and examples_written % 50 == 0:
                 print(f"{examples_written} examples written")
-            example = next(full_dataset)
+            try:
+                example = next(full_dataset)
+            except StopIteration:
+                print(f"Stop encountered {examples_written} examples written")
+                break
             record_id = path_to_id(example['audio'])
             # check if the ids associated with the record_id are not included in the disjoint_datasets
             pass_filter = check_disjoint_filter(record_id, disjoint_id_sets, record_ids_map)
@@ -150,6 +161,6 @@ if __name__ == "__main__":
             config['filter_json_path'],
             config['dataset_size'],
             config['constraints'],
-            config['disjoint_ids'],
+            config['disjoint_id_names'],
             config['disjoint_datasets'] 
         ) 
