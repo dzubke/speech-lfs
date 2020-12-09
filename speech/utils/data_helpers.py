@@ -5,18 +5,14 @@ import json
 import os
 import re
 import string
-import tqdm
+from Typing import Set
 # third-party libraries
+import tqdm
 # project libraries
 from speech.utils import convert
+from sppech.utils.io import read_data_json
 
 UNK_WORD_TOKEN = list()
-
-def path_to_id(record_path:str)->str:
-        #returns the basename of the path without the extension
-        return os.path.basename(
-            os.path.splitext(record_path)[0]
-        )
 
 def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
@@ -240,20 +236,20 @@ def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
         phonemes.extend(lexicon.get(word, unk_token))
     
     return phonemes
-    
 
-def clean_text(transcript:str)->str:
-    """
-    This function removes anything that is not alphanumeric, a space, or apostrophe from
-    the input `transcript`.
+
+def process_text(transcript:str)->str:
+    """This function removes punctuation (except apostrophe's) and extra space
+    from the input `transcript` string and lowers the case. 
+
     Args:
-        transcript (str): input transcript to be clean
+        transcript (str): input string to be processed
     Returns:
-        (str): cleaned transcript
+        (str): processed string
     """
     # allows for alphanumeric characters, space, and apostrophe
     accepted_char = '[^A-Za-z0-9 \']+'
-    # replacing weird encodings with apostrophe
+    # replacing apostrophe's with weird encodings
     transcript = transcript.replace(chr(8217), "'")
     # filters out unaccepted characters, lowers the case
     try:
@@ -266,8 +262,8 @@ def clean_text(transcript:str)->str:
     for punc in punct_noapost:
         if punc in transcript:
             raise ValueError(f"unwanted punctuation {punc} in transcript")
-    
-    return transcript 
+  
+    return transcript
 
 
 def check_update_contraints(record_id:int, 
@@ -340,29 +336,25 @@ def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:d
     return pass_check
 
 
-def process_text(transcript:str)->str:
-    """This function removes punctuation (except apostrophe's) and extra space
-    from the input `transcript` string and lowers the case. 
+def get_dataset_ids(dataset_path:str)->Set[str]:
+    """This function reads a dataset path and returns a set of the record ID's
+    in that dataset. The record ID's mainly correspond to recordings from the speak dataset. 
+    For other datsets, this function will return the filename without the extension.
 
     Args:
-        transcript (str): input string to be processed
+        dataset_path (str): path to the dataset
+    
     Returns:
-        (str): processed string
+        Set[str]: a set of the record ID's
     """
-    # allows for alphanumeric characters, space, and apostrophe
-    accepted_char = '[^A-Za-z0-9 \']+'
-    # replacing apostrophe's with weird encodings
-    transcript = transcript.replace(chr(8217), "'")
-    # filters out unaccepted characters, lowers the case
-    try:
-        transcript = transcript.strip().lower()
-        transcript = re.sub(accepted_char, '', transcript)
-    except TypeError:
-        print(f"Type Error with: {transcript}")
-    # check that all punctuation (minus apostrophe) has been removed 
-    punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
-    for punc in punct_noapost:
-        if punc in transcript:
-            raise ValueError(f"unwanted punctuation {punc} in transcript")
-  
-    return transcript
+    # dataset is a list of dictionaries with the audio path as the value of the 'audio' key.
+    dataset = read_data_json(dataset_path)
+
+    return set([path_to_id(xmpl['audio']) for xmpl in dataset])
+
+
+def path_to_id(record_path:str)->str:
+        #returns the basename of the path without the extension
+        return os.path.basename(
+            os.path.splitext(record_path)[0]
+        )
