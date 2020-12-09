@@ -530,7 +530,6 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             speak_train_last_id = 'SR9TIlF8bSWApZa1tqEBIHOQs5z1-1583920255'
 
             next_query = rec_ref\
-                #.where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))\
                 .order_by(u'id')\
                 .start_after({u'id': speak_train_last_id})\
                 .limit(QUERY_LIMIT)\
@@ -555,7 +554,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     break
 
                 # selects a random sample of `SAMPLES_PER_QUERY` from the total queries
-                #docs = random.sample(docs, SAMPLES_PER_QUERY)
+                docs = random.sample(docs, SAMPLES_PER_QUERY)
 
                 for doc in  docs:
                     # if num_examples is reached, break
@@ -586,7 +585,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                             record_ids_map = {
                                 doc['id']: {
                                     'lesson': doc['info']['lessonId'],
-                                    'line': target,         # using processed target as id 
+                                    'target_sent': target,         # using processed target as id 
                                     'speaker': doc['user']['uid']
                                 }
                             }
@@ -640,15 +639,14 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         ]
                         tsv_writer.writerow(tsv_row)
                         # save all the metadata in a separate file
-                        with open(self.metadata_path, 'a') as jsonfile:
-                            json.dump(doc, jsonfile)
-                            jsonfile.write("\n")
+                        #with open(self.metadata_path, 'a') as jsonfile:
+                        #    json.dump(doc, jsonfile)
+                        #    jsonfile.write("\n")
                         
                         example_count += 1
                 
                 # create the next query starting after the last_id 
                 next_query = (rec_ref\
-                    #.where(u'user.uid', u'not in', list(disjoint_id_sets['speaker']))\
                     .order_by(u'id')\
                     .start_after({u'id': last_id})\
                     .limit(QUERY_LIMIT)
