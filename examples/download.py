@@ -519,7 +519,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
-                "id", "target", "guess", "lessonId", "target_sent", "lineId", "uid", "redWords_score", "date"
+                "id", "target", "guess", "lessonId", "target_sentence", "lineId", "uid", "redWords_score", "date"
             ]
             tsv_writer.writerow(header)        
 
@@ -561,14 +561,16 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     if example_count >= self.num_examples:
                         break
                     
-                    # if doc['id'] in train_test_set: 
-                    if doc['user']['uid'] not in disjoint_id_sets['speaker'] \
+                    target = process_text(doc['info']['target'])
+
+                    # check that the speaker, target-sentence, and record_Id are disjoint
+                    if doc['user']['uid'] not in distjoint_id_sets['speaker']\
+                    and target not in distjoint_id_sets['target-sentence']\
                     and doc['id'] not in train_test_set:
                         # set `self.target_eq_guess` to True in `init` if you want 
                         ## to filter by `target`==`guess`
                         if self.target_eq_guess:
                             # process the target and guess and remove apostrophe's for comparison
-                            target = process_text(doc['info']['target'])
                             guess = process_text(doc['result']['guess'])
                             # removing apostrophes for comparison
                             target_no_apostrophe = target.replace("'", "")

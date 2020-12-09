@@ -208,12 +208,12 @@ def validate_all_models(
     predictions_dict= {}
 
     # relativfe and absolute tolerances for function
-    rel_tol = 7e-1
+    rel_tol = 3e-1
     abs_tol = 7e-2
 
     check_preds = True  # checks if the predictions of the torch and coreml models are equal
     check_probs = True  # checks if the probabilities across models are equal
-    check_hidden = False # checks if the hidden and cell states across models are equal
+    check_hidden = True # checks if the hidden and cell states across models are equal
 
 
     for audio_file in os.listdir(audio_dir):
@@ -230,7 +230,8 @@ def validate_all_models(
         torch_output = torch_model(torch.from_numpy(test_x),(torch.from_numpy(test_h), torch.from_numpy(test_c))) 
         torch_probs, torch_h, torch_c = to_numpy(torch_output[0]), to_numpy(torch_output[1][0]), to_numpy(torch_output[1][1])
         torch_max_decoder = max_decode(torch_probs[0], blank=PARAMS['blank_idx'])
-        torch_ctc_decoder = ctc_decode(torch_probs[0], beam_size=50, blank=PARAMS['blank_idx'])
+        # taking the first element of ctc_decode selects the top (and only) beam
+        torch_ctc_decoder = ctc_decode(torch_probs[0], beam_size=50, blank=PARAMS['blank_idx'])[0]
        
         ort_session = onnxruntime.InferenceSession(onnx_fn)
         ort_inputs = {
@@ -247,7 +248,8 @@ def validate_all_models(
         coreml_h = np.array(coreml_output['hidden'])
         coreml_c = np.array(coreml_output['cell'])
         coreml_max_decoder = max_decode(coreml_probs[0], blank=PARAMS['blank_idx'])
-        coreml_ctc_decoder = ctc_decode(coreml_probs[0], beam_size=50, blank=PARAMS['blank_idx'])
+        # the zero index selection takes the top (and only) beam in the ctc_decode function
+        coreml_ctc_decoder = ctc_decode(coreml_probs[0], beam_size=50, blank=PARAMS['blank_idx'])[0]
         logging.debug("coreml prediction completed")
 
         if audio_file == stream_test_name:
@@ -288,7 +290,7 @@ def validate_all_models(
         logging.debug(f"ctc decode: {coreml_ctc_decoder}")
 
         # Compare torch and Coreml predictions
-        if False: #check_preds: 
+        if check_preds: 
             assert(torch_max_decoder==coreml_max_decoder), \
                 f"max decoder preds doesn't match, torch: {torch_max_decoder}, coreml: {coreml_max_decoder} for file: {audio_path}"
             assert(torch_ctc_decoder[0]==coreml_ctc_decoder[0]), \
