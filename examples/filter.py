@@ -69,9 +69,9 @@ def filter_speak_train(
         header = next(tsv_reader)
         print("header: ", header)
         # this assert helps to ensure the row indexing below is correct
-        assert len(header) == 6, \
-            f"metadata header is not expected length. Expected 6, got {len(header)}."
-        # header: id, text, lessonId, lineId, uid(speaker_id), date
+        assert len(header) == 7, \
+            f"metadata header is not expected length. Expected 7, got {len(header)}."
+        # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
         for row in tsv_reader:
             tar_sentence = process_text(row[1])
             record_ids_map.update({
