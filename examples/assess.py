@@ -257,17 +257,16 @@ def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->No
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
             # header: id, text, lessonId, lineId, uid(speaker_id), date
             header = next(tsv_reader)
+            rec_ids_map = dict()
             for row in tsv_reader:
                 target_sent = process_text(row[1])
-                rec_ids_map.update({
-                    row[0]: {
+                rec_ids_map[row[0]]= {
                         constraint_names[0]: row[2],   # lesson
                         constraint_names[1]: row[3],    # line
                         constraint_names[2]: row[4],    # speaker
                         constraint_names[3]: target_sent,  # target-sentence
                         "date": row[6]                  # date
-                    }
-                })
+                }
 
         total_date_counter = dict()
         # `unq_date_sets` keep track of the unique ids
@@ -311,7 +310,9 @@ def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->No
         print()
     
     # ensures the directory of `out_path` exists
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    os.makedirs(out_path, exist_ok=True)
+    out_path = os.path.join(out_path, os.path.basename(out_path))
+    print("out_path: ", out_path)
     plt.savefig(out_path + "_count_plot.png")
     plt.close()
 
