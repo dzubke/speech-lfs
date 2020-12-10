@@ -86,11 +86,11 @@ def filter_speak_train(
     # create a defaultdict with set values for each disjoint-id name
     disjoint_id_sets = defaultdict(set)
 
-    for dj_key, dj_data_path in disjoint_datasets.items():
+    for dj_data_path, dj_names in disjoint_datasets.items():
         # get all the record_ids in the dataset
         record_ids = get_dataset_ids(dj_data_path)
         # loop through the disjoint-id-names in the key-tuple
-        for dj_name in dj_key:
+        for dj_name in dj_names:
             for record_id in record_ids:
                 # add the id to the relevant id-set
                 disjoint_id_sets[dj_name].add(record_ids_map[record_id][dj_name])
@@ -143,6 +143,7 @@ if __name__ == "__main__":
     with open(args.config, 'r') as config_file:
         config = yaml.load(config_file)
 
+    print("config: ", config)
     if config['dataset_name'].lower() == "speaktrain":
         filter_speak_train(
             config['full_json_path'],
