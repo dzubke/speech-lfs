@@ -152,9 +152,3 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
 # problems using python 3.7 in environment
   - numpy==1.13.3 -> python[version='>=2.7,<2.8.0a0|>=3.5,<3.6.0a0|>=3.6,<3.7.0a0|>=3.8,<3.9.0a0']
   librosa==0.7.2
-
-
-
-
-
-/home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201124/ph6/
