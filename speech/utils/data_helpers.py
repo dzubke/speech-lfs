@@ -325,11 +325,10 @@ def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:d
     # assumes the check passes (not the safest initial assumption but it makes the logic cleaner)
     pass_check = True
     # names of the ids along which the output dataset will be disjoint
-    disjoint_id_names = list(disjoint_id_sets.keys())
-    for name in disjoint_id_names:
-        disjoint_id = record_ids_map[record_id][name]
+    for id_name, dj_id_set in disjoint_id_sets.items():
+        disjoint_id = record_ids_map[record_id][id_name]
         # if the id is contained in the id_set of the disjoint_datasets, the check fails
-        if disjoint_id in disjoint_id_sets[name]:
+        if disjoint_id in dj_id_set:
             pass_check = False
             break
     
