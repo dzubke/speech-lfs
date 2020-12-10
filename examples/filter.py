@@ -18,8 +18,8 @@ from typing import List
 import yaml
 # project libs
 from speech.utils.io import read_data_json
-from speech.utils.data_helpers import check_disjoint_filter, check_update_contraints, path_to_id
-from speech.utils.data_helpers import process_text
+from speech.utils.data_helpers import check_disjoint_filter, check_update_contraints, get_dataset_ids 
+from speech.utils.data_helpers import path_to_id, process_text
 
 def filter_speak_train(
     full_json_path:str, 
@@ -27,8 +27,7 @@ def filter_speak_train(
     filter_json_path:str,
     dataset_size: int, 
     constraints:dict,
-    disjoint_id_names: List[str],
-    disjoint_datasets: List[str])->None:
+    disjoint_datasets: dict)->None:
     """
     This script filters the dataset in `full_json_path` and write the new dataset to `filter_json_path`.
     The constraints on the filtered dataset are:
@@ -45,9 +44,8 @@ def filter_speak_train(
         dataset_size (int): number of utterances included in the output dataset
         constraints (dict): dict of constraints on the number of utterances per speaker, lesson, 
             and line expressed as decimal fractions of the total dataset.
-        distjoint_id_names (List[str]): list of names of ids that specify the ids that will be disjoint
-        disjoint_datasets (List[str]): list of paths to datasets whose samples will be disjiont from 
-            the output dataset along the `disjoint_ids`
+        disjoint_datasets (Dict[Tuple[str],str]): dict whose keys are a tuple of the ids that will be disjoint
+            and whose values are the datasets paths whose examples will be disjiont from the output
     Returns:
         None, only files written.
     """
@@ -107,7 +105,7 @@ def filter_speak_train(
     # loop until the number of examples in dataset_size has been written
     with open(filter_json_path, 'w') as fid:
         while examples_written < dataset_size:
-            if examples_written != 0 and examples_written % 1000 == 0:
+            if examples_written != 0 and examples_written % 100000 == 0:
                 print(f"{examples_written} examples written")
             try:
                 example = next(full_dataset)
@@ -152,6 +150,5 @@ if __name__ == "__main__":
             config['filter_json_path'],
             config['dataset_size'],
             config['constraints'],
-            config['disjoint_id_names'],
             config['disjoint_datasets'] 
         ) 
