@@ -554,7 +554,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     break
 
                 # selects a random sample of `SAMPLES_PER_QUERY` from the total queries
-                docs = random.sample(docs, SAMPLES_PER_QUERY)
+                #docs = random.sample(docs, SAMPLES_PER_QUERY)
 
                 for doc in  docs:
                     # if num_examples is reached, break
@@ -564,8 +564,8 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                     target = process_text(doc['info']['target'])
 
                     # check that the speaker, target-sentence, and record_Id are disjoint
-                    if doc['user']['uid'] not in distjoint_id_sets['speaker']\
-                    and target not in distjoint_id_sets['target-sentence']\
+                    if doc['user']['uid'] not in disjoint_id_sets['speaker']\
+                    and target not in disjoint_id_sets['target_sentence']\
                     and doc['id'] not in train_test_set:
                         # set `self.target_eq_guess` to True in `init` if you want 
                         ## to filter by `target`==`guess`
@@ -585,7 +585,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                             record_ids_map = {
                                 doc['id']: {
                                     'lesson': doc['info']['lessonId'],
-                                    'target_sent': target,         # using processed target as id 
+                                    'target_sentence': target,         # using processed target as id 
                                     'speaker': doc['user']['uid']
                                 }
                             }
