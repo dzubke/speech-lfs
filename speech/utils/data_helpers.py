@@ -5,12 +5,12 @@ import json
 import os
 import re
 import string
-from Typing import Set
+from typing import Set
 # third-party libraries
 import tqdm
 # project libraries
 from speech.utils import convert
-from sppech.utils.io import read_data_json
+from speech.utils.io import read_data_json
 
 UNK_WORD_TOKEN = list()
 
