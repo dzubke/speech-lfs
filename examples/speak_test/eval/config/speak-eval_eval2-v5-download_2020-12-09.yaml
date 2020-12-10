@@ -8,6 +8,7 @@ constraints:
 days_from_today: 1095
 disjoint_id_names:
  - speaker
+ - target_sentence
 disjoint_metadata_tsv: /home/dzubke/awni_speech/data/speak_train/train_data_trim_2020-09-22.tsv
 disjoint_datasets:
  - /home/dzubke/awni_speech/data/speak_train/train-data_1M-examples_2020-10-06.json
