@@ -21,7 +21,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 # project libraries
 from speech.utils.convert import to_wave
-from speech.utils.data_helpers import check_update_contraints, path_to_id, process_text
+from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, path_to_id, process_text
 from speech.utils.io import load_config, read_data_json
 
 
@@ -718,7 +718,7 @@ class SpeakTestDownloader(SpeakTrainDownloader):
         lists_of_ids = [
             get_dataset_ids(data_path) for data_path in config['datasets']
         ]
-        self.record_ids = [ids for ids in list_of_ids for list_of_ids in lists_of_ids]
+        self.record_ids = [ids for list_of_ids in lists_of_ids for ids in list_of_ids]
 
     def download_dataset(self):
         """
@@ -754,11 +754,11 @@ class SpeakTestDownloader(SpeakTrainDownloader):
 
             # take the record_ids in batches of 10
             # the firestore `in` operater can take only a list of 10 elements
-            for idx_10 for range(0, len(self.record_ids), 10):  
+            for idx_10 in range(0, len(self.record_ids), 10):  
 
                 batch_10_ids = self.record_ids[idx_10: idx_10 + 10]
 
-                next_query = rec_ref.where(u'id', u'in, batch_10_ids)                    
+                next_query = rec_ref.where(u'id', u'in', batch_10_ids) 
 
                 for doc in next_query.stream():
                     doc = doc.to_dict()
