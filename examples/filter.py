@@ -8,6 +8,7 @@ used for the speak-train dataset.
 
 # standard libs
 import argparse
+from collections import defaultdict
 import csv
 import json
 import os
@@ -76,51 +77,44 @@ def filter_speak_train(
         record_ids_map = dict()
         for row in tsv_reader:
             tar_sentence = process_text(row[1])
-            record_ids_map.update({
-                row[0]: {
+            record_ids_map[row[0]] = {
                     "record": row[0],                    # adding record for disjoint_check
                     constraint_names[0]: row[2],        # lesson
                     constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
                     constraint_names[2]: row[4]         # speaker
-                }
-            })
+            }
 
-    # create a dict of sets of all the ids in the disjoint datasets that will not
-    # be included in the filtered dataset
-    disjoint_id_sets = {name: set() for name in disjoint_id_names}
-    for disj_dataset_path in disjoint_datasets:
-        disj_dataset = read_data_json(disj_dataset_path)
-        # extracts the record_ids from the excluded datasets
-        record_ids = [path_to_id(example['audio']) for example in disj_dataset]
-        # loop through each record id
-        for record_id in record_ids:
-            # loop through each id_name and update the disjoint_id_sets
-            for disjoint_id_name, disjoint_id_set in disjoint_id_sets.items():
-                if record_id in record_ids_map:
-                    disjoint_id_set.add(record_ids_map[record_id][disjoint_id_name])
-                # for record_id's not in the metadata.tsv (e.g. the speak testsets)
-                # only add the record_id as the line and lesson idea are not available
-                else:
-                    disjoint_id_sets['record'].add(record_id)
+
+    # create a defaultdict with set values for each disjoint-id name
+    disjoint_id_sets = defaultdict(set)
+
+    for dj_key, dj_data_path in disjoint_datasets.items():
+        # get all the record_ids in the dataset
+        record_ids = get_dataset_ids(dj_data_path)
+        # loop through the disjoint-id-names in the key-tuple
+        for dj_name in dj_key:
+            for record_id in record_ids:
+                # add the id to the relevant id-set
+                disjoint_id_sets[dj_name].add(record_ids_map[record_id][dj_name])
+    
+    print("all disjoint names: ", disjoint_id_sets.keys())
+
 
     # id_counter keeps track of the counts for each speaker, lesson, and line ids
-    id_counter = {
-        constraint_names[0]: dict(),    # lesson
-        constraint_names[1]: dict(),    # line
-        constraint_names[2]: dict()     # speaker
-    }
+    id_counter = {name: dict() for name in constraint_names}
 
     examples_written = 0
     # loop until the number of examples in dataset_size has been written
     with open(filter_json_path, 'w') as fid:
         while examples_written < dataset_size:
-            if examples_written != 0 and examples_written % 50 == 0:
+            if examples_written != 0 and examples_written % 1000 == 0:
                 print(f"{examples_written} examples written")
             try:
                 example = next(full_dataset)
             except StopIteration:
                 print(f"Stop encountered {examples_written} examples written")
                 break
+                
             record_id = path_to_id(example['audio'])
             # check if the ids associated with the record_id are not included in the disjoint_datasets
             pass_filter = check_disjoint_filter(record_id, disjoint_id_sets, record_ids_map)
@@ -137,9 +131,6 @@ def filter_speak_train(
                     fid.write("\n")
                     # increment counters
                     examples_written += 1
-
-
-
 
 
 
