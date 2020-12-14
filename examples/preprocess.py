@@ -20,6 +20,7 @@ import tqdm
 import yaml
 # project libraries
 from speech.utils import data_helpers, wave, convert
+from speech.utils.data_helpers import lexicon_to_dict, skip_file
 
 logging.basicConfig(filename=None, level=10)
 
@@ -37,7 +38,7 @@ class DataPreprocessor(object):
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
         if lexicon_path !='':
-            self.lex_dict = q
+            self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower())
         else: 
             self.lex_dict = None
         # list of tuples of audio_path and transcripts
@@ -407,7 +408,7 @@ class TedliumPreprocessor(DataPreprocessor):
                         logging.info(f"Error in cutting utterance: {target_wav_file}")
                 
                 # audio_path is corrupted and is skipped
-                if data_helpers.skip_file("tedlium", target_wav_file):
+                if skip_file("tedlium", target_wav_file):
                     continue
                 
                 transcript = self.remove_unk_token(utterance["transcript"])
@@ -508,7 +509,7 @@ class VoxforgePreprocessor(DataPreprocessor):
                     if audio_path is None:
                         continue
                     # audio_path is corrupted and is skipped
-                    elif data_helpers.skip_file(audio_path):
+                    elif skip_file(audio_path):
                         continue
                     transcript = line[1:]
                     # transcript should be a string
@@ -584,7 +585,7 @@ class TatoebaPreprocessor(DataPreprocessor):
                     if line[1] in speakers:
                         audio_path = os.path.join(dir_path, "audio", line[1], line[0]+".mp3")
                         transcript = " ".join(line[2:])
-                        if data_helpers.skip_file(audio_path):
+                        if skip_file(audio_path):
                             logging.info(f"skipping {audio_path}")
                             continue
                         self.audio_trans.append((audio_path, transcript))
@@ -595,7 +596,7 @@ class TatoebaPreprocessor(DataPreprocessor):
 
 class SpeakTrainPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
-                        force_convert, min_duration, max_duration):
+                        force_convert, min_duration, max_duration, *args):
         super(SpeakTrainPreprocessor, self).__init__(dataset_dir, dataset_files,
                                                       dataset_name, lexicon_path,
                                                       force_convert, min_duration, max_duration)
@@ -615,7 +616,7 @@ class SpeakTrainPreprocessor(DataPreprocessor):
             root, ext = os.path.splitext(label_path)
             json_path = root + os.path.extsep + "json"
             logging.info(f"entering write_json for {set_name}. writing json to {json_path}")
-            self.write_json_mp(json_path)
+            self.write_json(json_path)
 
 
     def collect_audio_transcripts(self, label_path:str):
@@ -635,11 +636,11 @@ class SpeakTrainPreprocessor(DataPreprocessor):
                 audio_path = os.path.join(audio_dir, row[0] + os.extsep + audio_ext)
                 
                 # skip the file if it is in one of the speak test sets
-                if data_helpers.skip_file(audio_path, "speaktrain"):
+                if skip_file(audio_path, "speaktrain"):
                     continue
                 
                 # no longer need to check if path exists when using trimmed_data.tsv
-                # the call below makes the script very slow as it is IO (disk) limited
+                # the `elif` call below makes the script very slow as it is IO (disk) limited
                 #elif not os.path.exists(audio_path):
                 #    continue
                 
@@ -763,6 +764,6 @@ if __name__ == "__main__":
                                           config['force_convert'], 
                                           config['min_duration'], 
                                           config['max_duration'],
-                                          config['custom_args'])
+                                          config.get('custom_args', None))
     data_preprocessor.process_datasets()
 

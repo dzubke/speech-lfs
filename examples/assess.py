@@ -10,6 +10,7 @@ from functools import partial
 import csv
 import os
 import re
+from typing import List
 # third party libraries
 import firebase_admin
 from firebase_admin import credentials
@@ -20,8 +21,8 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils import wave, data_helpers
-from speech.utils.io import write_pickle
+from speech.utils.data_helpers import path_to_id, process_text
+from speech.utils.io import read_data_json, write_pickle
 
 
 def assess_commonvoice(validated_path:str, max_occurance:int):
@@ -158,9 +159,20 @@ def assess_iphone_models(save_path:str)->None:
     secaxy.set_ylabel("Percent of total device count")
     plt.xlabel("Device names")
 
-def assess_speak_train(dataset_path:str):
 
-    def _update_key(in_dict, key): 
+
+def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->None:
+    """This function creates counts of the speaker, lesson, and line ids in a speak training dataset
+    Args:
+        dataset_path (str): path to speak training dataset
+        tsv_path (str): path to tsv file that contains speaker, line, and lesson ids 
+        out_path (str): base path name where plots and txt files will be saved
+    Returns:
+        None
+    """
+
+
+    def _increment_key(in_dict, key): 
         in_dict[key] = in_dict.get(key, 0) + 1
 
 
@@ -171,7 +183,7 @@ def assess_speak_train(dataset_path:str):
         ax.set_ylabel(f"utterance per {label}")
         ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
         ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-
+        plt.tight_layout()
 
     def reformat_large_tick_values(tick_val, pos):
         """
@@ -196,51 +208,202 @@ def assess_speak_train(dataset_path:str):
         return str(new_tick_format)
 
 
-    def _stats(count_dict:dict):
+    def _print_stats(count_dict:dict):
         values = list(count_dict.values())
         mean = round(np.mean(values), 2)
         std = round(np.std(values), 2)
         max_val = round(max(values), 2)
         min_val = round(min(values), 2)
-        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}")
+        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}, total_unique: {len(count_dict)}")
+        print(f"sample of 5 values: {list(count_dict.keys())[0:5]}")
     
 
-    # count dictionaries for the lesssons, lines, and users (speakers)
-    lesson_dict = {} 
-    line_dict = {} 
-    user_dict ={} 
-    
-    # create count_dicts for each
-    with open(dataset_path, 'r') as tsv_file: 
-        tsv_reader = csv.reader(tsv_file, delimiter='\t')
-        header = next(tsv_reader) 
-        print(header) 
-        for row in tsv_reader: 
-            lesson_id, line_id, user_id = row[2], row[3], row[4] 
-            _update_key(lesson_dict, lesson_id) 
-            _update_key(line_dict, line_id) 
-            _update_key(user_dict, user_id) 
 
+
+    # use this logic for a tsv file
+    count_tsv=False
+    if count_tsv:
+        # count dictionaries for the lesssons, lines, and users (speakers)
+        lesson_dict = {} 
+        line_dict = {} 
+        user_dict ={} 
+        # create count_dicts for each
+        with open(dataset_path, 'r') as tsv_file: 
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            header = next(tsv_reader) 
+            print(header) 
+            for row in tsv_reader: 
+                lesson_id, line_id, user_id = row[2], row[3], row[4] 
+                _increment_key(lesson_dict, lesson_id) 
+                _increment_key(line_dict, line_id) 
+                _increment_key(user_dict, user_id) 
+
+        # put the labels and count_dicts in list of the for-loop
+        constraint_names = ["lesson", "line", "speaker"]
+        counter = {
+            "lesson": lesson_dict, 
+            "line": line_dict, 
+            "speaker": user_dict
+        }
+
+    # use this logic for a json file supported by a tsv-file
+    count_json = True
+    if count_json:
+        # create mapping from record_id to speaker, line, and lesson ids
+        rec_ids_map = dict()
+        constraint_names = ['lesson', 'line', 'speaker', 'target_sent']
+        counter = {name: dict() for name in constraint_names}
+        with open(tsv_path, 'r') as tsv_file: 
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            # header: id, text, lessonId, lineId, uid(speaker_id), date
+            header = next(tsv_reader)
+            rec_ids_map = dict()
+            for row in tsv_reader:
+                target_sent = process_text(row[1])
+                rec_ids_map[row[0]]= {
+                        constraint_names[0]: row[2],   # lesson
+                        constraint_names[1]: row[3],    # line
+                        constraint_names[2]: row[4],    # speaker
+                        constraint_names[3]: target_sent,  # target-sentence
+                        "date": row[6]                  # date
+                }
+
+        total_date_counter = dict()
+        # `unq_date_sets` keep track of the unique ids
+        unq_date_counter = {name: dict() for name in constraint_names}
+        # iterate through the datasets
+        for dataset_path in dataset_paths:
+            dataset = read_data_json(dataset_path)
+            print(f"dataset {path_to_id(dataset_path)} size is: {len(dataset)}")
+
+            # iterate through the exmaples in the dataset
+            for xmpl in dataset:
+                rec_id = path_to_id(xmpl['audio'])
+                date =  rec_ids_map[rec_id]['date']
+                # date has format 2020-09-10T04:24:03.073Z, so splitting
+                # and joining by '-' using the first two element will be `2020-09`
+                yyyy_mm_date = '-'.join(date.split('-')[:2])
+                _increment_key(total_date_counter, yyyy_mm_date)
+
+                # iterate through the constraints and update the id counters
+                for name in constraint_names:
+                    constraint_id = rec_ids_map[rec_id][name]
+                    _increment_key(counter[name], constraint_id)
+                    update_unq_date_counter(
+                        unq_date_counter, 
+                        name, 
+                        constraint_id,
+                        yyyy_mm_date
+                    )
+
+                
+    
     # create the plots
-    fig, axs = plt.subplots(1,3)
-    fig.suptitle('Count')
-    
-    # put the labels and count_dicts in list of the for-loop
-    count_dicts = [lesson_dict, line_dict, user_dict]
-    labels = ["lessons", "lines", "speakers"]   
+    fig, axs = plt.subplots(1,len(constraint_names))
+    fig.set_size_inches(8, 6)
 
     # plot and calculate stats of the count_dicts
-    for ax, c_dict, label in zip(axs, count_dicts, labels):
-        _plot_count(ax, c_dict, label)
-        print(f"{label} stats")
-        _stats(c_dict)
+    for ax, name in zip(axs, constraint_names):
+        _plot_count(ax, counter[name], name)
+        print(f"{name} stats")
+        _print_stats(counter[name])
         print()
-    plt.show()
+    
+    # ensures the directory of `out_path` exists
+    os.makedirs(out_path, exist_ok=True)
+    out_path = os.path.join(out_path, os.path.basename(out_path))
+    print("out_path: ", out_path)
+    plt.savefig(out_path + "_count_plot.png")
+    plt.close()
 
-    print("unique lessons")
-    print(sorted(list(lesson_dict.keys()))[:200])
-    print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+    # plot the total_date histogram
+    fig, ax = plt.subplots(1,1)
+    dates = sorted(total_date_counter.keys())
+    date_counts = [total_date_counter[date] for date in dates]
+    ax.plot(range(len(date_counts)), date_counts)
+    plt.xticks(range(len(date_counts)), dates, rotation=60)
+    #ax.set_title(label)
+    #ax.set_xlabel(f"unique {label}")
+    #ax.set_ylabel(f"utterance per {label}")
+    #ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+    ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+    plt.tight_layout()
 
+    plt.savefig(out_path + "_date_count.png")
+    plt.close()
+
+    # plot the unique ids
+    for name in constraint_names:
+        fig, ax = plt.subplots(1,1)
+        date_counts = []
+        dates = sorted(unq_date_counter[name].keys())
+        total_count = sum([unq_date_counter[name][date]['count'] for date in dates])
+        cumulative_count = 0
+        for date in dates:
+            cumulative_count += unq_date_counter[name][date]['count'] 
+            date_counts.append(round(cumulative_count/total_count, 2))
+        
+        ax.plot(range(len(date_counts)), date_counts)
+        plt.xticks(range(len(date_counts)), dates, rotation=60)
+        ax.set_title(name)
+        ax.set_xlabel(f"Date")
+        ax.set_ylabel(f"% of total unique ID's")
+        #ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+        #ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+        plt.tight_layout()
+
+        plt.savefig(out_path + f"_unq_cum_date_{name}.png")
+        plt.close()
+
+
+    # sort the lesson_ids and line_ids and write to txt file
+    for name in counter:
+        sorted_ids = sorted(list(counter[name].keys()))
+
+        with open(f"{out_path}_{name}.txt", 'w') as fid:
+            for ids in sorted_ids:
+                fid.write(ids+"\n")
+
+
+    #print("unique lessons")
+    #print(sorted(list(lesson_dict.keys()))[:200])
+    #print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+
+
+def update_unq_date_counter(counter:dict, name:str, constraint_id:str, date:str)->dict:
+    """This function updates the unq_date_counter by incrementing the count for the constraint 
+    in `name` for `date` if the constraint_id is not already in the `date` set.
+
+    Args:
+        counter (Dict[
+                    name: Dict[
+                        date: Dict[
+                            "count": int, 
+                            "set": Set[constraint_id]
+                        ]
+                    ]
+                ]): 
+            dictionary with structure above. For each constraint_name and for each date-bucket (year-month), 
+                it has a count of the unique occurances of the `constraint_id` as regulated by the Set of `ids`
+        name (str): name of the constraint e.g. "lesson", "line", or "speaker"
+        constraint_id (str): id for constraint specified by `name`
+        date (str): date string of the year and month in the YYYY-MM format e.g. "2019-08"
+    
+    Returns:
+        (dict): updated counter dict
+    """
+    # create a date entry if one doesn't exist
+    if date not in counter[name]:
+        counter[name][date] = dict()
+    # create the id-set for the given `date` if it doesn't exist
+    if "set" not in counter[name][date]:
+        counter[name][date]["set"] = set()
+    # if the `constraint_id` is not in the set, increment the date count and add the id to the set
+    if constraint_id not in counter[name][date]["set"]:
+        counter[name][date]["count"] = counter[name][date].get("count", 0) + 1
+        counter[name][date]["set"].add(constraint_id)
+
+    return counter
 
 
 class DurationAssessor():
@@ -370,18 +533,26 @@ if __name__ == "__main__":
         "--dataset-name", type=str, help="name of dataset to asses"
     )
     parser.add_argument(
-        "--dataset-path", type=str, help="path to data.tsv file to parse."
+        "--dataset-path", type=str, nargs='*', help="path to json file(s) to parse"
     )
     parser.add_argument(
         "--max-occurance", type=int, default=20, 
         help="max number of times a sentence can occur in output"
+    )
+    parser.add_argument(
+        "--tsv-path", type=str, 
+        help="path to tsv file that contains speaker, line, and lesson ids for speaktrain"
+    )
+    parser.add_argument(
+        "--out-path", type=str, 
+        help="base path name where plots and txt files will be saved"
     )
     args = parser.parse_args()
 
     if args.dataset_name.lower() == "commonvoice":
         assess_commonvoice(args.dataset_path, args.max_occurance)
     elif args.dataset_name.lower() == "speaktrain":
-        assess_speak_train(args.dataset_path)
+        assess_speak_train(args.dataset_path, args.tsv_path, args.out_path)
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     else:

@@ -1,0 +1,3 @@
+nohup: ignoring input
+TensorBoard 1.15.0 at http://phoneme-3:6006/ (Press CTRL+C to quit)
+TensorBoard caught SIGTERM; exiting...

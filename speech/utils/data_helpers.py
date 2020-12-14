@@ -5,13 +5,14 @@ import json
 import os
 import re
 import string
-import tqdm
+from typing import Set
 # third-party libraries
+import tqdm
 # project libraries
 from speech.utils import convert
+from speech.utils.io import read_data_json
 
 UNK_WORD_TOKEN = list()
-
 
 def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
@@ -235,20 +236,20 @@ def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
         phonemes.extend(lexicon.get(word, unk_token))
     
     return phonemes
-    
 
-def clean_text(transcript:str)->str:
-    """
-    This function removes anything that is not alphanumeric, a space, or apostrophe from
-    the input `transcript`.
+
+def process_text(transcript:str)->str:
+    """This function removes punctuation (except apostrophe's) and extra space
+    from the input `transcript` string and lowers the case. 
+
     Args:
-        transcript (str): input transcript to be clean
+        transcript (str): input string to be processed
     Returns:
-        (str): cleaned transcript
+        (str): processed string
     """
     # allows for alphanumeric characters, space, and apostrophe
     accepted_char = '[^A-Za-z0-9 \']+'
-    # replacing weird encodings with apostrophe
+    # replacing apostrophe's with weird encodings
     transcript = transcript.replace(chr(8217), "'")
     # filters out unaccepted characters, lowers the case
     try:
@@ -261,5 +262,98 @@ def clean_text(transcript:str)->str:
     for punc in punct_noapost:
         if punc in transcript:
             raise ValueError(f"unwanted punctuation {punc} in transcript")
+  
+    return transcript
+
+
+def check_update_contraints(record_id:int, 
+                            record_ids_map:dict,
+                            id_counter:dict, 
+                            constraints:dict)->bool:
+    """This function is used by downloading and filtering code primarily on speak data
+    to constrain the number of recordings per speaker, line, and/or lesson.
+    It checks if the counts for the `record_id` is less than the constraints in `constraints. 
+    If the count is less, the constraint passes and the `id_counter` is incremented.
+  
+    Args:
+        record_id (int): id of the record
+        record_id_map (dict): dict that maps record_ids to speaker, lesson, and line ids
+        id_counter (dict): dict of counts of speaker, lesson, and line ids
+        constraints (dict): dict of 3 ints specifying the max number of utterances
+            per speaker, line, and lesson
+    Returns:
+        bool: true if the count of utterances per speaker, lesson, and line are all
+            below the max value in `constraints`
+    """
+    pass_constraint = True
+    # constraint_names = ['lesson', 'line', 'speaker']
+    constraint_names = list(constraints.keys())
+
+    for name in constraint_names:
+        constraint_id = record_ids_map[record_id][name]
+        count = id_counter[name].get(constraint_id, 0)
+        if count > constraints[name]:
+            pass_constraint = False
+            break
     
-    return transcript 
+    # if `record_id` passes the constraint, update the `id_counter`
+    if pass_constraint:
+        for name in constraint_names:
+            constraint_id = record_ids_map[record_id][name]
+            id_counter[name][constraint_id] = id_counter[name].get(constraint_id, 0) + 1
+
+    return pass_constraint
+
+
+def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:dict)->bool:
+    """This function checks if the record_id contains any common ids with the disjoint datasets.
+    If a common ids is found, the check fails.
+
+    This function is used in filter.py.
+
+    Args:
+        record_ids (str): record id for a recording.
+        disjoint_id_sets (Dict[str, Set[str]]): dictionary that maps the ids along which the output dataset
+            will be disjoint to the set of ids included in the `disjoint_datasets`. 
+        record_ids_map (Dict[str, Dict[str, str]]): dictionary to maps record_id to other ids like
+            speaker, lesson, line (or target-sentence).
+        
+    Returns:
+        (bool): True if the ids associated with the record_id are not contained in any of 
+            the `disjoint_ids_sets`. Otherwise, False.
+    """
+    # assumes the check passes (not the safest initial assumption but it makes the logic cleaner)
+    pass_check = True
+    # names of the ids along which the output dataset will be disjoint
+    for id_name, dj_id_set in disjoint_id_sets.items():
+        disjoint_id = record_ids_map[record_id][id_name]
+        # if the id is contained in the id_set of the disjoint_datasets, the check fails
+        if disjoint_id in dj_id_set:
+            pass_check = False
+            break
+    
+    return pass_check
+
+
+def get_dataset_ids(dataset_path:str)->Set[str]:
+    """This function reads a dataset path and returns a set of the record ID's
+    in that dataset. The record ID's mainly correspond to recordings from the speak dataset. 
+    For other datsets, this function will return the filename without the extension.
+
+    Args:
+        dataset_path (str): path to the dataset
+    
+    Returns:
+        Set[str]: a set of the record ID's
+    """
+    # dataset is a list of dictionaries with the audio path as the value of the 'audio' key.
+    dataset = read_data_json(dataset_path)
+
+    return set([path_to_id(xmpl['audio']) for xmpl in dataset])
+
+
+def path_to_id(record_path:str)->str:
+        #returns the basename of the path without the extension
+        return os.path.basename(
+            os.path.splitext(record_path)[0]
+        )
