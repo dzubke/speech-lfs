@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201124/ph4/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201130/ph4
 data:
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_train/train-data_25K-examples_2020-11-24_dd.json
     dev_sets:
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-11-24_large-model-mid-aug-no-feat-norm-naren-loss_speak-25K-2020-11-24.log
+    log_file: logs/2020-11-30_large-model-mid-aug-no-feat-norm-naren-loss_spk-25hr.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -42,9 +42,9 @@ preproc:
 optimizer:
     batch_size: 9
     run_state: [0, 0]
-    best_so_far: 0.25
+    best_so_far: 0.40
     start_epoch: 0
-    epochs: 100
+    epochs: 6
     learning_rate: 0.0003
     momentum: 0.9
     dampening: 0.0
@@ -54,7 +54,7 @@ model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     dropout: 0.4
     load_trained: True 
-    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
+    trained_path: examples/librispeech/models/ctc_models/20201125/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
@@ -71,5 +71,5 @@ training:
     loss_name: naren
     apex: False
     opt_level: 'O0'
-    checkpoints_per_epoch: 6
+    checkpoints_per_epoch: 1
     OMP_NUM_THREADS: 7
