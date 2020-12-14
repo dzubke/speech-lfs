@@ -105,7 +105,7 @@ logger = logging.getLogger("train_log")
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
 # 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201012/ph2/  --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200806/ph4/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -113,7 +113,7 @@ gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev 
 # can kill the tunnel on local by look for process here:
 ps aux | grep tensorboard
 
-gsutil -m cp -r gs://phoneme-vm-backup/models/ctc_models/20201029/ph7/  examples/librispeech/models/ctc_models/20201029/
+gsutil -m cp -r gs://phoneme-vm-backup/models/ctc_models/20201130/ph4/  examples/librispeech/models/ctc_models/20201029/
 # will cache password in memory for 10 days
 git config credential.helper 'cache --timeout 864000'
 
@@ -152,10 +152,3 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
 # problems using python 3.7 in environment
   - numpy==1.13.3 -> python[version='>=2.7,<2.8.0a0|>=3.5,<3.6.0a0|>=3.6,<3.7.0a0|>=3.8,<3.9.0a0']
   librosa==0.7.2
-
-
-
-
-{'start_epoch': 12, 'run_state': (4309248, 15.318887852869732), 'best_so_far': 0.16217908578584847, 'learning_rate': 0.00023}
-
-2020-11-19_mid-model-mid-aug-no-feat-norm_naren-loss_lib-ted-cv-speak-3M-2020-09-25_2020-10-05-06.
