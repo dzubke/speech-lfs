@@ -122,3 +122,6 @@ examples/librispeech/models/ctc_models/20201211/ph6/model_state_dict.pth filter=
 examples/librispeech/models/ctc_models/20201211/ph7/best_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20201211/ph7/ckpt_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
 examples/librispeech/models/ctc_models/20201211/ph7/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201029/ph7-copy/best_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201029/ph7-copy/ckpt_model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
+examples/librispeech/models/ctc_models/20201029/ph7-copy/model_state_dict.pth filter=lfs diff=lfs merge=lfs -text
