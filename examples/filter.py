@@ -101,6 +101,9 @@ def filter_speak_train(
     # id_counter keeps track of the counts for each speaker, lesson, and line ids
     id_counter = {name: dict() for name in constraint_names}
 
+
+
+
     examples_written = 0
     # loop until the number of examples in dataset_size has been written
     with open(filter_json_path, 'w') as fid:
@@ -125,10 +128,53 @@ def filter_speak_train(
                     constraints
                 )
                 if pass_constraint:
-                    json.dump(example, fid)
-                    fid.write("\n")
-                    # increment counters
-                    examples_written += 1
+                    # creates a filter based on the params in `dist_filter`
+                    pass_distribution_filter = check_distribution_filter(example, config['dist_filter'])
+                    if pass_distribution_filter:
+                        json.dump(example, fid)
+                        fid.write("\n")
+                        # increment counters
+                        examples_written += 1
+
+def check_distribution_filter(example: dict, filter_params:dict)->bool:
+    """This function filters the number of examples in the output dataset based on
+    the values in the `dist_filter_params` dict. 
+
+    Args:
+        example (dict): dictionary of a single training example
+        dist_filter_params (dict): a dictionary with the keys and values below
+            key (str): key of the value filtered on the input `example`
+            function (str): name of the function to apply to the values in `example[key]`
+            threshhod (float): threshhold to filter upon
+            above-threshold-percent (float): percent of examples to pass through with values above
+                the threshhold
+            below-threshold-percent (float): percent of examples to pass through with values below
+                the threshold
+    Returns:
+        (boo): whether the input example should pass through the filter
+    """
+    assert 0 <= filter_params['percent-above-threshold'] <= 1.0, "probs not between 0 and 1"
+    assert 0 <= filter_params['percent-below-threshold'] <= 1.0, "probs not between 0 and 1"
+
+    # fitler fails unless set to true
+    pass_filter = False
+    # value to pass into the `filter_fn`
+    filter_input = example[filter_params['key']]
+    # function to evaluate on the `filter_input`
+    filter_fn = filter_params['function']
+    filter_value = eval(f"{value_fn}({value_input})")
+
+    if filter_value >= filter_params['threshold']:
+        # make random trial using the `percent-above-threshhold`
+        if np.random.binomial(1, filter_params['percent-above-threshold']):
+            pass_filter = True
+    else:
+        # make random trial using the `percent-above-threshhold`
+        elif np.random.binomial(1, filter_params['percent-below-threshold']):
+            pass_filter = True
+    
+    return pass_filter
+
 
 
 
