@@ -873,6 +873,45 @@ class DemandDownloader(Downloader):
                     copyfile(wav_path, dst_wav_path)
 
 
+def download_sample_from_GCP():
+    """This function downloads a random sample of audio from processed data in Google Cloud.
+    """
+    import subprocess
+
+    sample_size = 100
+    src_dataset_path = "/home/dzubke/awni_speech/data/speak_test_data/eval/eval2/eval2_data_2020-12-05.json"
+    vm_string = "dzubke@phoneme-3:"
+    full_dataset_string = vm_string + src_dataset_path
+    dst_dir = "/Users/dustin/CS/work/speak/src/data/speak_eval/eval2/v1/"
+
+    cmd_base = ["gcloud", "compute", "scp"]
+    
+    # ensure the dst directory exists
+    os.makedirs(dst_dir, exist_ok=True)
+
+    # copy the datatset from the VM
+    subprocess.run(cmd_base + [full_dataset_string, dst_dir])
+    print(f"copied dataset {full_dataset_string} to {dst_dir}")
+
+    dataset = read_data_json(os.path.join(dst_dir, os.path.basename(src_dataset_path)))
+
+    data_subset = random.sample(dataset, sample_size)
+
+    dst_audio_dir = os.path.join(dst_dir, "audio")
+    os.makedirs(dst_audio_dir, exist_ok=True)
+    print("destination audio dir: ", dst_audio_dir)
+    for xmpl in data_subset:
+        audio_path = xmpl['audio']
+        full_audio_string = vm_string + audio_path
+        dst_audio_path = os.path.join(dst_audio_dir, os.path.basename(audio_path))
+        subprocess.run(cmd_base + [full_audio_string, dst_audio_path])
+
+
+
+
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
             description="Download voxforge dataset.")
