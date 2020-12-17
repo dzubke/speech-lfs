@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import path_to_id, process_text
+from speech.utils.data_helpers import get_record_id_map, get_dataset_ids, path_to_id, process_text
 from speech.utils.io import read_data_json, write_pickle
 
 
@@ -396,6 +396,94 @@ def dataset_stats(dataset_path:str)->None:
         print()
 
 
+def dataset_overlap(datapath_1: str, 
+                    datapath_2: str, 
+                    metadata_path: str,
+                    overlap_key: str)->None:
+    """This function assess the overlap between two datasets by the `overlap_key`. 
+    Two metrics are calcualted: 
+        1) coutn of unique overlap_keys / total unique overlap_keys
+        2) count of total overlaping keys / total records
+
+    Args:
+        datapath_1 (str): path to first dataset
+        datapath_2 (str): path to second dataset
+        metadata_path (str): path to metadata tsv file
+        overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
+
+    Returns:
+        None
+    """
+
+    print(f"assessing overlap based on key: {overlap_key}")
+
+    record_id_map = get_record_id_map(metadata_path)
+
+    data_dict = {
+        os.path.basename(datapath_1): get_dataset_ids(datapath_1),
+        os.path.basename(datapath_2):  get_dataset_ids(datapath_2)
+    }
+
+    # check the record_id_map contains all of the records in data1 and data2
+    rec_map_set = set(record_id_map.keys())
+
+    for data_name, data_ids in data_dict.items():
+        assert data_ids <= rec_map_set, \
+            f"{data_name} ids not in record_id_map:\n {data_ids.difference(rec_map_set)}"
+
+    # delete to save memory
+    del rec_map_set
+
+    print("data_dict keys: ", data_dict.keys())
+    data_keyid_lists = dict()
+    for data_name, rec_ids in data_dict.items():
+        data_keyid_lists[data_name] = [
+            record_id_map[rec_id][overlap_key] for rec_id in rec_ids
+        ]
+
+    print("data_list keys: ", data_keyid_lists.keys())
+
+    data_keyid_sets = {
+        data_name: set(key_ids)
+        for data_name, key_ids in data_keyid_lists.items()
+    }
+    print("data_set keys: ", data_keyid_sets.keys())
+    data_keyid_counters ={
+        data_name: Counter(key_ids)
+        for data_name, key_ids in data_keyid_lists.items()
+    }
+    # reference dataset to be analyzed
+    for ref_name, ref_set in data_keyid_sets.items():
+        # overlap dataset is reference for overlap exists with base dataset
+        for overlap_name, overlap_set in data_keyid_sets.items():
+            if ref_name == overlap_name:
+                continue
+            print(f"Reference dataset: {ref_name}")
+            print(f"Overlap dataset: {overlap_name}")
+            count_unq_intersect = len(ref_set.intersection(overlap_set))
+            print(f"% of Reference intersecting Overlap:\n \
+                {round(count_unq_intersect/len(ref_set), 3)}\n")
+            
+
+    # reference dataset to be analyzed
+    for ref_name, ref_counter in data_keyid_counters.items():
+        # overlap dataset is reference for overlap exists with base dataset
+        for overlap_name, _ in data_keyid_counters.items():
+            if ref_name == overlap_name:
+                continue
+            print(f"Reference dataset: {ref_name}")
+            print(f"Overlap dataset: {overlap_name}")
+            ref_set, overlap_set = data_keyid_sets[ref_name], data_keyid_sets[overlap_name]
+            intersect_ids = ref_set.intersection(overlap_set)
+            total_ref_records = len(data_dict[ref_name])
+            # count of intersecting records
+            count_tot_intersect = sum([
+                ref_counter[int_id] for int_id in intersect_ids
+            ])
+            print(f"Ratio of total intersecting over total records:\n \
+                {round(count_tot_intersect/total_ref_records, 3)}\n")
+
+
 
 
 
@@ -493,66 +581,6 @@ class TatoebaAssessor():
         # audio_eng_skill_df.drop_duplicates(subset='id').shape = (498959, 9)
         # audio_eng_sent_df.drop_duplicates(subset='id').shape = (498959, 6)
         # after drop_duplicates, audio_eng_skill_df[audio_eng_skill_df['user']=='\\N'].shape = (2, 9)
-        r'''
-        # skill may not be super helpful in filtering out sentences as nearly all sentences are by skill=5 users
-        In [89]: audio_eng_skill_df['skill'].value_counts(sort=True, ascending=False) 
-        Out[89]: 
-        5     497693
-        3         12
-        4          7
-        \N         4
-        Name: skill, dtype: int64
-
-        # not all users are skill 5 in English. It may just be that skill=5 users are the ones recording Eng sentences
-        In [90]: eng_skill_df['skill'].value_counts(sort=True, ascending=False) 
-        Out[90]: 
-        5     4568
-        4     2057
-        3     1479
-        2     1227
-        1      430
-        \N     195
-        0       43
-
-        # like with the Tatoeba subset, CK is 99% of the sentences
-        In [91]: audio_eng_skill_df['user'].value_counts(sort=True, ascending=False)   
-        Out[91]: 
-        CK              494779
-        papabear           877
-        RB                 805
-        Sean_Benward       742
-        pencil             348
-        jendav             235
-        Nero               194
-        BE                 178
-        dcampbell          167
-        mhattick           153
-        rhys_mcg           104
-        jaxhere             75
-        Susan1430           68
-        Kritter             58
-        Cainntear           38
-        MT                  33
-        CO                  26
-        patgfisher          19
-        Source_VOA          18
-        samir_t             12
-        arh                  7
-        Delian               6
-        RM                   4
-        bretsky              4
-        DJT                  4
-        LouiseRatty          3
-        \N                   2
-
-
-        # review is not going to helpful because of the total reviews, 99% of them as positive
-        In [97]: sent_review_df['review'].value_counts(sort=True, ascending=False) 
-        Out[97]: 
-        1    1067165
-        0       7180
-        -1       2949
-        '''
 
     
 
