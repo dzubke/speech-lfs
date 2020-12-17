@@ -15,10 +15,10 @@ from typing import List, Set
 import urllib
 from zipfile import ZipFile
 # third party libraries
-import tqdm
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import tqdm
 # project libraries
 from speech.utils.convert import to_wave
 from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, path_to_id, process_text
