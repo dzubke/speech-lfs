@@ -396,8 +396,7 @@ def dataset_stats(dataset_path:str)->None:
         print()
 
 
-def dataset_overlap(datapath_1: str, 
-                    datapath_2: str, 
+def dataset_overlap(dataset_list: str, 
                     metadata_path: str,
                     overlap_key: str)->None:
     """This function assess the overlap between two datasets by the `overlap_key`. 
@@ -406,8 +405,7 @@ def dataset_overlap(datapath_1: str,
         2) count of total overlaping keys / total records
 
     Args:
-        datapath_1 (str): path to first dataset
-        datapath_2 (str): path to second dataset
+        dataset_list (List[str]): list of dataset paths to compare
         metadata_path (str): path to metadata tsv file
         overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
 
@@ -420,8 +418,8 @@ def dataset_overlap(datapath_1: str,
     record_id_map = get_record_id_map(metadata_path)
 
     data_dict = {
-        os.path.basename(datapath_1): get_dataset_ids(datapath_1),
-        os.path.basename(datapath_2):  get_dataset_ids(datapath_2)
+        os.path.basename(datapath): get_dataset_ids(datapath)
+        for datapath in dataset_list
     }
 
     # check the record_id_map contains all of the records in data1 and data2
@@ -453,26 +451,34 @@ def dataset_overlap(datapath_1: str,
         for data_name, key_ids in data_keyid_lists.items()
     }
     # reference dataset to be analyzed
+    unq_output = dict()
     for ref_name, ref_set in data_keyid_sets.items():
         # overlap dataset is reference for overlap exists with base dataset
+        print(f"Reference dataset: {ref_name}")
+        unq_output[ref_name] = dict()
         for overlap_name, overlap_set in data_keyid_sets.items():
             if ref_name == overlap_name:
                 continue
-            print(f"Reference dataset: {ref_name}")
-            print(f"Overlap dataset: {overlap_name}")
+            print(f"\tOverlap dataset: {overlap_name}")
             count_unq_intersect = len(ref_set.intersection(overlap_set))
-            print(f"% of Reference intersecting Overlap:\n \
-                {round(count_unq_intersect/len(ref_set), 3)}\n")
+            perc_unq_interesct = round(count_unq_intersect/len(ref_set), 3)
+            print(f"\t% of Reference intersecting Overlap:{perc_unq_interesct}\n")
+            unq_output[ref_name][overlap_name] = perc_unq_interesct 
+
+    print("Fully unique ouputs: ")
+    print(unq_output)
             
 
     # reference dataset to be analyzed
+    total_output = dict()
     for ref_name, ref_counter in data_keyid_counters.items():
         # overlap dataset is reference for overlap exists with base dataset
+        print(f"Reference dataset: {ref_name}")
+        total_output[ref_name] = dict()
         for overlap_name, _ in data_keyid_counters.items():
             if ref_name == overlap_name:
                 continue
-            print(f"Reference dataset: {ref_name}")
-            print(f"Overlap dataset: {overlap_name}")
+            print(f"\tOverlap dataset: {overlap_name}")
             ref_set, overlap_set = data_keyid_sets[ref_name], data_keyid_sets[overlap_name]
             intersect_ids = ref_set.intersection(overlap_set)
             total_ref_records = len(data_dict[ref_name])
@@ -480,12 +486,12 @@ def dataset_overlap(datapath_1: str,
             count_tot_intersect = sum([
                 ref_counter[int_id] for int_id in intersect_ids
             ])
-            print(f"Ratio of total intersecting over total records:\n \
-                {round(count_tot_intersect/total_ref_records, 3)}\n")
+            perc_total_interesct = round(count_tot_intersect/total_ref_records, 3)
+            print(f"\tRatio of total intersect to total records: {perc_total_interesct}\n")
+            total_output[ref_name][overlap_name] = perc_total_interesct
 
-
-
-
+    print("Total output is: ")
+    print(total_output)
 
 
 
@@ -614,5 +620,7 @@ if __name__ == "__main__":
         assess_speak_train(args.dataset_path, args.tsv_path, args.out_path)
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
+    elif args.dataset_name.lower() == "speak_overlap":
+        dataset_overlap(args.dataset_path)
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")
