@@ -19,7 +19,7 @@ import yaml
 # project libs
 from speech.utils.io import read_data_json
 from speech.utils.data_helpers import check_disjoint_filter, check_update_contraints, get_dataset_ids 
-from speech.utils.data_helpers import path_to_id, process_text
+from speech.utils.data_helpers import get_record_id_map, path_to_id, process_text
 
 def filter_speak_train(
     full_json_path:str, 
@@ -62,26 +62,8 @@ def filter_speak_train(
     random.shuffle(full_dataset)
     full_dataset = iter(full_dataset)
 
-    # create a mapping from record_id to lesson, line, and speaker ids
-    with open(metadata_path, 'r') as tsv_file:
-        tsv_reader = csv.reader(tsv_file, delimiter='\t')
-        header = next(tsv_reader)
-        # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
-        print("header: ", header)
-        # this assert helps to ensure the row indexing below is correct
-        assert len(header) == 7, \
-            f"metadata header is not expected length. Expected 7, got {len(header)}."
-        # mapping from record_id to other ids like lesson, speaker, and line
-        record_ids_map = dict()
-        for row in tsv_reader:
-            tar_sentence = process_text(row[1])
-            record_ids_map[row[0]] = {
-                    "record": row[0],                    # adding record for disjoint_check
-                    constraint_names[0]: row[2],        # lesson
-                    constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
-                    constraint_names[2]: row[4]         # speaker
-            }
-
+    # get the mapping from record_id to other ids (like speaker, lesson, line) for each example
+    record_id_map = get_record_id_map(metadata_path, constraint_names)
 
     # create a defaultdict with set values for each disjoint-id name
     disjoint_id_sets = defaultdict(set)

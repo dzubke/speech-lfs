@@ -370,6 +370,37 @@ def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->No
     #print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
 
 
+def dataset_stats(dataset_path:str)->None:
+    """This function prints a variety of stats (like mean and std-dev) for the input dataset
+
+    Args:
+        dataset_path (str): path to the dataset
+    """
+
+    dataset = read_data_json(dataset_path)
+
+    data_features = {
+        "target_len": [len(xmpl['text']) for xmpl in dataset],
+        "audio_dur": [xmpl['duration'] for xmpl in dataset]
+    }
+
+    stat_functions = {
+        "mean": np.mean,
+        "stddev": np.std,
+    }
+
+    print(f"stats for dataset: {os.path.basename(dataset_path)}")
+    for data_name, data in data_features.items():
+        for stat_name, stat_fn in stat_functions.items():
+            print(f"\t{stat_name} of {data_name} is: {round(stat_fn(data), 3)}")
+        print()
+
+
+
+
+
+
+
 def update_unq_date_counter(counter:dict, name:str, constraint_id:str, date:str)->dict:
     """This function updates the unq_date_counter by incrementing the count for the constraint 
     in `name` for `date` if the constraint_id is not already in the `date` set.

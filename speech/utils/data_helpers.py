@@ -357,3 +357,47 @@ def path_to_id(record_path:str)->str:
         return os.path.basename(
             os.path.splitext(record_path)[0]
         )
+
+
+def get_record_id_map(metadata_path:str, id_names:list)->dict:
+    """This function returns a mapping from record_id to other ids like speaker, lesson,
+    line, and target sentence. This function runs on recordings from the speak firestore database.
+
+    Args:
+        metadata_path (str): path to the tsv file that contains the various ids
+        id_names (List[str]): names of the ids in the output dict. 
+            This is currented hard-coded to the list: ['lesson', 'target-sentence', 'speaker']
+    
+    Returns:
+        Dict[str, Dict[str, str]]: a mapping from record_id to a dict
+            where the value-dict's keys are the id_name and the values are the ids
+    """
+    assert os.path.splitext(metadata_path)[1] == '.tsv', \
+        f"metadata file: {metadata_path} is not a tsv file"
+
+    # check that input matches the expected values
+    # TODO: hard-coding the id-names isn't flexible but is the best option for now
+    expected_id_names = ['lesson', 'target-sentence', 'speaker']
+    assert id_names == expected_id_names, \
+        f"input id_names: {id_names} do not match expected values: {expected_id_names}"
+
+    # create a mapping from record_id to lesson, line, and speaker ids
+    with open(metadata_path, 'r') as tsv_file:
+        tsv_reader = csv.reader(tsv_file, delimiter='\t')
+        header = next(tsv_reader)
+        # this assert helps to ensure the row indexing below is correct
+        assert len(header) == 7, \
+            f"metadata header is not expected length. Expected 7, got {len(header)}."'
+        # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
+        print("header: ", header)
+
+        # mapping from record_id to other ids like lesson, speaker, and line
+        record_ids_map = dict()
+        for row in tsv_reader:
+            tar_sentence = process_text(row[1])
+            record_ids_map[row[0]] = {
+                    "record": row[0],           # adding record for disjoint_check
+                    id_names[0]: row[2],        # lesson
+                    id_names[1]: tar_sentence,  # using target_sentence instead of lineId
+                    id_names[2]: row[4]         # speaker
+            }
