@@ -11,7 +11,7 @@ print_modulus: 100
 # distribution-fitler sets the `key` in the example-dict and the `function` to apply to the key's value
 # as well as the percentages of examples to keep below and above the certain threshold
 dist_filter:
-  use: True
+  use: False
   key: text
   function: len
   threshold: 22.5
@@ -31,12 +31,12 @@ disjoint_datasets:
     /home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json:
         !!python/tuple ['record']
     /home/dzubke/awni_speech/data/speak_train/speak-train_3M_2020-12-10.json:
-        !!python/tuple ['record']
+        !!python/tuple ['record', 'target_sentence']
     /home/dzubke/awni_speech/data/speak_train/speak-train_1M_2020-12-10.json:
-        !!python/tuple ['record']
+        !!python/tuple ['record', 'target_sentence']
     /home/dzubke/awni_speech/data/speak_train/speak-train_500K_2020-12-10.json:
-        !!python/tuple ['record']
+        !!python/tuple ['record', 'target_sentence']
     /home/dzubke/awni_speech/data/speak_train/speak-train_250K_2020-12-10.json:
-        !!python/tuple ['record']
+        !!python/tuple ['record', 'target_sentence']
     /home/dzubke/awni_speech/data/speak_train/speak-train_100K_2020-12-10.json:
-        !!python/tuple ['record']
+        !!python/tuple ['record', 'target_sentence']
