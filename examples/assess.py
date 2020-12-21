@@ -471,7 +471,7 @@ def dataset_overlap(dataset_list: str,
             unq_output[ref_name][overlap_name] = perc_unq_interesct 
 
     print(f"Fully unique ouputs: \n{unq_output}\n")
-    print_prettytable(unq_output, "Intersect\\Reference", "Unique intersection") 
+    print_symmetric_table(unq_output, "Intersect\\Reference", "Unique intersection") 
 
     # reference dataset to be analyzed
     total_output = dict()
