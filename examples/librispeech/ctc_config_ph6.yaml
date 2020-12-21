@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201216/ph6/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201217/ph6/
 data:
     train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-100K-2020-12-10_dd.json
     dev_sets:
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-12-16_large-mid-aug-no-fn-naren_lib-ted-cv-speak-100K-2020-12-10.log
+    log_file: logs/2020-12-17_large-mid-aug-no-fn-naren_lib-ted-cv-speak-100K-2020-12-10.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -53,7 +53,7 @@ optimizer:
 model:
     dropout: 0.4
     load_trained: True 
-    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
+    trained_path: examples/librispeech/models/ctc_models/20201217/ph6/best_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
@@ -70,5 +70,5 @@ training:
     loss_name: naren
     apex: False
     opt_level: 'O0'
-    checkpoints_per_epoch: 4
+    checkpoints_per_epoch: 5
     OMP_NUM_THREADS: 7

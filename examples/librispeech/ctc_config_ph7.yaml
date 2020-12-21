@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph7/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201218/ph7/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-3M-2020-12-10_dd.json
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-1M-2020-12-18_dd.json
     dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
@@ -12,7 +12,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-12-11_large-mid-aug-no-fn-naren_lib-ted-cv-speak-3M-2020-12-10.log
+    log_file: logs/2020-12-18_large-mid-aug-no-fn-naren_lib-ted-cv-speak-1M-2020-12-18.log
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -70,5 +70,5 @@ training:
     loss_name: naren
     apex: False
     opt_level: 'O0'
-    checkpoints_per_epoch: 6
+    checkpoints_per_epoch: 5
     OMP_NUM_THREADS: 7
