@@ -21,7 +21,8 @@ from firebase_admin import firestore
 import tqdm
 # project libraries
 from speech.utils.convert import to_wave
-from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, path_to_id, process_text
+from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, get_record_id_map
+from speech.utils.data_helpers import path_to_id, process_text
 from speech.utils.io import load_config, read_data_json
 
 
@@ -477,25 +478,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         id_counter = {name: dict() for name in constraint_names}
 
         # create a mapping from record_id to lesson, line, and speaker ids
-        disjoint_ids_map = dict()
-        with open(self.disjoint_metadata_tsv, 'r') as tsv_file:
-            tsv_reader = csv.reader(tsv_file, delimiter='\t')
-            header = next(tsv_reader)
-            print("header: ", header)
-            # this assert helps to ensure the row indexing below is correct
-            assert len(header) == 7, \
-                f"metadata header is not expected length. Expected 7, got {len(header)}."
-            # header: id, text, lessonId, lineId, uid(speaker_id), redWords score, date
-            for row in tsv_reader:
-                tar_sentence = process_text(row[1])
-                disjoint_ids_map.update({
-                    row[0]: {
-                        "record": row[0],                    # adding record for disjoint_check
-                        constraint_names[0]: row[2],        # lesson
-                        constraint_names[1]: tar_sentence,  # using target_sentence instead of lineId
-                        constraint_names[2]: row[4]         # speaker
-                    }
-                })
+        disjoint_ids_map = get_record_id_map(metadata_path, constraint_names)
 
         # create a dict of sets of all the ids in the disjoint datasets that will not
         # be included in the filtered dataset
@@ -700,6 +683,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             del doc['result']['asrResultData']
 
         return doc
+
 
 class SpeakTestDownloader(SpeakTrainDownloader):
     """

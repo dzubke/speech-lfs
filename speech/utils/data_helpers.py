@@ -1,5 +1,6 @@
 # standard libraries
 from collections import defaultdict
+import csv
 import glob
 import json
 import os
@@ -359,7 +360,7 @@ def path_to_id(record_path:str)->str:
         )
 
 
-def get_record_id_map(metadata_path:str, id_names:list)->dict:
+def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
     """This function returns a mapping from record_id to other ids like speaker, lesson,
     line, and target sentence. This function runs on recordings from the speak firestore database.
 
@@ -377,23 +378,28 @@ def get_record_id_map(metadata_path:str, id_names:list)->dict:
 
     # check that input matches the expected values
     # TODO: hard-coding the id-names isn't flexible but is the best option for now
-    expected_id_names = ['lesson', 'target-sentence', 'speaker']
+    expected_id_names = ['lesson', 'target_sentence', 'speaker']
+    if id_names is None:
+        id_names = expected_id_names
     assert id_names == expected_id_names, \
         f"input id_names: {id_names} do not match expected values: {expected_id_names}"
 
     # create a mapping from record_id to lesson, line, and speaker ids
+    expected_row_len = 7
     with open(metadata_path, 'r') as tsv_file:
         tsv_reader = csv.reader(tsv_file, delimiter='\t')
         header = next(tsv_reader)
         # this assert helps to ensure the row indexing below is correct
-        assert len(header) == 7, \
-            f"metadata header is not expected length. Expected 7, got {len(header)}."'
+        assert len(header) == expected_row_len, \
+            f"Expected metadata header length: {expected_row_len}, got: {len(header)}."
         # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
         print("header: ", header)
 
         # mapping from record_id to other ids like lesson, speaker, and line
         record_ids_map = dict()
         for row in tsv_reader:
+            assert len(row) == expected_row_len, \
+                f"row: {row} is len: {len(row)}. Expected len: {expected_row_len}"
             tar_sentence = process_text(row[1])
             record_ids_map[row[0]] = {
                     "record": row[0],           # adding record for disjoint_check
@@ -401,3 +407,5 @@ def get_record_id_map(metadata_path:str, id_names:list)->dict:
                     id_names[1]: tar_sentence,  # using target_sentence instead of lineId
                     id_names[2]: row[4]         # speaker
             }
+
+    return record_ids_map

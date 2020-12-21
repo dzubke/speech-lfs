@@ -44,16 +44,17 @@ def filter_speak_train(config:dict)->None:
     Returns:
         None, only files written.
     """
+    # unpacking the config
+    # TODO, only unpack what is necessary
     full_json_path = config['full_json_path']
     metadata_path = config['metadata_tsv_path']
     filter_json_path = config['filter_json_path']
     dataset_size = config['dataset_size']
-    constraints = config['constraints']
     disjoint_datasets = config['disjoint_datasets']
 
 
     # re-calculate the constraints as integer counts based on the `dataset_size`
-    constraints = {name: int(constraints[name] * dataset_size) for name in constraints.keys()}
+    constraints = {name: int(constraints[name] * dataset_size) for name in config['constraints'].keys()}
     print("constraints: ", constraints)
 
     # constraint_names will help to ensure the dict keys created later are consistent.
@@ -69,7 +70,6 @@ def filter_speak_train(config:dict)->None:
 
     # create a defaultdict with set values for each disjoint-id name
     disjoint_id_sets = defaultdict(set)
-
     for dj_data_path, dj_names in disjoint_datasets.items():
         # get all the record_ids in the dataset
         record_ids = get_dataset_ids(dj_data_path)
