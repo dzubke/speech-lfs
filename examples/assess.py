@@ -19,10 +19,10 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
 import numpy as np
 import pandas as pd
-from prettytable import PrettyTable
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import get_record_id_map, get_dataset_ids, path_to_id, process_text
+from speech.utils.data_helpers import get_record_id_map, get_dataset_ids, path_to_id
+from speech.utils.data_helpers import print_prettytable, process_text
 from speech.utils.io import read_data_json, write_pickle
 
 
@@ -496,19 +496,6 @@ def dataset_overlap(dataset_list: str,
     print_prettytable(total_output, "Intersect\\Reference", "Total intersection")
 
 
-def print_prettytable(values_dict:dict, row_name:str, title:str)->None:
-    """Prints a prety table output of a 2-d dictionary 
-    Args:
-        values_dict (Dict[str, Dict[str, float]]): 2-d dictionary with identical keys on the two levels
-        row_name (str): name of the rows
-        title (str): title of the table
-    """
-    table = PrettyTable(title=title)
-    sorted_keys = sorted(values_dict.keys())
-    table.add_column(row_name, sorted_keys)
-    for data_name in sorted_keys:
-        table.add_column(data_name, [values_dict[data_name][key] for key in sorted_keys])
-    print(table)
 
 
 def update_unq_date_counter(counter:dict, name:str, constraint_id:str, date:str)->dict:

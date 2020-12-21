@@ -8,6 +8,7 @@ import re
 import string
 from typing import Set
 # third-party libraries
+from prettytable import PrettyTable
 import tqdm
 # project libraries
 from speech.utils import convert
@@ -409,3 +410,37 @@ def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
             }
 
     return record_ids_map
+
+
+def print_symmetric_table(values_dict:dict, row_name:str, title:str)->None:                   
+    """Prints a symmetric table from an input 2-d dictionary where the rows and columns have identical names
+
+    Args:
+        values_dict (Dict[str, Dict[str, float]]): 2-d dictionary with identical keys on the two levels
+        row_name (str): name of the rows
+        title (str): title of the table
+    """
+    table = PrettyTable(title=title)
+    sorted_keys = sorted(values_dict.keys())
+    table.add_column(row_name, sorted_keys)
+    for data_name in sorted_keys:
+        table.add_column(data_name, [values_dict[data_name][key] for key in sorted_keys])
+    print(table)
+
+
+def print_nonsym_table(values_dict:dict, row_title:str, title:str)->None:                   
+    """Prints a prety table output of a 2-d dictionary that doesn't not have the same inner 
+        and outter keys (which I'm calling non-symmetric).
+    Args:
+        values_dict (Dict[str, Dict[str, float]]): 2-d dict with different keys on inner and outer levels
+        row_title (str): name of the rows
+        title (str): title of the table
+    """
+    single_row_name = list(values_dict.keys())[0]
+    sorted_inner_keys = sorted(values_dict[single_row_name].keys())
+    column_names = [row_title] + sorted_inner_keys
+    table = PrettyTable(title=title, field_names=column_names)
+
+    for row_name in values_dict:
+        table.add_row([row_title] + [values_dict[row_name][key] for key in sorted_inner_keys])
+    print(table)    
