@@ -54,7 +54,7 @@ def filter_speak_train(config:dict)->None:
 
 
     # re-calculate the constraints as integer counts based on the `dataset_size`
-    constraints = {name: int(constraints[name] * dataset_size) for name in config['constraints'].keys()}
+    constraints = {name: int(value * dataset_size) for name, value in config['constraints'].items()}
     print("constraints: ", constraints)
 
     # constraint_names will help to ensure the dict keys created later are consistent.
@@ -66,7 +66,7 @@ def filter_speak_train(config:dict)->None:
     full_dataset = iter(full_dataset)
 
     # get the mapping from record_id to other ids (like speaker, lesson, line) for each example
-    record_id_map = get_record_id_map(metadata_path, constraint_names)
+    record_ids_map = get_record_id_map(metadata_path, constraint_names)
 
     # create a defaultdict with set values for each disjoint-id name
     disjoint_id_sets = defaultdict(set)

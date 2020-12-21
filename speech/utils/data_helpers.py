@@ -415,6 +415,7 @@ def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
 
 def print_symmetric_table(values_dict:dict, row_name:str, title:str)->None:
     """Prints a table of values in  2-d dict with identical inner and outer keys
+
     Args:
         values_dict (Dict[str, Dict[str, float]]): 2-d dictionary with identical keys on the two levels
         row_name (str): name of the rows
@@ -444,3 +445,4 @@ def print_nonsym_table(values_dict:dict, row_name:str, title:str)->None:
     for row_name in values_dict: 
         table.add_row([row_name] + [values_dict[row_name][key] for key in sorted_inner_keys]) 
     print(table)
+

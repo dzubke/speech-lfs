@@ -19,7 +19,6 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as tick
 import numpy as np
 import pandas as pd
-from prettytable import PrettyTable
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
 from speech.utils.data_helpers import get_record_id_map, get_dataset_ids, path_to_id
