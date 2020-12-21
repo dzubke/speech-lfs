@@ -111,7 +111,7 @@ def filter_speak_train(config:dict)->None:
                 if pass_constraint:
                     # if you don't want to use distribution filtering, the example always passes
                     if not config['dist_filter']['use']:
-                        pass_distribution_filter = True
+                        pass_distribution_filter = Tru
                     else:
                         # creates a filter based on the params in `dist_filter`
                         pass_distribution_filter = check_distribution_filter(example, config['dist_filter'])

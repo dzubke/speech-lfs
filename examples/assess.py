@@ -621,6 +621,6 @@ if __name__ == "__main__":
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     elif args.dataset_name.lower() == "speak_overlap":
-        dataset_overlap(args.dataset_path)
+        dataset_overlap(args.dataset_path, args.tsv_path, 'target_sentence')
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")
