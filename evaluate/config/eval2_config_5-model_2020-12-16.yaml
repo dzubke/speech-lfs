@@ -1,25 +1,25 @@
 eval_type: 'eval2'
 models:
-    model_spk-100-v2:
-        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201217/ph6/
-        tag: best
-        filename: model_state_dict.pth
-    model_spk-250-v2:
-        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201216/ph5/
-        tag: best
-        filename: model_state_dict.pth
-    model_spk-500-v2:
-        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph5/
-        tag: best
-        filename: model_state_dict.pth
+    #model_spk-100-v2:
+    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201217/ph6/
+    #    tag: best
+    #    filename: model_state_dict.pth
+    #model_spk-250-v2:
+    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201216/ph5/
+    #    tag: best
+    #    filename: model_state_dict.pth
+    #model_spk-500-v2:
+    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph5/
+    #    tag: best
+    #    filename: model_state_dict.pth
     model_spk-1000-v2:
-        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph6/
-        tag: best
-        filename: model_state_dict.pth
-    model_spk-3000-v2:
         path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph7/
         tag: best
         filename: model_state_dict.pth
+    #model_spk-3000-v2:
+    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph7/
+    #    tag: best
+    #    filename: model_state_dict.pth
     #model_0902:
     #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200826/ph2/20200902/
     #    tag: 

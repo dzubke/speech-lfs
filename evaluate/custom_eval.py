@@ -12,7 +12,7 @@ from evaluate.eval import run_eval
 import speech.loader
 from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models.ctc_model_train import CTC_train as CTC_train
-from speech.utils.data_helpers import lexicon_to_dict, print_prettytable, text_to_phonemes
+from speech.utils.data_helpers import lexicon_to_dict, print_nonsym_table, text_to_phonemes
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
 
 
@@ -157,7 +157,7 @@ def per_eval(config:dict)->None:
 
     print("full per_dict values: ")
     print(per_dict)
-    print_nonsym_table(per_dict, title="PER values", row_title="Data\\Model")
+    print_nonsym_table(per_dict, title="PER values", row_name="Data\\Model")
 
 
 
