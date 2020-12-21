@@ -496,9 +496,6 @@ def dataset_overlap(dataset_list: str,
     print_symmetric_table(total_output, "Intersect\\Reference", "Total intersection")
 
 
-
-
-
 def update_unq_date_counter(counter:dict, name:str, constraint_id:str, date:str)->dict:
     """This function updates the unq_date_counter by incrementing the count for the constraint 
     in `name` for `date` if the constraint_id is not already in the `date` set.
