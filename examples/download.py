@@ -206,9 +206,20 @@ class SpeakTrainDownloader(Downloader):
         Downloading the Speak Train Data is significantly different than other datasets
         because the Speak data is not pre-packaged into a zip file. Therefore, the 
         `download_dataset` method will be overwritten. 
+
+        Args:
+            output_dir (str): directory where files will be downloaded
+            dataset_name (str): name of the dataset 
+                TODO: (only used as a subdirectory of `output_dir`, maybe unnecessary)
+            config_path (dict): configuration file
+        
+        Properties:
+            download_audio (bool): if True, audio filles will be downloaded. 
+                If False, only metadata is downloaded.
         """
         self.output_dir = output_dir
         self.dataset_name = dataset_name
+        self.download_audio = False         # if False, no audio will be downloaded
 
     def download_dataset(self):
         """
@@ -225,6 +236,7 @@ class SpeakTrainDownloader(Downloader):
         PROJECT_ID = 'speak-v2-2a1f1'
         QUERY_LIMIT = 10000
         NUM_PROC = 100
+        AUDIO_EXT = ".m4a"
      
         # verify and set the credientials
         CREDENTIAL_PATH = "/home/dzubke/awni_speech/speak-v2-2a1f1-d8fc553a3437.json"
@@ -237,8 +249,12 @@ class SpeakTrainDownloader(Downloader):
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
-                "id", "text", "lessonId", "lineId", "uid", "redWords_score", "date"
+                "id", "target", "lessonId", "lineId", "uid", "redWords_score", "date"
             ]
+            # add the audio url if not downloading audio
+            if not self.download_audio: 
+                header.append("audio_url")
+
             tsv_writer.writerow(header)
 
         # initialize the credentials and firebase db client
@@ -252,6 +268,12 @@ class SpeakTrainDownloader(Downloader):
         
         start_time = time.time()
         query_count = 0 
+
+        audio_dir = os.path.join( self.output_dir, self.dataset_name,  "audio")
+        today = datetime.date.today().isoformat()
+        metadata_path = os.path.join(
+            self.output_dir, self.dataset_name,  f"metadata-with-url_{today}.tsv"
+        )
        
         # these two lines can be used for debugging by only looping a few times 
         #loop_iterations = 5
@@ -262,7 +284,7 @@ class SpeakTrainDownloader(Downloader):
             
             # converting generator to list to it can be referenced mutliple times
             # the documents are converted to_dict so they can be pickled in multiprocessing
-            docs = list(map(lambda x: x.to_dict(), next_query.stream()))
+            docs = list(map(lambda x: self._doc_trim_to_dict(x), next_query.stream()))
             
             try:
                 # this `id` will be used to start the next query
@@ -272,9 +294,16 @@ class SpeakTrainDownloader(Downloader):
             except IndexError:
                 break
             
+            mp_function = functools.partial(
+                self.multiprocess_download, 
+                audio_dir = audio_dir,
+                metadata_path = metadata_path,
+                audio_ext = AUDIO_EXT
+            )
+
             #self.singleprocess_record(docs)
             pool = Pool(processes=NUM_PROC)
-            results = pool.imap_unordered(self.multiprocess_download, docs, chunksize=1)
+            results = pool.imap_unordered(mp_function, docs, chunksize=1)
             pool.close() 
             pool.join()
            
@@ -347,40 +376,46 @@ class SpeakTrainDownloader(Downloader):
                     tsv_writer.writerow(tsv_row)
                     
 
-    def multiprocess_download(self, doc_dict:dict):
+    def multiprocess_download(self, doc:dict, audio_dir:str, metadata_path:str, audio_ext:str:
         """
-        Takes in a single document dictionary and records and downloads the contents if the recording
+        Takes in a single document and records and downloads the contents if the recording
         meets the criterion. Used by a multiprocessing pool.
+
+        Args:
+            doc (dict): dict of the record to bee processed. A dict is passed as it needs to be pickled.
+            audio_dir (str): directory where audio is saved
+            metadata_path (str): path where metadata tsv file will be saved
+            audio_ext (str): extension of the saved audio file
+        Returns:
+            None - write to file
         """
-        AUDIO_EXT = ".m4a"
-        TXT_EXT = ".txt"
-        # TODO (dustin) these paths shouldn't be hard-coded
-        audio_dir = "/home/dzubke/awni_speech/data/speak_train/data/audio"
-        data_label_path = "/home/dzubke/awni_speech/data/speak_train/data/train_data.tsv"
-        with open(data_label_path, 'a') as tsv_file:
+        with open(metadata_path, 'a') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             
-            original_target = doc_dict['info']['target']
+            # process the target and guess text to see if they are equal
+            original_target = doc['info']['target']
 
             # some of the guess's don't include apostrophes
             # so the filter criterion will not use apostrophes
-            target = process_text(doc_dict['info']['target'])
+            target = process_text(doc['info']['target'])
             target_no_apostrophe = target.replace("'", "")
 
             guess = process_text(doc_dict['result']['guess'])
             guess_no_apostrophe = guess.replace("'", "")
 
             if target_no_apostrophe == guess_no_apostrophe:
-                # save the audio file from the link in the document
-                audio_url = doc_dict['result']['audioDownloadUrl']
-                audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
-                try:
-                    urllib.request.urlretrieve(audio_url, filename=audio_save_path)
-                except (ValueError, URLError) as e:
-                    print(f"unable to download url: {audio_url} due to exception: {e}")
+
+                # if True, save the audio file from the link in the document
+                if self.download_audio:
+                    audio_url = doc['result']['audioDownloadUrl']
+                    audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
+                    try:
+                        urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+                    except (ValueError, URLError) as e:
+                        print(f"unable to download url: {audio_url} due to exception: {e}")
 
                 # save the target and metadata in a tsv row
-                # tsv header: "id", "text", "lessonId", "lineId", "uid", "date"
+                # tsv header: "id", "target", "lessonId", "lineId", "uid", "redWords Score", "date"
                 tsv_row =[
                     doc_dict['id'],
                     original_target,
@@ -388,9 +423,35 @@ class SpeakTrainDownloader(Downloader):
                     doc_dict['info']['lineId'],
                     doc_dict['user']['uid'],
                     doc_dict['result']['score'],
-                    doc_dict['info']['date']
+                    doc_dict['info']['date'], 
                 ]
+                # if not downloading the audio file, add the url to the metadata
+                if not self.download_audio:
+                    tsv_row.append(doc['result']['audioDownloadUrl'])
+
                 tsv_writer.writerow(tsv_row)
+
+    @staticmethod
+    def _doc_trim_to_dict(doc)->dict:
+        """This function converts a document into a dict and removes certain keys if the keys
+           exist in the dict. The removed keys have very large arrays for values that aren't necessary 
+            and take up alot of memory. 
+
+        Args:
+            doc: firestore document
+        Returns:
+            dict: trimmed dictionary of the input document
+        """
+        doc = doc.to_dict()
+        # remove large and unnecessary parts of the doc_dict
+        if 'asrResults' in doc['result']:
+            del doc['result']['asrResults']
+        if 'processingResult' in doc['result']:
+            del doc['result']['processingResult']
+        if 'asrResultData' in doc['result']:
+            del doc['result']['asrResultData']
+
+        return doc
 
 
 
@@ -660,29 +721,6 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
             train_test_ids.update([path_to_id(datum['audio']) for datum in dataset])
 
         return train_test_ids
-    
-
-    @staticmethod
-    def _doc_trim_to_dict(doc)->dict:
-        """This function converts a document into a dict and removes certain keys if the keys
-           exist in the dict. The removed keys have very large arrays for values that aren't necessary 
-            and take up alot of memory. 
-
-        Args:
-            doc: firestore document
-        Returns:
-            dict: trimmed dictionary of the input document
-        """
-        doc = doc.to_dict()
-        # remove large and unnecessary parts of the doc_dict
-        if 'asrResults' in doc['result']:
-            del doc['result']['asrResults']
-        if 'processingResult' in doc['result']:
-            del doc['result']['processingResult']
-        if 'asrResultData' in doc['result']:
-            del doc['result']['asrResultData']
-
-        return doc
 
 
 class SpeakTestDownloader(SpeakTrainDownloader):
@@ -732,7 +770,7 @@ class SpeakTestDownloader(SpeakTrainDownloader):
         with open(data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
-                "id", "target", "guess", "lessonId", "target_sentence", "lineId", "uid", "redWords_score", "date"
+                "id", "target", "guess", "lessonId", "lineId", "uid", "redWords_score", "date"
             ]
             tsv_writer.writerow(header) 
 
@@ -754,7 +792,6 @@ class SpeakTestDownloader(SpeakTrainDownloader):
                         doc['info']['target'],
                         doc['result']['guess'],
                         doc['info']['lessonId'],
-                        target,     # using this to replace lineId
                         doc['info']['lineId'],
                         doc['user']['uid'],
                         doc['result']['score'],
