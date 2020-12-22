@@ -206,6 +206,16 @@ class SpeakTrainDownloader(Downloader):
         Downloading the Speak Train Data is significantly different than other datasets
         because the Speak data is not pre-packaged into a zip file. Therefore, the 
         `download_dataset` method will be overwritten. 
+
+        Args:
+            output_dir (str): directory where files will be downloaded
+            dataset_name (str): name of the dataset 
+                TODO: (only used as a subdirectory of `output_dir`, maybe unnecessary)
+            config_path (dict): configuration file
+        
+        Properties:
+            download_audio (bool): if True, audio filles will be downloaded. 
+                If False, only metadata is downloaded.
         """
         self.output_dir = output_dir
         self.dataset_name = dataset_name
@@ -239,8 +249,12 @@ class SpeakTrainDownloader(Downloader):
         with open(self.data_label_path, 'w', newline='\n') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             header = [
-                "id", "target", "lessonId", "lineId", "uid", "redWords_score", "date", "audio_url"
+                "id", "target", "lessonId", "lineId", "uid", "redWords_score", "date"
             ]
+            # add the audio url if not downloading audio
+            if not self.download_audio: 
+                header.append("audio_url")
+
             tsv_writer.writerow(header)
 
         # initialize the credentials and firebase db client
@@ -254,6 +268,12 @@ class SpeakTrainDownloader(Downloader):
         
         start_time = time.time()
         query_count = 0 
+
+        audio_dir = os.path.join( self.output_dir, self.dataset_name,  "audio")
+        today = datetime.date.today().isoformat()
+        metadata_path = os.path.join(
+            self.output_dir, self.dataset_name,  f"metadata-with-url_{today}.tsv"
+        )
        
         # these two lines can be used for debugging by only looping a few times 
         #loop_iterations = 5
@@ -274,10 +294,6 @@ class SpeakTrainDownloader(Downloader):
             except IndexError:
                 break
             
-            audio_dir = "/home/dzubke/awni_speech/data/speak_train/data/audio"
-            today = datetime.date.today().isoformat()
-            metadata_path = f"/home/dzubke/awni_speech/data/speak_train/metadata-with-url_{today}.tsv"
-
             mp_function = functools.partial(
                 self.multiprocess_download, 
                 audio_dir = audio_dir,
@@ -408,8 +424,11 @@ class SpeakTrainDownloader(Downloader):
                     doc_dict['user']['uid'],
                     doc_dict['result']['score'],
                     doc_dict['info']['date'], 
-                    doc['result']['audioDownloadUrl']
                 ]
+                # if not downloading the audio file, add the url to the metadata
+                if not self.download_audio:
+                    tsv_row.append(doc['result']['audioDownloadUrl'])
+
                 tsv_writer.writerow(tsv_row)
 
     @staticmethod
