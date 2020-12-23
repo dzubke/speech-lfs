@@ -104,8 +104,7 @@ logger = logging.getLogger("train_log")
 
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
-# 1. on VM run:
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20200806/ph4/   --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201218/ph7/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -152,3 +151,14 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
 # problems using python 3.7 in environment
   - numpy==1.13.3 -> python[version='>=2.7,<2.8.0a0|>=3.5,<3.6.0a0|>=3.6,<3.7.0a0|>=3.8,<3.9.0a0']
   librosa==0.7.2
+
+
+
+2020-12-18_large-mid-aug-no-fn-naren_lib-ted-cv-speak-1M-2020-12-18.
+
+
+
+ 
+  WARNING: nvidia-installer was forced to guess the X library path '/usr/lib' and X module path '/usr/lib/xorg/modules'; these paths were not queryable from the
+           system.  If X fails to find the NVIDIA X driver module, please install the `pkg-config` utility and the X.Org SDK/development package for your         
+           distribution and reinstall the driver.

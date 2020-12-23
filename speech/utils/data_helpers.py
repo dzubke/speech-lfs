@@ -1,5 +1,6 @@
 # standard libraries
 from collections import defaultdict
+import csv
 import glob
 import json
 import os
@@ -7,6 +8,7 @@ import re
 import string
 from typing import Set
 # third-party libraries
+from prettytable import PrettyTable
 import tqdm
 # project libraries
 from speech.utils import convert
@@ -357,3 +359,90 @@ def path_to_id(record_path:str)->str:
         return os.path.basename(
             os.path.splitext(record_path)[0]
         )
+
+
+def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
+    """This function returns a mapping from record_id to other ids like speaker, lesson,
+    line, and target sentence. This function runs on recordings from the speak firestore database.
+
+    Args:
+        metadata_path (str): path to the tsv file that contains the various ids
+        id_names (List[str]): names of the ids in the output dict. 
+            This is currented hard-coded to the list: ['lesson', 'target-sentence', 'speaker']
+    
+    Returns:
+        Dict[str, Dict[str, str]]: a mapping from record_id to a dict
+            where the value-dict's keys are the id_name and the values are the ids
+    """
+    assert os.path.splitext(metadata_path)[1] == '.tsv', \
+        f"metadata file: {metadata_path} is not a tsv file"
+
+    # check that input matches the expected values
+    # TODO: hard-coding the id-names isn't flexible but is the best option for now
+    expected_id_names = ['lesson', 'target_sentence', 'speaker']
+    if id_names is None:
+        id_names = expected_id_names
+    assert id_names == expected_id_names, \
+        f"input id_names: {id_names} do not match expected values: {expected_id_names}"
+
+    # create a mapping from record_id to lesson, line, and speaker ids
+    expected_row_len = 7
+    with open(metadata_path, 'r') as tsv_file:
+        tsv_reader = csv.reader(tsv_file, delimiter='\t')
+        header = next(tsv_reader)
+        # this assert helps to ensure the row indexing below is correct
+        assert len(header) == expected_row_len, \
+            f"Expected metadata header length: {expected_row_len}, got: {len(header)}."
+        # header: id, text, lessonId, lineId, uid(speaker_id), redWords_score, date
+        print("header: ", header)
+
+        # mapping from record_id to other ids like lesson, speaker, and line
+        record_ids_map = dict()
+        for row in tsv_reader:
+            assert len(row) == expected_row_len, \
+                f"row: {row} is len: {len(row)}. Expected len: {expected_row_len}"
+            tar_sentence = process_text(row[1])
+            record_ids_map[row[0]] = {
+                    "record": row[0],           # adding record for disjoint_check
+                    id_names[0]: row[2],        # lesson
+                    id_names[1]: tar_sentence,  # using target_sentence instead of lineId
+                    id_names[2]: row[4]         # speaker
+            }
+
+    return record_ids_map
+
+
+
+def print_symmetric_table(values_dict:dict, row_name:str, title:str)->None:
+    """Prints a table of values in  2-d dict with identical inner and outer keys
+
+    Args:
+        values_dict (Dict[str, Dict[str, float]]): 2-d dictionary with identical keys on the two levels
+        row_name (str): name of the rows
+        title (str): title of the table
+    """
+    table = PrettyTable(title=title)
+    sorted_keys = sorted(values_dict.keys())
+    table.add_column(row_name, sorted_keys)
+    for data_name in sorted_keys:
+        table.add_column(data_name, [values_dict[data_name][key] for key in sorted_keys])
+    print(table)
+
+
+
+def print_nonsym_table(values_dict:dict, row_name:str, title:str)->None:                
+    """Prints a prety table from a 2-d dict that has different inner and outer keys (not-symmetric)
+    Args: 
+        values_dict (Dict[str, Dict[str, float]]): 2-d dict with different keys on inner and outer levels 
+        row_name (str): name of the rows 
+        title (str): title of the table 
+    """ 
+    single_row_name = list(values_dict.keys())[0] 
+    sorted_inner_keys = sorted(values_dict[single_row_name].keys()) 
+    column_names = [row_name] + sorted_inner_keys 
+    table = PrettyTable(title=title, field_names=column_names)                             
+                                    
+    for row_name in values_dict: 
+        table.add_row([row_name] + [values_dict[row_name][key] for key in sorted_inner_keys]) 
+    print(table)
+
