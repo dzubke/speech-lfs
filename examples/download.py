@@ -221,7 +221,7 @@ class SpeakTrainDownloader(Downloader):
         self.output_dir = output_dir
         self.dataset_name = dataset_name
         self.download_audio = False         # if False, no audio will be downloaded
-        self.last_id = '1BAA7FA2-8FDD-4E98-B92F-F017BF321B68'
+        self.last_id = '351999FC-1B14-4D9E-9D52-63D0EB66ABD1'
 
     def download_dataset(self):
         """
@@ -236,7 +236,7 @@ class SpeakTrainDownloader(Downloader):
         """
 
         PROJECT_ID = 'speak-v2-2a1f1'
-        QUERY_LIMIT = 5000
+        QUERY_LIMIT = 2000
         NUM_PROC = 50
         AUDIO_EXT = ".m4a"
      
