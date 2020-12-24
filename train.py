@@ -17,9 +17,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
 import torch
-import torch.nn as nn
-import torch.multiprocessing as mp
+import torch.cuda.amp import autocast, GradScaler
 import torch.distributed as dist
+import torch.multiprocessing as mp
+import torch.nn as nn
 import tqdm
 import yaml
 # project libraries
@@ -35,24 +36,26 @@ from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
 BLANK_IDX = 0
 
 
-def run_epoch(model, 
-              optimizer, 
-              train_ldr, 
-              logger, 
+def run_epoch(model:nn.Module, 
+              optimizer:Torch.optim.SDG, 
+              train_ldr:Torch.utils.data.DataLoader, 
+              logger:logging.Logger, 
               debug_mode:bool, 
-              tbX_writer, 
+              tbX_writer:SummaryWriter, 
               iter_count:int, 
               avg_loss:float, 
               local_rank:int, 
               loss_name:str, 
               save_path:str,
-              chkpt_per_epoch:int):
+              chkpt_per_epoch:int,
+              scaler:GradScaler=None)->:
     """
     Performs a forwards and backward pass through the model
     Args:
         iter_count (int): count of iterations
         save_path (str): path to directory where model is saved
         chkpt_per_epoch (int): # checkpoints for each epoch (including at the end of the epoch) that will be saved
+        
     """
     is_rank_0 = (torch.distributed.get_rank() == 0 )
     use_log = (logger is not None) and is_rank_0
