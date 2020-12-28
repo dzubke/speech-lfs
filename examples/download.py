@@ -2,6 +2,7 @@
 import argparse
 import csv
 import datetime
+import functools
 import glob
 import json
 from multiprocessing import Pool
@@ -220,6 +221,7 @@ class SpeakTrainDownloader(Downloader):
         self.output_dir = output_dir
         self.dataset_name = dataset_name
         self.download_audio = False         # if False, no audio will be downloaded
+        self.last_id = '351999FC-1B14-4D9E-9D52-63D0EB66ABD1'
 
     def download_dataset(self):
         """
@@ -234,8 +236,8 @@ class SpeakTrainDownloader(Downloader):
         """
 
         PROJECT_ID = 'speak-v2-2a1f1'
-        QUERY_LIMIT = 10000
-        NUM_PROC = 100
+        QUERY_LIMIT = 2000
+        NUM_PROC = 50
         AUDIO_EXT = ".m4a"
      
         # verify and set the credientials
@@ -245,17 +247,11 @@ class SpeakTrainDownloader(Downloader):
         os.putenv("GOOGLE_APPLICATION_CREDENTIALS", CREDENTIAL_PATH)
         
         # create the data-label path and initialize the tsv headers 
-        self.data_label_path = os.path.join(self.output_dir, "train_data.tsv")
-        with open(self.data_label_path, 'w', newline='\n') as tsv_file:
-            tsv_writer = csv.writer(tsv_file, delimiter='\t')
-            header = [
-                "id", "target", "lessonId", "lineId", "uid", "redWords_score", "date"
-            ]
-            # add the audio url if not downloading audio
-            if not self.download_audio: 
-                header.append("audio_url")
-
-            tsv_writer.writerow(header)
+        audio_dir = os.path.join( self.output_dir,  "audio")
+        today = datetime.date.today().isoformat()
+        metadata_path = os.path.join(
+            self.output_dir, f"metadata-with-url_{today}.tsv"
+        )
 
         # initialize the credentials and firebase db client
         cred = credentials.ApplicationDefault()
@@ -264,16 +260,34 @@ class SpeakTrainDownloader(Downloader):
 
         # create the first query based on the constant QUERY_LIMIT
         rec_ref = db.collection(u'recordings')
-        next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+        # start a new query
+        if self.last_id is None:
+            next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
+            
+            # write a header to a new file
+            with open(metadata_path, 'w', newline='\n') as tsv_file:
+                tsv_writer = csv.writer(tsv_file, delimiter='\t')
+                header = [
+                    "id", "target", "lessonId", "lineId", "uid", "redWords_score", "date"
+                ]
+                # add the audio url if not downloading audio
+                if not self.download_audio: 
+                    header.append("audio_url")
+
+                tsv_writer.writerow(header)
+
+        # or begin where a previous run left off at `self.last_id`
+        else: 
+            next_query = (rec_ref
+                .order_by(u'id')
+                .start_after({
+                    u'id': self.last_id
+                })
+                .limit(QUERY_LIMIT))
         
         start_time = time.time()
         query_count = 0 
 
-        audio_dir = os.path.join( self.output_dir, self.dataset_name,  "audio")
-        today = datetime.date.today().isoformat()
-        metadata_path = os.path.join(
-            self.output_dir, self.dataset_name,  f"metadata-with-url_{today}.tsv"
-        )
        
         # these two lines can be used for debugging by only looping a few times 
         #loop_iterations = 5
@@ -323,6 +337,62 @@ class SpeakTrainDownloader(Downloader):
         
             # used for debugging with fixed number of loops
             #loop_iterations -= 1
+    
+
+    def multiprocess_download(self, doc_dict:dict, audio_dir:str, metadata_path:str, audio_ext:str):
+        """
+        Takes in a single document and records and downloads the contents if the recording
+        meets the criterion. Used by a multiprocessing pool.
+
+        Args:
+            doc (dict): dict of the record to bee processed. A dict is passed as it needs to be pickled.
+            audio_dir (str): directory where audio is saved
+            metadata_path (str): path where metadata tsv file will be saved
+            audio_ext (str): extension of the saved audio file
+        Returns:
+            None - write to file
+        """
+        with open(metadata_path, 'a') as tsv_file:
+            tsv_writer = csv.writer(tsv_file, delimiter='\t')
+            # process the target and guess text to see if they are equal
+            original_target = doc_dict['info']['target']
+
+            # some of the guess's don't include apostrophes
+            # so the filter criterion will not use apostrophes
+            target = process_text(doc_dict['info']['target'])
+            target_no_apostrophe = target.replace("'", "")
+            
+            guess = doc_dict['result']['guess']
+            guess_no_apostrophe = guess.replace("'", "")
+            
+            if target_no_apostrophe == guess_no_apostrophe:
+
+                # if True, save the audio file from the link in the document
+                if self.download_audio:
+                    audio_url = doc_dict['result']['audioDownloadUrl']
+                    audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
+                    try:
+                        urllib.request.urlretrieve(audio_url, filename=audio_save_path)
+                    except (ValueError, URLError) as e:
+                        print(f"unable to download url: {audio_url} due to exception: {e}")
+
+                # save the target and metadata in a tsv row
+                # tsv header: "id", "target", "lessonId", "lineId", "uid", "redWords Score", "date"
+                tsv_row =[
+                    doc_dict['id'],
+                    original_target,
+                    doc_dict['info']['lessonId'],
+                    doc_dict['info']['lineId'],
+                    doc_dict['user']['uid'],
+                    doc_dict['result']['score'],
+                    doc_dict['info']['date'], 
+                ]
+                # if not downloading the audio file, add the url to the metadata
+                if not self.download_audio:
+                    tsv_row.append(doc_dict['result']['audioDownloadUrl'])
+
+                tsv_writer.writerow(tsv_row)
+
 
     def singleprocess_download(self, docs_list:list):
         """
@@ -337,7 +407,6 @@ class SpeakTrainDownloader(Downloader):
 
         with open(self.data_label_path, 'a') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
-            
             # filter the documents where `target`==`guess`
             for doc in docs_list:
       
@@ -375,61 +444,6 @@ class SpeakTrainDownloader(Downloader):
                     ]
                     tsv_writer.writerow(tsv_row)
                     
-
-    def multiprocess_download(self, doc:dict, audio_dir:str, metadata_path:str, audio_ext:str:
-        """
-        Takes in a single document and records and downloads the contents if the recording
-        meets the criterion. Used by a multiprocessing pool.
-
-        Args:
-            doc (dict): dict of the record to bee processed. A dict is passed as it needs to be pickled.
-            audio_dir (str): directory where audio is saved
-            metadata_path (str): path where metadata tsv file will be saved
-            audio_ext (str): extension of the saved audio file
-        Returns:
-            None - write to file
-        """
-        with open(metadata_path, 'a') as tsv_file:
-            tsv_writer = csv.writer(tsv_file, delimiter='\t')
-            
-            # process the target and guess text to see if they are equal
-            original_target = doc['info']['target']
-
-            # some of the guess's don't include apostrophes
-            # so the filter criterion will not use apostrophes
-            target = process_text(doc['info']['target'])
-            target_no_apostrophe = target.replace("'", "")
-
-            guess = process_text(doc_dict['result']['guess'])
-            guess_no_apostrophe = guess.replace("'", "")
-
-            if target_no_apostrophe == guess_no_apostrophe:
-
-                # if True, save the audio file from the link in the document
-                if self.download_audio:
-                    audio_url = doc['result']['audioDownloadUrl']
-                    audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
-                    try:
-                        urllib.request.urlretrieve(audio_url, filename=audio_save_path)
-                    except (ValueError, URLError) as e:
-                        print(f"unable to download url: {audio_url} due to exception: {e}")
-
-                # save the target and metadata in a tsv row
-                # tsv header: "id", "target", "lessonId", "lineId", "uid", "redWords Score", "date"
-                tsv_row =[
-                    doc_dict['id'],
-                    original_target,
-                    doc_dict['info']['lessonId'],
-                    doc_dict['info']['lineId'],
-                    doc_dict['user']['uid'],
-                    doc_dict['result']['score'],
-                    doc_dict['info']['date'], 
-                ]
-                # if not downloading the audio file, add the url to the metadata
-                if not self.download_audio:
-                    tsv_row.append(doc['result']['audioDownloadUrl'])
-
-                tsv_writer.writerow(tsv_row)
 
     @staticmethod
     def _doc_trim_to_dict(doc)->dict:
