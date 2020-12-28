@@ -73,7 +73,7 @@ sudo umount /dev/sdb1
 # to see all the mounted filesystems use the command below
 mount -l 
 mount -l | grep sdb1    # or to look for the specific disk
- 
+
 
 # STEP 5: RENAME THE FILPATHS
 # Once the disk is attached and mounted in `read-write` mode,
