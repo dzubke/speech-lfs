@@ -1,11 +1,14 @@
 # standard libraries
 from collections import defaultdict
 import csv
+from gc import get_referents
 import glob
 import json
 import os
 import re
 import string
+import sys
+from types import ModuleType, FunctionType
 from typing import Set
 # third-party libraries
 from prettytable import PrettyTable
@@ -240,12 +243,13 @@ def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
     return phonemes
 
 
-def process_text(transcript:str)->str:
+def process_text(transcript:str, remove_apost:bool = False)->str:
     """This function removes punctuation (except apostrophe's) and extra space
     from the input `transcript` string and lowers the case. 
 
     Args:
         transcript (str): input string to be processed
+        remove_apost (bool): if True, the apostrophe will be removed from `transcript`
     Returns:
         (str): processed string
     """
@@ -264,7 +268,10 @@ def process_text(transcript:str)->str:
     for punc in punct_noapost:
         if punc in transcript:
             raise ValueError(f"unwanted punctuation {punc} in transcript")
-  
+    # remove apostrophe, if selected
+    if remove_apost:
+        transcript = transcript.replace("'", "") 
+
     return transcript
 
 
@@ -361,7 +368,7 @@ def path_to_id(record_path:str)->str:
         )
 
 
-def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
+def get_record_id_map(metadata_path:str, id_names:list=None, has_url:bool=False)->dict:
     """This function returns a mapping from record_id to other ids like speaker, lesson,
     line, and target sentence. This function runs on recordings from the speak firestore database.
 
@@ -369,7 +376,8 @@ def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
         metadata_path (str): path to the tsv file that contains the various ids
         id_names (List[str]): names of the ids in the output dict. 
             This is currented hard-coded to the list: ['lesson', 'target-sentence', 'speaker']
-    
+        has_url (bool): if true, the metadata file contains an extra column with an audio url
+
     Returns:
         Dict[str, Dict[str, str]]: a mapping from record_id to a dict
             where the value-dict's keys are the id_name and the values are the ids
@@ -386,7 +394,7 @@ def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
         f"input id_names: {id_names} do not match expected values: {expected_id_names}"
 
     # create a mapping from record_id to lesson, line, and speaker ids
-    expected_row_len = 7
+    expected_row_len = 7 + int(has_url)     # add an extra column if audio_url exists
     with open(metadata_path, 'r') as tsv_file:
         tsv_reader = csv.reader(tsv_file, delimiter='\t')
         header = next(tsv_reader)
@@ -445,4 +453,28 @@ def print_nonsym_table(values_dict:dict, row_name:str, title:str)->None:
     for row_name in values_dict: 
         table.add_row([row_name] + [values_dict[row_name][key] for key in sorted_inner_keys]) 
     print(table)
+
+
+def getsize(obj):
+    """sum size of object & members.
+    copied from: https://stackoverflow.com/questions/449560/how-do-i-determine-the-size-of-an-object-in-python
+    """
+    # Custom objects know their class.
+    # Function objects seem to know way too much, including modules.
+    # Exclude modules as well.
+    BLACKLIST = type, ModuleType, FunctionType
+    if isinstance(obj, BLACKLIST):
+        raise TypeError('getsize() does not take argument of type: '+ str(type(obj)))
+    seen_ids = set()
+    size = 0
+    objects = [obj]
+    while objects:
+        need_referents = []
+        for obj in objects:
+            if not isinstance(obj, BLACKLIST) and id(obj) not in seen_ids:
+                seen_ids.add(id(obj))
+                size += sys.getsizeof(obj)
+                need_referents.append(obj)
+        objects = get_referents(*need_referents)
+    return size
 
