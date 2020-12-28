@@ -164,13 +164,13 @@ def assess_iphone_models(save_path:str)->None:
 
 def assess_speak_train(dataset_paths: List[str], 
                         metadata_path:str, 
-                        out_path:str, 
+                        out_dir:str, 
                         use_json:bool=True)->None:
     """This function creates counts of the speaker, lesson, and line ids in a speak training dataset
     Args:
         dataset_path (str): path to speak training.json dataset
         metadata_path (str): path to tsv file that contains speaker, line, and lesson ids 
-        out_path (str): base path name where plots and txt files will be saved
+        out_dir (str): directory where plots and txt files will be saved
         use_json (bool): if true, the data will be read from a training.json file
     Returns:
         None
@@ -307,9 +307,9 @@ def assess_speak_train(dataset_paths: List[str],
         _print_stats(counter[name])
         print()
     
-    # ensures the directory of `out_path` exists
-    os.makedirs(out_path, exist_ok=True)
-    out_path = os.path.join(out_path, os.path.basename(out_path))
+    # ensures the directory of `out_dir` exists
+    os.makedirs(out_dir, exist_ok=dir)
+    out_path = os.path.join(out_dir, os.path.basename(out_dir))
     print("out_path: ", out_path)
     plt.savefig(out_path + "_count_plot.png")
     plt.close()
@@ -610,15 +610,19 @@ if __name__ == "__main__":
         help="path to metadata.tsv file that contains speaker, line, and lesson ids for speaktrain"
     )
     parser.add_argument(
-        "--out-path", type=str, 
-        help="base path name where plots and txt files will be saved"
+        "--out-dir", type=str, 
+        help="directory where plots and txt files will be saved"
     )
     args = parser.parse_args()
 
     if args.dataset_name.lower() == "commonvoice":
         assess_commonvoice(args.dataset_path, args.max_occurance)
     elif args.dataset_name.lower() == "speaktrain":
-        assess_speak_train(args.dataset_path, args.tsv_path, args.out_path)
+        if args.dataset_path is None:
+            use_json = False
+        else:
+            use_json = True
+        assess_speak_train(args.dataset_path, args.metadata_path, args.out_dir, use_json = use_json)
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     elif args.dataset_name.lower() == "speak_overlap":
