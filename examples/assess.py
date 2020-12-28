@@ -162,12 +162,16 @@ def assess_iphone_models(save_path:str)->None:
 
 
 
-def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->None:
+def assess_speak_train(dataset_paths: List[str], 
+                        metadata_path:str, 
+                        out_path:str, 
+                        use_json:bool=True)->None:
     """This function creates counts of the speaker, lesson, and line ids in a speak training dataset
     Args:
-        dataset_path (str): path to speak training dataset
-        tsv_path (str): path to tsv file that contains speaker, line, and lesson ids 
+        dataset_path (str): path to speak training.json dataset
+        metadata_path (str): path to tsv file that contains speaker, line, and lesson ids 
         out_path (str): base path name where plots and txt files will be saved
+        use_json (bool): if true, the data will be read from a training.json file
     Returns:
         None
     """
@@ -218,51 +222,47 @@ def assess_speak_train(dataset_paths: List[str], tsv_path:str, out_path:str)->No
         print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}, total_unique: {len(count_dict)}")
         print(f"sample of 5 values: {list(count_dict.keys())[0:5]}")
     
-    # use this logic for a tsv file
-    count_tsv=False
-    if count_tsv:
+    # this will read the data from a metadata.tsv file
+    if not use_json:
         # count dictionaries for the lesssons, lines, and users (speakers)
-        lesson_dict = {} 
-        line_dict = {} 
-        user_dict ={} 
+        lesson_dict, line_dict, user_dict, target_dict = {}, {}, {}, {}
         # create count_dicts for each
-        with open(dataset_path, 'r') as tsv_file: 
+        with open(metadata_path, 'r') as tsv_file: 
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
             header = next(tsv_reader) 
             print(header) 
             for row in tsv_reader: 
-                lesson_id, line_id, user_id = row[2], row[3], row[4] 
-                _increment_key(lesson_dict, lesson_id) 
-                _increment_key(line_dict, line_id) 
-                _increment_key(user_dict, user_id) 
+                _increment_key(lesson_dict, row[2]) 
+                _increment_key(line_dict, row[3]) 
+                _increment_key(user_dict, row[4]) 
+                _increment_key(target_dict, process_text(row[1])) 
 
         # put the labels and count_dicts in list of the for-loop
-        constraint_names = ["lesson", "line", "speaker"]
+        constraint_names = ['lesson', 'line', 'speaker', 'target_sent']
         counter = {
             "lesson": lesson_dict, 
             "line": line_dict, 
-            "speaker": user_dict
+            "speaker": user_dict,
+            "target_sent": target_dict
         }
 
-    # use this logic for a json file supported by a tsv-file
-    count_json = True
-    if count_json:
+    # reading from a training.json file supported by a metadata.tsv file
+    if use_json:
         # create mapping from record_id to speaker, line, and lesson ids
         rec_ids_map = dict()
         constraint_names = ['lesson', 'line', 'speaker', 'target_sent']
         counter = {name: dict() for name in constraint_names}
-        with open(tsv_path, 'r') as tsv_file: 
+        with open(metadata_path, 'r') as tsv_file: 
             tsv_reader = csv.reader(tsv_file, delimiter='\t')
             # header: id, text, lessonId, lineId, uid(speaker_id), date
             header = next(tsv_reader)
             rec_ids_map = dict()
             for row in tsv_reader:
-                target_sent = process_text(row[1])
                 rec_ids_map[row[0]]= {
                         constraint_names[0]: row[2],   # lesson
                         constraint_names[1]: row[3],    # line
                         constraint_names[2]: row[4],    # speaker
-                        constraint_names[3]: target_sent,  # target-sentence
+                        constraint_names[3]: process_text(row[1]),  # target-sentence
                         "date": row[6]                  # date
                 }
 
@@ -606,8 +606,8 @@ if __name__ == "__main__":
         help="max number of times a sentence can occur in output"
     )
     parser.add_argument(
-        "--tsv-path", type=str, 
-        help="path to tsv file that contains speaker, line, and lesson ids for speaktrain"
+        "--metadata-path", type=str, 
+        help="path to metadata.tsv file that contains speaker, line, and lesson ids for speaktrain"
     )
     parser.add_argument(
         "--out-path", type=str, 
@@ -622,6 +622,6 @@ if __name__ == "__main__":
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     elif args.dataset_name.lower() == "speak_overlap":
-        dataset_overlap(args.dataset_path, args.tsv_path, overlap_key='target_sentence')
+        dataset_overlap(args.dataset_path, args.metadata_path, overlap_key='target_sentence')
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")

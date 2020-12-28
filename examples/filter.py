@@ -21,7 +21,7 @@ import yaml
 from speech.utils.io import read_data_json
 from speech.utils.data_helpers import check_disjoint_filter, check_update_contraints, get_dataset_ids 
 from speech.utils.data_helpers import get_record_id_map, path_to_id, process_text
-
+p'
 def filter_speak_train(config:dict)->None:
     """
     This script filters the dataset in `full_json_path` and write the new dataset to `filter_json_path`.
