@@ -268,8 +268,7 @@ class DataPreprocessor(object):
 
 
     def process_text_mp(self, transcript:str, lex_dict:dict=None):
-        """
-        this method removed unwanted puncutation marks split the text into a list of words
+        """this method removed unwanted puncutation marks split the text into a list of words
         or list of phonemes if a lexicon_dict exists
         """
         # allows for alphanumeric characters, space, and apostrophe
@@ -591,8 +590,8 @@ class TatoebaPreprocessor(DataPreprocessor):
                         self.audio_trans.append((audio_path, transcript))
 
 
-
 ###################   SPEAK TRAIN       ###################### 
+
 
 class SpeakTrainPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
@@ -647,6 +646,121 @@ class SpeakTrainPreprocessor(DataPreprocessor):
                 else:
                     self.audio_trans.append((audio_path, row[1]))
 
+
+###################   SPEAK TRAIN       ###################### 
+###############    FROM FULL METDATA.TSV   ###################
+
+
+class SpeakTrainMetadataPreprocessor(DataPreprocessor):
+    """This class filters, downloads, and preprocesses speak training data
+    based on the metadata from all (as of 2020-12-28) the recordings that meet
+    the `target==guess` criterion. 
+
+    This class is filtering the recordings in the metadata.tsv file based on the count constraints
+    on speaker and target-sentence in the config file
+
+
+    """
+    def __init__(self, config:dict):
+        """Takes in a `config` dictionary as input
+        """
+        super(SpeakTrainPreprocessor, self).__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration']
+        )
+        self.config = config
+
+
+    def process_datasets(self):
+        """Main function that knits together supporting functions
+        """
+        # iterate through every dataset in the dataset_dict
+        for name, label_path in self.dataset_dict.items():
+            # clears the audio_transcript buffer
+            self.clear_audio_trans()    
+
+            label_path = os.path.join(self.dataset_dir, label_path)
+            logging.info(f"label_path: {label_path}")
+            # collects the audio paths and transcripts into a list
+            self.collect_audio_transcripts(label_path)
+            
+            logging.info(f"len of auddio_trans: {len(self.audio_trans)}")
+
+            # creates the audio path name
+            json_path = os.path.join(self.dataset_dir, name + ".json")
+            logging.info(f"entering write_json for {set_name}. writing json to {json_path}")
+
+
+            #self.write_json_mp(json_path)
+
+
+    def collect_audio_transcripts(self, metadata_path:str):
+        
+        audio_dir = os.path.join(self.dataset_dir, "audio")
+        audio_ext = "wav"
+        speaker_counter = dict()
+
+        disjoint_id_sets  = get_disjoint_sets(self.config['disjoint_datasets'])
+
+        count_constraints = {
+            name: int(value * dataset_size) for name, value in config['constraints'].items()
+        }
+        id_counter = {name: dict() for name in constraints}
+
+
+        examples_collected = 0
+        with open(metadata_path, 'r') as tsv_file:
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            # header: id, target, lessonId, lineId, uid, redWords, date, audio_url
+            header = next(tsv_reader)
+            
+            while examples_collected < self.config['dataset_size']:
+
+                # print progress of collecting examples
+                if examples_collected != 0 and examples_collected % config['print_modulus'] == 0:
+                    print(f"{examples_collected} examples collected")
+                try:
+                    row = next(tsv_reader)
+                except StopIteration:
+                    print(f"Stop encountered {examples_collected} examples collected")
+                    break
+
+                assert len(row) == 8, f"metadata row length: {len(row)} is not 8"
+
+                record_id = row[0]
+                # creates a mapping from record_id to other id's for filtering and contraints
+                record_ids_map = {
+                    record_id: {
+                        'record': record_id,                    # record
+                        'target_sentence': process_text(row[1]), # processed target
+                        'lesson': row[2],                       # lesson
+                        'speaker': row[4]                       # speaker
+                    }
+                }
+                # check if the record_id should be disjoint from the disjoint_sets
+                pass_filter = check_disjoint_filter(record_id, disjoint_id_sets, record_ids_map)
+                if pass_filter:
+                    # check if the count for each id-type is under the contraint limit
+                    pass_constraints = check_update_contraints(
+                        record_id, 
+                        record_ids_map, 
+                        id_counter, 
+                        count_constraints
+                    )
+                    if pass_constraints:
+                        # add the example to the list to be written
+                        audio_path = os.path.join(audio_dir, row[0] + os.extsep + audio_ext)
+                        # a tuple of the audio path and download url allow for the downloading 
+                        # of the audio file in the `write_json` function
+                        self.audio_trans.append(( 
+                            (audio_path, download_url), row[1]
+                        ))
+                        examples_collected += 1
 
 
 class UnknownWords():

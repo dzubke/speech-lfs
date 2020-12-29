@@ -344,6 +344,71 @@ def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:d
     return pass_check
 
 
+def check_distribution_filter(example: dict, filter_params:dict)->bool:
+    """This function filters the number of examples in the output dataset based on
+    the values in the `dist_filter_params` dict. 
+
+    Args:
+        example (dict): dictionary of a single training example
+        dist_filter_params (dict): a dictionary with the keys and values below
+            key (str): key of the value filtered on the input `example`
+            function (str): name of the function to apply to the values in `example[key]`
+            threshhod (float): threshhold to filter upon
+            above-threshold-percent (float): percent of examples to pass through with values above
+                the threshhold
+            below-threshold-percent (float): percent of examples to pass through with values below
+                the threshold
+    Returns:
+        (boo): whether the input example should pass through the filter
+    """
+    assert 0 <= filter_params['percent-above-threshold'] <= 1.0, "probs not between 0 and 1"
+    assert 0 <= filter_params['percent-below-threshold'] <= 1.0, "probs not between 0 and 1"
+
+    # fitler fails unless set to true
+    pass_filter = False
+    # value to pass into the `filter_fn`
+    filter_input = example[filter_params['key']]
+    # function to evaluate on the `filter_input`
+    filter_fn = filter_params['function']
+    filter_value = eval(f"{filter_fn}({filter_input})")
+
+    if filter_value >= filter_params['threshold']:
+        # make random trial using the `percent-above-threshhold`
+        if np.random.binomial(1, filter_params['percent-above-threshold']):
+            pass_filter = True
+    else:
+        # make random trial using the `percent-above-threshhold`
+        if np.random.binomial(1, filter_params['percent-below-threshold']):
+            pass_filter = True
+    
+    return pass_filter
+
+
+def get_disjoint_sets(disjoint_dict:dict)->dict:
+    """Creates a dictionary of sets of ids that will be used to ensure a created datasets
+        does not contain the ids included in the Sets in the output dict. 
+
+    Args:
+        disjoint_dict (Dict[str, Tuple[str]]): dict of dataset_path as keys and a tuple of id_names
+            as values.
+
+    Returns:
+        Dict[str, Set[str]]: a dict with `id_names` as keys and a set of ids as values
+    """
+
+    disjoint_id_sets = defaultdict(set)
+    for dj_data_path, dj_names in disjoint_dict.items():
+        # get all the record_ids in the dataset
+        record_ids = get_dataset_ids(dj_data_path)
+        # loop through the disjoint-id-names in the key-tuple
+        for dj_name in dj_names:
+            for record_id in record_ids:
+                # add the id to the relevant id-set
+                disjoint_id_sets[dj_name].add(record_ids_map[record_id][dj_name])
+    
+    return disjoint_id_sets
+
+
 def get_dataset_ids(dataset_path:str)->Set[str]:
     """This function reads a dataset path and returns a set of the record ID's
     in that dataset. The record ID's mainly correspond to recordings from the speak dataset. 
