@@ -8,12 +8,15 @@ force_convert: False    # Converts audio to wav file even if .wav file already e
 min_duration: 1         # minimum audio duration in seconds
 max_duration: 20        # maximum audio duration in seconds
 # number of examples in filtered dataset
-dataset_size: 103000
+dataset_size: 1030000
+# interal to print progress updats
+print_modulus: 100000
 # max number of utterances for a single id
 constraints:
   lesson: 0.005
-  target_sentence: 0.0005
+  target_sentence: 0.000075
   speaker: 0.0005
+disjoint_metadata: /home/dzubke/awni_speech/data/speak_train/speak-train-test-eval_metadata-7rows_2020-12-18.tsv
 # the keys are the dataset-path and values are the id-names along with the output dataset will be disjoint
 # e.g. a key of `record` means output dataset will be disjiont with dataset-path for  record_ids
 disjoint_datasets:

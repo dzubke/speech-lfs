@@ -20,7 +20,7 @@ import yaml
 # project libs
 from speech.utils.io import read_data_json
 from speech.utils.data_helpers import check_disjoint_filter, check_distribution_filter, check_update_contraints
-from speech.utils.data_helpers import get_dataset_ids, get_disjoint_sets, get_record_id_map
+from speech.utils.data_helpers import get_dataset_ids, get_disjoint_sets, get_record_ids_map
 from speech.utils.data_helpers import path_to_id, process_text
 
 
@@ -68,7 +68,7 @@ def filter_speak_train(config:dict)->None:
     full_dataset = iter(full_dataset)
 
     # get the mapping from record_id to other ids (like speaker, lesson, line) for each example
-    record_ids_map = get_record_id_map(metadata_path, constraint_names)
+    record_ids_map = get_record_ids_map(metadata_path, constraint_names)
 
     # create a defaultdict with set values for each disjoint-id name
     disjoint_id_sets  = get_disjoint_sets(config['disjoint_datasets'])

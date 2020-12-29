@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import get_record_id_map, get_dataset_ids, path_to_id
+from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id
 from speech.utils.data_helpers import print_symmetric_table, process_text
 from speech.utils.io import read_data_json, write_pickle
 
@@ -413,7 +413,7 @@ def dataset_overlap(dataset_list: str,
 
     print(f"assessing overlap based on key: {overlap_key}")
 
-    record_id_map = get_record_id_map(metadata_path)
+    record_id_map = get_record_ids_map(metadata_path)
 
     # creates a shorter, pretty name of the dataset
     def pretty_data_name(data_name):

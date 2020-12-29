@@ -13,6 +13,7 @@ from multiprocessing import Pool
 import os
 import re
 import subprocess
+import time
 from typing import Tuple
 import unicodedata
 # third party libraries
@@ -20,7 +21,11 @@ import tqdm
 import yaml
 # project libraries
 from speech.utils import data_helpers, wave, convert
-from speech.utils.data_helpers import lexicon_to_dict, skip_file
+from speech.utils.data_helpers import process_text as target_process
+from speech.utils.data_helpers import (
+    check_disjoint_filter, check_update_contraints, get_disjoint_sets, get_record_ids_map, 
+    lexicon_to_dict, skip_file
+)
 
 logging.basicConfig(filename=None, level=10)
 
@@ -664,7 +669,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
     def __init__(self, config:dict):
         """Takes in a `config` dictionary as input
         """
-        super(SpeakTrainPreprocessor, self).__init__(
+        super(SpeakTrainMetadataPreprocessor, self).__init__(
             dataset_dir = config['dataset_dir'], 
             dataset_files = config['dataset_files'],
             dataset_name = config['dataset_name'],
@@ -693,7 +698,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
 
             # creates the audio path name
             json_path = os.path.join(self.dataset_dir, name + ".json")
-            logging.info(f"entering write_json for {set_name}. writing json to {json_path}")
+            logging.info(f"entering write_json for {name}. writing json to {json_path}")
 
 
             #self.write_json_mp(json_path)
@@ -704,14 +709,19 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
         audio_dir = os.path.join(self.dataset_dir, "audio")
         audio_ext = "wav"
         speaker_counter = dict()
+        
+        # creates mapping from record_id to other ids like lesson, speaker, and target sentence
+        disjoint_ids_map = get_record_ids_map(self.config['disjoint_metadata'], has_url=False)
 
-        disjoint_id_sets  = get_disjoint_sets(self.config['disjoint_datasets'])
-
+        disjoint_id_sets  = get_disjoint_sets(self.config['disjoint_datasets'], disjoint_ids_map)
+        
+        del disjoint_ids_map        # to conserve memory
+    
         count_constraints = {
-            name: int(value * dataset_size) for name, value in config['constraints'].items()
+            name: int(value * self.config['dataset_size']) 
+            for name, value in config['constraints'].items()
         }
-        id_counter = {name: dict() for name in constraints}
-
+        id_counter = {name: dict() for name in count_constraints}
 
         examples_collected = 0
         with open(metadata_path, 'r') as tsv_file:
@@ -737,7 +747,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
                 record_ids_map = {
                     record_id: {
                         'record': record_id,                    # record
-                        'target_sentence': process_text(row[1]), # processed target
+                        'target_sentence': target_process(row[1]), # processed target
                         'lesson': row[2],                       # lesson
                         'speaker': row[4]                       # speaker
                     }
@@ -758,7 +768,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
                         # a tuple of the audio path and download url allow for the downloading 
                         # of the audio file in the `write_json` function
                         self.audio_trans.append(( 
-                            (audio_path, download_url), row[1]
+                            (audio_path, row[7]), row[1]
                         ))
                         examples_collected += 1
 
@@ -870,14 +880,8 @@ if __name__ == "__main__":
     with open(args.config, 'r') as config_file:
         config = yaml.load(config_file) 
 
+    start_time = time.time()
     data_preprocessor = eval(config['dataset_name']+"Preprocessor")
-    data_preprocessor = data_preprocessor(config['dataset_dir'], 
-                                          config['dataset_files'], 
-                                          config['dataset_name'], 
-                                          config['lexicon_path'],
-                                          config['force_convert'], 
-                                          config['min_duration'], 
-                                          config['max_duration'],
-                                          config.get('custom_args', None))
+    data_preprocessor = data_preprocessor(config) 
     data_preprocessor.process_datasets()
-
+    print(f"script took: {round((time.time() - start_time)/ 60, 3)} min")

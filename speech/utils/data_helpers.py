@@ -26,7 +26,8 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     The digit accents are removed from the file name. 
     """
     corpus_names = [
-        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None
+        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None,
+        "speaktrainmetadata"
     ]
     if corpus_name not in corpus_names:
         raise ValueError("corpus_name not accepted")
@@ -384,14 +385,16 @@ def check_distribution_filter(example: dict, filter_params:dict)->bool:
     return pass_filter
 
 
-def get_disjoint_sets(disjoint_dict:dict)->dict:
+def get_disjoint_sets(disjoint_dict:dict, record_ids_map:dict)->dict:
     """Creates a dictionary of sets of ids that will be used to ensure a created datasets
         does not contain the ids included in the Sets in the output dict. 
 
     Args:
         disjoint_dict (Dict[str, Tuple[str]]): dict of dataset_path as keys and a tuple of id_names
             as values.
-
+        record_ids_map (Dict[str, Dict[str, int]]): mapping from record_id to lesson, speaker
+            target_sentence, and record_id
+        
     Returns:
         Dict[str, Set[str]]: a dict with `id_names` as keys and a set of ids as values
     """
@@ -433,13 +436,13 @@ def path_to_id(record_path:str)->str:
         )
 
 
-def get_record_id_map(metadata_path:str, id_names:list=None, has_url:bool=False)->dict:
+def get_record_ids_map(metadata_path:str, id_names:list=None, has_url:bool=False)->dict:
     """This function returns a mapping from record_id to other ids like speaker, lesson,
     line, and target sentence. This function runs on recordings from the speak firestore database.
 
     Args:
         metadata_path (str): path to the tsv file that contains the various ids
-        id_names (List[str]): names of the ids in the output dict. 
+        id_names (List[str]): names of the ids in the output dict 
             This is currented hard-coded to the list: ['lesson', 'target-sentence', 'speaker']
         has_url (bool): if true, the metadata file contains an extra column with an audio url
 
@@ -474,12 +477,11 @@ def get_record_id_map(metadata_path:str, id_names:list=None, has_url:bool=False)
         for row in tsv_reader:
             assert len(row) == expected_row_len, \
                 f"row: {row} is len: {len(row)}. Expected len: {expected_row_len}"
-            tar_sentence = process_text(row[1])
             record_ids_map[row[0]] = {
-                    "record": row[0],           # adding record for disjoint_check
-                    id_names[0]: row[2],        # lesson
-                    id_names[1]: tar_sentence,  # using target_sentence instead of lineId
-                    id_names[2]: row[4]         # speaker
+                    "record": row[0],                   # adding record for disjoint_check
+                    id_names[0]: row[2],                # lesson
+                    id_names[1]: process_text(row[1]),  # using target_sentence instead of lineId
+                    id_names[2]: row[4]                 # speaker
             }
 
     return record_ids_map

@@ -22,7 +22,7 @@ from firebase_admin import firestore
 import tqdm
 # project libraries
 from speech.utils.convert import to_wave
-from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, get_record_id_map
+from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, get_record_ids_map
 from speech.utils.data_helpers import path_to_id, process_text
 from speech.utils.io import load_config, read_data_json
 
@@ -550,7 +550,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         id_counter = {name: dict() for name in constraint_names}
 
         # create a mapping from record_id to lesson, line, and speaker ids
-        disjoint_ids_map = get_record_id_map(metadata_path, constraint_names)
+        disjoint_ids_map = get_record_ids_map(metadata_path, constraint_names)
 
         # create a dict of sets of all the ids in the disjoint datasets that will not
         # be included in the filtered dataset
