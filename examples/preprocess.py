@@ -15,6 +15,7 @@ import re
 import subprocess
 from typing import Tuple
 import unicodedata
+import urllib
 # third party libraries
 import tqdm
 import yaml
@@ -33,7 +34,8 @@ class DataPreprocessor(object):
                  lexicon_path:str,
                  force_convert:bool, 
                  min_duration:float, 
-                 max_duration:float):
+                 max_duration:float,
+                 download_audio:bool):
 
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
@@ -48,6 +50,8 @@ class DataPreprocessor(object):
         self.min_duration = min_duration
         self.max_duration = max_duration
         self.audio_ext = 'wav'
+        self.download_audio = download_audio
+
 
     def process_datasets(self):
         """
@@ -152,9 +156,7 @@ class DataPreprocessor(object):
         audio files based on the min and max duration and saves the audio_path, 
         transcript, and duration into a json file specified in the input save_path
         """
-
-        ############     beginning of multi-process method calls      ###########
-        NUM_PROC = 20
+        NUM_PROC = 50
 
         # clearing the data_json_path file contents so that values are appended
         # to older values from previous runs
@@ -168,7 +170,8 @@ class DataPreprocessor(object):
             force_convert = self.force_convert,
             min_duration = self.min_duration,
             max_duration = self.max_duration,
-            lex_dict = self.lex_dict
+            lex_dict = self.lex_dict,
+            download_audio = self.download_audio
         )
         # call the multi-process pool
         # the audio_trans list is broken into chunks to see the tqdm progress bar 
@@ -206,7 +209,8 @@ class DataPreprocessor(object):
                         force_convert:bool,
                         min_duration:float, 
                         max_duration:float,
-                        lex_dict:dict) -> dict:
+                        lex_dict:dict,
+                        download_audio:bool=False) -> dict:
         """
         Unfortunately, there are four ways this function can exit and return the unk_word_dict.
         (1) if the audio_path doesn't exists, (2) if the convert.to_wave call fails, 
@@ -224,39 +228,61 @@ class DataPreprocessor(object):
             min_duration: see argsparse description,  fixed arg using functools.partial
             max_duration: see argsparse description,  fixed arg using functools.partial
             lex_dict: see argsparse description,  fixed arg using functools.partial
+            download_audio (bool): if true, the function will download the audio
         Returns:
             unk_word_dict: a dictionary of unknown with words as keys and counts as values
         """
-        audio_path, transcript = audio_transcript
         unk_words_dict = {}
-        with open(data_json_path, 'a+') as fid:
+
+        # unpack the transcript differently if audio will be downloaded
+        if download_audio:
+            (wav_path, download_url), transcript = audio_transcript
+
+            # I don't want to use a context manager, so am using the old open/.close() notation
+            tempfile = NamedTemporaryFile(suffix=".m4a")
+            audio_path = tempfile.name
+            # download the audio file into the tempfile
+            try:
+                urllib.request.urlretrieve(download_url, filename=audio_path)
+            except (ValueError, urllib.error.URLError) as e:
+                print(f"unable to download url: {download_url} due to exception: {e}")
+                continue
+
+        else:   # if not downloading, unpack and check if the path exists
+            audio_path, transcript = audio_transcript
             # skip the audio file if it doesn't exist
             if not os.path.exists(audio_path):
                 print(f"file {audio_path} does not exists")
                 return unk_words_dict
             
-            # create the path of the converted wav file
-            base, raw_ext = os.path.splitext(audio_path)
-            wav_path = base + os.path.extsep + "wav"
+            # replace the original extension with ".wav"
+            wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wav"
+        
 
-            # if the wave file doesn't exist, convert to wave
-            if not os.path.exists(wav_path) or force_convert:
-                try:
-                    convert.to_wave(audio_path, wav_path)
-                except subprocess.CalledProcessError:
-                    # if the file can't be converted, skip the file by continuing
-                    print(f"Process Error converting file: {audio_path}")
-                    return unk_words_dict
-            
-            # filter by duration
-            dur = wave.wav_duration(wav_path)
-            if min_duration <= dur <= max_duration:
+        # if the wave file doesn't exist, convert to wave
+        if not os.path.exists(wav_path) or force_convert:
+            try:
+                convert.to_wave(audio_path, wav_path)
+            except subprocess.CalledProcessError:
+                # if the file can't be converted, skip the file by continuing
+                print(f"Process Error converting file: {audio_path}")
+                return unk_words_dict
+        
+        # close the tempfile that contains the downloaded audio
+        if download_audio:
+            tempfile.close()    
 
-                text, unk_word_dict = self.process_text_mp(transcript, lex_dict)
-                # if transcript has an unknown word, skip it
-                if unk_word_dict:
-                    return unk_word_dict
-                else: 
+        # filter by duration
+        dur = wave.wav_duration(wav_path)
+        if min_duration <= dur <= max_duration:
+
+            text, unk_word_dict = self.process_text_mp(transcript, lex_dict)
+            # if transcript has an unknown word, skip it
+            if unk_word_dict:
+                return unk_word_dict
+            else: 
+                # write the datum and return an empty unk_word_dict
+                with open(data_json_path, 'a+') as fid:
                     datum = {
                         'text' : text,
                         'duration' : dur,
@@ -264,7 +290,8 @@ class DataPreprocessor(object):
                     }
                     json.dump(datum, fid)
                     fid.write("\n")
-                    return unk_word_dict
+
+                return unk_word_dict
 
 
     def process_text_mp(self, transcript:str, lex_dict:dict=None):
@@ -672,6 +699,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
             force_convert = config['force_convert'],
             min_duration = config['min_duration'],
             max_duration = config['max_duration']
+            download_audio = config['download_audio']
         )
         self.config = config
 
@@ -863,21 +891,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
             description="creates a data json file")
-    parser.add_argument("--config", type=str,
-        help="path to preprocessing config.")
+    parser.add_argument(
+        "--config", type=str, help="path to preprocessing config."
+    )
     args = parser.parse_args()
 
     with open(args.config, 'r') as config_file:
         config = yaml.load(config_file) 
 
     data_preprocessor = eval(config['dataset_name']+"Preprocessor")
-    data_preprocessor = data_preprocessor(config['dataset_dir'], 
-                                          config['dataset_files'], 
-                                          config['dataset_name'], 
-                                          config['lexicon_path'],
-                                          config['force_convert'], 
-                                          config['min_duration'], 
-                                          config['max_duration'],
-                                          config.get('custom_args', None))
+    data_preprocessor = data_preprocessor(config)
     data_preprocessor.process_datasets()
 
