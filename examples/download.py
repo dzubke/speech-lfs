@@ -11,6 +11,7 @@ import random
 import re
 from shutil import copyfile
 import tarfile
+from tempfile import NamedTemporaryFile
 import time
 from typing import List, Set
 import urllib
@@ -657,11 +658,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         # save the audio file from the link in the document
                         audio_url = doc['result']['audioDownloadUrl']
                         audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
-                        try:
-                            urllib.request.urlretrieve(audio_url, filename=audio_path)
-                        except (ValueError, urllib.error.URLError) as e:
-                            print(f"unable to download url: {audio_url} due to exception: {e}")
-                            continue
+
 
                         # convert the downloaded file to .wav format
                         # usually, this conversion done in the preprocessing step 
