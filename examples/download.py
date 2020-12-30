@@ -11,6 +11,7 @@ import random
 import re
 from shutil import copyfile
 import tarfile
+from tempfile import NamedTemporaryFile
 import time
 from typing import List, Set
 import urllib
@@ -22,7 +23,7 @@ from firebase_admin import firestore
 import tqdm
 # project libraries
 from speech.utils.convert import to_wave
-from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, get_record_id_map
+from speech.utils.data_helpers import check_update_contraints, get_dataset_ids, get_record_ids_map
 from speech.utils.data_helpers import path_to_id, process_text
 from speech.utils.io import load_config, read_data_json
 
@@ -221,7 +222,8 @@ class SpeakTrainDownloader(Downloader):
         self.output_dir = output_dir
         self.dataset_name = dataset_name
         self.download_audio = False         # if False, no audio will be downloaded
-        self.last_id = '1BAA7FA2-8FDD-4E98-B92F-F017BF321B68'
+        self.last_id = None #'351999FC-1B14-4D9E-9D52-63D0EB66ABD1'
+        self.metadata_fname = "metadata-with-url"
 
     def download_dataset(self):
         """
@@ -236,7 +238,7 @@ class SpeakTrainDownloader(Downloader):
         """
 
         PROJECT_ID = 'speak-v2-2a1f1'
-        QUERY_LIMIT = 5000
+        QUERY_LIMIT = 2500
         NUM_PROC = 50
         AUDIO_EXT = ".m4a"
      
@@ -250,7 +252,7 @@ class SpeakTrainDownloader(Downloader):
         audio_dir = os.path.join( self.output_dir,  "audio")
         today = datetime.date.today().isoformat()
         metadata_path = os.path.join(
-            self.output_dir, f"metadata-with-url_{today}.tsv"
+            self.output_dir, f"{self.metadata_fname}_{today}.tsv"
         )
 
         # initialize the credentials and firebase db client
@@ -260,7 +262,8 @@ class SpeakTrainDownloader(Downloader):
 
         # create the first query based on the constant QUERY_LIMIT
         rec_ref = db.collection(u'recordings')
-        # start a new query
+
+        # if `last_id` is not set, start the query from the beginning
         if self.last_id is None:
             next_query = rec_ref.order_by(u'id').limit(QUERY_LIMIT)
             
@@ -287,12 +290,12 @@ class SpeakTrainDownloader(Downloader):
         
         start_time = time.time()
         query_count = 0 
-
-       
+        
+            
         # these two lines can be used for debugging by only looping a few times 
         #loop_iterations = 5
         #while loop_iterations > 0:
-        
+    
         # loops until break is called in try-except block
         while True:
             
@@ -308,6 +311,7 @@ class SpeakTrainDownloader(Downloader):
             except IndexError:
                 break
             
+            # fill in the keyword arguments of the multiprocess download function        
             mp_function = functools.partial(
                 self.multiprocess_download, 
                 audio_dir = audio_dir,
@@ -337,15 +341,16 @@ class SpeakTrainDownloader(Downloader):
         
             # used for debugging with fixed number of loops
             #loop_iterations -= 1
-    
+        
 
-    def multiprocess_download(self, doc_dict:dict, audio_dir:str, metadata_path:str, audio_ext:str):
+    def multiprocess_download(self, doc:dict, audio_dir:str, metadata_path:str, audio_ext:str):
         """
         Takes in a single document and records and downloads the contents if the recording
         meets the criterion. Used by a multiprocessing pool.
 
         Args:
             doc (dict): dict of the record to bee processed. A dict is passed as it needs to be pickled.
+            tsv_writer (csv.writer): tsv_writer object where the metadata will be written
             audio_dir (str): directory where audio is saved
             metadata_path (str): path where metadata tsv file will be saved
             audio_ext (str): extension of the saved audio file
@@ -355,22 +360,16 @@ class SpeakTrainDownloader(Downloader):
         with open(metadata_path, 'a') as tsv_file:
             tsv_writer = csv.writer(tsv_file, delimiter='\t')
             # process the target and guess text to see if they are equal
-            original_target = doc_dict['info']['target']
-
-            # some of the guess's don't include apostrophes
-            # so the filter criterion will not use apostrophes
-            target = process_text(doc_dict['info']['target'])
-            target_no_apostrophe = target.replace("'", "")
+            # some of the guess's don't include apostrophes so processing will remove apostrophes
+            target = process_text(doc['info']['target'], remove_apost=True)
+            guess = process_text(doc['result']['guess'], remove_apost=True)
             
-            guess = doc_dict['result']['guess']
-            guess_no_apostrophe = guess.replace("'", "")
-            
-            if target_no_apostrophe == guess_no_apostrophe:
+            if target == guess:
 
                 # if True, save the audio file from the link in the document
                 if self.download_audio:
-                    audio_url = doc_dict['result']['audioDownloadUrl']
-                    audio_save_path = os.path.join(audio_dir, doc_dict['id'] + AUDIO_EXT)
+                    audio_url = doc['result']['audioDownloadUrl']
+                    audio_save_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
                     try:
                         urllib.request.urlretrieve(audio_url, filename=audio_save_path)
                     except (ValueError, URLError) as e:
@@ -379,18 +378,17 @@ class SpeakTrainDownloader(Downloader):
                 # save the target and metadata in a tsv row
                 # tsv header: "id", "target", "lessonId", "lineId", "uid", "redWords Score", "date"
                 tsv_row =[
-                    doc_dict['id'],
-                    original_target,
-                    doc_dict['info']['lessonId'],
-                    doc_dict['info']['lineId'],
-                    doc_dict['user']['uid'],
-                    doc_dict['result']['score'],
-                    doc_dict['info']['date'], 
+                    doc['id'],
+                    doc['info']['target'],
+                    doc['info']['lessonId'],
+                    doc['info']['lineId'],
+                    doc['user']['uid'],
+                    doc['result']['score'],
+                    doc['info']['date']
                 ]
                 # if not downloading the audio file, add the url to the metadata
                 if not self.download_audio:
-                    tsv_row.append(doc_dict['result']['audioDownloadUrl'])
-
+                    tsv_row.append(doc['result']['audioDownloadUrl'])
                 tsv_writer.writerow(tsv_row)
 
 
@@ -553,7 +551,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
         id_counter = {name: dict() for name in constraint_names}
 
         # create a mapping from record_id to lesson, line, and speaker ids
-        disjoint_ids_map = get_record_id_map(metadata_path, constraint_names)
+        disjoint_ids_map = get_record_ids_map(metadata_path, constraint_names)
 
         # create a dict of sets of all the ids in the disjoint datasets that will not
         # be included in the filtered dataset
@@ -660,11 +658,7 @@ class SpeakEvalDownloader(SpeakTrainDownloader):
                         # save the audio file from the link in the document
                         audio_url = doc['result']['audioDownloadUrl']
                         audio_path = os.path.join(audio_dir, doc['id'] + AUDIO_EXT)
-                        try:
-                            urllib.request.urlretrieve(audio_url, filename=audio_path)
-                        except (ValueError, urllib.error.URLError) as e:
-                            print(f"unable to download url: {audio_url} due to exception: {e}")
-                            continue
+
 
                         # convert the downloaded file to .wav format
                         # usually, this conversion done in the preprocessing step 
