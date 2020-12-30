@@ -104,7 +104,7 @@ logger = logging.getLogger("train_log")
 
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201216/ph5/   --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201218/ph7/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -153,5 +153,4 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
   librosa==0.7.2
 
 
-remote: error: File examples/librispeech/models/ctc_models/20201029/ph7-copy/best_model_state_dict.pth is 285.27 MB; this exceeds GitHub's file size limit of 100.00 MB
-remote: error: File examples/librispeech/models/ctc_models/20201029/ph7-copy/model_state_dict.pth is 285.27 MB; this exceeds GitHub's file size limit of 100.00 MB
+~ 8800 after 3.4 M, seems very low

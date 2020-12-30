@@ -19,8 +19,10 @@ import numpy as np
 import yaml
 # project libs
 from speech.utils.io import read_data_json
-from speech.utils.data_helpers import check_disjoint_filter, check_update_contraints, get_dataset_ids 
-from speech.utils.data_helpers import get_record_id_map, path_to_id, process_text
+from speech.utils.data_helpers import check_disjoint_filter, check_distribution_filter, check_update_contraints
+from speech.utils.data_helpers import get_dataset_ids, get_disjoint_sets, get_record_ids_map
+from speech.utils.data_helpers import path_to_id, process_text
+
 
 def filter_speak_train(config:dict)->None:
     """
@@ -50,15 +52,12 @@ def filter_speak_train(config:dict)->None:
     metadata_path = config['metadata_tsv_path']
     filter_json_path = config['filter_json_path']
     dataset_size = config['dataset_size']
-    disjoint_datasets = config['disjoint_datasets']
+
 
 
     # re-calculate the constraints as integer counts based on the `dataset_size`
-    constraints = {name: int(constraints[name] * dataset_size) for name in config['constraints'].keys()}
+    constraints = {name: int(value * dataset_size) for name, value in config['constraints'].items()}
     print("constraints: ", constraints)
-
-    # constraint_names will help to ensure the dict keys created later are consistent.
-    constraint_names = list(constraints.keys())
 
     # read and shuffle the full dataset and convert to iterator to save memory
     full_dataset = read_data_json(full_json_path)
@@ -66,24 +65,14 @@ def filter_speak_train(config:dict)->None:
     full_dataset = iter(full_dataset)
 
     # get the mapping from record_id to other ids (like speaker, lesson, line) for each example
-    record_id_map = get_record_id_map(metadata_path, constraint_names)
+    record_ids_map = get_record_ids_map(metadata_path, list(constraints.keys()))
 
     # create a defaultdict with set values for each disjoint-id name
-    disjoint_id_sets = defaultdict(set)
-    for dj_data_path, dj_names in disjoint_datasets.items():
-        # get all the record_ids in the dataset
-        record_ids = get_dataset_ids(dj_data_path)
-        # loop through the disjoint-id-names in the key-tuple
-        for dj_name in dj_names:
-            for record_id in record_ids:
-                # add the id to the relevant id-set
-                disjoint_id_sets[dj_name].add(record_ids_map[record_id][dj_name])
-    
+    disjoint_id_sets  = get_disjoint_sets(config['disjoint_datasets'])
     print("all disjoint names: ", disjoint_id_sets.keys())
 
-
     # id_counter keeps track of the counts for each speaker, lesson, and line ids
-    id_counter = {name: dict() for name in constraint_names}
+    id_counter = {name: dict() for name in constraints}
 
     examples_written = 0
     # loop until the number of examples in dataset_size has been written
@@ -120,48 +109,6 @@ def filter_speak_train(config:dict)->None:
                         fid.write("\n")
                         # increment counters
                         examples_written += 1
-
-
-def check_distribution_filter(example: dict, filter_params:dict)->bool:
-    """This function filters the number of examples in the output dataset based on
-    the values in the `dist_filter_params` dict. 
-
-    Args:
-        example (dict): dictionary of a single training example
-        dist_filter_params (dict): a dictionary with the keys and values below
-            key (str): key of the value filtered on the input `example`
-            function (str): name of the function to apply to the values in `example[key]`
-            threshhod (float): threshhold to filter upon
-            above-threshold-percent (float): percent of examples to pass through with values above
-                the threshhold
-            below-threshold-percent (float): percent of examples to pass through with values below
-                the threshold
-    Returns:
-        (boo): whether the input example should pass through the filter
-    """
-    assert 0 <= filter_params['percent-above-threshold'] <= 1.0, "probs not between 0 and 1"
-    assert 0 <= filter_params['percent-below-threshold'] <= 1.0, "probs not between 0 and 1"
-
-    # fitler fails unless set to true
-    pass_filter = False
-    # value to pass into the `filter_fn`
-    filter_input = example[filter_params['key']]
-    # function to evaluate on the `filter_input`
-    filter_fn = filter_params['function']
-    filter_value = eval(f"{filter_fn}({filter_input})")
-
-    if filter_value >= filter_params['threshold']:
-        # make random trial using the `percent-above-threshhold`
-        if np.random.binomial(1, filter_params['percent-above-threshold']):
-            pass_filter = True
-    else:
-        # make random trial using the `percent-above-threshhold`
-        if np.random.binomial(1, filter_params['percent-below-threshold']):
-            pass_filter = True
-    
-    return pass_filter
-
-
 
 
 if __name__ == "__main__":

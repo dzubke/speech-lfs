@@ -9,18 +9,25 @@ import io
 import json
 import logging
 import math
-from multiprocessing import Pool
+import multiprocessing as mp
 import os
 import re
 import subprocess
+from tempfile import NamedTemporaryFile
+import time
 from typing import Tuple
 import unicodedata
+import urllib
 # third party libraries
 import tqdm
 import yaml
 # project libraries
 from speech.utils import data_helpers, wave, convert
-from speech.utils.data_helpers import lexicon_to_dict, skip_file
+from speech.utils.data_helpers import process_text
+from speech.utils.data_helpers import (
+    check_disjoint_filter, check_update_contraints, get_disjoint_sets, get_record_ids_map, 
+    lexicon_to_dict, skip_file
+)
 
 logging.basicConfig(filename=None, level=10)
 
@@ -33,7 +40,8 @@ class DataPreprocessor(object):
                  lexicon_path:str,
                  force_convert:bool, 
                  min_duration:float, 
-                 max_duration:float):
+                 max_duration:float,
+                 download_audio:bool):
 
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
@@ -48,6 +56,8 @@ class DataPreprocessor(object):
         self.min_duration = min_duration
         self.max_duration = max_duration
         self.audio_ext = 'wav'
+        self.download_audio = download_audio
+
 
     def process_datasets(self):
         """
@@ -98,7 +108,7 @@ class DataPreprocessor(object):
                 
                 dur = wave.wav_duration(wav_path)
                 if self.min_duration <= dur <= self.max_duration:
-                    text = self.process_text(transcript, unknown_words, wav_path, self.lex_dict)
+                    text = self.text_to_phonemes(transcript, unknown_words, wav_path, self.lex_dict)
                     # if transcript has an unknown word, skip it
                     if unknown_words.has_unknown: 
                         continue
@@ -115,7 +125,7 @@ class DataPreprocessor(object):
         unknown_words.process_save(save_path)
 
 
-    def process_text(self, transcript:str, unknown_words, audio_path:str, lex_dict:dict=None,):
+    def text_to_phonemes(self, transcript:str, unknown_words, audio_path:str, lex_dict:dict=None,):
         """
         this method removed unwanted puncutation marks split the text into a list of words
         or list of phonemes if a lexicon_dict exists
@@ -152,9 +162,7 @@ class DataPreprocessor(object):
         audio files based on the min and max duration and saves the audio_path, 
         transcript, and duration into a json file specified in the input save_path
         """
-
-        ############     beginning of multi-process method calls      ###########
-        NUM_PROC = 20
+        NUM_PROC = mp.cpu_count()
 
         # clearing the data_json_path file contents so that values are appended
         # to older values from previous runs
@@ -168,15 +176,16 @@ class DataPreprocessor(object):
             force_convert = self.force_convert,
             min_duration = self.min_duration,
             max_duration = self.max_duration,
-            lex_dict = self.lex_dict
+            lex_dict = self.lex_dict,
+            download_audio = self.download_audio
         )
         # call the multi-process pool
         # the audio_trans list is broken into chunks to see the tqdm progress bar 
        
-        chunk_size = 60000
+        chunk_size = mp.cpu_count() * 1000
         iterations = math.ceil(len(self.audio_trans) / chunk_size) 
         list_unk_dict = list()
-        with Pool(processes=NUM_PROC) as pool:
+        with mp. Pool(processes=NUM_PROC) as pool:
             for chunk_idx in tqdm.tqdm(range(iterations)):
            
                 unk_word_dict = pool.map(
@@ -186,6 +195,8 @@ class DataPreprocessor(object):
 
             pool.close()
             pool.join()
+        
+        print("finished worker pool")
 
         # combine the unk_word_dicts
         all_unk_dict = dict()
@@ -195,10 +206,11 @@ class DataPreprocessor(object):
         
         # write the unk_word_dict
         data_dir = os.path.split(data_json_path)[0]
-        unk_dict_filename = "unk-words-dict_{}.json".format(str(date.today()))
-        unk_dict_filename = os.path.join(data_dir, unk_words_filename)
-        with open(unk_dict_filename, 'w') as fid:
+        unk_words_filename = "unk-words-dict_{}.json".format(str(date.today()))
+        unk_words_filename = os.path.join(data_dir, unk_words_filename)
+        with open(unk_words_filename, 'w') as fid:
             json.dump(all_unk_dict, fid)
+
 
     def _process_sample(self,
                         audio_transcript:Tuple[str, str], 
@@ -206,7 +218,8 @@ class DataPreprocessor(object):
                         force_convert:bool,
                         min_duration:float, 
                         max_duration:float,
-                        lex_dict:dict) -> dict:
+                        lex_dict:dict,
+                        download_audio:bool=False) -> dict:
         """
         Unfortunately, there are four ways this function can exit and return the unk_word_dict.
         (1) if the audio_path doesn't exists, (2) if the convert.to_wave call fails, 
@@ -224,39 +237,64 @@ class DataPreprocessor(object):
             min_duration: see argsparse description,  fixed arg using functools.partial
             max_duration: see argsparse description,  fixed arg using functools.partial
             lex_dict: see argsparse description,  fixed arg using functools.partial
+            download_audio (bool): if true, the function will download the audio
         Returns:
             unk_word_dict: a dictionary of unknown with words as keys and counts as values
         """
-        audio_path, transcript = audio_transcript
         unk_words_dict = {}
-        with open(data_json_path, 'a+') as fid:
+
+        # unpack the transcript differently if audio will be downloaded
+        if download_audio:
+            (wav_path, download_url), transcript = audio_transcript
+
+            # Using the old open/.close() notation instead of context manager for tempfile
+            tempfile = NamedTemporaryFile(suffix=".m4a")
+            audio_path = tempfile.name
+            # download the audio file into the tempfile
+            try:
+                urllib.request.urlretrieve(download_url, filename=audio_path)
+            # if the download fails, the example is not written to the training.json
+            # and an empty unk_words_dict is returned
+            except (ValueError, urllib.error.URLError) as e:
+                print(f"unable to download url: {download_url} due to exception: {e}")
+                return unk_words_dict
+
+        else:   # if not downloading, unpack and check if the path exists
+            audio_path, transcript = audio_transcript
             # skip the audio file if it doesn't exist
             if not os.path.exists(audio_path):
                 print(f"file {audio_path} does not exists")
                 return unk_words_dict
             
-            # create the path of the converted wav file
-            base, raw_ext = os.path.splitext(audio_path)
-            wav_path = base + os.path.extsep + "wav"
+            # replace the original extension with ".wav"
+            wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wav"
+        
 
-            # if the wave file doesn't exist, convert to wave
-            if not os.path.exists(wav_path) or force_convert:
-                try:
-                    convert.to_wave(audio_path, wav_path)
-                except subprocess.CalledProcessError:
-                    # if the file can't be converted, skip the file by continuing
-                    print(f"Process Error converting file: {audio_path}")
-                    return unk_words_dict
-            
-            # filter by duration
-            dur = wave.wav_duration(wav_path)
-            if min_duration <= dur <= max_duration:
+        # if the wave file doesn't exist, convert to wave
+        #if not os.path.exists(wav_path) or force_convert:
+        # above line is commented to reduce io bottleneck
+        try:
+            convert.to_wave(audio_path, wav_path)
+        except subprocess.CalledProcessError:
+            # if the file can't be converted, skip the file by continuing
+            print(f"Process Error converting file: {audio_path}")
+            return unk_words_dict
+        
+        # close the tempfile that contains the downloaded audio
+        if download_audio:
+            tempfile.close()    
 
-                text, unk_word_dict = self.process_text_mp(transcript, lex_dict)
-                # if transcript has an unknown word, skip it
-                if unk_word_dict:
-                    return unk_word_dict
-                else: 
+        # filter by duration
+        dur = wave.wav_duration(wav_path)
+        if min_duration <= dur <= max_duration:
+
+            text, unk_word_dict = self.text_to_phonemes_mp(transcript, lex_dict)
+            # if transcript has an unknown word, exit the function
+            if unk_word_dict:
+                return unk_word_dict
+            else: 
+                # write the datum and return an empty unk_word_dict
+                with open(data_json_path, 'a+') as fid:
                     datum = {
                         'text' : text,
                         'duration' : dur,
@@ -264,12 +302,14 @@ class DataPreprocessor(object):
                     }
                     json.dump(datum, fid)
                     fid.write("\n")
-                    return unk_word_dict
+
+                return unk_word_dict
+        else: 
+            return unk_word_dict
 
 
-    def process_text_mp(self, transcript:str, lex_dict:dict=None):
-        """
-        this method removed unwanted puncutation marks split the text into a list of words
+    def text_to_phonemes_mp(self, transcript:str, lex_dict:dict=None):
+        """this method removed unwanted puncutation marks split the text into a list of words
         or list of phonemes if a lexicon_dict exists
         """
         # allows for alphanumeric characters, space, and apostrophe
@@ -591,8 +631,8 @@ class TatoebaPreprocessor(DataPreprocessor):
                         self.audio_trans.append((audio_path, transcript))
 
 
-
 ###################   SPEAK TRAIN       ###################### 
+
 
 class SpeakTrainPreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
@@ -647,6 +687,126 @@ class SpeakTrainPreprocessor(DataPreprocessor):
                 else:
                     self.audio_trans.append((audio_path, row[1]))
 
+
+###################   SPEAK TRAIN       ###################### 
+###############    FROM FULL METDATA.TSV   ###################
+
+
+class SpeakTrainMetadataPreprocessor(DataPreprocessor):
+    """This class filters, downloads, and preprocesses speak training data
+    based on the metadata from all (as of 2020-12-28) the recordings that meet
+    the `target==guess` criterion. 
+
+    This class is filtering the recordings in the metadata.tsv file based on the count constraints
+    on speaker and target-sentence in the config file
+
+
+    """
+    def __init__(self, config:dict):
+        """Takes in a `config` dictionary as input
+        """
+        super(SpeakTrainMetadataPreprocessor, self).__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration'],
+            download_audio = config['download_audio']
+        )
+        self.config = config
+
+
+    def process_datasets(self):
+        """Main function that knits together supporting functions
+        """
+        # iterate through every dataset in the dataset_dict
+        for name, label_path in self.dataset_dict.items():
+            # clears the audio_transcript buffer
+            self.clear_audio_trans()    
+
+            label_path = os.path.join(self.dataset_dir, label_path)
+            logging.info(f"label_path: {label_path}")
+            # collects the audio paths and transcripts into a list
+            self.collect_audio_transcripts(label_path)
+            
+            logging.info(f"len of auddio_trans: {len(self.audio_trans)}")
+
+            # creates the audio path name
+            json_path = os.path.join(self.dataset_dir, name + ".json")
+            logging.info(f"entering write_json for {name}. writing json to {json_path}")
+
+            self.write_json_mp(json_path)
+
+
+    def collect_audio_transcripts(self, metadata_path:str):
+        
+        audio_dir = os.path.join(self.dataset_dir, "audio")
+        audio_ext = "wav"
+        speaker_counter = dict()
+        
+        # creates mapping from record_id to other ids like lesson, speaker, and target sentence
+        disjoint_ids_map = get_record_ids_map(self.config['disjoint_metadata'], has_url=False)
+
+        disjoint_id_sets  = get_disjoint_sets(self.config['disjoint_datasets'], disjoint_ids_map)
+        
+        del disjoint_ids_map        # to conserve memory
+    
+        count_constraints = {
+            name: int(value * self.config['dataset_size']) 
+            for name, value in config['constraints'].items()
+        }
+        id_counter = {name: dict() for name in count_constraints}
+
+        examples_collected = 0
+        with open(metadata_path, 'r') as tsv_file:
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            # header: id, target, lessonId, lineId, uid, redWords, date, audio_url
+            header = next(tsv_reader)
+            
+            while examples_collected < self.config['dataset_size']:
+
+                # print progress of collecting examples
+                if examples_collected != 0 and examples_collected % config['print_modulus'] == 0:
+                    print(f"{examples_collected} examples collected")
+                try:
+                    row = next(tsv_reader)
+                except StopIteration:
+                    print(f"Stop encountered {examples_collected} examples collected")
+                    break
+
+                assert len(row) == 8, f"metadata row length: {len(row)} is not 8"
+
+                record_id = row[0]
+                # creates a mapping from record_id to other id's for filtering and contraints
+                record_ids_map = {
+                    record_id: {
+                        'record': record_id,                    # record
+                        'target_sentence': process_text(row[1]), # processed target
+                        'lesson': row[2],                       # lesson
+                        'speaker': row[4]                       # speaker
+                    }
+                }
+                # check if the record_id should be disjoint from the disjoint_sets
+                pass_filter = check_disjoint_filter(record_id, disjoint_id_sets, record_ids_map)
+                if pass_filter:
+                    # check if the count for each id-type is under the contraint limit
+                    pass_constraints = check_update_contraints(
+                        record_id, 
+                        record_ids_map, 
+                        id_counter, 
+                        count_constraints
+                    )
+                    if pass_constraints:
+                        # add the example to the list to be written
+                        audio_path = os.path.join(audio_dir, row[0] + os.extsep + audio_ext)
+                        # a tuple of the audio path and download url allow for the downloading 
+                        # of the audio file in the `write_json` function
+                        self.audio_trans.append(( 
+                            (audio_path, row[7]), row[1]
+                        ))
+                        examples_collected += 1
 
 
 class UnknownWords():
@@ -749,21 +909,16 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
             description="creates a data json file")
-    parser.add_argument("--config", type=str,
-        help="path to preprocessing config.")
+    parser.add_argument(
+        "--config", type=str, help="path to preprocessing config."
+    )
     args = parser.parse_args()
 
     with open(args.config, 'r') as config_file:
         config = yaml.load(config_file) 
 
+    start_time = time.time()
     data_preprocessor = eval(config['dataset_name']+"Preprocessor")
-    data_preprocessor = data_preprocessor(config['dataset_dir'], 
-                                          config['dataset_files'], 
-                                          config['dataset_name'], 
-                                          config['lexicon_path'],
-                                          config['force_convert'], 
-                                          config['min_duration'], 
-                                          config['max_duration'],
-                                          config.get('custom_args', None))
+    data_preprocessor = data_preprocessor(config) 
     data_preprocessor.process_datasets()
-
+    print(f"script took: {round((time.time() - start_time)/ 60, 3)} min")

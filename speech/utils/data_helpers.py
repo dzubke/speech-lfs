@@ -1,13 +1,17 @@
 # standard libraries
 from collections import defaultdict
 import csv
+from gc import get_referents
 import glob
 import json
 import os
 import re
 import string
+import sys
+from types import ModuleType, FunctionType
 from typing import Set
 # third-party libraries
+from prettytable import PrettyTable
 import tqdm
 # project libraries
 from speech.utils import convert
@@ -22,7 +26,8 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     The digit accents are removed from the file name. 
     """
     corpus_names = [
-        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None
+        "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None,
+        "speaktrainmetadata"
     ]
     if corpus_name not in corpus_names:
         raise ValueError("corpus_name not accepted")
@@ -239,12 +244,13 @@ def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
     return phonemes
 
 
-def process_text(transcript:str)->str:
+def process_text(transcript:str, remove_apost:bool = False)->str:
     """This function removes punctuation (except apostrophe's) and extra space
     from the input `transcript` string and lowers the case. 
 
     Args:
         transcript (str): input string to be processed
+        remove_apost (bool): if True, the apostrophe will be removed from `transcript`
     Returns:
         (str): processed string
     """
@@ -263,7 +269,10 @@ def process_text(transcript:str)->str:
     for punc in punct_noapost:
         if punc in transcript:
             raise ValueError(f"unwanted punctuation {punc} in transcript")
-  
+    # remove apostrophe, if selected
+    if remove_apost:
+        transcript = transcript.replace("'", "") 
+
     return transcript
 
 
@@ -336,6 +345,73 @@ def check_disjoint_filter(record_id:str, disjoint_id_sets:dict, record_ids_map:d
     return pass_check
 
 
+def check_distribution_filter(example: dict, filter_params:dict)->bool:
+    """This function filters the number of examples in the output dataset based on
+    the values in the `dist_filter_params` dict. 
+
+    Args:
+        example (dict): dictionary of a single training example
+        dist_filter_params (dict): a dictionary with the keys and values below
+            key (str): key of the value filtered on the input `example`
+            function (str): name of the function to apply to the values in `example[key]`
+            threshhod (float): threshhold to filter upon
+            above-threshold-percent (float): percent of examples to pass through with values above
+                the threshhold
+            below-threshold-percent (float): percent of examples to pass through with values below
+                the threshold
+    Returns:
+        (boo): whether the input example should pass through the filter
+    """
+    assert 0 <= filter_params['percent-above-threshold'] <= 1.0, "probs not between 0 and 1"
+    assert 0 <= filter_params['percent-below-threshold'] <= 1.0, "probs not between 0 and 1"
+
+    # fitler fails unless set to true
+    pass_filter = False
+    # value to pass into the `filter_fn`
+    filter_input = example[filter_params['key']]
+    # function to evaluate on the `filter_input`
+    filter_fn = filter_params['function']
+    filter_value = eval(f"{filter_fn}({filter_input})")
+
+    if filter_value >= filter_params['threshold']:
+        # make random trial using the `percent-above-threshhold`
+        if np.random.binomial(1, filter_params['percent-above-threshold']):
+            pass_filter = True
+    else:
+        # make random trial using the `percent-above-threshhold`
+        if np.random.binomial(1, filter_params['percent-below-threshold']):
+            pass_filter = True
+    
+    return pass_filter
+
+
+def get_disjoint_sets(disjoint_dict:dict, record_ids_map:dict)->dict:
+    """Creates a dictionary of sets of ids that will be used to ensure a created datasets
+        does not contain the ids included in the Sets in the output dict. 
+
+    Args:
+        disjoint_dict (Dict[str, Tuple[str]]): dict of dataset_path as keys and a tuple of id_names
+            as values.
+        record_ids_map (Dict[str, Dict[str, int]]): mapping from record_id to lesson, speaker
+            target_sentence, and record_id
+        
+    Returns:
+        Dict[str, Set[str]]: a dict with `id_names` as keys and a set of ids as values
+    """
+
+    disjoint_id_sets = defaultdict(set)
+    for dj_data_path, dj_names in disjoint_dict.items():
+        # get all the record_ids in the dataset
+        record_ids = get_dataset_ids(dj_data_path)
+        # loop through the disjoint-id-names in the key-tuple
+        for dj_name in dj_names:
+            for record_id in record_ids:
+                # add the id to the relevant id-set
+                disjoint_id_sets[dj_name].add(record_ids_map[record_id][dj_name])
+    
+    return disjoint_id_sets
+
+
 def get_dataset_ids(dataset_path:str)->Set[str]:
     """This function reads a dataset path and returns a set of the record ID's
     in that dataset. The record ID's mainly correspond to recordings from the speak dataset. 
@@ -360,15 +436,16 @@ def path_to_id(record_path:str)->str:
         )
 
 
-def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
+def get_record_ids_map(metadata_path:str, id_names:list=None, has_url:bool=False)->dict:
     """This function returns a mapping from record_id to other ids like speaker, lesson,
     line, and target sentence. This function runs on recordings from the speak firestore database.
 
     Args:
         metadata_path (str): path to the tsv file that contains the various ids
-        id_names (List[str]): names of the ids in the output dict. 
+        id_names (List[str]): names of the ids in the output dict 
             This is currented hard-coded to the list: ['lesson', 'target-sentence', 'speaker']
-    
+        has_url (bool): if true, the metadata file contains an extra column with an audio url
+
     Returns:
         Dict[str, Dict[str, str]]: a mapping from record_id to a dict
             where the value-dict's keys are the id_name and the values are the ids
@@ -385,7 +462,7 @@ def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
         f"input id_names: {id_names} do not match expected values: {expected_id_names}"
 
     # create a mapping from record_id to lesson, line, and speaker ids
-    expected_row_len = 7
+    expected_row_len = 7 + int(has_url)     # add an extra column if audio_url exists
     with open(metadata_path, 'r') as tsv_file:
         tsv_reader = csv.reader(tsv_file, delimiter='\t')
         header = next(tsv_reader)
@@ -400,12 +477,71 @@ def get_record_id_map(metadata_path:str, id_names:list=None)->dict:
         for row in tsv_reader:
             assert len(row) == expected_row_len, \
                 f"row: {row} is len: {len(row)}. Expected len: {expected_row_len}"
-            tar_sentence = process_text(row[1])
             record_ids_map[row[0]] = {
-                    "record": row[0],           # adding record for disjoint_check
-                    id_names[0]: row[2],        # lesson
-                    id_names[1]: tar_sentence,  # using target_sentence instead of lineId
-                    id_names[2]: row[4]         # speaker
+                    "record": row[0],                   # adding record for disjoint_check
+                    id_names[0]: row[2],                # lesson
+                    id_names[1]: process_text(row[1]),  # using target_sentence instead of lineId
+                    id_names[2]: row[4]                 # speaker
             }
 
     return record_ids_map
+
+
+
+def print_symmetric_table(values_dict:dict, row_name:str, title:str)->None:
+    """Prints a table of values in  2-d dict with identical inner and outer keys
+
+    Args:
+        values_dict (Dict[str, Dict[str, float]]): 2-d dictionary with identical keys on the two levels
+        row_name (str): name of the rows
+        title (str): title of the table
+    """
+    table = PrettyTable(title=title)
+    sorted_keys = sorted(values_dict.keys())
+    table.add_column(row_name, sorted_keys)
+    for data_name in sorted_keys:
+        table.add_column(data_name, [values_dict[data_name][key] for key in sorted_keys])
+    print(table)
+
+
+
+def print_nonsym_table(values_dict:dict, row_name:str, title:str)->None:                
+    """Prints a prety table from a 2-d dict that has different inner and outer keys (not-symmetric)
+    Args: 
+        values_dict (Dict[str, Dict[str, float]]): 2-d dict with different keys on inner and outer levels 
+        row_name (str): name of the rows 
+        title (str): title of the table 
+    """ 
+    single_row_name = list(values_dict.keys())[0] 
+    sorted_inner_keys = sorted(values_dict[single_row_name].keys()) 
+    column_names = [row_name] + sorted_inner_keys 
+    table = PrettyTable(title=title, field_names=column_names)                             
+                                    
+    for row_name in values_dict: 
+        table.add_row([row_name] + [values_dict[row_name][key] for key in sorted_inner_keys]) 
+    print(table)
+
+
+def getsize(obj):
+    """sum size of object & members.
+    copied from: https://stackoverflow.com/questions/449560/how-do-i-determine-the-size-of-an-object-in-python
+    """
+    # Custom objects know their class.
+    # Function objects seem to know way too much, including modules.
+    # Exclude modules as well.
+    BLACKLIST = type, ModuleType, FunctionType
+    if isinstance(obj, BLACKLIST):
+        raise TypeError('getsize() does not take argument of type: '+ str(type(obj)))
+    seen_ids = set()
+    size = 0
+    objects = [obj]
+    while objects:
+        need_referents = []
+        for obj in objects:
+            if not isinstance(obj, BLACKLIST) and id(obj) not in seen_ids:
+                seen_ids.add(id(obj))
+                size += sys.getsizeof(obj)
+                need_referents.append(obj)
+        objects = get_referents(*need_referents)
+    return size
+
