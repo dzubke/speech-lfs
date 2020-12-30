@@ -211,6 +211,7 @@ class DataPreprocessor(object):
         with open(unk_words_filename, 'w') as fid:
             json.dump(all_unk_dict, fid)
 
+
     def _process_sample(self,
                         audio_transcript:Tuple[str, str], 
                         data_json_path:str,
@@ -246,12 +247,14 @@ class DataPreprocessor(object):
         if download_audio:
             (wav_path, download_url), transcript = audio_transcript
 
-            # I don't want to use a context manager, so am using the old open/.close() notation
+            # Using the old open/.close() notation instead of context manager for tempfile
             tempfile = NamedTemporaryFile(suffix=".m4a")
             audio_path = tempfile.name
             # download the audio file into the tempfile
             try:
                 urllib.request.urlretrieve(download_url, filename=audio_path)
+            # if the download fails, the example is not written to the training.json
+            # and an empty unk_words_dict is returned
             except (ValueError, urllib.error.URLError) as e:
                 print(f"unable to download url: {download_url} due to exception: {e}")
                 return unk_words_dict
@@ -269,6 +272,7 @@ class DataPreprocessor(object):
 
         # if the wave file doesn't exist, convert to wave
         #if not os.path.exists(wav_path) or force_convert:
+        # above line is commented to reduce io bottleneck
         try:
             convert.to_wave(audio_path, wav_path)
         except subprocess.CalledProcessError:
@@ -285,7 +289,7 @@ class DataPreprocessor(object):
         if min_duration <= dur <= max_duration:
 
             text, unk_word_dict = self.text_to_phonemes_mp(transcript, lex_dict)
-            # if transcript has an unknown word, skip it
+            # if transcript has an unknown word, exit the function
             if unk_word_dict:
                 return unk_word_dict
             else: 
@@ -300,6 +304,8 @@ class DataPreprocessor(object):
                     fid.write("\n")
 
                 return unk_word_dict
+        else: 
+            return unk_word_dict
 
 
     def text_to_phonemes_mp(self, transcript:str, lex_dict:dict=None):
