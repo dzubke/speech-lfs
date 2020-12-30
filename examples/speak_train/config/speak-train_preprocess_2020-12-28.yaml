@@ -1,4 +1,4 @@
-dataset_dir: /home/dzubke/awni_speech/data/speak_train/ # directory where the dataset is located
+dataset_dir: /home/dzubke/awni_speech/data/speak_train/2020-12-29/ # directory where the dataset is located
 dataset_files:           # dataset filenames to be processed, files should be in dataset_dir
     # key is dataset name, value is filename to be processed
     speak-train_test_2020-12-28: metadata-with-url_2020-12-24.tsv
@@ -15,7 +15,7 @@ print_modulus: 100000
 # max number of utterances for a single id
 constraints:
   lesson: 0.005
-  target_sentence: 0.000075
+  target_sentence: 0.00008
   speaker: 0.0005
 disjoint_metadata: /home/dzubke/awni_speech/data/speak_train/speak-train-test-eval_metadata-7rows_2020-12-18.tsv
 # the keys are the dataset-path and values are the id-names along with the output dataset will be disjoint
