@@ -1,18 +1,18 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201230/ph4/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json #LibriSpeech/dev-combo_dd.json
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-1M-2020-12-30_dd.json
     dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
-        #cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
-        #libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
-        #ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
+        cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
+        libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
+        ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
     dev_set_save_reference: speak
     start_and_end: False
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-11-30_large-model-mid-aug-no-feat-norm-naren-loss_spk-25hr.log
+    log_file: logs/2020-12-30_large-model-mid-aug-no-feat-norm-naren-loss_spk-1M-2020-12-30.log
     level: error
     debug_mode: False
 preproc:
@@ -45,7 +45,7 @@ optimizer:
     run_state: [0, 0]
     best_so_far: 0.40
     start_epoch: 0
-    epochs: 100
+    epochs: 5
     learning_rate: 0.0003
     momentum: 0.9
     dampening: 0.0
@@ -53,7 +53,7 @@ optimizer:
     sched_step: 1
 model:
     dropout: 0.4
-    load_trained: False 
+    load_trained: True
     trained_path: examples/librispeech/models/ctc_models/20201125/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
@@ -71,5 +71,5 @@ training:
     amp: False                   # turns on Pytorch's automatic mixed-precision
     apex: False                 # NOT IMPLEMENTED: uses Nvidia's apex version of amp
     opt_level: 'O0'             # precision parameter for apex
-    checkpoints_per_epoch: 1
-    OMP_NUM_THREADS: 7          # this should be equal to:  #_CPU / #_GPU
+    checkpoints_per_epoch: 4
+    OMP_NUM_THREADS: 6          # this should be equal to:  #_CPU / #_GPU
