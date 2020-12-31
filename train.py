@@ -56,8 +56,8 @@ def run_epoch(model,
         Tuple[int, float]: train state of # batch iterations and average loss
     """
     # booleans and constants for logging
-    is_rank_0 = (torch.distributed.get_rank() == 0 )
-    use_log = (logger is not None) and is_rank_0
+    is_rank_0 = (torch.distributed.get_rank() == 0)
+    use_log = (logger is not None and is_rank_0)
     log_modulus = 100     # limits certain logging function to report less frequently
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0
@@ -71,9 +71,10 @@ def run_epoch(model,
     batch_counter = 0
     device = torch.device("cuda:" + str(local_rank))
     
-    # if scaler is not None, amp is being used
-    use_amp = scaler is not None
-    fwd_ctx = autocast if use_amp else contextlib.suppress
+    # if scaler is enabled, amp is being used
+    use_amp = scaler._enabled
+
+    print(f"Amp is being used: {use_amp}")
 
     # training loop
     for batch in tq:
@@ -101,10 +102,10 @@ def run_epoch(model,
                 log_batchnorm_mean_std(model.module.state_dict(), logger)
  
         start_t = time.time()
-        optimizer.zero_grad()
-        
-        # `fwd_ctx` will autocast to lower precision if amp is used. otherwise, it's no-operation
-        with fwd_ctx():
+        optimizer.zero_grad(set_to_none=True)   # set grads to None for modest perf improvement
+        print(f"Scaler init and curr scale: {scaler._init_scale}, {scaler._scale}")
+        #  will autocast to lower precision if amp is used. otherwise, it's no-operation
+        with autocast(enabled = True):# use_amp):
             # unpack the batch 
             inputs, labels, input_lens, label_lens = model.module.collate(*batch)
             inputs = inputs.cuda() #.to(device) #.cuda(local_rank)
@@ -119,14 +120,11 @@ def run_epoch(model,
                 loss = naren_loss(out, labels, input_lens, label_lens, model.module.blank)
        
         # backward pass 
-        if use_amp:
-            loss = loss.cuda()
-            scaler.scale(loss).backward() 
+        loss = loss.cuda()      # amp needs the loss to be on cuda
+        scaler.scale(loss).backward() 
         #elif use_apex:
         #    with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
         #    scaled_loss.backward()
-        else:
-            loss.backward()
 
         # checks on gradient flow
         if use_log: 
@@ -134,18 +132,14 @@ def run_epoch(model,
                 plot_grad_flow_bar(model.module.named_parameters(),  get_logger_filename(logger))
                 log_param_grad_norms(model.module.named_parameters(), logger)
 
-        # gradient clipping and optimizer step
-        if use_amp:
-            scaler.unscale_(optimizer)
-            grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
-            scaler.step(optimizer)
-            scaler.update()
+        # gradient clipping and optimizer step, scaling disabled if amp is not used
+        scaler.unscale_(optimizer)
+        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
+        scaler.step(optimizer)
+        scaler.update()
         #elif use_apex:
         #   grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200) 
         #   optimizer.step()
-        else:    
-            grad_norm = nn.utils.clip_grad_norm_(model.module.parameters(), 200) 
-            optimizer.step()
 
         # logging in rank_0 process
         if is_rank_0:
@@ -173,7 +167,11 @@ def run_epoch(model,
             # writing to the tensorboard log files
             tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
             tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-            tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
+            
+            # adding this to suppress a tbX WARNING about inf values
+            # TODO, this may or may not be a good idea as it masks inf in tensorboard
+            tbX_grad_norm = avg_grad_norm if avg_grad_norm != float('inf') else 0
+            tbX_writer.add_scalars('train/grad', {"grad_norm": tbX_grad_norm}, iter_count)
 
             # progress bar update    
             tq.set_postfix(iter=iter_count, loss=loss, 
@@ -380,7 +378,7 @@ def run(local_rank:int, config:dict)->None:
         gamma=opt_cfg["sched_gamma"])
 
     # gradient scaler
-    scaler = GradScaler() if train_cfg['amp'] else None
+    scaler = GradScaler(enabled=train_cfg['amp'])
 
     # call the ddp or apex wrappers
     model.cuda(local_rank)
