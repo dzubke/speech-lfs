@@ -54,7 +54,7 @@ optimizer:
 model:
     dropout: 0.4
     load_trained: True
-    trained_path: examples/librispeech/models/ctc_models/20201125/ph4/best_model_state_dict.pth
+    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
