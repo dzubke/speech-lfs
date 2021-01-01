@@ -6,7 +6,7 @@ import yaml
 from speech.loader import Preprocessor, AudioDataset
 from speech.utils.config import Config
 from speech.utils.io import load_config
-from speech.utils.model_debug import get_logger
+from speech.utils.logging import get_logger
 
 def test_main():
     config_path = "./ctc_config_ph6.yaml"

@@ -27,10 +27,11 @@ from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
 from speech.utils.logging import get_logger, get_logger_filename
 from speech.utils.model_debug import (
-    check_nan_params_grads, log_batchnorm_mean_std, log_cpu_mem_disk_usage, 
-    log_model_grads, log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
+    check_nan_params_grads, log_batchnorm_mean_std, log_cpu_mem_disk_usage, log_model_grads,
+    log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
 )
 
+#torch.autograd.set_detect_anomaly(True)
 
 def run_epoch(model, 
               optimizer, 
@@ -73,9 +74,8 @@ def run_epoch(model,
     
     # if scaler is enabled, amp is being used
     use_amp = scaler._enabled
-
     print(f"Amp is being used: {use_amp}")
-
+    
     # training loop
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
@@ -103,9 +103,9 @@ def run_epoch(model,
  
         start_t = time.time()
         optimizer.zero_grad(set_to_none=True)   # set grads to None for modest perf improvement
-        print(f"Scaler init and curr scale: {scaler._init_scale}, {scaler._scale}")
+        
         #  will autocast to lower precision if amp is used. otherwise, it's no-operation
-        with autocast(enabled = True):# use_amp):
+        with autocast(enabled = use_amp):
             # unpack the batch 
             inputs, labels, input_lens, label_lens = model.module.collate(*batch)
             inputs = inputs.cuda() #.to(device) #.cuda(local_rank)
@@ -170,7 +170,7 @@ def run_epoch(model,
             
             # adding this to suppress a tbX WARNING about inf values
             # TODO, this may or may not be a good idea as it masks inf in tensorboard
-            tbX_grad_norm = avg_grad_norm if avg_grad_norm != float('inf') else 0
+            tbX_grad_norm = avg_grad_norm if avg_grad_norm not in [float('inf'), float('nan')] else 0
             tbX_writer.add_scalars('train/grad', {"grad_norm": tbX_grad_norm}, iter_count)
 
             # progress bar update    
@@ -209,7 +209,7 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
     Only works with pytorch 1.X. The log_softmax is performed outside of
     the loss function (unlike awni and naren's where the log_softmax is internal).
     The `.permute(1,0,2).float()` transform puts the log_probs in the expected format.
-    """
+    """ 
     log_probs = nn.functional.log_softmax(out, dim=2) 
     loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)
     loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)
@@ -232,7 +232,7 @@ def naren_loss(out, labels, input_lens, label_lens, blank_idx):
     """
     from warpctc_pytorch import CTCLoss
     loss_fn = CTCLoss(blank=blank_idx, size_average=True, length_average=False)
-    out = out.permute(1,0,2).float().cpu() #permuation for sean ctc
+    out = out.permute(1,0,2).float().cpu() #permuation for naren's  warpctc
     loss = loss_fn(out, labels, input_lens, label_lens)
     return loss
 
@@ -307,10 +307,7 @@ def run(local_rank:int, config:dict)->None:
     train_cfg = config['training']    
 
     # setting up the distributed training environment
-    dist.init_process_group(                                   
-        backend='nccl'
-        #init_method='env://',
-    )
+    dist.init_process_group(backend='nccl')
     torch.cuda.set_device(local_rank)
     print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
     is_rank_0 = (torch.distributed.get_rank() == 0)
@@ -342,7 +339,6 @@ def run(local_rank:int, config:dict)->None:
     best_so_far = train_state.get('best_so_far', opt_cfg['best_so_far'])
     start_epoch =  train_state.get('start_epoch', opt_cfg['start_epoch'])
     
-
     # create the loaders
     batch_size = opt_cfg["batch_size"]
     preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
@@ -350,7 +346,7 @@ def run(local_rank:int, config:dict)->None:
     
     train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
 
-    # create the dev-set loaders for the rank_0 process
+    # create the dev-set loaders in the rank_0 process
     if is_rank_0:
         dev_ldr_dict = dict() 
         for dev_name, dev_path in data_cfg["dev_sets"].items():
@@ -377,8 +373,8 @@ def run(local_rank:int, config:dict)->None:
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
 
-    # gradient scaler
-    scaler = GradScaler(enabled=train_cfg['amp'])
+    # gradient scaler, too large a value for init_scale produces NaN gradients
+    scaler = GradScaler(enabled=train_cfg['amp'], init_scale=32)
 
     # call the ddp or apex wrappers
     model.cuda(local_rank)

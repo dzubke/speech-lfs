@@ -21,22 +21,7 @@ import torch
 from torch.autograd import Variable, Function
 # project libraries
 from speech.utils.data_structs import TorchNamedParams, TorchParams, Batch
-
-
-def get_logger(logger_path:str='')->Logger:
-        # create logger
-        logger = logging.getLogger("log")
-        logger.setLevel(logging.DEBUG)
-        # create file handler which logs even debug messages
-        if logger_path:
-            fh = logging.FileHandler(logger_path)
-            fh.setLevel(logging.DEBUG)
-            formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', "%Y-%m-%d %H:%M:%S")
-            fh.setFormatter(formatter)
-            logger.addHandler(fh)
-        
-        return logger
-
+from speech.utils.logging import get_logger_filename
 
 
 def check_nan_params_grads(model_params:TorchParams)->bool:
@@ -144,13 +129,6 @@ def log_param_grad_norms(named_parameters:TorchNamedParams, logger:Logger)->None
     logger.info(f"param_grad_norm: total_norm: {total_norm}")        
         
 
-def get_logger_filename(logger:Logger)->str:
-    """
-    Returns the filename of the logger
-    """
-    basename, filename = os.path.split(logger.handlers[0].baseFilename)
-    filename, ext = os.path.splitext(filename)
-    return filename
 
 
 def format_bytes(bytes, suffix="B"):
