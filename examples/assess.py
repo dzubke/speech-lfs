@@ -5,11 +5,12 @@ license: MIT
 """
 # standard libary
 import argparse
-from collections import Counter
+from collections import Counter, OrderedDict
 from functools import partial
 import csv
 import os
 import re
+from typing import List
 # third party libraries
 import firebase_admin
 from firebase_admin import credentials
@@ -20,8 +21,9 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils import wave, data_helpers
-from speech.utils.io import write_pickle
+from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id
+from speech.utils.data_helpers import print_symmetric_table, process_text
+from speech.utils.io import read_data_json, write_pickle
 
 
 def assess_commonvoice(validated_path:str, max_occurance:int):
@@ -158,9 +160,24 @@ def assess_iphone_models(save_path:str)->None:
     secaxy.set_ylabel("Percent of total device count")
     plt.xlabel("Device names")
 
-def assess_speak_train(dataset_path:str):
 
-    def _update_key(in_dict, key): 
+
+def assess_speak_train(dataset_paths: List[str], 
+                        metadata_path:str, 
+                        out_dir:str, 
+                        use_json:bool=True)->None:
+    """This function creates counts of the speaker, lesson, and line ids in a speak training dataset
+    Args:
+        dataset_path (str): path to speak training.json dataset
+        metadata_path (str): path to tsv file that contains speaker, line, and lesson ids 
+        out_dir (str): directory where plots and txt files will be saved
+        use_json (bool): if true, the data will be read from a training.json file
+    Returns:
+        None
+    """
+
+
+    def _increment_key(in_dict, key): 
         in_dict[key] = in_dict.get(key, 0) + 1
 
 
@@ -171,7 +188,7 @@ def assess_speak_train(dataset_path:str):
         ax.set_ylabel(f"utterance per {label}")
         ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
         ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-
+        plt.tight_layout()
 
     def reformat_large_tick_values(tick_val, pos):
         """
@@ -196,51 +213,323 @@ def assess_speak_train(dataset_path:str):
         return str(new_tick_format)
 
 
-    def _stats(count_dict:dict):
+    def _print_stats(count_dict:dict):
         values = list(count_dict.values())
         mean = round(np.mean(values), 2)
         std = round(np.std(values), 2)
         max_val = round(max(values), 2)
         min_val = round(min(values), 2)
-        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}")
+        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}, total_unique: {len(count_dict)}")
+        print(f"sample of 5 values: {list(count_dict.keys())[0:5]}")
     
+    # this will read the data from a metadata.tsv file
+    if not use_json:
+        # count dictionaries for the lesssons, lines, and users (speakers)
+        lesson_dict, line_dict, user_dict, target_dict = {}, {}, {}, {}
+        # create count_dicts for each
+        with open(metadata_path, 'r') as tsv_file: 
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            header = next(tsv_reader) 
+            print(header) 
+            for row in tsv_reader: 
+                _increment_key(lesson_dict, row[2]) 
+                _increment_key(line_dict, row[3]) 
+                _increment_key(user_dict, row[4]) 
+                _increment_key(target_dict, process_text(row[1])) 
 
-    # count dictionaries for the lesssons, lines, and users (speakers)
-    lesson_dict = {} 
-    line_dict = {} 
-    user_dict ={} 
+        # put the labels and count_dicts in list of the for-loop
+        constraint_names = ['lesson', 'line', 'speaker', 'target_sent']
+        counter = {
+            "lesson": lesson_dict, 
+            "line": line_dict, 
+            "speaker": user_dict,
+            "target_sent": target_dict
+        }
+
+    # reading from a training.json file supported by a metadata.tsv file
+    if use_json:
+        # create mapping from record_id to speaker, line, and lesson ids
+        rec_ids_map = dict()
+        constraint_names = ['lesson', 'line', 'speaker', 'target_sent']
+        counter = {name: dict() for name in constraint_names}
+        with open(metadata_path, 'r') as tsv_file: 
+            tsv_reader = csv.reader(tsv_file, delimiter='\t')
+            # header: id, text, lessonId, lineId, uid(speaker_id), date
+            header = next(tsv_reader)
+            rec_ids_map = dict()
+            for row in tsv_reader:
+                rec_ids_map[row[0]]= {
+                        constraint_names[0]: row[2],   # lesson
+                        constraint_names[1]: row[3],    # line
+                        constraint_names[2]: row[4],    # speaker
+                        constraint_names[3]: process_text(row[1]),  # target-sentence
+                        "date": row[6]                  # date
+                }
+
+        total_date_counter = dict()
+        # `unq_date_sets` keep track of the unique ids
+        unq_date_counter = {name: dict() for name in constraint_names}
+        # iterate through the datasets
+        for dataset_path in dataset_paths:
+            dataset = read_data_json(dataset_path)
+            print(f"dataset {path_to_id(dataset_path)} size is: {len(dataset)}")
+
+            # iterate through the exmaples in the dataset
+            for xmpl in dataset:
+                rec_id = path_to_id(xmpl['audio'])
+                date =  rec_ids_map[rec_id]['date']
+                # date has format 2020-09-10T04:24:03.073Z, so splitting
+                # and joining by '-' using the first two element will be `2020-09`
+                yyyy_mm_date = '-'.join(date.split('-')[:2])
+                _increment_key(total_date_counter, yyyy_mm_date)
+
+                # iterate through the constraints and update the id counters
+                for name in constraint_names:
+                    constraint_id = rec_ids_map[rec_id][name]
+                    _increment_key(counter[name], constraint_id)
+                    update_unq_date_counter(
+                        unq_date_counter, 
+                        name, 
+                        constraint_id,
+                        yyyy_mm_date
+                    )
+
+                
     
-    # create count_dicts for each
-    with open(dataset_path, 'r') as tsv_file: 
-        tsv_reader = csv.reader(tsv_file, delimiter='\t')
-        header = next(tsv_reader) 
-        print(header) 
-        for row in tsv_reader: 
-            lesson_id, line_id, user_id = row[2], row[3], row[4] 
-            _update_key(lesson_dict, lesson_id) 
-            _update_key(line_dict, line_id) 
-            _update_key(user_dict, user_id) 
-
     # create the plots
-    fig, axs = plt.subplots(1,3)
-    fig.suptitle('Count')
-    
-    # put the labels and count_dicts in list of the for-loop
-    count_dicts = [lesson_dict, line_dict, user_dict]
-    labels = ["lessons", "lines", "speakers"]   
+    fig, axs = plt.subplots(1,len(constraint_names))
+    fig.set_size_inches(8, 6)
 
     # plot and calculate stats of the count_dicts
-    for ax, c_dict, label in zip(axs, count_dicts, labels):
-        _plot_count(ax, c_dict, label)
-        print(f"{label} stats")
-        _stats(c_dict)
+    for ax, name in zip(axs, constraint_names):
+        _plot_count(ax, counter[name], name)
+        print(f"{name} stats")
+        _print_stats(counter[name])
         print()
-    plt.show()
+    
+    # ensures the directory of `out_dir` exists
+    os.makedirs(out_dir, exist_ok=dir)
+    out_path = os.path.join(out_dir, os.path.basename(out_dir))
+    print("out_path: ", out_path)
+    plt.savefig(out_path + "_count_plot.png")
+    plt.close()
 
-    print("unique lessons")
-    print(sorted(list(lesson_dict.keys()))[:200])
-    print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+    # plot the total_date histogram
+    fig, ax = plt.subplots(1,1)
+    dates = sorted(total_date_counter.keys())
+    date_counts = [total_date_counter[date] for date in dates]
+    ax.plot(range(len(date_counts)), date_counts)
+    plt.xticks(range(len(date_counts)), dates, rotation=60)
+    #ax.set_title(label)
+    #ax.set_xlabel(f"unique {label}")
+    #ax.set_ylabel(f"utterance per {label}")
+    #ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+    ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+    plt.tight_layout()
 
+    plt.savefig(out_path + "_date_count.png")
+    plt.close()
+
+    # plot the unique ids
+    for name in constraint_names:
+        fig, ax = plt.subplots(1,1)
+        date_counts = []
+        dates = sorted(unq_date_counter[name].keys())
+        total_count = sum([unq_date_counter[name][date]['count'] for date in dates])
+        cumulative_count = 0
+        for date in dates:
+            cumulative_count += unq_date_counter[name][date]['count'] 
+            date_counts.append(round(cumulative_count/total_count, 2))
+        
+        ax.plot(range(len(date_counts)), date_counts)
+        plt.xticks(range(len(date_counts)), dates, rotation=60)
+        ax.set_title(name)
+        ax.set_xlabel(f"Date")
+        ax.set_ylabel(f"% of total unique ID's")
+        #ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+        #ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
+        plt.tight_layout()
+
+        plt.savefig(out_path + f"_unq_cum_date_{name}.png")
+        plt.close()
+
+
+    # sort the lesson_ids and line_ids and write to txt file
+    for name in counter:
+        sorted_ids = sorted(list(counter[name].keys()))
+
+        with open(f"{out_path}_{name}.txt", 'w') as fid:
+            for ids in sorted_ids:
+                fid.write(ids+"\n")
+
+
+    #print("unique lessons")
+    #print(sorted(list(lesson_dict.keys()))[:200])
+    #print(f"number of unique lessons: {len(set(lesson_dict.keys()))}")
+
+
+def dataset_stats(dataset_path:str)->None:
+    """This function prints a variety of stats (like mean and std-dev) for the input dataset
+
+    Args:
+        dataset_path (str): path to the dataset
+    """
+
+    dataset = read_data_json(dataset_path)
+
+    data_features = {
+        "target_len": [len(xmpl['text']) for xmpl in dataset],
+        "audio_dur": [xmpl['duration'] for xmpl in dataset]
+    }
+
+    stat_functions = {
+        "mean": np.mean,
+        "stddev": np.std,
+    }
+
+    print(f"stats for dataset: {os.path.basename(dataset_path)}")
+    for data_name, data in data_features.items():
+        for stat_name, stat_fn in stat_functions.items():
+            print(f"\t{stat_name} of {data_name} is: {round(stat_fn(data), 3)}")
+        print()
+
+
+def dataset_overlap(dataset_list: str, 
+                    metadata_path: str,
+                    overlap_key: str)->None:
+    """This function assess the overlap between two datasets by the `overlap_key`. 
+    Two metrics are calcualted: 
+        1) coutn of unique overlap_keys / total unique overlap_keys
+        2) count of total overlaping keys / total records
+
+    Args:
+        dataset_list (List[str]): list of dataset paths to compare
+        metadata_path (str): path to metadata tsv file
+        overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
+
+    Returns:
+        None
+    """
+
+    print(f"assessing overlap based on key: {overlap_key}")
+
+    record_id_map = get_record_ids_map(metadata_path)
+
+    # creates a shorter, pretty name of the dataset
+    def pretty_data_name(data_name):
+        """This function makes the data name shorter and easier to read
+        """
+        data_name = os.path.basename(data_name)             # remove the path directories
+        data_name = os.path.splitext(data_name)[0]          # removes extension
+        data_name = data_name.replace("speak-", "")         # remove 'speak-'
+        data_name = data_name.replace("data_trim", "7M")    # changes name for 7M records
+        data_name = data_name.replace("eval2_data", "eval2-v1") # change the eval2-v1 name
+        data_name = data_name.replace("_data", "")          # removes _data from v4 and v5
+        data_name = re.sub(r'_2020-..-..', '',data_name)    # removes date
+        return data_name
+
+    data_dict = {
+        pretty_data_name(datapath): get_dataset_ids(datapath)
+        for datapath in dataset_list
+    }
+
+    # check the record_id_map contains all of the records in data1 and data2
+    rec_map_set = set(record_id_map.keys())
+
+    for data_name, data_ids in data_dict.items():
+        assert data_ids <= rec_map_set, \
+            f"{data_name} ids not in record_id_map:\n {data_ids.difference(rec_map_set)}"
+
+    # delete to save memory
+    del rec_map_set
+
+    data_keyid_lists = dict()
+    for data_name, rec_ids in data_dict.items():
+        data_keyid_lists[data_name] = [
+            record_id_map[rec_id][overlap_key] for rec_id in rec_ids
+        ]
+
+    data_keyid_sets = {
+        data_name: set(key_ids)
+        for data_name, key_ids in data_keyid_lists.items()
+    }
+    data_keyid_counters ={
+        data_name: Counter(key_ids)
+        for data_name, key_ids in data_keyid_lists.items()
+    }
+    # reference dataset to be analyzed
+    unq_output = dict()
+    for ref_name, ref_set in data_keyid_sets.items():
+        # overlap dataset is reference for overlap exists with base dataset
+        print(f"Reference dataset: {ref_name}")
+        unq_output[ref_name] = dict()
+        for overlap_name, overlap_set in data_keyid_sets.items():
+            print(f"\tOverlap dataset: {overlap_name}")
+            count_unq_intersect = len(ref_set.intersection(overlap_set))
+            perc_unq_interesct = round(count_unq_intersect/len(ref_set), 3)
+            print(f"\t% of Reference intersecting Overlap:{perc_unq_interesct}\n")
+            unq_output[ref_name][overlap_name] = perc_unq_interesct 
+
+    print(f"Fully unique ouputs: \n{unq_output}\n")
+    print_symmetric_table(unq_output, "Intersect\\Reference", "Unique intersection") 
+
+    # reference dataset to be analyzed
+    total_output = dict()
+    for ref_name, ref_counter in data_keyid_counters.items():
+        # overlap dataset is reference for overlap exists with base dataset
+        print(f"Reference dataset: {ref_name}")
+        total_output[ref_name] = dict()
+        for overlap_name, _ in data_keyid_counters.items():
+            print(f"\tOverlap dataset: {overlap_name}")
+            ref_set, overlap_set = data_keyid_sets[ref_name], data_keyid_sets[overlap_name]
+            intersect_ids = ref_set.intersection(overlap_set)
+            total_ref_records = len(data_dict[ref_name])
+            # count of intersecting records
+            count_tot_intersect = sum([
+                ref_counter[int_id] for int_id in intersect_ids
+            ])
+            perc_total_interesct = round(count_tot_intersect/total_ref_records, 3)
+            print(f"\tRatio of total intersect to total records: {perc_total_interesct}\n")
+            total_output[ref_name][overlap_name] = perc_total_interesct
+
+    print(f"Total output is:\n{total_output}\n")
+    print_symmetric_table(total_output, "Intersect\\Reference", "Total intersection")
+
+
+def update_unq_date_counter(counter:dict, name:str, constraint_id:str, date:str)->dict:
+    """This function updates the unq_date_counter by incrementing the count for the constraint 
+    in `name` for `date` if the constraint_id is not already in the `date` set.
+
+    Args:
+        counter (Dict[
+                    name: Dict[
+                        date: Dict[
+                            "count": int, 
+                            "set": Set[constraint_id]
+                        ]
+                    ]
+                ]): 
+            dictionary with structure above. For each constraint_name and for each date-bucket (year-month), 
+                it has a count of the unique occurances of the `constraint_id` as regulated by the Set of `ids`
+        name (str): name of the constraint e.g. "lesson", "line", or "speaker"
+        constraint_id (str): id for constraint specified by `name`
+        date (str): date string of the year and month in the YYYY-MM format e.g. "2019-08"
+    
+    Returns:
+        (dict): updated counter dict
+    """
+    # create a date entry if one doesn't exist
+    if date not in counter[name]:
+        counter[name][date] = dict()
+    # create the id-set for the given `date` if it doesn't exist
+    if "set" not in counter[name][date]:
+        counter[name][date]["set"] = set()
+    # if the `constraint_id` is not in the set, increment the date count and add the id to the set
+    if constraint_id not in counter[name][date]["set"]:
+        counter[name][date]["count"] = counter[name][date].get("count", 0) + 1
+        counter[name][date]["set"].add(constraint_id)
+
+    return counter
 
 
 class DurationAssessor():
@@ -299,66 +588,6 @@ class TatoebaAssessor():
         # audio_eng_skill_df.drop_duplicates(subset='id').shape = (498959, 9)
         # audio_eng_sent_df.drop_duplicates(subset='id').shape = (498959, 6)
         # after drop_duplicates, audio_eng_skill_df[audio_eng_skill_df['user']=='\\N'].shape = (2, 9)
-        r'''
-        # skill may not be super helpful in filtering out sentences as nearly all sentences are by skill=5 users
-        In [89]: audio_eng_skill_df['skill'].value_counts(sort=True, ascending=False) 
-        Out[89]: 
-        5     497693
-        3         12
-        4          7
-        \N         4
-        Name: skill, dtype: int64
-
-        # not all users are skill 5 in English. It may just be that skill=5 users are the ones recording Eng sentences
-        In [90]: eng_skill_df['skill'].value_counts(sort=True, ascending=False) 
-        Out[90]: 
-        5     4568
-        4     2057
-        3     1479
-        2     1227
-        1      430
-        \N     195
-        0       43
-
-        # like with the Tatoeba subset, CK is 99% of the sentences
-        In [91]: audio_eng_skill_df['user'].value_counts(sort=True, ascending=False)   
-        Out[91]: 
-        CK              494779
-        papabear           877
-        RB                 805
-        Sean_Benward       742
-        pencil             348
-        jendav             235
-        Nero               194
-        BE                 178
-        dcampbell          167
-        mhattick           153
-        rhys_mcg           104
-        jaxhere             75
-        Susan1430           68
-        Kritter             58
-        Cainntear           38
-        MT                  33
-        CO                  26
-        patgfisher          19
-        Source_VOA          18
-        samir_t             12
-        arh                  7
-        Delian               6
-        RM                   4
-        bretsky              4
-        DJT                  4
-        LouiseRatty          3
-        \N                   2
-
-
-        # review is not going to helpful because of the total reviews, 99% of them as positive
-        In [97]: sent_review_df['review'].value_counts(sort=True, ascending=False) 
-        Out[97]: 
-        1    1067165
-        0       7180
-        -1       2949
-        '''
 
     
 
@@ -370,19 +599,33 @@ if __name__ == "__main__":
         "--dataset-name", type=str, help="name of dataset to asses"
     )
     parser.add_argument(
-        "--dataset-path", type=str, help="path to data.tsv file to parse."
+        "--dataset-path", type=str, nargs='*', help="path to json file(s) to parse"
     )
     parser.add_argument(
         "--max-occurance", type=int, default=20, 
         help="max number of times a sentence can occur in output"
+    )
+    parser.add_argument(
+        "--metadata-path", type=str, 
+        help="path to metadata.tsv file that contains speaker, line, and lesson ids for speaktrain"
+    )
+    parser.add_argument(
+        "--out-dir", type=str, 
+        help="directory where plots and txt files will be saved"
     )
     args = parser.parse_args()
 
     if args.dataset_name.lower() == "commonvoice":
         assess_commonvoice(args.dataset_path, args.max_occurance)
     elif args.dataset_name.lower() == "speaktrain":
-        assess_speak_train(args.dataset_path)
+        if args.dataset_path is None:
+            use_json = False
+        else:
+            use_json = True
+        assess_speak_train(args.dataset_path, args.metadata_path, args.out_dir, use_json = use_json)
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
+    elif args.dataset_name.lower() == "speak_overlap":
+        dataset_overlap(args.dataset_path, args.metadata_path, overlap_key='target_sentence')
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")

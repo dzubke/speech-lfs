@@ -1,9 +1,6 @@
-# compability methods
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 # standard libraries
 import argparse
+import contextlib
 import os
 import itertools
 import json
@@ -17,9 +14,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
 import torch
-import torch.nn as nn
-import torch.multiprocessing as mp
+from torch.cuda.amp import autocast, GradScaler
 import torch.distributed as dist
+import torch.multiprocessing as mp
+import torch.nn as nn
 import tqdm
 import yaml
 # project libraries
@@ -27,17 +25,17 @@ import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
-from speech.utils.model_debug import check_nan_params_grads, log_model_grads, plot_grad_flow_line, plot_grad_flow_bar
-from speech.utils.model_debug import save_batch_log_stats, log_batchnorm_mean_std, log_param_grad_norms
-from speech.utils.model_debug import get_logger_filename, log_cpu_mem_disk_usage
+from speech.utils.logging import get_logger, get_logger_filename
+from speech.utils.model_debug import (
+    check_nan_params_grads, log_batchnorm_mean_std, log_cpu_mem_disk_usage, log_model_grads,
+    log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
+)
 
-
-BLANK_IDX = 0
-
+#torch.autograd.set_detect_anomaly(True)
 
 def run_epoch(model, 
               optimizer, 
-              train_ldr, 
+              train_ldr,
               logger, 
               debug_mode:bool, 
               tbX_writer, 
@@ -46,182 +44,182 @@ def run_epoch(model,
               local_rank:int, 
               loss_name:str, 
               save_path:str,
-              chkpt_per_epoch:int):
+              chkpt_per_epoch:int,
+              scaler:GradScaler=None)->tuple:
     """
     Performs a forwards and backward pass through the model
     Args:
         iter_count (int): count of iterations
         save_path (str): path to directory where model is saved
-        chkpt_per_epoch (int): # checkpoints for each epoch (including at the end of the epoch) that will be saved
+        chkpt_per_epoch (int): # checkpoints for each epoch that will be saved
+            including at the end of the epoch (which is unnecessary).
+    Returns:
+        Tuple[int, float]: train state of # batch iterations and average loss
     """
-    is_rank_0 = (torch.distributed.get_rank() == 0 )
-    use_log = (logger is not None) and is_rank_0
-    model_t, data_t = 0.0, 0.0
-    end_t = time.time()
-    tq = tqdm.tqdm(train_ldr)  if is_rank_0 else train_ldr
+    # booleans and constants for logging
+    is_rank_0 = (torch.distributed.get_rank() == 0)
+    use_log = (logger is not None and is_rank_0)
     log_modulus = 100     # limits certain logging function to report less frequently
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0
-    # batch_counter is use to checkpoint the model after going through 50% of the dataset
+    model_t, data_t = 0.0, 0.0
+    end_t = time.time()
+
+    # progress bar for rank_0 process
+    tq = tqdm.tqdm(train_ldr)  if is_rank_0 else train_ldr
+    
+    # counter for model checkpointing
     batch_counter = 0
     device = torch.device("cuda:" + str(local_rank))
-    print(f"rank {local_rank}: device: {device}")
-    print(f"rank {local_rank}: loader length", len(train_ldr))
-
-    # model compatibility for using multiple gpu's 
-    if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)): #, apex.parallel.DistributedDataParallel)): 
-       model_module = model.module 
-    else: 
-        model_module = model
-
-    print(f"rank {local_rank}:tq type:", type(tq))
-    #train_iter = iter(train_ldr)
-    print(f"rank {local_rank}: after iterator assigned")
-    #print(f"first batch: {next(iter(train_ldr))}")
-    #print(f"first batch: {next(iter(train_ldr))}")
-    #print(f"first batch: {next(iter(train_ldr))}")
+    
+    # if scaler is enabled, amp is being used
+    use_amp = scaler._enabled
+    print(f"Amp is being used: {use_amp}")
+    
+    # training loop
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
-        #print(f"rank {local_rank}: inside loop")
         
         ##############  Mid-epoch checkpoint ###############
-        if is_rank_0 and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 and batch_counter != 0:
+        if is_rank_0 \
+        and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 \
+        and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
-            save(model_module, preproc, save_path, tag='ckpt')
+            save(model.module, preproc, save_path, tag='ckpt')
             # save the run_sate
             ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
             write_pickle(ckpt_state_path, {'run_state': (iter_count, avg_loss)})
         batch_counter += 1
         ####################################################
 
-        #print(f"rank {local_rank}: loop begins")
-        batch = list(batch)    # this was added as the batch generator was being exhausted when it was called
-        #print(f"rank {local_rank}: after temp batch")
+        # convert the temprorary generator batch to a permanent list
+        batch = list(batch) 
+        
+        # save the batch information
         if use_log: 
             if debug_mode:  
                 save_batch_log_stats(batch, logger)
-                log_batchnorm_mean_std(model_module.state_dict(), logger)
+                log_batchnorm_mean_std(model.module.state_dict(), logger)
  
         start_t = time.time()
-        optimizer.zero_grad()
-        if use_log: logger.info(f"train: Optimizer zero_grad")
-        #print(f'rank {local_rank}: after optimizer zero_grad')
-        # calcuating the loss outside of model.loss to allow multi-gpu use
-        inputs, labels, input_lens, label_lens = model_module.collate(*batch)
-        #print(f'rank {local_rank}: after collate')
-        inputs = inputs.cuda() #.to(device) #.cuda(local_rank)
-        #print(f'rank {local_rank}: after inputs to cuda')
-        out, rnn_args = model(inputs, softmax=False)
-        #print(f'rank {local_rank}: after model inference')
-
-        if loss_name == "native":
-            loss = native_loss(out, labels, input_lens, label_lens, model_module.blank)
-        elif loss_name == "awni":
-            loss = awni_loss(out, labels, input_lens, label_lens, model_module.blank)
-        elif loss_name == "naren":
-            loss =naren_loss(out, labels, input_lens, label_lens, model_module.blank)
-        #print(f"rank {local_rank}: after loss calc")
+        optimizer.zero_grad(set_to_none=True)   # set grads to None for modest perf improvement
         
-        if use_log: logger.info(f"train: Loss calculated")
-    
-        ############# amp change ##################################################################
-        #with apex.amp.scale_loss(loss, optimizer) as scaled_loss:                                      #
-        #   scaled_loss.backward()                                                                #
+        #  will autocast to lower precision if amp is used. otherwise, it's no-operation
+        with autocast(enabled = use_amp):
+            # unpack the batch 
+            inputs, labels, input_lens, label_lens = model.module.collate(*batch)
+            inputs = inputs.cuda() #.to(device) #.cuda(local_rank)
+            out, rnn_args = model(inputs, softmax=False)
+            
+            # use the loss function defined in `loss_name`
+            if loss_name == "native":
+                loss = native_loss(out, labels, input_lens, label_lens, model.module.blank)
+            elif loss_name == "awni":
+                loss = awni_loss(out, labels, input_lens, label_lens, model.module.blank)
+            elif loss_name == "naren":
+                loss = naren_loss(out, labels, input_lens, label_lens, model.module.blank)
+       
+        # backward pass 
+        loss = loss.cuda()      # amp needs the loss to be on cuda
+        scaler.scale(loss).backward() 
+        #elif use_apex:
+        #    with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
+        #    scaled_loss.backward()
 
-        ############# non-amp change  #############################################################
-        loss.backward()                                                                           #
-        #print(f"rank {local_rank}: after backwards call")
-        #print("loss", loss)
-        if use_log: logger.info(f"train: Backward run ")
+        # checks on gradient flow
         if use_log: 
             if debug_mode: 
-                plot_grad_flow_bar(model_module.named_parameters(),  get_logger_filename(logger))
-                log_param_grad_norms(model_module.named_parameters(), logger)
+                plot_grad_flow_bar(model.module.named_parameters(),  get_logger_filename(logger))
+                log_param_grad_norms(model.module.named_parameters(), logger)
 
-        ############# amp change ##################################################################
-        #grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200)            #
-        
-        ############# non-amp change ##################################################################
-        grad_norm = nn.utils.clip_grad_norm_(model_module.parameters(), 200) 
-        #grad_norm = 0
-        #print(f"rank {local_rank}: after grad_norm")
+        # gradient clipping and optimizer step, scaling disabled if amp is not used
+        scaler.unscale_(optimizer)
+        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
+        scaler.step(optimizer)
+        scaler.update()
+        #elif use_apex:
+        #   grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200) 
+        #   optimizer.step()
 
-        if use_log: logger.info(f"train: Grad_norm clipped ")
-        #print(f"rank {local_rank}: before optimizer step")
-        optimizer.step()
-        if use_log: logger.info(f"train: Optimizer step taken")
-        #print(f"rank {local_rank}: after optimizer step")
-        if is_rank_0:  # logging on rank_0 process
-            #print("inside rank 0 logging")
-
-            if use_log: logger.info(f"train: loss reassigned ")
-
+        # logging in rank_0 process
+        if is_rank_0:
+            # calculate timers
             prev_end_t = end_t
             end_t = time.time()
             model_t += end_t - start_t
             data_t += start_t - prev_end_t
-            if use_log: logger.info(f"train: time calculated ")
-            #print("after time calc")
             
+            # creating scalers from grad_norm and loss for weighted
+            # TODO, needed with pytorch 0.4, may not be necessary anymore
             if isinstance(grad_norm, torch.Tensor):
                 grad_norm = grad_norm.item()
             if isinstance(loss, torch.Tensor):
                 loss = loss.item()
+
+            # calculating the weighted average of loss and grad_norm
             if iter_count == 0:
                 avg_loss = loss
                 avg_grad_norm = grad_norm
             else: 
                 avg_loss = exp_w * avg_loss + (1 - exp_w) * loss
                 avg_grad_norm = exp_w * avg_grad_norm + (1 - exp_w) * grad_norm
-            if use_log: logger.info(f"train: Avg loss: {avg_loss}")
-            #print("avg_loss, grad_norm calc")
+            
+            # writing to the tensorboard log files
             tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
             tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-            tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
+            
+            # adding this to suppress a tbX WARNING about inf values
+            # TODO, this may or may not be a good idea as it masks inf in tensorboard
+            tbX_grad_norm = avg_grad_norm if avg_grad_norm not in [float('inf'), float('nan')] else 0
+            tbX_writer.add_scalars('train/grad', {"grad_norm": tbX_grad_norm}, iter_count)
+
+            # progress bar update    
             tq.set_postfix(iter=iter_count, loss=loss, 
                 avg_loss=avg_loss, grad_norm=grad_norm,
                 model_time=model_t, data_time=data_t)
-            #print("tq and tbX writing")
-            if use_log: logger.info(f'train: loss is inf: {loss == float("inf")}')
-            if use_log: logger.info(f"train: iter={iter_count}, loss={round(loss,3)}, grad_norm={round(grad_norm,3)}")
+            if use_log: 
+                logger.info(f'train: loss is inf: {loss == float("inf")}')
+                logger.info(
+                    f"train: iter={iter_count}, loss={round(loss,3)}, grad_norm={round(grad_norm,3)}"
+                )
         
             if iter_count % log_modulus == 0:
                 if use_log: log_cpu_mem_disk_usage(logger)
         
-        if check_nan_params_grads(model_module.parameters()):
+        # checks for nan gradients
+        if check_nan_params_grads(model.module.parameters()):
             if use_log:
-                logger.error(f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model_module.state_dict()}")
-                log_model_grads(model_module.named_parameters(), logger)
+                logger.error(
+                    f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.module.state_dict()}"
+                )
+                log_model_grads(model.module.named_parameters(), logger)
                 save_batch_log_stats(batch, logger)
-                log_param_grad_norms(model_module.named_parameters(), logger)
-                plot_grad_flow_bar(model_module.named_parameters(), get_logger_filename(logger))
+                log_param_grad_norms(model.module.named_parameters(), logger)
+                plot_grad_flow_bar(model.module.named_parameters(), get_logger_filename(logger))
             debug_mode = True
             torch.autograd.set_detect_anomaly(True)
 
-        #print(f"rank {local_rank}: loop end")
         iter_count += 1
 
     return iter_count, avg_loss
+
 
 def native_loss(out, labels, input_lens, label_lens, blank_idx):
     """Calculates the loss using pytorch's native loss function. 
     Only works with pytorch 1.X. The log_softmax is performed outside of
     the loss function (unlike awni and naren's where the log_softmax is internal).
     The `.permute(1,0,2).float()` transform puts the log_probs in the expected format.
-    """
-    ############## Native loss code ############################################################
-    log_probs = nn.functional.log_softmax(out, dim=2)                                        # 
-    loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)         #     
-    loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)         #
+    """ 
+    log_probs = nn.functional.log_softmax(out, dim=2) 
+    loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)
+    loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)
     return loss
-
 
 def awni_loss(out, labels, input_lens, label_lens, blank_idx):
     """Calculates the loss using awni hannun's warpctc bindings.
     Only works with pytorch 0.4.
     """
     import functions.ctc as ctc #awni hannun's ctc bindings
-    ############## Awni loss code  #############################################################
     loss_fn = ctc.CTCLoss(blank_label=blank_idx)   
     loss = loss_fn(out, labels, input_lens, label_lens)      
     return loss
@@ -234,35 +232,26 @@ def naren_loss(out, labels, input_lens, label_lens, blank_idx):
     """
     from warpctc_pytorch import CTCLoss
     loss_fn = CTCLoss(blank=blank_idx, size_average=True, length_average=False)
-    out = out.permute(1,0,2).float().cpu() #permuation for sean ctc
-    #print(f"out shape after permute: {float_out.size()}, sum: {torch.sum(float_out)}")
+    out = out.permute(1,0,2).float().cpu() #permuation for naren's  warpctc
     loss = loss_fn(out, labels, input_lens, label_lens)
-    #print(f"naren loss is_cuda: {loss.is_cuda}")
     return loss
-
 
 
 def eval_dev(model, ldr, preproc,  logger, loss_name):
     """
     Runs the devset evaluation loop.
-    Note: model is not a DDP wrapper, but the model itself, so there is no need
-        to create a `model_module` object as in `run_epoch`.
     """
     losses = []; all_preds = []; all_labels = []
         
     model.set_eval()
     preproc.set_eval()  # this turns off dataset augmentation
     use_log = (logger is not None)
-    if use_log: logger.info(f"eval_dev: set_eval ")
 
-
+    # saves time by not computing and saving gradients as there is no backwards pass
     with torch.no_grad():
         for batch in tqdm.tqdm(ldr):
-            if use_log: logger.info(f"eval_dev: =====Inside batch loop=====")
             batch = list(batch)
-            if use_log: logger.info(f"eval_dev: batch converted")
             preds = model.infer(batch)
-            if use_log: logger.info(f"eval_dev: infer call")
             
             inputs, labels, input_lens, label_lens = model.collate(*batch)
             inputs = inputs.cuda(non_blocking=True)
@@ -275,34 +264,41 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             elif loss_name == "naren":
                 loss = naren_loss(out, labels, input_lens, label_lens, model.blank)
 
-            if use_log: logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
-            if use_log: logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
             losses.append(loss.item())
-            if use_log: logger.info(f"eval_dev: loss appended")
-            #losses.append(loss.data[0])
             all_preds.extend(preds)
-            if use_log: logger.info(f"eval_dev: preds: {preds}")
             all_labels.extend(batch[1])        #add the labels in the batch object
-            if use_log: logger.info(f"eval_dev: labels: {batch[1]}")
-
-    model.set_train()
-    preproc.set_train()
-    if use_log: logger.info(f"eval_dev: set_train")
-
+            
     loss = sum(losses) / len(losses)
-    if use_log: logger.info(f"eval_dev: Avg loss: {loss}")
 
-    results = [(preproc.decode(l), preproc.decode(p))              # decodes back to phoneme labels
+    # decodes from integer tokens back to phoneme labels
+    results = [(preproc.decode(l), preproc.decode(p))
                for l, p in zip(all_labels, all_preds)]
-    if use_log: logger.info(f"eval_dev: results {results}")
+    
     cer = speech.compute_cer(results)
     print("Dev: Loss {:.3f}, CER {:.3f}".format(loss, cer))
-    if use_log: logger.info(f"CER: {cer}")
+    
+    if use_log: 
+        logger.info(f"eval_dev: loss calculated as: {loss.item():0.3f}")
+        logger.info(f"eval_dev: loss is nan: {math.isnan(loss.item())}")
+        logger.info(f"eval_dev: results {results}")
+        logger.info(f"CER: {cer}")
+
+    # set the model and preproc back to training mode
+    model.set_train()
+    preproc.set_train()
 
     return loss, cer
 
-def run(local_rank, config):
 
+def run(local_rank:int, config:dict)->None:
+    """Main function that defines the data, optimizer, and model objects and runs the training
+    and evaluation loops.
+
+    Args:
+        local_rank (int): rank of the process on the GPU
+        config (dict): training configuration dict
+    """
+    # unpacking the config
     data_cfg = config["data"]
     log_cfg = config["logger"]
     preproc_cfg = config["preproc"]
@@ -311,74 +307,49 @@ def run(local_rank, config):
     train_cfg = config['training']    
 
     # setting up the distributed training environment
-    if train_cfg['distributed']:
-        dist.init_process_group(                                   
-            backend='nccl'
-            #init_method='env://',
-        )
-        torch.cuda.set_device(local_rank)
-        print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
-        is_rank_0 = (torch.distributed.get_rank() == 0)
-    else:
-        is_rank_0 = True
+    dist.init_process_group(backend='nccl')
+    torch.cuda.set_device(local_rank)
+    print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
+    is_rank_0 = (torch.distributed.get_rank() == 0)
 
+    # defining the logging and debugging modes
     use_log = log_cfg["use_log"] and is_rank_0
-
     debug_mode = log_cfg["debug_mode"]    
     if debug_mode: torch.autograd.set_detect_anomaly(True)
 
-    # TODO, drz, replace with get_logger function
-    if use_log:
-        # create logger
-        logger = logging.getLogger("train_log")
-        logger.setLevel(logging.DEBUG)
-        # create file handler which logs even debug messages
-        fh = logging.FileHandler(log_cfg["log_file"])
-        fh.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', "%Y-%m-%d %H:%M:%S")
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-    else:
-        logger = None
-    
-
-    if is_rank_0: # will create tensorboard X writer if rank 0 process
-        tbX_writer = SummaryWriter(logdir=config["save_path"])
-    else:
-        tbX_writer = None
+    # create a logger, rank_0 boolean is contained in `use_log`
+    logger = get_logger("train_log", log_cfg['log_file'], log_cfg['level']) if use_log else None
+   
+    # creates tensorboardX writer in rank_0 process 
+    tbX_writer = SummaryWriter(logdir=config["save_path"]) if is_rank_0 else None
     
     # Load previous train state: dict with contents:
-    #   {'start_epoch': int, 'run_state': (int, float), 'best_so_far': float, 'learning_rate': float}
+        # {start_epoch: int, run_state: (int, float), best_so_far: float, learning_rate: float}
     train_state_path = os.path.join(config["save_path"], "train_state.pickle")
     if os.path.exists(train_state_path):
         print(f"load train_state from: {train_state_path}")
         train_state = read_pickle(train_state_path)
-    else:   # if train_path doesn't exist, create empty dict to load from config
+    # if train_path doesn't exist, create empty dict to load from config 
+    else:   
         print(f"load train_state from config")
         train_state = dict()
+        
     # the get-statements will load from train_state if key exists, and from opt_cfg otherwise
     run_state = train_state.get('run_state',  opt_cfg['run_state'])
     best_so_far = train_state.get('best_so_far', opt_cfg['best_so_far'])
-    start_epoch =  train_state.get('start_epoch', # train_state used to use 'next_epoch' 
-                                    train_state.get('next_epoch', opt_cfg['start_epoch'])
-    )
-    learning_rate = opt_cfg['learning_rate']
-
-    # Loaders
+    start_epoch =  train_state.get('start_epoch', opt_cfg['start_epoch'])
+    
+    # create the loaders
     batch_size = opt_cfg["batch_size"]
     preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
                   start_and_end=data_cfg["start_and_end"])
     
-    if train_cfg['distributed']:
-        train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
-    else: 
-        train_ldr = loader.make_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])  
+    train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
 
-
-    dev_ldr_dict = dict() # dict that includes all the dev_loaders
-    if is_rank_0:       # evaluation will only be done in rank_0 process
+    # create the dev-set loaders in the rank_0 process
+    if is_rank_0:
+        dev_ldr_dict = dict() 
         for dev_name, dev_path in data_cfg["dev_sets"].items():
-            # data_cfg["num_workers"] = 0 if 'distributed' is tru
             dev_ldr = loader.make_loader(dev_path, preproc, batch_size=8, num_workers=data_cfg["num_workers"])
             dev_ldr_dict.update({dev_name: dev_ldr})
 
@@ -391,7 +362,8 @@ def run(local_rank, config):
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
     
-    # Optimizer
+    # Optimizer and learning rate scheduler
+    learning_rate = opt_cfg['learning_rate']
     optimizer = torch.optim.SGD(model.parameters(),
                     lr=learning_rate,   # from train_state or opt_config
                     momentum=opt_cfg["momentum"],
@@ -401,24 +373,18 @@ def run(local_rank, config):
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
 
-    loss_name = train_cfg['loss_name']
+    # gradient scaler, too large a value for init_scale produces NaN gradients
+    scaler = GradScaler(enabled=train_cfg['amp'], init_scale=32)
 
-    # multi-gpu training
-    if train_cfg['distributed']:
-        model.cuda(local_rank)
-    
-        #if train_cfg['apex']:
-        #    model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
-        #    model = apex.parallel.DistributedDataParallel(model)
-        #else:
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
-        
-        model_module = model.module
+    # call the ddp or apex wrappers
+    model.cuda(local_rank)
+    if train_cfg['apex']:
+        model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
+        model = apex.parallel.DistributedDataParallel(model)
+        raise NotImplementedError("Need to incorporate apex into `run_epoch` function")
     else:
-        # allows for compatbility with distributed-data-parallel models
-        model_module = model
-        model.cuda() if use_cuda else model.cpu()
-
+        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
+    
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")
         logger.info(f"train: model: {model}")
@@ -434,24 +400,26 @@ def run(local_rank, config):
         print(f"optimizer: {optimizer}")
         print(f"config: {config}")
 
+
+    # training loop
     for epoch in range(start_epoch, opt_cfg["epochs"]):
-        if use_log: logger.info(f"Starting epoch: {epoch}")
+        
         start = time.time()
         for group in optimizer.param_groups:
             if is_rank_0: print(f'learning rate: {group["lr"]}')
             if use_log: logger.info(f"train: learning rate: {group['lr']}")
         
-
         try:
-            run_state = run_epoch(model, optimizer, train_ldr, logger, debug_mode, tbX_writer, 
-                                    *run_state, local_rank, loss_name, config['save_path'],
-                                    train_cfg['checkpoints_per_epoch'])
+            run_state = run_epoch(
+                model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
+                train_cfg['loss_name'], config['save_path'], train_cfg['checkpoints_per_epoch'], scaler
+            )
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
                 logger.error(f"train: ====In except block====")
-                logger.error(f"train: state_dict: {model_module.state_dict()}")
-                log_model_grads(model_module.named_parameters(), logger)
+                logger.error(f"train: state_dict: {model.module.state_dict()}")
+                log_model_grads(model.module.named_parameters(), logger)
             raise Exception('Failure in run_epoch').with_traceback(err.__traceback__)
         finally: # used to ensure that plots are closed even if exception raised
             plt.close('all')
@@ -471,9 +439,10 @@ def run(local_rank, config):
     
             # the logger needs to be removed to save the model
             if use_log: preproc.logger = None
-            speech.save(model_module, preproc, config["save_path"])
-            if use_log: logger.info(f"train: ====== model saved =======")
-            if use_log: preproc.logger = logger
+            speech.save(model.module, preproc, config["save_path"])
+            if use_log: 
+                logger.info(f"train: ====== model saved =======")
+                preproc.logger = logger
 
             # creating the dictionaries that hold the PER and loss values
             dev_loss_dict = dict()
@@ -482,7 +451,7 @@ def run(local_rank, config):
             for dev_name, dev_ldr in dev_ldr_dict.items():
                 print(f"evaluating devset: {dev_name}")
                 if use_log: logger.info(f"train: === evaluating devset: {dev_name} ==")
-                dev_loss, dev_per = eval_dev(model_module, dev_ldr, preproc, logger, loss_name)
+                dev_loss, dev_per = eval_dev(model.module, dev_ldr, preproc, logger, train_cfg['loss_name'])
 
                 dev_loss_dict.update({dev_name: dev_loss})
                 dev_per_dict.update({dev_name: dev_per})
@@ -497,7 +466,7 @@ def run(local_rank, config):
                     if dev_per < best_so_far:
                         if use_log: preproc.logger = None   # remove the logger to save the model
                         best_so_far = dev_per
-                        speech.save(model_module, preproc,
+                        speech.save(model.module, preproc,
                                 config["save_path"], tag="best")
                         if use_log: 
                             preproc.logger = logger
@@ -563,7 +532,4 @@ if __name__ == "__main__":
 
     os.environ['OMP_NUM_THREADS'] = str(train_cfg['OMP_NUM_THREADS'])
 
-    if train_cfg['distributed']:
-        run(local_rank=args.local_rank, config=config)
-    else:
-        run(local_rank=0, config=config)
+    run(local_rank=args.local_rank, config=config)
