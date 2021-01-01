@@ -25,9 +25,9 @@ import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
-from speech.utils.logging import get_logger
+from speech.utils.logging import get_logger, get_logger_filename
 from speech.utils.model_debug import (
-    check_nan_params_grads, get_logger_filename, log_batchnorm_mean_std, log_cpu_mem_disk_usage, 
+    check_nan_params_grads, log_batchnorm_mean_std, log_cpu_mem_disk_usage, 
     log_model_grads, log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
 )
 
