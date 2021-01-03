@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201230/ph4/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-500K-2020-11-24_dd.json
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-1M-2020-12-30_dd.json
     dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
@@ -12,7 +12,8 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-11-24_large-model-mid-aug-no-feat-norm-naren-loss_lib-ted-cv-speak-500K-2020-11-24.log
+    log_file: logs/2020-12-30_large-model-mid-aug-no-feat-norm-naren-loss_spk-1M-2020-12-30.log
+    level: error
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -42,18 +43,17 @@ preproc:
 optimizer:
     batch_size: 9
     run_state: [0, 0]
-    best_so_far: 0.25
+    best_so_far: 0.40
     start_epoch: 0
-    epochs: 100
+    epochs: 5
     learning_rate: 0.0003
     momentum: 0.9
     dampening: 0.0
     sched_gamma: 1.0
     sched_step: 1
 model:
-    class: this value is no longer used as train.py is hardcorded to use CTC_train
     dropout: 0.4
-    load_trained: True 
+    load_trained: True
     trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
@@ -67,9 +67,9 @@ model:
             bidirectional: False
             layers: 5
 training:
-    distributed: True
     loss_name: naren
-    apex: False
-    opt_level: 'O0'
-    checkpoints_per_epoch: 6
-    OMP_NUM_THREADS: 7
+    amp: False                   # turns on Pytorch's automatic mixed-precision
+    apex: False                 # NOT IMPLEMENTED: uses Nvidia's apex version of amp
+    opt_level: 'O0'             # precision parameter for apex
+    checkpoints_per_epoch: 4
+    OMP_NUM_THREADS: 6          # this should be equal to:  #_CPU / #_GPU

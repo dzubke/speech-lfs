@@ -731,7 +731,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
             # collects the audio paths and transcripts into a list
             self.collect_audio_transcripts(label_path)
             
-            logging.info(f"len of auddio_trans: {len(self.audio_trans)}")
+            logging.info(f"len of audio_trans: {len(self.audio_trans)}")
 
             # creates the audio path name
             json_path = os.path.join(self.dataset_dir, name + ".json")
