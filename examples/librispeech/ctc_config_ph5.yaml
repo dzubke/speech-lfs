@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201216/ph5/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210101/ph5/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-250K-2020-12-10_dd.json
+    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-1M-2020-12-30_dd.json
     dev_sets:
         speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
         cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
@@ -12,7 +12,8 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2020-12-16_large-mid-aug-no-fn-naren_lib-ted-cv-speak-250K-2020-12-10.log
+    log_file: logs/2021-01-01_large-mid-aug-no-feat-norm-naren-loss-amp_lib-ted-cv-spk-1M-2020-12-30.log
+    level: error
     debug_mode: False
 preproc:
     preprocessor: log_spectrogram
@@ -40,9 +41,9 @@ preproc:
         1: {W: 20, F: 15, m_F: 2, T: 9, m_T: 2}
         2: {W: 20, F: 10, m_F: 3, T: 6, m_T: 3}
 optimizer:
-    batch_size: 9
-    run_state: [0, 0]
-    best_so_far: 0.34
+    batch_size: 16
+    run_state: [0, 0]           # (iteration_count, avg_loss)
+    best_so_far: 0.40           # best_per
     start_epoch: 0
     epochs: 5
     learning_rate: 0.0003
@@ -52,8 +53,8 @@ optimizer:
     sched_step: 1
 model:
     dropout: 0.4
-    load_trained: True 
-    trained_path: examples/librispeech/models/ctc_models/20201216/ph5/best_model_state_dict.pth
+    load_trained: True
+    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
@@ -66,9 +67,9 @@ model:
             bidirectional: False
             layers: 5
 training:
-    distributed: True
     loss_name: naren
-    apex: False
-    opt_level: 'O0'
-    checkpoints_per_epoch: 6
-    OMP_NUM_THREADS: 7
+    amp: True                   # turns on Pytorch's automatic mixed-precision
+    apex: False                 # NOT IMPLEMENTED: uses Nvidia's apex version of amp
+    opt_level: 'O0'             # precision parameter for apex
+    checkpoints_per_epoch: 4
+    OMP_NUM_THREADS: 6          # this should be equal to:  #_CPU / #_GPU
