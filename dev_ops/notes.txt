@@ -154,3 +154,11 @@ gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-v
 
 
 ~ 8800 after 3.4 M, seems very low
+
+
+puffy
+conda install tornado==6.0.3=py37h7b6447c_0
+numpy-base 1.15.4 py37h2f8d375_0
+tbb4py 2020.3 py37hfd86e86_0
+conda install pyopenssl==19.0.0=py37_0
+conda install ipython_genutils==0.2.0=py37_0
