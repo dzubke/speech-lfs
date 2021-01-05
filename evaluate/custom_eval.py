@@ -12,8 +12,9 @@ from evaluate.eval import run_eval
 import speech.loader
 from speech.models.ctc_decoder import decode as ctc_decode
 from speech.models.ctc_model_train import CTC_train as CTC_train
-from speech.utils.data_helpers import lexicon_to_dict, print_nonsym_table, text_to_phonemes
+from speech.utils.data_helpers import lexicon_to_dict, text_to_phonemes
 from speech.utils.io import get_names, load_config, load_state_dict, read_pickle
+from speech.utils.visual import print_nonsym_table
 
 
 

@@ -737,7 +737,9 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
             json_path = os.path.join(self.dataset_dir, name + ".json")
             logging.info(f"entering write_json for {name}. writing json to {json_path}")
 
-            self.write_json_mp(json_path)
+            # `dry-run` toggle facilities the search for mininmum constraints without downloading data
+            if not self.config['dry-run']:
+                self.write_json_mp(json_path)
 
 
     def collect_audio_transcripts(self, metadata_path:str):
