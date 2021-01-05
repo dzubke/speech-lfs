@@ -21,9 +21,10 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id
-from speech.utils.data_helpers import print_symmetric_table, process_text
+from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id, process_text
 from speech.utils.io import read_data_json, write_pickle
+from speech.utils.visual import plot_count, print_stats, print_symmetric_table
+
 
 
 def assess_commonvoice(validated_path:str, max_occurance:int):
@@ -181,47 +182,6 @@ def assess_speak_train(dataset_paths: List[str],
         in_dict[key] = in_dict.get(key, 0) + 1
 
 
-    def _plot_count(ax, count_dict:dict, label:str):
-        ax.plot(range(len(count_dict.values())), sorted(list(count_dict.values()), reverse=True))
-        ax.set_title(label)
-        ax.set_xlabel(f"unique {label}")
-        ax.set_ylabel(f"utterance per {label}")
-        ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-        ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-        plt.tight_layout()
-
-    def reformat_large_tick_values(tick_val, pos):
-        """
-        Turns large tick values (in the billions, millions and thousands) such as 4500 into 4.5K and 
-        also appropriately turns 4000 into 4K (no zero after the decimal).
-        taken from: https://dfrieds.com/data-visualizations/how-format-large-tick-values.html
-        """
-        if tick_val >= 1000000000:
-            val = round(tick_val/1000000000, 1)
-            new_tick_format = '{:}B'.format(val)
-        elif tick_val >= 1000000:
-            val = round(tick_val/1000000, 1)
-            new_tick_format = '{:}M'.format(val)
-        elif tick_val >= 1000:
-            val = round(tick_val/1000, 1)
-            new_tick_format = '{:}K'.format(val)
-        elif tick_val < 1000:
-            new_tick_format = round(tick_val, 1)
-        else:
-            new_tick_format = tick_val
-        
-        return str(new_tick_format)
-
-
-    def _print_stats(count_dict:dict):
-        values = list(count_dict.values())
-        mean = round(np.mean(values), 2)
-        std = round(np.std(values), 2)
-        max_val = round(max(values), 2)
-        min_val = round(min(values), 2)
-        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}, total_unique: {len(count_dict)}")
-        print(f"sample of 5 values: {list(count_dict.keys())[0:5]}")
-    
     # this will read the data from a metadata.tsv file
     if not use_json:
         # count dictionaries for the lesssons, lines, and users (speakers)
@@ -295,16 +255,15 @@ def assess_speak_train(dataset_paths: List[str],
                     )
 
                 
-    
     # create the plots
     fig, axs = plt.subplots(1,len(constraint_names))
     fig.set_size_inches(8, 6)
 
     # plot and calculate stats of the count_dicts
     for ax, name in zip(axs, constraint_names):
-        _plot_count(ax, counter[name], name)
+        plot_count(ax, counter[name], name)
         print(f"{name} stats")
-        _print_stats(counter[name])
+        print_stats(counter[name])
         print()
     
     # ensures the directory of `out_dir` exists
