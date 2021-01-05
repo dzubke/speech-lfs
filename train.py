@@ -9,7 +9,6 @@ import math
 import random
 import time
 # third-party libraries
-#import apex
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -31,7 +30,6 @@ from speech.utils.model_debug import (
     log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
 )
 
-#torch.autograd.set_detect_anomaly(True)
 
 def run_epoch(model, 
               optimizer, 
@@ -53,6 +51,8 @@ def run_epoch(model,
         save_path (str): path to directory where model is saved
         chkpt_per_epoch (int): # checkpoints for each epoch that will be saved
             including at the end of the epoch (which is unnecessary).
+        scaler (GradScaler): gradient scaler to prevent gradient underflow when autocast
+            uses float16 precision for forward pass
     Returns:
         Tuple[int, float]: train state of # batch iterations and average loss
     """
@@ -73,7 +73,7 @@ def run_epoch(model,
     device = torch.device("cuda:" + str(local_rank))
     
     # if scaler is enabled, amp is being used
-    use_amp = scaler._enabled
+    use_amp = scaler.is_enabled()
     print(f"Amp is being used: {use_amp}")
     
     # training loop
@@ -122,11 +122,7 @@ def run_epoch(model,
         # backward pass 
         loss = loss.cuda()      # amp needs the loss to be on cuda
         scaler.scale(loss).backward() 
-        #elif use_apex:
-        #    with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
-        #    scaled_loss.backward()
-
-        # checks on gradient flow
+        
         if use_log: 
             if debug_mode: 
                 plot_grad_flow_bar(model.module.named_parameters(),  get_logger_filename(logger))
@@ -137,9 +133,6 @@ def run_epoch(model,
         grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
         scaler.step(optimizer)
         scaler.update()
-        #elif use_apex:
-        #   grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200) 
-        #   optimizer.step()
 
         # logging in rank_0 process
         if is_rank_0:
@@ -170,13 +163,21 @@ def run_epoch(model,
             
             # adding this to suppress a tbX WARNING about inf values
             # TODO, this may or may not be a good idea as it masks inf in tensorboard
-            tbX_grad_norm = avg_grad_norm if avg_grad_norm not in [float('inf'), float('nan')] else 0
+            if grad_norm == float('inf') or math.isnan(grad_norm):
+                tbX_grad_norm = 1
+            else:
+                tbX_grad_norm  = grad_norm
             tbX_writer.add_scalars('train/grad', {"grad_norm": tbX_grad_norm}, iter_count)
 
             # progress bar update    
-            tq.set_postfix(iter=iter_count, loss=loss, 
-                avg_loss=avg_loss, grad_norm=grad_norm,
-                model_time=model_t, data_time=data_t)
+            tq.set_postfix(
+                it=iter_count, 
+                grd_nrm=grad_norm,
+                lss=loss, 
+                lss_av=avg_loss, 
+                t_mdl=model_t, 
+                t_data=data_t,
+                scl=scaler.get_scale())
             if use_log: 
                 logger.info(f'train: loss is inf: {loss == float("inf")}')
                 logger.info(
@@ -188,6 +189,7 @@ def run_epoch(model,
         
         # checks for nan gradients
         if check_nan_params_grads(model.module.parameters()):
+            print("\n~~~ NaN value detected in gradients or parameters ~~~\n")
             if use_log:
                 logger.error(
                     f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.module.state_dict()}"
@@ -196,8 +198,9 @@ def run_epoch(model,
                 save_batch_log_stats(batch, logger)
                 log_param_grad_norms(model.module.named_parameters(), logger)
                 plot_grad_flow_bar(model.module.named_parameters(), get_logger_filename(logger))
-            debug_mode = True
-            torch.autograd.set_detect_anomaly(True)
+            
+            #debug_mode = True
+            #torch.autograd.set_detect_anomaly(True)
 
         iter_count += 1
 
@@ -374,16 +377,11 @@ def run(local_rank:int, config:dict)->None:
         gamma=opt_cfg["sched_gamma"])
 
     # gradient scaler, too large a value for init_scale produces NaN gradients
-    scaler = GradScaler(enabled=train_cfg['amp'], init_scale=32)
+    scaler = GradScaler(enabled=train_cfg['amp'], init_scale=16)
 
-    # call the ddp or apex wrappers
+    # call the ddp wrappers
     model.cuda(local_rank)
-    if train_cfg['apex']:
-        model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
-        model = apex.parallel.DistributedDataParallel(model)
-        raise NotImplementedError("Need to incorporate apex into `run_epoch` function")
-    else:
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
+    model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
     
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")

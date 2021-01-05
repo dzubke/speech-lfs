@@ -353,8 +353,8 @@ def dataset_stats(dataset_path:str)->None:
         print()
 
 
-def dataset_overlap(dataset_list: str, 
-                    metadata_path: str,
+def dataset_overlap(dataset_list: list, 
+                    metadata_paths: list,
                     overlap_key: str)->None:
     """This function assess the overlap between two datasets by the `overlap_key`. 
     Two metrics are calcualted: 
@@ -363,16 +363,26 @@ def dataset_overlap(dataset_list: str,
 
     Args:
         dataset_list (List[str]): list of dataset paths to compare
-        metadata_path (str): path to metadata tsv file
+        metadata_paths (List[str]): path to metadata tsv file
         overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
 
     Returns:
         None
     """
-
+    print("Arguments")
+    print(f"list of datasets: {dataset_list}")
+    print(f"metadata_paths: {metadata_paths}")
     print(f"assessing overlap based on key: {overlap_key}")
 
-    record_id_map = get_record_ids_map(metadata_path)
+    # combine the record_ids_maps for each metadata path.
+    # this is necessary because the training metadata.tsv file is disjoint from the 
+    # test and evaluation metadata.
+    record_ids_map = dict()
+    has_url_fn = lambda path: 'url' in path
+    for metadata_path in metadata_paths:
+        record_ids_map.update(
+            get_record_ids_map(metadata_path, has_url= has_url_fn(metadata_path))
+        )
 
     # creates a shorter, pretty name of the dataset
     def pretty_data_name(data_name):
@@ -392,20 +402,19 @@ def dataset_overlap(dataset_list: str,
         for datapath in dataset_list
     }
 
-    # check the record_id_map contains all of the records in data1 and data2
-    rec_map_set = set(record_id_map.keys())
-
+    # check the record_ids_map contains all of the records in data1 and data2
+    rec_map_set = set(record_ids_map.keys())
     for data_name, data_ids in data_dict.items():
+        # checks that data_ids are subset of rec_map_set
         assert data_ids <= rec_map_set, \
-            f"{data_name} ids not in record_id_map:\n {data_ids.difference(rec_map_set)}"
-
+            f"{data_name} ids not in record_ids_map:\n {data_ids.difference(rec_map_set)}"
     # delete to save memory
     del rec_map_set
 
     data_keyid_lists = dict()
     for data_name, rec_ids in data_dict.items():
         data_keyid_lists[data_name] = [
-            record_id_map[rec_id][overlap_key] for rec_id in rec_ids
+            record_ids_map[rec_id][overlap_key] for rec_id in rec_ids
         ]
 
     data_keyid_sets = {
@@ -565,7 +574,7 @@ if __name__ == "__main__":
         help="max number of times a sentence can occur in output"
     )
     parser.add_argument(
-        "--metadata-path", type=str, 
+        "--metadata-path", type=str, nargs='*', 
         help="path to metadata.tsv file that contains speaker, line, and lesson ids for speaktrain"
     )
     parser.add_argument(
