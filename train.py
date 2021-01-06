@@ -9,7 +9,6 @@ import math
 import random
 import time
 # third-party libraries
-#import apex
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorboardX import SummaryWriter
@@ -25,10 +24,10 @@ import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
 from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
-from speech.utils.logging import get_logger
+from speech.utils.logging import get_logger, get_logger_filename
 from speech.utils.model_debug import (
-    check_nan_params_grads, get_logger_filename, log_batchnorm_mean_std, log_cpu_mem_disk_usage, 
-    log_model_grads, log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
+    check_nan_params_grads, log_batchnorm_mean_std, log_cpu_mem_disk_usage, log_model_grads,
+    log_param_grad_norms, plot_grad_flow_line, plot_grad_flow_bar, save_batch_log_stats
 )
 
 
@@ -52,12 +51,14 @@ def run_epoch(model,
         save_path (str): path to directory where model is saved
         chkpt_per_epoch (int): # checkpoints for each epoch that will be saved
             including at the end of the epoch (which is unnecessary).
+        scaler (GradScaler): gradient scaler to prevent gradient underflow when autocast
+            uses float16 precision for forward pass
     Returns:
         Tuple[int, float]: train state of # batch iterations and average loss
     """
     # booleans and constants for logging
-    is_rank_0 = (torch.distributed.get_rank() == 0 )
-    use_log = (logger is not None) and is_rank_0
+    is_rank_0 = (torch.distributed.get_rank() == 0)
+    use_log = (logger is not None and is_rank_0)
     log_modulus = 100     # limits certain logging function to report less frequently
     exp_w = 0.985        # exponential weight for exponential moving average loss        
     avg_grad_norm = 0
@@ -71,10 +72,10 @@ def run_epoch(model,
     batch_counter = 0
     device = torch.device("cuda:" + str(local_rank))
     
-    # if scaler is not None, amp is being used
-    use_amp = scaler is not None
-    fwd_ctx = autocast if use_amp else contextlib.suppress
-
+    # if scaler is enabled, amp is being used
+    use_amp = scaler.is_enabled()
+    print(f"Amp is being used: {use_amp}")
+    
     # training loop
     for batch in tq:
         if use_log: logger.info(f"train: ====== Iteration: {iter_count} in run_epoch =======")
@@ -101,10 +102,10 @@ def run_epoch(model,
                 log_batchnorm_mean_std(model.module.state_dict(), logger)
  
         start_t = time.time()
-        optimizer.zero_grad()
+        optimizer.zero_grad(set_to_none=True)   # set grads to None for modest perf improvement
         
-        # `fwd_ctx` will autocast to lower precision if amp is used. otherwise, it's no-operation
-        with fwd_ctx():
+        #  will autocast to lower precision if amp is used. otherwise, it's no-operation
+        with autocast(enabled = use_amp):
             # unpack the batch 
             inputs, labels, input_lens, label_lens = model.module.collate(*batch)
             inputs = inputs.cuda() #.to(device) #.cuda(local_rank)
@@ -119,33 +120,19 @@ def run_epoch(model,
                 loss = naren_loss(out, labels, input_lens, label_lens, model.module.blank)
        
         # backward pass 
-        if use_amp:
-            loss = loss.cuda()
-            scaler.scale(loss).backward() 
-        #elif use_apex:
-        #    with apex.amp.scale_loss(loss, optimizer) as scaled_loss:
-        #    scaled_loss.backward()
-        else:
-            loss.backward()
-
-        # checks on gradient flow
+        loss = loss.cuda()      # amp needs the loss to be on cuda
+        scaler.scale(loss).backward() 
+        
         if use_log: 
             if debug_mode: 
                 plot_grad_flow_bar(model.module.named_parameters(),  get_logger_filename(logger))
                 log_param_grad_norms(model.module.named_parameters(), logger)
 
-        # gradient clipping and optimizer step
-        if use_amp:
-            scaler.unscale_(optimizer)
-            grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
-            scaler.step(optimizer)
-            scaler.update()
-        #elif use_apex:
-        #   grad_norm = nn.utils.clip_grad_norm_(apex.amp.master_params(optimizer), 200) 
-        #   optimizer.step()
-        else:    
-            grad_norm = nn.utils.clip_grad_norm_(model.module.parameters(), 200) 
-            optimizer.step()
+        # gradient clipping and optimizer step, scaling disabled if amp is not used
+        scaler.unscale_(optimizer)
+        grad_norm = nn.utils.clip_grad_norm_(model.parameters(), 200).item()
+        scaler.step(optimizer)
+        scaler.update()
 
         # logging in rank_0 process
         if is_rank_0:
@@ -173,12 +160,24 @@ def run_epoch(model,
             # writing to the tensorboard log files
             tbX_writer.add_scalars('train/loss', {"loss": loss}, iter_count)
             tbX_writer.add_scalars('train/loss', {"avg_loss": avg_loss}, iter_count)
-            tbX_writer.add_scalars('train/grad', {"grad_norm": avg_grad_norm}, iter_count)
+            
+            # adding this to suppress a tbX WARNING about inf values
+            # TODO, this may or may not be a good idea as it masks inf in tensorboard
+            if grad_norm == float('inf') or math.isnan(grad_norm):
+                tbX_grad_norm = 1
+            else:
+                tbX_grad_norm  = grad_norm
+            tbX_writer.add_scalars('train/grad', {"grad_norm": tbX_grad_norm}, iter_count)
 
             # progress bar update    
-            tq.set_postfix(iter=iter_count, loss=loss, 
-                avg_loss=avg_loss, grad_norm=grad_norm,
-                model_time=model_t, data_time=data_t)
+            tq.set_postfix(
+                it=iter_count, 
+                grd_nrm=grad_norm,
+                lss=loss, 
+                lss_av=avg_loss, 
+                t_mdl=model_t, 
+                t_data=data_t,
+                scl=scaler.get_scale())
             if use_log: 
                 logger.info(f'train: loss is inf: {loss == float("inf")}')
                 logger.info(
@@ -190,6 +189,7 @@ def run_epoch(model,
         
         # checks for nan gradients
         if check_nan_params_grads(model.module.parameters()):
+            print("\n~~~ NaN value detected in gradients or parameters ~~~\n")
             if use_log:
                 logger.error(
                     f"train: labels: {[labels]}, label_lens: {label_lens} state_dict: {model.module.state_dict()}"
@@ -198,8 +198,9 @@ def run_epoch(model,
                 save_batch_log_stats(batch, logger)
                 log_param_grad_norms(model.module.named_parameters(), logger)
                 plot_grad_flow_bar(model.module.named_parameters(), get_logger_filename(logger))
-            debug_mode = True
-            torch.autograd.set_detect_anomaly(True)
+            
+            #debug_mode = True
+            #torch.autograd.set_detect_anomaly(True)
 
         iter_count += 1
 
@@ -211,7 +212,7 @@ def native_loss(out, labels, input_lens, label_lens, blank_idx):
     Only works with pytorch 1.X. The log_softmax is performed outside of
     the loss function (unlike awni and naren's where the log_softmax is internal).
     The `.permute(1,0,2).float()` transform puts the log_probs in the expected format.
-    """
+    """ 
     log_probs = nn.functional.log_softmax(out, dim=2) 
     loss_fn = torch.nn.CTCLoss(blank=blank_idx, reduction='sum', zero_infinity=True)
     loss = loss_fn(log_probs.permute(1,0,2).float(), labels, input_lens, label_lens)
@@ -234,7 +235,7 @@ def naren_loss(out, labels, input_lens, label_lens, blank_idx):
     """
     from warpctc_pytorch import CTCLoss
     loss_fn = CTCLoss(blank=blank_idx, size_average=True, length_average=False)
-    out = out.permute(1,0,2).float().cpu() #permuation for sean ctc
+    out = out.permute(1,0,2).float().cpu() #permuation for naren's  warpctc
     loss = loss_fn(out, labels, input_lens, label_lens)
     return loss
 
@@ -309,10 +310,7 @@ def run(local_rank:int, config:dict)->None:
     train_cfg = config['training']    
 
     # setting up the distributed training environment
-    dist.init_process_group(                                   
-        backend='nccl'
-        #init_method='env://',
-    )
+    dist.init_process_group(backend='nccl')
     torch.cuda.set_device(local_rank)
     print(f"local_rank: {local_rank}, dist.get_rank: {torch.distributed.get_rank()}")
     is_rank_0 = (torch.distributed.get_rank() == 0)
@@ -344,7 +342,6 @@ def run(local_rank:int, config:dict)->None:
     best_so_far = train_state.get('best_so_far', opt_cfg['best_so_far'])
     start_epoch =  train_state.get('start_epoch', opt_cfg['start_epoch'])
     
-
     # create the loaders
     batch_size = opt_cfg["batch_size"]
     preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
@@ -352,7 +349,7 @@ def run(local_rank:int, config:dict)->None:
     
     train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
 
-    # create the dev-set loaders for the rank_0 process
+    # create the dev-set loaders in the rank_0 process
     if is_rank_0:
         dev_ldr_dict = dict() 
         for dev_name, dev_path in data_cfg["dev_sets"].items():
@@ -379,17 +376,12 @@ def run(local_rank:int, config:dict)->None:
         step_size=opt_cfg["sched_step"], 
         gamma=opt_cfg["sched_gamma"])
 
-    # gradient scaler
-    scaler = GradScaler() if train_cfg['amp'] else None
+    # gradient scaler, too large a value for init_scale produces NaN gradients
+    scaler = GradScaler(enabled=train_cfg['amp'], init_scale=16)
 
-    # call the ddp or apex wrappers
+    # call the ddp wrappers
     model.cuda(local_rank)
-    if train_cfg['apex']:
-        model, optimizer = apex.amp.initialize(model, optimizer, opt_level=train_cfg['opt_level']) 
-        model = apex.parallel.DistributedDataParallel(model)
-        raise NotImplementedError("Need to incorporate apex into `run_epoch` function")
-    else:
-        model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
+    model = nn.parallel.DistributedDataParallel(model, device_ids=[local_rank], output_device=local_rank)
     
     if use_log: 
         logger.info(f"train: ====== Model, loaders, optimimzer created =======")

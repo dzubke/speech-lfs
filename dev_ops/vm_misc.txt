@@ -194,10 +194,8 @@ gcloud compute project-info add-metadata --metadata google-compute-default-regio
 git lfs pointer --file=filename > filename.pt
 mv filename.pt filename 
 
-
+## how to replace carriage return with newline in out files
+sed 's/\r/\n/g' file.out
 
 nvidia-smi --query-gpu=utilization.memory -u --format=csv
-
-google-cloud-monitoring>=0.30.1
-
 
