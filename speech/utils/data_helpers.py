@@ -11,7 +11,6 @@ import sys
 from types import ModuleType, FunctionType
 from typing import Set
 # third-party libraries
-from prettytable import PrettyTable
 import tqdm
 # project libraries
 from speech.utils import convert
@@ -236,7 +235,7 @@ def text_to_phonemes(transcript:str, lexicon:dict, unk_token=list())->list:
         raise TypeError(f"unk_token has type {type(unk_token)}, not str or list")
 
     phonemes = list()
-    transcript = clean_text(transcript)
+    transcript = process_text(transcript)
     transcript = transcript.split(' ')
     for word in transcript:
         phonemes.extend(lexicon.get(word, unk_token))
@@ -487,39 +486,6 @@ def get_record_ids_map(metadata_path:str, id_names:list=None, has_url:bool=False
     return record_ids_map
 
 
-
-def print_symmetric_table(values_dict:dict, row_name:str, title:str)->None:
-    """Prints a table of values in  2-d dict with identical inner and outer keys
-
-    Args:
-        values_dict (Dict[str, Dict[str, float]]): 2-d dictionary with identical keys on the two levels
-        row_name (str): name of the rows
-        title (str): title of the table
-    """
-    table = PrettyTable(title=title)
-    sorted_keys = sorted(values_dict.keys())
-    table.add_column(row_name, sorted_keys)
-    for data_name in sorted_keys:
-        table.add_column(data_name, [values_dict[data_name][key] for key in sorted_keys])
-    print(table)
-
-
-
-def print_nonsym_table(values_dict:dict, row_name:str, title:str)->None:                
-    """Prints a prety table from a 2-d dict that has different inner and outer keys (not-symmetric)
-    Args: 
-        values_dict (Dict[str, Dict[str, float]]): 2-d dict with different keys on inner and outer levels 
-        row_name (str): name of the rows 
-        title (str): title of the table 
-    """ 
-    single_row_name = list(values_dict.keys())[0] 
-    sorted_inner_keys = sorted(values_dict[single_row_name].keys()) 
-    column_names = [row_name] + sorted_inner_keys 
-    table = PrettyTable(title=title, field_names=column_names)                             
-                                    
-    for row_name in values_dict: 
-        table.add_row([row_name] + [values_dict[row_name][key] for key in sorted_inner_keys]) 
-    print(table)
 
 
 def getsize(obj):

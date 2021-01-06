@@ -182,7 +182,7 @@ class DataPreprocessor(object):
         # call the multi-process pool
         # the audio_trans list is broken into chunks to see the tqdm progress bar 
        
-        chunk_size = mp.cpu_count() * 1000
+        chunk_size = mp.cpu_count() * 5000
         iterations = math.ceil(len(self.audio_trans) / chunk_size) 
         list_unk_dict = list()
         with mp. Pool(processes=NUM_PROC) as pool:
@@ -256,14 +256,14 @@ class DataPreprocessor(object):
             # if the download fails, the example is not written to the training.json
             # and an empty unk_words_dict is returned
             except (ValueError, urllib.error.URLError) as e:
-                print(f"unable to download url: {download_url} due to exception: {e}")
+                print(f"~~~ unable to download url: {download_url} due to exception: {e}")
                 return unk_words_dict
 
         else:   # if not downloading, unpack and check if the path exists
             audio_path, transcript = audio_transcript
             # skip the audio file if it doesn't exist
             if not os.path.exists(audio_path):
-                print(f"file {audio_path} does not exists")
+                print(f"~~~ file {audio_path} does not exists")
                 return unk_words_dict
             
             # replace the original extension with ".wav"
@@ -277,7 +277,7 @@ class DataPreprocessor(object):
             convert.to_wave(audio_path, wav_path)
         except subprocess.CalledProcessError:
             # if the file can't be converted, skip the file by continuing
-            print(f"Process Error converting file: {audio_path}")
+            print(f"~~~ Process Error converting file: {audio_path}")
             return unk_words_dict
         
         # close the tempfile that contains the downloaded audio
@@ -288,10 +288,10 @@ class DataPreprocessor(object):
         dur = wave.wav_duration(wav_path)
         if min_duration <= dur <= max_duration:
 
-            text, unk_word_dict = self.text_to_phonemes_mp(transcript, lex_dict)
+            text, unk_words_dict = self.text_to_phonemes_mp(transcript, lex_dict)
             # if transcript has an unknown word, exit the function
-            if unk_word_dict:
-                return unk_word_dict
+            if unk_words_dict:
+                return unk_words_dict
             else: 
                 # write the datum and return an empty unk_word_dict
                 with open(data_json_path, 'a+') as fid:
@@ -303,9 +303,9 @@ class DataPreprocessor(object):
                     json.dump(datum, fid)
                     fid.write("\n")
 
-                return unk_word_dict
+                return unk_words_dict
         else: 
-            return unk_word_dict
+            return unk_words_dict
 
 
     def text_to_phonemes_mp(self, transcript:str, lex_dict:dict=None):
@@ -737,7 +737,9 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
             json_path = os.path.join(self.dataset_dir, name + ".json")
             logging.info(f"entering write_json for {name}. writing json to {json_path}")
 
-            self.write_json_mp(json_path)
+            # `dry-run` toggle facilities the search for mininmum constraints without downloading data
+            if not self.config['dry-run']:
+                self.write_json_mp(json_path)
 
 
     def collect_audio_transcripts(self, metadata_path:str):

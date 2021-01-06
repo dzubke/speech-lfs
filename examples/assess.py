@@ -21,9 +21,10 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id
-from speech.utils.data_helpers import print_symmetric_table, process_text
+from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id, process_text
 from speech.utils.io import read_data_json, write_pickle
+from speech.utils.visual import plot_count, print_stats, print_symmetric_table
+
 
 
 def assess_commonvoice(validated_path:str, max_occurance:int):
@@ -181,47 +182,6 @@ def assess_speak_train(dataset_paths: List[str],
         in_dict[key] = in_dict.get(key, 0) + 1
 
 
-    def _plot_count(ax, count_dict:dict, label:str):
-        ax.plot(range(len(count_dict.values())), sorted(list(count_dict.values()), reverse=True))
-        ax.set_title(label)
-        ax.set_xlabel(f"unique {label}")
-        ax.set_ylabel(f"utterance per {label}")
-        ax.xaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-        ax.yaxis.set_major_formatter(tick.FuncFormatter(reformat_large_tick_values));
-        plt.tight_layout()
-
-    def reformat_large_tick_values(tick_val, pos):
-        """
-        Turns large tick values (in the billions, millions and thousands) such as 4500 into 4.5K and 
-        also appropriately turns 4000 into 4K (no zero after the decimal).
-        taken from: https://dfrieds.com/data-visualizations/how-format-large-tick-values.html
-        """
-        if tick_val >= 1000000000:
-            val = round(tick_val/1000000000, 1)
-            new_tick_format = '{:}B'.format(val)
-        elif tick_val >= 1000000:
-            val = round(tick_val/1000000, 1)
-            new_tick_format = '{:}M'.format(val)
-        elif tick_val >= 1000:
-            val = round(tick_val/1000, 1)
-            new_tick_format = '{:}K'.format(val)
-        elif tick_val < 1000:
-            new_tick_format = round(tick_val, 1)
-        else:
-            new_tick_format = tick_val
-        
-        return str(new_tick_format)
-
-
-    def _print_stats(count_dict:dict):
-        values = list(count_dict.values())
-        mean = round(np.mean(values), 2)
-        std = round(np.std(values), 2)
-        max_val = round(max(values), 2)
-        min_val = round(min(values), 2)
-        print(f"mean: {mean}, std: {std}, max: {max_val}, min: {min_val}, total_unique: {len(count_dict)}")
-        print(f"sample of 5 values: {list(count_dict.keys())[0:5]}")
-    
     # this will read the data from a metadata.tsv file
     if not use_json:
         # count dictionaries for the lesssons, lines, and users (speakers)
@@ -295,16 +255,15 @@ def assess_speak_train(dataset_paths: List[str],
                     )
 
                 
-    
     # create the plots
     fig, axs = plt.subplots(1,len(constraint_names))
     fig.set_size_inches(8, 6)
 
     # plot and calculate stats of the count_dicts
     for ax, name in zip(axs, constraint_names):
-        _plot_count(ax, counter[name], name)
+        plot_count(ax, counter[name], name)
         print(f"{name} stats")
-        _print_stats(counter[name])
+        print_stats(counter[name])
         print()
     
     # ensures the directory of `out_dir` exists
@@ -394,8 +353,8 @@ def dataset_stats(dataset_path:str)->None:
         print()
 
 
-def dataset_overlap(dataset_list: str, 
-                    metadata_path: str,
+def dataset_overlap(dataset_list: list, 
+                    metadata_paths: list,
                     overlap_key: str)->None:
     """This function assess the overlap between two datasets by the `overlap_key`. 
     Two metrics are calcualted: 
@@ -404,16 +363,26 @@ def dataset_overlap(dataset_list: str,
 
     Args:
         dataset_list (List[str]): list of dataset paths to compare
-        metadata_path (str): path to metadata tsv file
+        metadata_paths (List[str]): path to metadata tsv file
         overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
 
     Returns:
         None
     """
-
+    print("Arguments")
+    print(f"list of datasets: {dataset_list}")
+    print(f"metadata_paths: {metadata_paths}")
     print(f"assessing overlap based on key: {overlap_key}")
 
-    record_id_map = get_record_ids_map(metadata_path)
+    # combine the record_ids_maps for each metadata path.
+    # this is necessary because the training metadata.tsv file is disjoint from the 
+    # test and evaluation metadata.
+    record_ids_map = dict()
+    has_url_fn = lambda path: 'url' in path
+    for metadata_path in metadata_paths:
+        record_ids_map.update(
+            get_record_ids_map(metadata_path, has_url= has_url_fn(metadata_path))
+        )
 
     # creates a shorter, pretty name of the dataset
     def pretty_data_name(data_name):
@@ -433,20 +402,19 @@ def dataset_overlap(dataset_list: str,
         for datapath in dataset_list
     }
 
-    # check the record_id_map contains all of the records in data1 and data2
-    rec_map_set = set(record_id_map.keys())
-
+    # check the record_ids_map contains all of the records in data1 and data2
+    rec_map_set = set(record_ids_map.keys())
     for data_name, data_ids in data_dict.items():
+        # checks that data_ids are subset of rec_map_set
         assert data_ids <= rec_map_set, \
-            f"{data_name} ids not in record_id_map:\n {data_ids.difference(rec_map_set)}"
-
+            f"{data_name} ids not in record_ids_map:\n {data_ids.difference(rec_map_set)}"
     # delete to save memory
     del rec_map_set
 
     data_keyid_lists = dict()
     for data_name, rec_ids in data_dict.items():
         data_keyid_lists[data_name] = [
-            record_id_map[rec_id][overlap_key] for rec_id in rec_ids
+            record_ids_map[rec_id][overlap_key] for rec_id in rec_ids
         ]
 
     data_keyid_sets = {
@@ -606,7 +574,7 @@ if __name__ == "__main__":
         help="max number of times a sentence can occur in output"
     )
     parser.add_argument(
-        "--metadata-path", type=str, 
+        "--metadata-path", type=str, nargs='*', 
         help="path to metadata.tsv file that contains speaker, line, and lesson ids for speaktrain"
     )
     parser.add_argument(
