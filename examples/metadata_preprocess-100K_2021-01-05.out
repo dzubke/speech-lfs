@@ -1,0 +1,1082 @@
+nohup: ignoring input
+INFO:root:label_path: /home/dzubke/awni_speech/data/speak_train/2020-12-29/metadata-with-url_2020-12-24.tsv
+config: {'dataset_dir': '/home/dzubke/awni_speech/data/speak_train/2020-12-29/', 'dataset_files': {'speak-train_100K_2021-01-05': 'metadata-with-url_2020-12-24.tsv'}, 'dataset_name': 'SpeakTrainMetadata', 'lexicon_path': '/home/dzubke/awni_speech/speech-lfs/examples/common-voice/cv-lex-extended_2020-07-16.txt', 'force_convert': False, 'min_duration': 1, 'max_duration': 20, 'download_audio': True, 'dry-run': False, 'dataset_size': 108150, 'print_modulus': 20000, 'constraints': {'lesson': 0.005, 'target_sentence': 7e-05, 'speaker': 0.0005}, 'disjoint_metadata': '/home/dzubke/awni_speech/data/speak_train/speak-train-test-eval_metadata-7rows_2020-12-18.tsv', 'disjoint_datasets': {'/home/dzubke/awni_speech/data/speak_test_data/2019-11-29/speak-test_2019-11-29.json': ('record', 'target_sentence', 'speaker'), '/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json': ('record', 'target_sentence', 'speaker'), '/home/dzubke/awni_speech/data/speak_test_data/eval/eval2/speak-eval2-v2_2020-12-07.json': ('target_sentence',)}}
+header:  ['id', 'text', 'lessonId', 'lineId', 'uid', 'redWords_score', 'date']
+constraints are: {'lesson': 540, 'target_sentence': 7, 'speaker': 54}
+20000 examples collected
+20000 examples collected
+40000 examples collected
+40000 examples collected
+40000 examples collected
+40000 examples collected
+40000 examples collected
+40000 examples collected
+40000 examples collected
+40000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+60000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+80000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collectedINFO:root:len of audio_trans: 108150
+INFO:root:entering write_json for speak-train_100K_2021-01-05. writing json to /home/dzubke/awni_speech/data/speak_train/2020-12-29/speak-train_100K_2021-01-05.json
+
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+100000 examples collected
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [09:33<00:00, 573.25s/it]100%|██████████| 1/1 [09:33<00:00, 573.25s/it]~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539945723.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539945723.m4a does not exist.'
+~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539945747.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539945747.m4a does not exist.'
+~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539945758.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539945758.m4a does not exist.'
+~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958459.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958459.m4a does not exist.'
+~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958624.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958624.m4a does not exist.'
+~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958661.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958661.m4a does not exist.'
+~~~ unable to download url: Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958718.m4a does not exist. due to exception: unknown url type: 'Object 496uN1Bt8sbQOSthLoocM1qb2FX2-1539958718.m4a does not exist.'
+~~~ unable to download url: Object 4Ai8ErRBzKhBWec0JIeAeZDOaxk2-1540136154.m4a does not exist. due to exception: unknown url type: 'Object 4Ai8ErRBzKhBWec0JIeAeZDOaxk2-1540136154.m4a does not exist.'
+~~~ unable to download url: Object 4TiPLA2tLxfruY9nQeOiWF85N2F3-1547655126.m4a does not exist. due to exception: unknown url type: 'Object 4TiPLA2tLxfruY9nQeOiWF85N2F3-1547655126.m4a does not exist.'
+~~~ unable to download url: Object 4WM7bUQh0OeJ0rzbwb6wm31KjLw1-1538448434.m4a does not exist. due to exception: unknown url type: 'Object 4WM7bUQh0OeJ0rzbwb6wm31KjLw1-1538448434.m4a does not exist.'
+~~~ unable to download url: Object 4WM7bUQh0OeJ0rzbwb6wm31KjLw1-1538448560.m4a does not exist. due to exception: unknown url type: 'Object 4WM7bUQh0OeJ0rzbwb6wm31KjLw1-1538448560.m4a does not exist.'
+~~~ unable to download url: Object 4WPULOEJZ9a59OvSoeIcLyAbS4K3-1539906324.m4a does not exist. due to exception: unknown url type: 'Object 4WPULOEJZ9a59OvSoeIcLyAbS4K3-1539906324.m4a does not exist.'
+~~~ unable to download url: Object 4WPULOEJZ9a59OvSoeIcLyAbS4K3-1540166707.m4a does not exist. due to exception: unknown url type: 'Object 4WPULOEJZ9a59OvSoeIcLyAbS4K3-1540166707.m4a does not exist.'
+~~~ unable to download url: Object 4WPULOEJZ9a59OvSoeIcLyAbS4K3-1540166733.m4a does not exist. due to exception: unknown url type: 'Object 4WPULOEJZ9a59OvSoeIcLyAbS4K3-1540166733.m4a does not exist.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object 4yY6QNsY3aYlC7P8nzANYqyY7Yx2-1538492781.m4a does not exist. due to exception: unknown url type: 'Object 4yY6QNsY3aYlC7P8nzANYqyY7Yx2-1538492781.m4a does not exist.'
+~~~ unable to download url: Object 0EsdoOKHATPFxjXd9slxTu1UBVs1-1538610288.m4a does not exist. due to exception: unknown url type: 'Object 0EsdoOKHATPFxjXd9slxTu1UBVs1-1538610288.m4a does not exist.'
+~~~ unable to download url: Object 0EsdoOKHATPFxjXd9slxTu1UBVs1-1540216820.m4a does not exist. due to exception: unknown url type: 'Object 0EsdoOKHATPFxjXd9slxTu1UBVs1-1540216820.m4a does not exist.'
+~~~ unable to download url: Object 0EsdoOKHATPFxjXd9slxTu1UBVs1-1540216846.m4a does not exist. due to exception: unknown url type: 'Object 0EsdoOKHATPFxjXd9slxTu1UBVs1-1540216846.m4a does not exist.'
+~~~ unable to download url: Object 0KbUGVrjHxMS3Yi6fOadpNjKZrD2-1549617146.m4a does not exist. due to exception: unknown url type: 'Object 0KbUGVrjHxMS3Yi6fOadpNjKZrD2-1549617146.m4a does not exist.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object 6BbhDnAvEoPeHBn8ZohupDdJ9Ro2-1540122748.m4a does not exist. due to exception: unknown url type: 'Object 6BbhDnAvEoPeHBn8ZohupDdJ9Ro2-1540122748.m4a does not exist.'
+~~~ unable to download url: domain: FIRStorageErrorDomain, code: -13000, description: Error Domain=FIRStorageErrorDomain Code=-13000 "An unknown error occurred, please check the server response." UserInfo={object=0LOfTs4EgKfi8ByfY18hEDHr5lm2-1582294173.m4a, ResponseBody=Upload has already been terminated., bucket=speak-v2-2a1f1-userdata, data={length = 35, bytes = 0x55706c6f 61642068 61732061 6c726561 ... 6d696e61 7465642e }, data_content_type=text/plain; charset=utf-8, NSLocalizedDescription=An unknown error occurred, please check the server response., ResponseErrorDomain=com.google.HTTPStatus, ResponseErrorCode=400}, localizedDescription: An unknown error occurred, please check the server response. due to exception: <urlopen error unknown url type: domain>
+~~~ unable to download url: Object 6VIf61bZTjdC7N0czc9B7vn344Y2-1540213927.m4a does not exist. due to exception: unknown url type: 'Object 6VIf61bZTjdC7N0czc9B7vn344Y2-1540213927.m4a does not exist.'
+~~~ unable to download url: Object 6VIf61bZTjdC7N0czc9B7vn344Y2-1540213950.m4a does not exist. due to exception: unknown url type: 'Object 6VIf61bZTjdC7N0czc9B7vn344Y2-1540213950.m4a does not exist.'
+~~~ unable to download url: Object 7A5Ibu3YXiY9izF0h67lN0OgvW52-1540207468.m4a does not exist. due to exception: unknown url type: 'Object 7A5Ibu3YXiY9izF0h67lN0OgvW52-1540207468.m4a does not exist.'
+~~~ unable to download url: Object 7A5Ibu3YXiY9izF0h67lN0OgvW52-1540209413.m4a does not exist. due to exception: unknown url type: 'Object 7A5Ibu3YXiY9izF0h67lN0OgvW52-1540209413.m4a does not exist.'
+~~~ unable to download url: Object 74yhERenSheiLAx5OzIdmefyEUH3-1538471915.m4a does not exist. due to exception: unknown url type: 'Object 74yhERenSheiLAx5OzIdmefyEUH3-1538471915.m4a does not exist.'
+~~~ unable to download url: Object 10ADgUhACccAoRgdc5VNyKMWNuC2-1540220453.m4a does not exist. due to exception: unknown url type: 'Object 10ADgUhACccAoRgdc5VNyKMWNuC2-1540220453.m4a does not exist.'
+~~~ unable to download url: Object 10ADgUhACccAoRgdc5VNyKMWNuC2-1540220472.m4a does not exist. due to exception: unknown url type: 'Object 10ADgUhACccAoRgdc5VNyKMWNuC2-1540220472.m4a does not exist.'
+~~~ unable to download url: Object 10ADgUhACccAoRgdc5VNyKMWNuC2-1540220575.m4a does not exist. due to exception: unknown url type: 'Object 10ADgUhACccAoRgdc5VNyKMWNuC2-1540220575.m4a does not exist.'
+~~~ unable to download url: Object 0uwCKIJtqjRB6RxF1K4sVAOdBL13-1557403286.m4a does not exist. due to exception: unknown url type: 'Object 0uwCKIJtqjRB6RxF1K4sVAOdBL13-1557403286.m4a does not exist.'
+~~~ unable to download url: Object 0zTwQu8DMKVmvDwTJNnqexdb8oa2-1543862570.m4a does not exist. due to exception: unknown url type: 'Object 0zTwQu8DMKVmvDwTJNnqexdb8oa2-1543862570.m4a does not exist.'
+~~~ unable to download url: Object 93NYmBCybeeVLxQGfwxQGo2AogF2-1538536718.m4a does not exist. due to exception: unknown url type: 'Object 93NYmBCybeeVLxQGfwxQGo2AogF2-1538536718.m4a does not exist.'
+~~~ unable to download url: Object 94C10yBcWzWs1n1iFLsxwx21fWY2-1540108601.m4a does not exist. due to exception: unknown url type: 'Object 94C10yBcWzWs1n1iFLsxwx21fWY2-1540108601.m4a does not exist.'
+~~~ unable to download url: Object 0pA7bNvpD9QSbnKh8sBbHpnbBtj1-1549473466.m4a does not exist. due to exception: unknown url type: 'Object 0pA7bNvpD9QSbnKh8sBbHpnbBtj1-1549473466.m4a does not exist.'
+~~~ unable to download url: Object 0jvzBZ80zsaFSDTMYuJXtijRg913-1541373742.m4a does not exist. due to exception: unknown url type: 'Object 0jvzBZ80zsaFSDTMYuJXtijRg913-1541373742.m4a does not exist.'
+~~~ unable to download url: Object 11KS8xjsZHbOY4GcICT31RZMknB3-1540047192.m4a does not exist. due to exception: unknown url type: 'Object 11KS8xjsZHbOY4GcICT31RZMknB3-1540047192.m4a does not exist.'
+~~~ unable to download url: Object AElPtXzlXhYzf6rzPsyf0XRJz5F2-1538448960.m4a does not exist. due to exception: unknown url type: 'Object AElPtXzlXhYzf6rzPsyf0XRJz5F2-1538448960.m4a does not exist.'
+~~~ unable to download url: Object Af9ZGROnWgMIVdIXFPVKwMDaJGr2-1538498190.m4a does not exist. due to exception: unknown url type: 'Object Af9ZGROnWgMIVdIXFPVKwMDaJGr2-1538498190.m4a does not exist.'
+~~~ unable to download url: Object Af9ZGROnWgMIVdIXFPVKwMDaJGr2-1538498291.m4a does not exist. due to exception: unknown url type: 'Object Af9ZGROnWgMIVdIXFPVKwMDaJGr2-1538498291.m4a does not exist.'
+~~~ unable to download url: Object Af9ZGROnWgMIVdIXFPVKwMDaJGr2-1538499632.m4a does not exist. due to exception: unknown url type: 'Object Af9ZGROnWgMIVdIXFPVKwMDaJGr2-1538499632.m4a does not exist.'
+~~~ unable to download url: Object BlsvFoJ6j7R7UN5oQUV9zsNSbb73-1538437212.m4a does not exist. due to exception: unknown url type: 'Object BlsvFoJ6j7R7UN5oQUV9zsNSbb73-1538437212.m4a does not exist.'
+~~~ unable to download url: Object BlsvFoJ6j7R7UN5oQUV9zsNSbb73-1538437415.m4a does not exist. due to exception: unknown url type: 'Object BlsvFoJ6j7R7UN5oQUV9zsNSbb73-1538437415.m4a does not exist.'
+~~~ unable to download url: Object BlsvFoJ6j7R7UN5oQUV9zsNSbb73-1538462216.m4a does not exist. due to exception: unknown url type: 'Object BlsvFoJ6j7R7UN5oQUV9zsNSbb73-1538462216.m4a does not exist.'
+~~~ unable to download url: Object 04Auc1TLW5WSa8NAtEUkzcb9j173-1540212729.m4a does not exist. due to exception: unknown url type: 'Object 04Auc1TLW5WSa8NAtEUkzcb9j173-1540212729.m4a does not exist.'
+~~~ unable to download url: Object CNyyh6NC3mTTMHaS2iWPitMSiDZ2-1542115498.m4a does not exist. due to exception: unknown url type: 'Object CNyyh6NC3mTTMHaS2iWPitMSiDZ2-1542115498.m4a does not exist.'
+~~~ unable to download url: Object DBup5qmv1bZ9Vvf4bPdDETDBG9E3-1557394619.m4a does not exist. due to exception: unknown url type: 'Object DBup5qmv1bZ9Vvf4bPdDETDBG9E3-1557394619.m4a does not exist.'
+~~~ unable to download url: Object 1BJLzfXBXEVoPPpaDK9inEadPlQ2-1543506617.m4a does not exist. due to exception: unknown url type: 'Object 1BJLzfXBXEVoPPpaDK9inEadPlQ2-1543506617.m4a does not exist.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540222813.m4a does not exist. due to exception: unknown url type: 'Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540222813.m4a does not exist.'
+~~~ unable to download url: Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540222791.m4a does not exist. due to exception: unknown url type: 'Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540222791.m4a does not exist.'
+~~~ unable to download url: Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223025.m4a does not exist. due to exception: unknown url type: 'Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223025.m4a does not exist.'
+~~~ unable to download url: Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223053.m4a does not exist. due to exception: unknown url type: 'Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223053.m4a does not exist.'
+~~~ unable to download url: Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223308.m4a does not exist. due to exception: unknown url type: 'Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223308.m4a does not exist.'
+~~~ unable to download url: Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223336.m4a does not exist. due to exception: unknown url type: 'Object G9rzpQKy1nhKFdZpQ1py4lJne2t1-1540223336.m4a does not exist.'
+~~~ unable to download url: domain: FIRStorageErrorDomain, code: -13000, description: Error Domain=FIRStorageErrorDomain Code=-13000 "An unknown error occurred, please check the server response." UserInfo={object=1TK6lNI8QFSFqSBAo6DvgREhmjA3-1582218979.m4a, ResponseBody=Upload has already been terminated., bucket=speak-v2-2a1f1-userdata, data=<55706c6f 61642068 61732061 6c726561 64792062 65656e20 7465726d 696e6174 65642e>, data_content_type=text/plain; charset=utf-8, NSLocalizedDescription=An unknown error occurred, please check the server response., ResponseErrorDomain=com.google.HTTPStatus, ResponseErrorCode=400}, localizedDescription: An unknown error occurred, please check the server response. due to exception: <urlopen error unknown url type: domain>
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object FOPYgL5a9whVZgm633AXuPYqMoO2-1538478110.m4a does not exist. due to exception: unknown url type: 'Object FOPYgL5a9whVZgm633AXuPYqMoO2-1538478110.m4a does not exist.'
+~~~ unable to download url: Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712487.m4a does not exist. due to exception: unknown url type: 'Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712487.m4a does not exist.'
+~~~ unable to download url: Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712516.m4a does not exist. due to exception: unknown url type: 'Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712516.m4a does not exist.'
+~~~ unable to download url: Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712812.m4a does not exist. due to exception: unknown url type: 'Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712812.m4a does not exist.'
+~~~ unable to download url: Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712983.m4a does not exist. due to exception: unknown url type: 'Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539712983.m4a does not exist.'
+~~~ unable to download url: Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539713172.m4a does not exist. due to exception: unknown url type: 'Object 05qg16i7viMBaXkCh7i7hJBOFNP2-1539713172.m4a does not exist.'
+~~~ unable to download url: Object 1r5klUozv0fJQd5uLU9ohyptuly2-1546185423.m4a does not exist. due to exception: unknown url type: 'Object 1r5klUozv0fJQd5uLU9ohyptuly2-1546185423.m4a does not exist.'
+~~~ unable to download url: Object 1r5klUozv0fJQd5uLU9ohyptuly2-1546352687.m4a does not exist. due to exception: unknown url type: 'Object 1r5klUozv0fJQd5uLU9ohyptuly2-1546352687.m4a does not exist.'
+~~~ unable to download url: Object Lu72QTUclIWxglNqqgK5cnnY99e2-1540009023.m4a does not exist. due to exception: unknown url type: 'Object Lu72QTUclIWxglNqqgK5cnnY99e2-1540009023.m4a does not exist.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object Sd9QozJ4LqY0pvKSQkBK4VA4nuQ2-1540203754.m4a does not exist. due to exception: unknown url type: 'Object Sd9QozJ4LqY0pvKSQkBK4VA4nuQ2-1540203754.m4a does not exist.'
+~~~ unable to download url: Object Sd9QozJ4LqY0pvKSQkBK4VA4nuQ2-1540203813.m4a does not exist. due to exception: unknown url type: 'Object Sd9QozJ4LqY0pvKSQkBK4VA4nuQ2-1540203813.m4a does not exist.'
+~~~ unable to download url: Object Sd9QozJ4LqY0pvKSQkBK4VA4nuQ2-1540203941.m4a does not exist. due to exception: unknown url type: 'Object Sd9QozJ4LqY0pvKSQkBK4VA4nuQ2-1540203941.m4a does not exist.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object PVFiYC5cwEctrVu0gGoQt7CrVfs2-1540203980.m4a does not exist. due to exception: unknown url type: 'Object PVFiYC5cwEctrVu0gGoQt7CrVfs2-1540203980.m4a does not exist.'
+~~~ unable to download url: Object QSLppetk63YdtSQwnCA4cGcn87m2-1540118750.m4a does not exist. due to exception: unknown url type: 'Object QSLppetk63YdtSQwnCA4cGcn87m2-1540118750.m4a does not exist.'
+~~~ unable to download url: Object QSLppetk63YdtSQwnCA4cGcn87m2-1540215357.m4a does not exist. due to exception: unknown url type: 'Object QSLppetk63YdtSQwnCA4cGcn87m2-1540215357.m4a does not exist.'
+~~~ unable to download url: Object YJgr6yyf8HZPrbKbcYWjwkgSNjt2-1538526547.m4a does not exist. due to exception: unknown url type: 'Object YJgr6yyf8HZPrbKbcYWjwkgSNjt2-1538526547.m4a does not exist.'
+~~~ unable to download url: Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178600.m4a does not exist. due to exception: unknown url type: 'Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178600.m4a does not exist.'
+~~~ unable to download url: Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178686.m4a does not exist. due to exception: unknown url type: 'Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178686.m4a does not exist.'
+~~~ unable to download url: Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178720.m4a does not exist. due to exception: unknown url type: 'Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178720.m4a does not exist.'
+~~~ unable to download url: Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178760.m4a does not exist. due to exception: unknown url type: 'Object 27HCaXrantWnncI8aAx3rVfs6Di2-1540178760.m4a does not exist.'
+~~~ unable to download url: Object TAoJhcoD34adctcAQBRmiWE2RCi2-1540083578.m4a does not exist. due to exception: unknown url type: 'Object TAoJhcoD34adctcAQBRmiWE2RCi2-1540083578.m4a does not exist.'
+~~~ unable to download url: Object TiIMmkZvzLfIYhh2TclzuR3JNvs1-1538480147.m4a does not exist. due to exception: unknown url type: 'Object TiIMmkZvzLfIYhh2TclzuR3JNvs1-1538480147.m4a does not exist.'
+~~~ unable to download url: Object 3BKzwEBVMgYhLjZIarlOUDAR7ww2-1540189214.m4a does not exist. due to exception: unknown url type: 'Object 3BKzwEBVMgYhLjZIarlOUDAR7ww2-1540189214.m4a does not exist.'
+~~~ unable to download url: Object 3BKzwEBVMgYhLjZIarlOUDAR7ww2-1540189415.m4a does not exist. due to exception: unknown url type: 'Object 3BKzwEBVMgYhLjZIarlOUDAR7ww2-1540189415.m4a does not exist.'
+~~~ unable to download url: Object eJvUCPWj2UYUmw5vRf1sDfs3OL92-1540202655.m4a does not exist. due to exception: unknown url type: 'Object eJvUCPWj2UYUmw5vRf1sDfs3OL92-1540202655.m4a does not exist.'
+~~~ unable to download url: Object ULQa3SvdS2dVbnFPfnpRZqqE7he2-1539938088.m4a does not exist. due to exception: unknown url type: 'Object ULQa3SvdS2dVbnFPfnpRZqqE7he2-1539938088.m4a does not exist.'
+~~~ unable to download url: Object Uh55SNWQJYZcyuHyCbvUD4hOeQX2-1540187186.m4a does not exist. due to exception: unknown url type: 'Object Uh55SNWQJYZcyuHyCbvUD4hOeQX2-1540187186.m4a does not exist.'
+~~~ unable to download url: domain: FIRStorageErrorDomain, code: -13000, description: Error Domain=FIRStorageErrorDomain Code=-13000 "An unknown error occurred, please check the server response." UserInfo={object=d1xdd7KmcEWQL2hbiAAmqoV4SPy1-1593377969.m4a, FIRAuthErrorUserInfoNameKey=ERROR_NETWORK_REQUEST_FAILED, bucket=speak-v2-2a1f1-userdata, NSLocalizedDescription=An unknown error occurred, please check the server response., ResponseErrorDomain=FIRStorageErrorDomain, NSUnderlyingError=0x28204e100 {Error Domain=NSURLErrorDomain Code=-1009 "인터넷 연결이 오프라인 상태입니다." UserInfo={_kCFStreamErrorCodeKey=50, NSUnderlyingError=0x28204ebe0 {Error Domain=kCFErrorDomainCFNetwork Code=-1009 "(null)" UserInfo={_kCFStreamErrorCodeKey=50, _kCFStreamErrorDomainKey=1}}, _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <C60AE9EE-6CCE-45A2-8705-2D1C6C18AE54>.<1>, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <C60AE9EE-6CCE-45A2-8705-2D1C6C18AE54>.<1>"
+), NSLocalizedDescription=인터넷 연결이 오프라인 상태입니다., NSErrorFailingURLStringKey=https://securetoken.googleapis.com/v1/token?key=AIzaSyBFa7H841dS26GjB94EMV2I_53vkBTiQMo, NSErrorFailingURLKey=https://securetoken.googleapis.com/v1/token?key=AIzaSyBFa7H841dS26GjB94EMV2I_53vkBTiQMo, _kCFStreamErrorDomainKey=1}}, ResponseErrorCode=-13020}, localizedDescription: An unknown error occurred, please check the server response. due to exception: <urlopen error unknown url type: domain>
+~~~ unable to download url: Object dLIytDZcLeXDqpygDlrota4ou932-1539908477.m4a does not exist. due to exception: unknown url type: 'Object dLIytDZcLeXDqpygDlrota4ou932-1539908477.m4a does not exist.'
+~~~ unable to download url: Object dLIytDZcLeXDqpygDlrota4ou932-1539908586.m4a does not exist. due to exception: unknown url type: 'Object dLIytDZcLeXDqpygDlrota4ou932-1539908586.m4a does not exist.'
+~~~ unable to download url: Object dLIytDZcLeXDqpygDlrota4ou932-1540217121.m4a does not exist. due to exception: unknown url type: 'Object dLIytDZcLeXDqpygDlrota4ou932-1540217121.m4a does not exist.'
+~~~ unable to download url: Object dLIytDZcLeXDqpygDlrota4ou932-1540217671.m4a does not exist. due to exception: unknown url type: 'Object dLIytDZcLeXDqpygDlrota4ou932-1540217671.m4a does not exist.'
+~~~ unable to download url: An unknown error occurred, please check the server response. due to exception: unknown url type: 'An unknown error occurred, please check the server response.'
+~~~ unable to download url: Object abOItCAP1NQBVtl1jstlG2z282h1-1541338551.m4a does not exist. due to exception: unknown url type: 'Object abOItCAP1NQBVtl1jstlG2z282h1-1541338551.m4a does not exist.'
+~~~ unable to download url: Object abOItCAP1NQBVtl1jstlG2z282h1-1541338564.m4a does not exist. due to exception: unknown url type: 'Object abOItCAP1NQBVtl1jstlG2z282h1-1541338564.m4a does not exist.'
+~~~ unable to download url: Object n5bd3KZg9TauG7syJoXEGdIePkb2-1548168184.m4a does not exist. due to exception: unknown url type: 'Object n5bd3KZg9TauG7syJoXEGdIePkb2-1548168184.m4a does not exist.'
+~~~ unable to download url: Object gOBmrqbXuzNWzPWIyHNYryyubiu1-1540232934.m4a does not exist. due to exception: unknown url type: 'Object gOBmrqbXuzNWzPWIyHNYryyubiu1-1540232934.m4a does not exist.'
+~~~ unable to download url: Object gOBmrqbXuzNWzPWIyHNYryyubiu1-1540232994.m4a does not exist. due to exception: unknown url type: 'Object gOBmrqbXuzNWzPWIyHNYryyubiu1-1540232994.m4a does not exist.'
+~~~ unable to download url: Object 0B1879b2NNWJnQjgpHRBVTBBOqi1-1539902772.m4a does not exist. due to exception: unknown url type: 'Object 0B1879b2NNWJnQjgpHRBVTBBOqi1-1539902772.m4a does not exist.'
+~~~ unable to download url: Object 0B1879b2NNWJnQjgpHRBVTBBOqi1-1539902866.m4a does not exist. due to exception: unknown url type: 'Object 0B1879b2NNWJnQjgpHRBVTBBOqi1-1539902866.m4a does not exist.'
+~~~ unable to download url: Object l8vAYDnOOXXp9BjSXe7YEAKWXvT2-1540109359.m4a does not exist. due to exception: unknown url type: 'Object l8vAYDnOOXXp9BjSXe7YEAKWXvT2-1540109359.m4a does not exist.'
+
+finished worker pool
+script took: 15.934 min
