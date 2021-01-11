@@ -301,7 +301,7 @@ def check_update_contraints(record_id:int,
     for name in constraint_names:
         constraint_id = record_ids_map[record_id][name]
         count = id_counter[name].get(constraint_id, 0)
-        if count > constraints[name]:
+        if count >= constraints[name]:
             pass_constraint = False
             break
     
