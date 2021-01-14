@@ -1,28 +1,25 @@
 eval_type: 'eval2'
 models:
-    #model_spk-100-v2:
-    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201217/ph6/
-    #    tag: best
-    #    filename: model_state_dict.pth
-    #model_spk-250-v2:
-    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201216/ph5/
-    #    tag: best
-    #    filename: model_state_dict.pth
-    #model_spk-500-v2:
-    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph5/
-    #    tag: best
-    #    filename: model_state_dict.pth
-    model_amp-spk-1000-20201230:
-        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210101/ph5/
-        tag: best
-        filename: model_state_dict.pth    #model_spk-3000-v2:
-    model_spk-1000-20201230:
-        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201230/ph4/
+    model_spk-100-no-amp:
+        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210106/ph4/
         tag: best
         filename: model_state_dict.pth
-    #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20201211/ph7/
-    #    tag: best
-    #    filename: model_state_dict.pth
+    model_spk-100:
+        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210106/ph6/
+        tag: best
+        filename: model_state_dict.pth
+    model_spk-250:
+        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210106/ph5/
+        tag: best
+        filename: model_state_dict.pth
+    model_spk-500:
+        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210106/ph7/
+        tag: best
+        filename: model_state_dict.pth
+    model_spk-1000:
+        path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210101/ph5/
+        tag: best
+        filename: model_state_dict.pth
     #model_0902:
     #    path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20200826/ph2/20200902/
     #    tag: 
