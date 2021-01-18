@@ -5,9 +5,10 @@ license: MIT
 """
 # standard libary
 import argparse
-from collections import Counter, OrderedDict
-from functools import partial
+from collections import Counter, defaultdict, OrderedDict
 import csv
+from functools import partial
+import json
 import os
 import re
 from typing import List
@@ -21,7 +22,9 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id, process_text
+from speech.utils.data_helpers import (
+    get_record_ids_map, get_dataset_ids, path_to_id, process_text, today_date
+)
 from speech.utils.io import read_data_json, write_pickle
 from speech.utils.visual import plot_count, print_stats, print_symmetric_table
 
@@ -86,6 +89,72 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
             # dropping the rows in drop_index
             in_df = in_df.drop(index=drop_index)
     return in_df, drop_row_count
+
+
+def assess_nsc_tags(config:dict)->None:
+    """This function calculates a variety of statistics on the presence of non-speech
+    tags in the transcripts of the National Speech Corpus (NSC) dataset. 
+
+    The `config` contents include:
+        transcript_dir (str): path to the directory that contains all of the transcripts
+
+    A a note, the transcripts are encoded using 'utf-8-sig' which has the '\ufeff' byte order mark, 
+    or BOM, which is used to tell the difference between big- and little-endian UTF-16 encoding.
+    """
+
+    non_speech_tags = {'<FIL/>', '<SPK/>', '<STA/>', '<NON/>', '<NPS/>'}
+    trans_dict = dict()     # dictionary containing the transcripts
+    tags_dict = defaultdict(list)       # dict record keeping of the non-speech tags
+    totals = {"words": 0, "lines": 0}
+
+    transcript_paths = os.path.listdir(config['transcript_dir'])
+    transcript_paths.sort()
+
+    for path in transcript_paths:
+        with open(path, 'r', encoding='utf-8-sig') as fid:
+            for row in fid:
+                # clean and split the id and transcript
+                trans_id, trans = next(row).strip().split('\t')
+
+                # each example has a lower-case trannscript on a second line
+                # try-except prints the filepath if the second line is missing
+                try: 
+                    trans_lower = next(fid).strip()
+                except StopIteration:
+                    print(f"file {path} is not have lower-case transcript"
+                    raise StopIteration
+                
+                # checks that trans_lower is actually a lower-case version of transcript
+                assert trans.lower() == trans_lower.lower(), \
+                    f"{trans_id} transcript is not equal: {trans} | {trans_lower}"
+            
+                # records if non-speech-tags are in each line
+                for word in trans_lower.split(' '):
+                    if word in non_speech_tags:
+                        # records are formated as <path>_<id>
+                        tags_dict[word].append(path+"_"+trans_id)
+                    
+                # increment the total word and line counts
+                totals['words'] += len(trans_lower)
+                totals['lines'] += 1
+
+    # tally up the non-speech tag counts
+    tags_tally = dict()
+    for tag, paths in tags_dict.items():
+        tags_tally[tag] = {
+            "total_tags": len(paths),
+            "tags_per_line": len(paths) / totals['lines'],
+            "tags_per_word": len(paths) / totals['words'], 
+            "sample_lines": paths[:5]
+        }
+    
+    # write the tags tally to json file
+    out_file = os.path.join(
+        os.path.dirname(os.path.normpath(config['transcript_dir'])), 
+        f"tag_stats_{today_date()}.json"
+    )
+    with open(out_file, 'w') as fid:
+        json.dump(tags_tally, fid)
 
 
 

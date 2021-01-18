@@ -104,7 +104,7 @@ logger = logging.getLogger("train_log")
 
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20201230/ph4/   --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20210106/ph7/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -163,10 +163,21 @@ tbb4py 2020.3 py37hfd86e86_0
 conda install pyopenssl==19.0.0=py37_0
 conda install ipython_genutils==0.2.0=py37_0
 
-nohup python -m torch.distributed.launch --nproc_per_node=8 --nnodes=1 --node_rank=0 --master_addr="10.128.0.10" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml &> 2020-12-30_large-mid-aug-no-feat-norm-naren-loss_spk-1M-2020-12-30.out &
+# second attempt to upgrade python 
+conda install cffi=1.11.5
+
+
+python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 --master_addr="10.128.0.33" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
 
 sed 's/\r/\n/g'
 
-ges_phones
-spk-1k-1230 
-spk-a-1k-1230
+nohup python assess.py --dataset-name speak_overlap --config speak_train/config/assess-overlap_2021-01-11.yaml &> 2021-01-11_assess-overlap_spk-20201230.out &
+
+spk-100-na:   (1.47)  b ah t ih t r w aa z f ah n
+spk-100-1230:   (0.99)  b ah t ih t w aa z f ah n
+
+python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 --master_addr="10.128.0.32" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
+
+
+echo $LD_LIBRARY_PATH
+:/home/dzubke/speech-lfs/libs/warp-ctc/build:/home/dzubke/speech-lfs/libs/warp-ctc-naren/build

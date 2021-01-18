@@ -1,6 +1,7 @@
 # standard libraries
 from collections import defaultdict
 import csv
+from datetime import date
 from gc import get_referents
 import glob
 import json
@@ -17,6 +18,14 @@ from speech.utils import convert
 from speech.utils.io import read_data_json
 
 UNK_WORD_TOKEN = list()
+
+def today_date()->:
+    """returns a string of todays date formatted as 'YYYY-MM-DD'
+    """
+    return str(date.today())
+
+
+
 
 def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
