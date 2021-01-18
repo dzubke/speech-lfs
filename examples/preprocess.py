@@ -721,6 +721,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
     def process_datasets(self):
         """Main function that knits together supporting functions
         """
+        print(f"config: {self.config}")
         # iterate through every dataset in the dataset_dict
         for name, label_path in self.dataset_dict.items():
             # clears the audio_transcript buffer
@@ -759,6 +760,7 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
             name: int(value * self.config['dataset_size']) 
             for name, value in config['constraints'].items()
         }
+        print(f"constraints are: {count_constraints}")
         id_counter = {name: dict() for name in count_constraints}
 
         examples_collected = 0

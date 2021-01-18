@@ -422,15 +422,13 @@ def dataset_stats(dataset_path:str)->None:
         print()
 
 
-def dataset_overlap(dataset_list: list, 
-                    metadata_paths: list,
-                    overlap_key: str)->None:
+def dataset_overlap(config_path:str)->None:
     """This function assess the overlap between two datasets by the `overlap_key`. 
     Two metrics are calcualted: 
         1) coutn of unique overlap_keys / total unique overlap_keys
         2) count of total overlaping keys / total records
 
-    Args:
+    Config includes:
         dataset_list (List[str]): list of dataset paths to compare
         metadata_paths (List[str]): path to metadata tsv file
         overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
@@ -438,6 +436,10 @@ def dataset_overlap(dataset_list: list,
     Returns:
         None
     """
+    config = load_config(config_path)
+    dataset_list = config['dataset_list']
+    metadata_paths = config['metadata_paths']
+    overlap_key = config['overlap_key']
     print("Arguments")
     print(f"list of datasets: {dataset_list}")
     print(f"metadata_paths: {metadata_paths}")
@@ -650,6 +652,10 @@ if __name__ == "__main__":
         "--out-dir", type=str, 
         help="directory where plots and txt files will be saved"
     )
+    parser.add_argument(
+        "--config", type=str, 
+        help="config of arguments, used in dagtaset_overlap"
+    )
     args = parser.parse_args()
 
     if args.dataset_name.lower() == "commonvoice":
@@ -663,6 +669,6 @@ if __name__ == "__main__":
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     elif args.dataset_name.lower() == "speak_overlap":
-        dataset_overlap(args.dataset_path, args.metadata_path, overlap_key='target_sentence')
+        dataset_overlap(args.config)
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")
