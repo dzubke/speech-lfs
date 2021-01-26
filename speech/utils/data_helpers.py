@@ -19,7 +19,7 @@ from speech.utils.io import read_data_json
 
 UNK_WORD_TOKEN = list()
 
-def today_date()->:
+def today_date()->str:
     """returns a string of todays date formatted as 'YYYY-MM-DD'
     """
     return str(date.today())

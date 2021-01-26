@@ -91,42 +91,42 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
     return in_df, drop_row_count
 
 
-def assess_nsc_tags(config:dict)->None:
+def assess_nsc_tags(transcript_dir:str)->None:
     """This function calculates a variety of statistics on the presence of non-speech
     tags in the transcripts of the National Speech Corpus (NSC) dataset. 
 
-    The `config` contents include:
+    Arguments:
         transcript_dir (str): path to the directory that contains all of the transcripts
 
     A a note, the transcripts are encoded using 'utf-8-sig' which has the '\ufeff' byte order mark, 
     or BOM, which is used to tell the difference between big- and little-endian UTF-16 encoding.
     """
 
-    non_speech_tags = {'<FIL/>', '<SPK/>', '<STA/>', '<NON/>', '<NPS/>'}
+    non_speech_tags = {'<FIL/>', '<SPK/>', '<STA/>', '<NON/>', '<NPS/>', '**'}
     trans_dict = dict()     # dictionary containing the transcripts
     tags_dict = defaultdict(list)       # dict record keeping of the non-speech tags
     totals = {"words": 0, "lines": 0}
 
-    transcript_paths = os.path.listdir(config['transcript_dir'])
+    transcript_paths = os.listdir(transcript_dir)
     transcript_paths.sort()
 
     for path in transcript_paths:
+        path = os.path.join(transcript_dir, path)
         with open(path, 'r', encoding='utf-8-sig') as fid:
             for row in fid:
                 # clean and split the id and transcript
-                trans_id, trans = next(row).strip().split('\t')
+                trans_id, trans = row.strip().split('\t')
 
                 # each example has a lower-case trannscript on a second line
                 # try-except prints the filepath if the second line is missing
                 try: 
                     trans_lower = next(fid).strip()
                 except StopIteration:
-                    print(f"file {path} is not have lower-case transcript"
+                    print(f"file {path} is not have lower-case transcript")
                     raise StopIteration
-                
-                # checks that trans_lower is actually a lower-case version of transcript
-                assert trans.lower() == trans_lower.lower(), \
-                    f"{trans_id} transcript is not equal: {trans} | {trans_lower}"
+                # checks that the two transcripts are equal except for case and punctuation
+                #assert process_text(trans) == trans_lower, \
+                #    f"{path}_{trans_id} transcript is not equal:\n1) {trans} \n2) {trans_lower}"
             
                 # records if non-speech-tags are in each line
                 for word in trans_lower.split(' '):
@@ -149,8 +149,9 @@ def assess_nsc_tags(config:dict)->None:
         }
     
     # write the tags tally to json file
+    print(f"totals: {totals}")
     out_file = os.path.join(
-        os.path.dirname(os.path.normpath(config['transcript_dir'])), 
+        os.path.dirname(os.path.normpath(transcript_dir)), 
         f"tag_stats_{today_date()}.json"
     )
     with open(out_file, 'w') as fid:
@@ -670,5 +671,7 @@ if __name__ == "__main__":
         assess_iphone_models(args.dataset_path)
     elif args.dataset_name.lower() == "speak_overlap":
         dataset_overlap(args.config)
+    elif args.dataset_name.lower() == "nsc_tags":
+        assess_nsc_tags(args.dataset_path[0])
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")
