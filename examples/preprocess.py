@@ -26,7 +26,7 @@ from speech.utils import data_helpers, wave, convert
 from speech.utils.data_helpers import process_text
 from speech.utils.data_helpers import (
     check_disjoint_filter, check_update_contraints, get_disjoint_sets, get_record_ids_map, 
-    lexicon_to_dict, skip_file
+    lexicon_to_dict, process_text, skip_file, today_date
 )
 
 logging.basicConfig(filename=None, level=10)
@@ -41,22 +41,21 @@ class DataPreprocessor(object):
                  force_convert:bool, 
                  min_duration:float, 
                  max_duration:float,
-                 download_audio:bool):
+                 download_audio:bool,
+                 process_transcript:bool=True
+    ):
 
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
-        if lexicon_path !='':
-            self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower())
-        else: 
-            self.lex_dict = None
-        # list of tuples of audio_path and transcripts
-        self.audio_trans=list()
-        # if true, all audio wav files will be overwritten if they exists
-        self.force_convert = force_convert
+        self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower()) if lexicon_path!='' else None
+        self.audio_trans=list()     # list of tuples of audio_path and transcripts
+        self.force_convert = force_convert  # if true, all wav files will be overwritten
         self.min_duration = min_duration
         self.max_duration = max_duration
         self.audio_ext = 'wav'
         self.download_audio = download_audio
+        self.process_transcript = process_transcript
+
 
 
     def process_datasets(self):
@@ -108,9 +107,11 @@ class DataPreprocessor(object):
                 
                 dur = wave.wav_duration(wav_path)
                 if self.min_duration <= dur <= self.max_duration:
-                    text = self.text_to_phonemes(transcript, unknown_words, wav_path, self.lex_dict)
-                    # if transcript has an unknown word, skip it
-                    if unknown_words.has_unknown: 
+                    text = self.text_to_phonemes(
+                        transcript, unknown_words, wav_path, self.lex_dict, self.process_transcript
+                    )
+                    
+                    if unknown_words.has_unknown: # if transcript has an unknown word, skip it
                         continue
                     
                     datum = {'text' : text,
@@ -125,33 +126,34 @@ class DataPreprocessor(object):
         unknown_words.process_save(save_path)
 
 
-    def text_to_phonemes(self, transcript:str, unknown_words, audio_path:str, lex_dict:dict=None,):
-        """
-        this method removed unwanted puncutation marks split the text into a list of words
+    def text_to_phonemes(self, 
+                        transcript:str, 
+                        unknown_words, 
+                        audio_path:str, 
+                        lex_dict:dict,
+                        process_transcript:bool=True):
+        """this method removed unwanted puncutation marks split the text into a list of words
         or list of phonemes if a lexicon_dict exists
+
+        Args:
+            transcript (str): string to be converted to phonemes
+            unknown_words (object): unknown_words object
+            audio_path (str): path to transcript's audio file
+            lex_dict (dict): dictionary mapping words to phonemes
+            process_transcript (bool): if False, the transcript will not be processed. default is True
         """
-        # allows for alphanumeric characters, space, and apostrophe
-        accepted_char = '[^A-Za-z0-9 \']+'
-        # filters out unaccepted characters, lowers the case
-        try:
-            transcript = re.sub(accepted_char, '', transcript).lower()
-        except TypeError:
-            logging.info(f"Type Error with: {transcript}")
-        # check that all punctuation (minus apostrophe) has been removed 
-        punct_noapost = '!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
-        for punc in punct_noapost:
-            if punc in transcript: 
-                raise ValueError(f"unwanted punctuation {punc} in transcript")
-        # split the transcript into a list of words
-        transcript = transcript.split()
-        # if there is a pronunciation dict, convert words to phonemes
-        if self.lex_dict is not None:
-            unknown_words.check_transcript(audio_path, transcript, self.lex_dict)
-            phonemes = []
-            for word in transcript:
-                # TODO: I shouldn't need to include list() in get but dict is outputing None not []
-                phonemes.extend(self.lex_dict.get(word, list()))
-            transcript = phonemes
+
+        if process_transcript:
+            # remove punctuation (except apostraphe) and lower case
+            transcript = process_text(transcript)
+
+        # convert words to phonemes
+        unknown_words.check_transcript(audio_path, transcript, self.lex_dict)
+        phonemes = []
+        for word in transcript:
+            # TODO: I shouldn't need to include list() in get but dict is outputing None not []
+            phonemes.extend(self.lex_dict.get(word, list()))
+        transcript = phonemes
 
         return transcript
 
@@ -615,20 +617,15 @@ class TatoebaPreprocessor(DataPreprocessor):
             reader = csv.reader(fid, delimiter='\t')
             # first line in reader is the header which equals:
             # ['id', 'username', 'text']
-            is_header = True
+            header = next(reader)
             for line in reader:
-                if is_header:
-                    is_header=False
-                    continue
-                else: 
-                    # filter by accent
-                    if line[1] in speakers:
-                        audio_path = os.path.join(dir_path, "audio", line[1], line[0]+".mp3")
-                        transcript = " ".join(line[2:])
-                        if skip_file(audio_path):
-                            logging.info(f"skipping {audio_path}")
-                            continue
-                        self.audio_trans.append((audio_path, transcript))
+                if line[1] in speakers:
+                    audio_path = os.path.join(dir_path, "audio", line[1], line[0]+".mp3")
+                    transcript = " ".join(line[2:])
+                    if skip_file(audio_path):
+                        logging.info(f"skipping {audio_path}")
+                        continue
+                    self.audio_trans.append((audio_path, transcript))
 
 
 ###################   SPEAK TRAIN       ###################### 
@@ -811,6 +808,110 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
                             (audio_path, row[7]), row[1]
                         ))
                         examples_collected += 1
+
+
+################## Switchboard ###########################
+
+class SwitchboardPreprocessor(DataPreprocessor):
+    """
+    """
+    def __init__(self, config:dict):
+        """
+        """
+        super(SpeakTrainMetadataPreprocessor, self).__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration'], 
+            process_transcript = config['process_transcript']
+        )
+        self.config = config
+
+    def process_datasets(self):
+        logging.info("Processing Switchboard dataset")
+        for set_name, label_fn in self.dataset_dict.items():
+            self.clear_audio_trans()    # clears the audio_transcript buffer
+            label_path = os.path.join(self.dataset_dir, label_fn)
+            self.collect_audio_transcripts(label_path)
+            root, ext = os.path.splitext(label_path)
+            json_path = root + os.path.extsep + "json"
+            self.write_json(json_path)
+        unique_unknown_words(self.dataset_dir)
+    
+
+    def collect_audio_transcripts(self, label_path:str):
+        # open the file and select only entries with desired accents
+
+        # variables to limit the number of duplicated utterances
+        target_constraint = 1e-3
+        target_counter = dict()
+        n_utterance_skipped = 0
+        with open(label_path) as fid: 
+            reader = csv.reader(fid, delimiter=',')
+            # header: "wav_filename", "wav_filesize", "transcript"
+            header = next(reader)
+
+            target_constraint *= int(len(reader))
+            print(f"max number of duplicated transcripts: {target_constraint}")
+            print(f"dataset size: {len(reader)}")
+
+            for row in reader:
+                filename, transcript = row[0], row[2]
+                # don't include 1-element transcripts, they are skewed towards "yeah" and "uh-hm" 
+                if len(transcript.split()) == 1: 
+                    continue
+                
+                if target_counter.get(transcript, 0) < target_constraint:
+                    target_counter[transcript] = target_counter.get(transcript, 0) + 1
+                    self.audio_trans.append((filename, transcript))
+                else:
+                    n_utterance_skipped += 1
+            
+        print(f"number of utterances skipped from target contraint: {n_utterance_skipped}")
+
+
+
+    @staticmethod
+    def update_lexicon(lexicon_path:str)->None:
+        """cleans the lexicon of comments and empty lines as well as maps three phonemes in the swb vocab 
+        into the cmu-dict phoneme vocab.
+
+        This function isn't use the in the class, but is included for reference as it is part of the 
+        preprocessing pipeline.
+
+        Args:
+            lexicon_path (str): path to the lexicon
+        """
+
+        out_name = 'lexicon_updated-' + today_date() +'.txt'
+        out_path = os.path.join(os.path.dirname(lexicon_path), out_name)
+
+        # the original phoneme vocab doesn't match cmu_dict, `phoneme_map` creates the matching
+        phoneme_map = {'ax': 'ah', 'en': 'n', 'el': 'l'}
+        with open(lexicon_path, 'r') as rfid:
+            with open(out_path, 'w') as wfid:
+                for row in rfid:
+                    # skip comments and empty rows
+                    if row.startswith(('#', ' ', '\n')) or len(row) == 0:
+                        continue
+                    # split each row into the word-phonems pairings
+                    row = row.strip().split(' ')
+                    word, phonemes = row[0], row[1:]
+                    # create an updated row starting with the original word
+                    upd_row = [word]
+                    for phn in phonemes:
+                        # re-map the phonemes outside of cmu-dict
+                        if phn in phoneme_map:
+                            upd_row.append(phoneme_map[phn])
+                        # remove the non-speech labels
+                        else:
+                            upd_row.append(phn)
+
+                    wfid.write(" ".join(upd_row)+'\n')
+
 
 
 class UnknownWords():

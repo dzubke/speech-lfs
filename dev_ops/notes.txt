@@ -181,3 +181,16 @@ python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 -
 
 echo $LD_LIBRARY_PATH
 :/home/dzubke/speech-lfs/libs/warp-ctc/build:/home/dzubke/speech-lfs/libs/warp-ctc-naren/build
+
+
+
+cffi==1.11.2
+
+docker run --rm --gpus all \
+  --mount type=bind,\
+    source=/mnt/disks/data_disk/home/dzubke/awni_speech/data/,\
+    target=/mnt/disks/data_disk/home/dzubke/awni_speech/data/ \
+  -it speech bash
+python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 train.py ctc_config_ph4.yaml 
+
+200000 24
