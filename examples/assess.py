@@ -5,9 +5,10 @@ license: MIT
 """
 # standard libary
 import argparse
-from collections import Counter, OrderedDict
-from functools import partial
+from collections import Counter, defaultdict, OrderedDict
 import csv
+from functools import partial
+import json
 import os
 import re
 from typing import List
@@ -21,7 +22,9 @@ import numpy as np
 import pandas as pd
 # project libraries
 from speech.dataset_info import AllDatasets, TatoebaDataset
-from speech.utils.data_helpers import get_record_ids_map, get_dataset_ids, path_to_id, process_text
+from speech.utils.data_helpers import (
+    get_record_ids_map, get_dataset_ids, path_to_id, process_text, today_date
+)
 from speech.utils.io import read_data_json, write_pickle
 from speech.utils.visual import plot_count, print_stats, print_symmetric_table
 
@@ -86,6 +89,73 @@ def filter_by_count(in_df:pd.DataFrame, count_dict:dict, filter_value:int):
             # dropping the rows in drop_index
             in_df = in_df.drop(index=drop_index)
     return in_df, drop_row_count
+
+
+def assess_nsc_tags(transcript_dir:str)->None:
+    """This function calculates a variety of statistics on the presence of non-speech
+    tags in the transcripts of the National Speech Corpus (NSC) dataset. 
+
+    Arguments:
+        transcript_dir (str): path to the directory that contains all of the transcripts
+
+    A a note, the transcripts are encoded using 'utf-8-sig' which has the '\ufeff' byte order mark, 
+    or BOM, which is used to tell the difference between big- and little-endian UTF-16 encoding.
+    """
+
+    non_speech_tags = {'<FIL/>', '<SPK/>', '<STA/>', '<NON/>', '<NPS/>', '**'}
+    trans_dict = dict()     # dictionary containing the transcripts
+    tags_dict = defaultdict(list)       # dict record keeping of the non-speech tags
+    totals = {"words": 0, "lines": 0}
+
+    transcript_paths = os.listdir(transcript_dir)
+    transcript_paths.sort()
+
+    for path in transcript_paths:
+        path = os.path.join(transcript_dir, path)
+        with open(path, 'r', encoding='utf-8-sig') as fid:
+            for row in fid:
+                # clean and split the id and transcript
+                trans_id, trans = row.strip().split('\t')
+
+                # each example has a lower-case trannscript on a second line
+                # try-except prints the filepath if the second line is missing
+                try: 
+                    trans_lower = next(fid).strip()
+                except StopIteration:
+                    print(f"file {path} is not have lower-case transcript")
+                    raise StopIteration
+                # checks that the two transcripts are equal except for case and punctuation
+                #assert process_text(trans) == trans_lower, \
+                #    f"{path}_{trans_id} transcript is not equal:\n1) {trans} \n2) {trans_lower}"
+            
+                # records if non-speech-tags are in each line
+                for word in trans_lower.split(' '):
+                    if word in non_speech_tags:
+                        # records are formated as <path>_<id>
+                        tags_dict[word].append(path+"_"+trans_id)
+                    
+                # increment the total word and line counts
+                totals['words'] += len(trans_lower)
+                totals['lines'] += 1
+
+    # tally up the non-speech tag counts
+    tags_tally = dict()
+    for tag, paths in tags_dict.items():
+        tags_tally[tag] = {
+            "total_tags": len(paths),
+            "tags_per_line": len(paths) / totals['lines'],
+            "tags_per_word": len(paths) / totals['words'], 
+            "sample_lines": paths[:5]
+        }
+    
+    # write the tags tally to json file
+    print(f"totals: {totals}")
+    out_file = os.path.join(
+        os.path.dirname(os.path.normpath(transcript_dir)), 
+        f"tag_stats_{today_date()}.json"
+    )
+    with open(out_file, 'w') as fid:
+        json.dump(tags_tally, fid)
 
 
 
@@ -353,15 +423,13 @@ def dataset_stats(dataset_path:str)->None:
         print()
 
 
-def dataset_overlap(dataset_list: list, 
-                    metadata_paths: list,
-                    overlap_key: str)->None:
+def dataset_overlap(config_path:str)->None:
     """This function assess the overlap between two datasets by the `overlap_key`. 
     Two metrics are calcualted: 
         1) coutn of unique overlap_keys / total unique overlap_keys
         2) count of total overlaping keys / total records
 
-    Args:
+    Config includes:
         dataset_list (List[str]): list of dataset paths to compare
         metadata_paths (List[str]): path to metadata tsv file
         overlap_key (str): key to assess overlap (like speaker_id or target-sentence)
@@ -369,6 +437,10 @@ def dataset_overlap(dataset_list: list,
     Returns:
         None
     """
+    config = load_config(config_path)
+    dataset_list = config['dataset_list']
+    metadata_paths = config['metadata_paths']
+    overlap_key = config['overlap_key']
     print("Arguments")
     print(f"list of datasets: {dataset_list}")
     print(f"metadata_paths: {metadata_paths}")
@@ -581,6 +653,10 @@ if __name__ == "__main__":
         "--out-dir", type=str, 
         help="directory where plots and txt files will be saved"
     )
+    parser.add_argument(
+        "--config", type=str, 
+        help="config of arguments, used in dagtaset_overlap"
+    )
     args = parser.parse_args()
 
     if args.dataset_name.lower() == "commonvoice":
@@ -594,6 +670,8 @@ if __name__ == "__main__":
     elif args.dataset_name.lower() == "speakiphone":
         assess_iphone_models(args.dataset_path)
     elif args.dataset_name.lower() == "speak_overlap":
-        dataset_overlap(args.dataset_path, args.metadata_path, overlap_key='target_sentence')
+        dataset_overlap(args.config)
+    elif args.dataset_name.lower() == "nsc_tags":
+        assess_nsc_tags(args.dataset_path[0])
     else:
         raise ValueError(f"Dataset name: {args.dataset_name} is not a valid selection")

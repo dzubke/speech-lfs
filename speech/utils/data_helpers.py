@@ -1,6 +1,7 @@
 # standard libraries
 from collections import defaultdict
 import csv
+from datetime import date
 from gc import get_referents
 import glob
 import json
@@ -18,34 +19,56 @@ from speech.utils.io import read_data_json
 
 UNK_WORD_TOKEN = list()
 
+def today_date()->str:
+    """returns a string of todays date formatted as 'YYYY-MM-DD'
+    """
+    return str(date.today())
+
+
 def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
     This function reads the librispeech-lexicon.txt file which is a mapping of words in the
     librispeech corpus to phoneme labels and represents the file as a dictionary.
     The digit accents are removed from the file name. 
     """
-    corpus_names = [
+    accepted_corpora = [
         "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None,
-        "speaktrainmetadata"
+        "speaktrainmetadata", "switchboard"
     ]
-    if corpus_name not in corpus_names:
+    if corpus_name not in accepted_corpora:
         raise ValueError("corpus_name not accepted")
     
     lex_dict = dict()
     with open(lexicon_path, 'r', encoding="ISO-8859-1") as fid:
-        lexicon = (l.strip().lower().split() for l in fid)
+        lexicon = process_lexicon(fid, corpus_name)
         for line in lexicon: 
             word, phones = word_phone_split(line, corpus_name)
             phones = clean_phonemes(phones, corpus_name)
-            # librispeech: the if-statement will ignore the second pronunciation with the same word
+            # this if-statement will ignore the second pronunciation like in librispeech
             if lex_dict.get(word, UNK_WORD_TOKEN)  == UNK_WORD_TOKEN:
                 lex_dict[word] = phones
     lex_dict = clean_dict(lex_dict, corpus_name)
     #assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
     return lex_dict
 
+def process_lexicon(file_reader, corpus_name:str)->list:
+    """Strips and splits the lexicon lines.
+    The case is kept intact for the 'switchboard' corpus, but is lowered for all others
 
-def word_phone_split(line:list, corpus_name=str):
+    Args:
+        file_reader: file reader object of lexicon
+        corpus_name (str)
+    Returns:
+        (list): split lexicon lines
+    """
+    if corpus_name == 'switchboard':
+        lexicon = [l.strip().split() for l in file_reader]
+    else:
+        lexicon = [l.strip().lower().split() for l in file_reader]
+    return lexicon
+
+
+def word_phone_split(line:list, corpus_name:str):
     """
     Splits the input list line into the word and phone entry.
     voxforge has a middle column that is not used
@@ -58,6 +81,8 @@ def word_phone_split(line:list, corpus_name=str):
 
 
 def clean_phonemes(phonemes, corpus_name):
+    """Librispeech and cmudict have accent digits that need to be removed
+    """
 
     if corpus_name == "librispeech" or corpus_name == "cmudict":
         return list(map(lambda x: x.rstrip(string.digits), phonemes))
@@ -66,11 +91,15 @@ def clean_phonemes(phonemes, corpus_name):
 
 
 def clean_dict(lex_dict, corpus_name):
+    """honeslty, not sure what this is doing... sorry, lol
+    """
     corpus_num_duplicates = ["tedlium", "cmudict", "voxforge"]
     if corpus_name in corpus_num_duplicates:
-        return defaultdict(lambda: UNK_WORD_TOKEN, 
-                {key: value for key, value in lex_dict.items() if not re.search("\(\d\)$", key)})
-    else: 
+        return defaultdict(
+            lambda: UNK_WORD_TOKEN, 
+            {key: value for key, value in lex_dict.items() if not re.search("\(\d\)$", key)}
+        )
+    else: # no-op
         return lex_dict
 
 
@@ -255,7 +284,7 @@ def process_text(transcript:str, remove_apost:bool = False)->str:
     """
     # allows for alphanumeric characters, space, and apostrophe
     accepted_char = '[^A-Za-z0-9 \']+'
-    # replacing apostrophe's with weird encodings
+    # replacing a weird encoding with apostrophe's
     transcript = transcript.replace(chr(8217), "'")
     # filters out unaccepted characters, lowers the case
     try:

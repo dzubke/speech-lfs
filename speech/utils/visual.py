@@ -13,7 +13,7 @@ from prettytable import PrettyTable
 def plot_eval_1(mispro_scores:list, sent_scores:list, save_path:str)->None:
     """Creats a line chart of the mispronuncation and whole-sentence scores from evaluation 1
     """
-    pass
+    
 
 
 def plot_count(ax, count_dict:dict, label:str):
