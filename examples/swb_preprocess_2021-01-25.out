@@ -1,6 +1,0 @@
-nohup: ignoring input
-Traceback (most recent call last):
-  File "preprocess.py", line 925, in <module>
-    data_preprocessor = eval(config['dataset_name']+"Preprocessor")
-  File "<string>", line 1, in <module>
-NameError: name 'SwitchboardPreprocessor' is not defined
