@@ -76,7 +76,11 @@ def word_phone_split(line:list, corpus_name:str):
     if corpus_name == "voxforge":
         word, phones = line[0], line[2:]
     else:
-        word, phones = line[0], line[1:]
+        try:
+            word, phones = line[0], line[1:]
+        except IndexError:
+            print(f"line: {line}")
+            raise IndexError
     return word, phones
 
 
