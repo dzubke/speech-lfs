@@ -10,7 +10,7 @@ import re
 import string
 import sys
 from types import ModuleType, FunctionType
-from typing import Set
+from typing import List, Set
 # third-party libraries
 import tqdm
 # project libraries
@@ -518,7 +518,20 @@ def get_record_ids_map(metadata_path:str, id_names:list=None, has_url:bool=False
 
     return record_ids_map
 
+def total_duration(data: List[dict])->float:
+    """Returns the total time (in hours) of the input data list. 
+    The data list has the typical training format, which is a list of dictionaries
+    the a "duration" key.
 
+    Args:
+        data (List[Dict[str, Any]]): list of dicts with key "duration"
+    
+    Returns:
+        (float): total duration of the dataset in hours
+    """
+
+    total_duration_s = sum([xmpl['duration'] for xmpl in data])
+    return round(total_duration_s/3600, 3)
 
 
 def getsize(obj):
