@@ -235,3 +235,7 @@ sed -i 's#/mnt/disks/data_disk/home/dzubke/awni_speech/data#/mnt/disks/data_disk
 /home/dzubke/miniconda/envs/aligner/lib/python3.8/site-packag es/montreal_forced_aligner
 
 There were no wav files found 
+
+nohup mfa align  -j 16 /mnt/disks/data_disk/data/LibriSpeech/train-other-500/ /mnt/disks/data_disk/data/LibriSpeech/librispeech-lexicon.txt english ./train-500-textgrids  &> align_train-500.out &
+
+nohup mfa align  -j 50 /mnt/disks/data_disk/data/speak_train/2020-12-29/audio/  /home/dzubke/awni_speech/speech-lfs/data/lexicon/  english ./spk-train-textgrids &> spk-train_2021-02-04.out &

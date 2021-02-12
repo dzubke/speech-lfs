@@ -4,15 +4,15 @@ from __future__ import print_function
 
 import editdistance
 
-def compute_cer(results, verbose=True, dist_len=False):
+def compute_cer(results, verbose=True, dist_len=False)->int:
     """
     Arguments:
-        results (list): list of 2 elements tuples made of lists of the ground truth labels
-         and phoneme predicted sequences
-    Keyword Arguments:
-        verbose - bool: if true, the distance and length will be printedd
-        dist_len - bool: if true, the distance and length will be returned
-    Returns the PER for the full set.
+        results (List[Tuple[List[str],List[str]]]): list of 2 elements tuples made of lists of the 
+            ground truth labelsand phoneme predicted sequences
+        verbose (bool): if true, the distance and length will be printedd
+        dist_len (bool): if true, the distance and length will be returned
+    Returns:
+        (int): the PER for the full set.
 
     >>>results = [(["dh", "ah","space", "r"], ["dh", "ah", "r"])] 
     ### dist = 1

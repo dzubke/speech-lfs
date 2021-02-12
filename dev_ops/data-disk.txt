@@ -55,7 +55,8 @@ gcloud compute instances detach-disk phoneme-4 \
 
 # STEP 4 & 9: MOUNT AND UNMOUNT THE DISK TO THE FILESYSTEM
 # this command is used to mount the data disk for details on the mount command see here:
-# https://manpages.ubuntu.com/manpages/xenial/man8/mount.8.html
+# https://manpages.ubuntu.com/manp
+ages/xenial/man8/mount.8.html
 # the `ro` option is the most crtical is it means `read-only`. For `read-write` use the `rw` option.
 # the options `discard,suid,dev,exec,auto,nouser,async` are all part of the `defaults` on the manpage.
 # the `noload` option seems necessary. Not sure exaclty what that does. 
