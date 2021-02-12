@@ -11,6 +11,7 @@ import logging
 import math
 import multiprocessing as mp
 import os
+from pathlib import Path
 import re
 import subprocess
 from tempfile import NamedTemporaryFile
@@ -31,6 +32,8 @@ from speech.utils.data_helpers import (
 
 logging.basicConfig(filename=None, level=10)
 
+###################   BASE CLASS      #######################
+
 class DataPreprocessor(object):
     
     def __init__(self, 
@@ -47,7 +50,7 @@ class DataPreprocessor(object):
 
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
-        self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower()) if lexicon_path!='' else None
+        self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower())
         self.audio_trans=list()     # list of tuples of audio_path and transcripts
         self.force_convert = force_convert  # if true, all wav files will be overwritten
         self.min_duration = min_duration
@@ -55,8 +58,6 @@ class DataPreprocessor(object):
         self.audio_ext = 'wav'
         self.download_audio = download_audio
         self.process_transcript = process_transcript
-
-
 
     def process_datasets(self):
         """
@@ -88,13 +89,14 @@ class DataPreprocessor(object):
         with open(save_path, 'w') as fid:
             logging.info("Writing files to label json")
             for audio_path, transcript in tqdm.tqdm(self.audio_trans):
+                
                 # skip the audio file if it doesn't exist
                 if not os.path.exists(audio_path):
                     logging.info(f"file {audio_path} does not exists")
                     continue
                 
                 base, raw_ext = os.path.splitext(audio_path)
-                # sometimes using the ".wv" extension so that original .wav files can be converted
+                # sometimes the ".wv" extension is used so that original .wav files can be converted
                 wav_path = base + os.path.extsep + self.audio_ext
                 # if the wave file doesn't exist or it should be re-converted, convert to wave
                 if not os.path.exists(wav_path) or self.force_convert:
@@ -350,7 +352,59 @@ class DataPreprocessor(object):
         return transcript, unk_word_dict
 
 
+###################   LIBRISPEECH      #######################
+
+
+class LibrispeechPreprocessor(DataPreprocessor):
+
+    def __init__(self, config:dict):
+        """
+        """
+        super().__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration'], 
+            process_transcript = config['process_transcript']
+        )
+        self.config = config
+        self.src_audio_ext = ".flac"
+        self.dst_audio_ext = ".wav"
+
+    def process_datasets(self):
+        for set_name, subset_names in self.dataset_dict.items():
+            for subset_name in subset_names:
+                self.clear_audio_trans()    # clears the audio_transcript buffer
+                subset_dir = Path(self.dataset_dir).joinpath(subset_name)
+                logging.info(f"subset_dir: {subset_dir}")
+                self.collect_audio_transcripts(subset_dir)
+                logging.info(f"len of auddio_trans: {len(self.audio_trans)}")
+                json_path =  subset_dir.with_suffix(".json")
+                logging.info(f"entering write_json for {subset_name}")
+                self.write_json(json_path)
+        unique_unknown_words(self.dataset_dir)
+
+    def collect_audio_transcripts(self, subset_dir:Path):
+
+        for trans_path in subset_dir.rglob("*.trans.txt"):
+            for example in trans_path.read_text().split('\n'):
+                if example == '':       # removes empty string at end of file
+                    continue
+                example = example.replace('\t', ' ')    # ensure line is space (not tab) separated
+                example = example.split(' ', maxsplit=1)
+                if len(example) != 2:
+                    print(f"unexpected row: {example}")
+                    continue
+                audio_id, transcript = example
+                audio_path = trans_path.parent.joinpath(audio_id + self.dst_audio_ext) # normally use .flac
+                self.audio_trans.append((str(audio_path), transcript))
+
+
 ###################   COMMON VOICE       #######################
+
 
 class CommonvoicePreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
@@ -940,8 +994,8 @@ class UnknownWords():
         # increment the line and word counts
         self.line_count += 1
         self.word_count += len(text) - 1
-        
-        # if the word_phoneme_dict doesn't have an entry for 'word', it is an unknown word
+    
+       # if the word_phoneme_dict doesn't have an entry for 'word', it is an unknown word
         line_unk = [
             word for word in text 
             if not word_phoneme_dict.get(word, data_helpers.UNK_WORD_TOKEN)
@@ -949,7 +1003,7 @@ class UnknownWords():
         
         #if line_unk is empty, has_unknown is False
         self.has_unknown = bool(line_unk)
-
+        
         # if unknown words exist, update the word_set and log the count per filename
         if self.has_unknown:
             self.word_set.update(line_unk)

@@ -89,7 +89,7 @@ def clean_phonemes(phonemes, corpus_name):
     """
 
     if corpus_name == "librispeech" or corpus_name == "cmudict":
-        return list(map(lambda x: x.rstrip(string.digits), phonemes))
+        return [phones.rstrip(string.digits) for phones in phonemes]
     else:
         return phonemes
 

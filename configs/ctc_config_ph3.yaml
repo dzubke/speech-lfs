@@ -71,5 +71,8 @@ training:
     loss_name: naren
     apex: False
     opt_level: 'O0'
-    checkpoints_per_epoch: 1
     OMP_NUM_THREADS: 7
+checkpoint:
+    gcs_bucket: spk-models
+    gcs_dir: 2021-02-10
+    checkpoints_per_epoch: 1
