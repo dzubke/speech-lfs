@@ -5,6 +5,7 @@ import os
 import csv 
 from typing import Tuple
 # third-party libraries
+import editdistance
 import torch
 import tqdm
 # project libraries
@@ -90,7 +91,6 @@ def visual_eval(config:dict)->None:
 
 
     # write the PER predictions to a txt file
-
     # sort the dictionary to ease of matching audio file with formatted output
     output_dict = OrderedDict(sorted(output_dict.items()))
     with open(output_path, 'w') as out_file:  
@@ -104,11 +104,13 @@ def visual_eval(config:dict)->None:
             for model_name in output_dict[rec_id]['infer'].keys():
                 top_beam=True
                 for preds, confid in output_dict[rec_id]['infer'][model_name]:
+                    per = editdistance.eval(output_dict[rec_id]['tar_phones'], preds)
+                    per /= len((output_dict[rec_id]['tar_phones']))
                     if top_beam:
-                        out_file.write(f"{model_name}:\t({round(confid, 2)})\t{' '.join(preds)}\n")
+                        out_file.write(f"{model_name}:\t({round(per, 2)})\t{' '.join(preds)}\n")
                         top_beam = False
                     else:
-                        out_file.write(f"\t   \t({round(confid, 2)})\t{' '.join(preds)}\n")
+                        out_file.write(f"\t   \t({round(per, 2)})\t{' '.join(preds)}\n")
             #out_file.write(f"2020-11-18:\t\t {output_dict[rec_id]['model_1118']}\n")
             #out_file.write(f"2020-09-25:\t\t {output_dict[rec_id]['model_0925']}\n")
             #out_file.write(f"2020-09-02:\t\t {output_dict[rec_id]['model_0902']}\n")

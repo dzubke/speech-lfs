@@ -6,6 +6,7 @@ import itertools
 import json
 import logging
 import math
+from pathlib import Path
 import random
 import time
 # third-party libraries
@@ -23,6 +24,7 @@ import yaml
 import speech
 import speech.loader as loader
 from speech.models.ctc_model_train import CTC_train
+from speech.utils.checkpoint import GCSCheckpointHandler
 from speech.utils.io import load_config, load_from_trained, read_pickle, save, write_pickle 
 from speech.utils.logging import get_logger, get_logger_filename
 from speech.utils.model_debug import (
@@ -42,15 +44,14 @@ def run_epoch(model,
               local_rank:int, 
               loss_name:str, 
               save_path:str,
-              chkpt_per_epoch:int,
+              gcs_ckpt_handler,
               scaler:GradScaler=None)->tuple:
     """
     Performs a forwards and backward pass through the model
     Args:
         iter_count (int): count of iterations
         save_path (str): path to directory where model is saved
-        chkpt_per_epoch (int): # checkpoints for each epoch that will be saved
-            including at the end of the epoch (which is unnecessary).
+        gcs_ckpt_handler: facilities saving files to google cloud storage
         scaler (GradScaler): gradient scaler to prevent gradient underflow when autocast
             uses float16 precision for forward pass
     Returns:
@@ -82,13 +83,17 @@ def run_epoch(model,
         
         ##############  Mid-epoch checkpoint ###############
         if is_rank_0 \
-        and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 \
+        and batch_counter % (len(train_ldr) // gcs_ckpt_handler.chkpt_per_epoch) == 0 \
         and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
             save(model.module, preproc, save_path, tag='ckpt')
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_model_state_dict.pth")
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_preproc.pyc")
             # save the run_sate
             ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
             write_pickle(ckpt_state_path, {'run_state': (iter_count, avg_loss)})
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_run_state.pickle")
+
         batch_counter += 1
         ####################################################
 
@@ -307,7 +312,8 @@ def run(local_rank:int, config:dict)->None:
     preproc_cfg = config["preproc"]
     opt_cfg = config["optimizer"]
     model_cfg = config["model"]
-    train_cfg = config['training']    
+    train_cfg = config['training']  
+    ckpt_cfg = config['checkpoint']  
 
     # setting up the distributed training environment
     dist.init_process_group(backend='nccl')
@@ -325,6 +331,8 @@ def run(local_rank:int, config:dict)->None:
    
     # creates tensorboardX writer in rank_0 process 
     tbX_writer = SummaryWriter(logdir=config["save_path"]) if is_rank_0 else None
+
+    gcs_ckpt_handler = GCSCheckpointHandler(ckpt_cfg)
     
     # Load previous train state: dict with contents:
         # {start_epoch: int, run_state: (int, float), best_so_far: float, learning_rate: float}
@@ -410,7 +418,8 @@ def run(local_rank:int, config:dict)->None:
         try:
             run_state = run_epoch(
                 model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
-                train_cfg['loss_name'], config['save_path'], train_cfg['checkpoints_per_epoch'], scaler
+                train_cfg['loss_name'], config['save_path'], train_cfg['checkpoints_per_epoch'], gcs_ckpt_handler,
+                scaler
             )
         except Exception as err:
             if use_log: 
@@ -438,6 +447,9 @@ def run(local_rank:int, config:dict)->None:
             # the logger needs to be removed to save the model
             if use_log: preproc.logger = None
             speech.save(model.module, preproc, config["save_path"])
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
+
             if use_log: 
                 logger.info(f"train: ====== model saved =======")
                 preproc.logger = logger
@@ -464,8 +476,10 @@ def run(local_rank:int, config:dict)->None:
                     if dev_per < best_so_far:
                         if use_log: preproc.logger = None   # remove the logger to save the model
                         best_so_far = dev_per
-                        speech.save(model.module, preproc,
-                                config["save_path"], tag="best")
+                        speech.save(model.module, preproc, config["save_path"], tag="best")
+                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_model_state_dict.pth")
+                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_preproc.pyc")
+
                         if use_log: 
                             preproc.logger = logger
                             logger.info(f"model saved based per on: {dev_name} dataset")
@@ -485,7 +499,7 @@ def run(local_rank:int, config:dict)->None:
                            "best_so_far": best_so_far,
                            "learning_rate": learning_rate}
             write_pickle(os.path.join(config["save_path"], "train_state.pickle"), train_state)
-
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "train_state.pickle")
 
 def calc_per_difference(dev_per_dict:dict) -> dict:
     """

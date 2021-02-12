@@ -104,7 +104,7 @@ logger = logging.getLogger("train_log")
 
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # connect to tensorboard on VM
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20210106/ph7/   --port 6006 &> tb.out &
+nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20210106/ph5/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -191,6 +191,51 @@ docker run --rm --gpus all \
     source=/mnt/disks/data_disk/home/dzubke/awni_speech/data/,\
     target=/mnt/disks/data_disk/home/dzubke/awni_speech/data/ \
   -it speech bash
+
+
 python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 train.py ctc_config_ph4.yaml 
 
 200000 24
+
+
+
+cat lib-ted-cv-spk/train_lib-ted-cv-speak-250K-2021-01-05_dm.json ./swb/swb-train.json > lib-ted-cv-spk-swb/train_lib-ted-cv-spk250K-swb-2021-01-26_dm.json
+
+
+sed -i 's#/mnt/disks/data_disk/home/dzubke/awni_speech/data#/mnt/disks/data_master/data#g'
+
+sed -i 's#/home/dzubke/awni_speech/data#/mnt/disks/data_disk/data#g'
+
+sed -i 's#/mnt/disks/data_disk/home/dzubke/awni_speech/data#/mnt/disks/data_disk/data#g' *.json
+
+
+/mnt/disks/data_disk/data/swb/swb-train.json
+/mnt/disks/data_disk/data/lib-ted-cv-spk/train_lib-ted-cv-speak-250K-2021-01-05.json
+/mnt/disks/data_disk/data/lib-ted-cv-spk-swb/train_lib-ted-cv-spk250K-swb-2021-01-26.json
+
+
+2021-01-26_large-mid-aug-no-fn-naren-amp_lib-ted-cv-spk250K-swb-2021-01-26.
+
+
+182748  ./data
+532     ./tests
+272     ./speech
+4392    ./streaming
+5308    ./model_convert
+3148368 ./examples
+28      ./configs
+14616   ./evaluate
+12911728        ./.git
+96      ./dev_ops
+16268188        .
+
+
+-rw-rw-r-- 1 dzubke dzubke 92910239 Jan 28 11:22 model
+
+/home/dzubke/miniconda/envs/aligner/lib/python3.8/site-packag es/montreal_forced_aligner
+
+There were no wav files found 
+
+nohup mfa align  -j 16 /mnt/disks/data_disk/data/LibriSpeech/train-other-500/ /mnt/disks/data_disk/data/LibriSpeech/librispeech-lexicon.txt english ./train-500-textgrids  &> align_train-500.out &
+
+nohup mfa align  -j 50 /mnt/disks/data_disk/data/speak_train/2020-12-29/audio/  /home/dzubke/awni_speech/speech-lfs/data/lexicon/  english ./spk-train-textgrids &> spk-train_2021-02-04.out &

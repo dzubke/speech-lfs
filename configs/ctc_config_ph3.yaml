@@ -75,4 +75,4 @@ training:
 checkpoint:
     gcs_bucket: spk-models
     gcs_dir: 2021-02-10
-    checkpoints_per_epoch: 1
+    checkpoints_per_epoch: 1    
