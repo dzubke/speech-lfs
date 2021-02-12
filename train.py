@@ -44,7 +44,6 @@ def run_epoch(model,
               local_rank:int, 
               loss_name:str, 
               save_path:str,
-              chkpt_per_epoch:int,
               gcs_ckpt_handler,
               scaler:GradScaler=None)->tuple:
     """
@@ -52,8 +51,6 @@ def run_epoch(model,
     Args:
         iter_count (int): count of iterations
         save_path (str): path to directory where model is saved
-        chkpt_per_epoch (int): # checkpoints for each epoch that will be saved
-            including at the end of the epoch (which is unnecessary).
         gcs_ckpt_handler: facilities saving files to google cloud storage
         scaler (GradScaler): gradient scaler to prevent gradient underflow when autocast
             uses float16 precision for forward pass
@@ -86,16 +83,17 @@ def run_epoch(model,
         
         ##############  Mid-epoch checkpoint ###############
         if is_rank_0 \
-        and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 \
+        and batch_counter % (len(train_ldr) // gcs_ckpt_handler.chkpt_per_epoch) == 0 \
         and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
             save(model.module, preproc, save_path, tag='ckpt')
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_model_state_dict.pth")
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_preproc.pyc")
+            print("~~~~~", save_path)
+            #gcs_ckpt_handler.save_to_#gcs(save_path, "ckpt_model_state_dict.pth")
+            #gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_preproc.pyc")
             # save the run_sate
             ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
             write_pickle(ckpt_state_path, {'run_state': (iter_count, avg_loss)})
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_run_state.pickle")
+            #gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_run_state.pickle")
 
         batch_counter += 1
         ####################################################
@@ -421,8 +419,7 @@ def run(local_rank:int, config:dict)->None:
         try:
             run_state = run_epoch(
                 model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
-                train_cfg['loss_name'], config['save_path'], train_cfg['checkpoints_per_epoch'], gcs_ckpt_handler,
-                scaler
+                train_cfg['loss_name'], config['save_path'], gcs_ckpt_handler, scaler
             )
         except Exception as err:
             if use_log: 
@@ -450,8 +447,8 @@ def run(local_rank:int, config:dict)->None:
             # the logger needs to be removed to save the model
             if use_log: preproc.logger = None
             speech.save(model.module, preproc, config["save_path"])
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
+            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
+            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
 
             if use_log: 
                 logger.info(f"train: ====== model saved =======")
@@ -480,8 +477,8 @@ def run(local_rank:int, config:dict)->None:
                         if use_log: preproc.logger = None   # remove the logger to save the model
                         best_so_far = dev_per
                         speech.save(model.module, preproc, config["save_path"], tag="best")
-                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_model_state_dict.pth")
-                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_preproc.pyc")
+                        #gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_model_state_dict.pth")
+                        #gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_preproc.pyc")
 
                         if use_log: 
                             preproc.logger = logger
@@ -502,7 +499,7 @@ def run(local_rank:int, config:dict)->None:
                            "best_so_far": best_so_far,
                            "learning_rate": learning_rate}
             write_pickle(os.path.join(config["save_path"], "train_state.pickle"), train_state)
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "train_state.pickle")
+            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "train_state.pickle")
 
 def calc_per_difference(dev_per_dict:dict) -> dict:
     """
