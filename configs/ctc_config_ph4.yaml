@@ -1,11 +1,12 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210126/ph4/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-12/ph4/
 data:
-    train_set: /mnt/disks/data_disk/data/lib-ted-cv-spk-swb/train_lib-ted-cv-spk250K-swb-2021-01-26.json
+    train_set: /mnt/disks/data_disk/data/librispeech/train-other-960.json
     dev_sets:
         speak: /mnt/disks/data_disk/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json
         cv: /mnt/disks/data_disk/data/common-voice/v5.1_2020-06-22/dev.json
-        libsp: /mnt/disks/data_disk/data/LibriSpeech/dev-clean.json
+        libsp: /mnt/disks/data_disk/data/librispeech/dev-clean.json
+        libsp-align: /mnt/disks/data_disk/data/librispeech/dev-clean_aligner.json
         ted: /mnt/disks/data_disk/data/tedlium/TEDLIUM_release-3/dev.json
         swb: /mnt/disks/data_disk/data/swb/swb-dev.json
     dev_set_save_reference: speak
@@ -13,7 +14,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2021-01-26_large-mid-aug-no-fn-naren-amp_lib-ted-cv-spk250K-swb-2021-01-26.log
+    log_file: logs/2021-02-12_lib-960.log
     level: error
     debug_mode: False
 preproc:
@@ -46,7 +47,7 @@ optimizer:
     run_state: [0, 0]
     best_so_far: 0.40
     start_epoch: 0
-    epochs: 5
+    epochs: 10
     learning_rate: 0.0003
     momentum: 0.9
     dampening: 0.0
@@ -70,5 +71,8 @@ model:
 training:
     loss_name: naren
     amp: True                 # turns on Pytorch's automatic mixed-precision
-    checkpoints_per_epoch: 5
-    OMP_NUM_THREADS: 5        # this should be equal to:  #_CPU / #_GPU
+    OMP_NUM_THREADS: 3        # this should be equal to:  #_CPU / #_GPU
+checkpoint:
+    gcs_bucket: "spk-models"
+    gcs_dir: "2021-02-12"
+    checkpoints_per_epoch: 4
