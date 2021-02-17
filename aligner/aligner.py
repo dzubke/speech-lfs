@@ -10,12 +10,14 @@ import csv
 import fnmatch
 import glob
 import json
+import math
 import os
 from pathlib import Path
 import re
 import shutil
 import string
 from typing import Dict, List, Tuple
+import unicodedata
 # third party libraries
 import editdistance as ed
 import numpy as np
@@ -26,136 +28,7 @@ from speech.utils.data_helpers import clean_phonemes, get_record_ids_map, path_t
 from speech.utils.io import read_data_json, write_data_json
 
 
-
-def compute_lexicon_outliers(lexicon_path:str):
-    """This function computes the outliers in the lexicon by length of pronunciation. It is meant
-    to catch very short or long pronunciations.
-    
-    It does this by printing pronunciations that are more than 2 standard deviations away from the 
-    mean ratio of the word length to pronunciation length, where word length is the number of 
-    characters and pronunciation length is the number of phonemes. 
-    
-    Args:
-        lexicon_path (str): path to lexicon
-    """
-
-    # returns lexicon with pronunciations as list of phoneme strings
-    lex_dict = load_lex_dict(lexicon_path, split_phones=True)
-
-    pronun_ratios  = [len(word)/len(phones) for word, phones in lex_dict.items()]
-    mean_ratio = np.mean(pronun_ratios)
-    stddev_ratio = np.std(pronun_ratios)
-
-    outlier_factor = 4.0    # num std-deviations that define an outlier
-    lower_bound = mean_ratio - outlier_factor * stddev_ratio
-    upper_bound = mean_ratio + outlier_factor * stddev_ratio
-
-    print(f"mean: {mean_ratio}, std-dev: {stddev_ratio}, # of stddev for outlier: {outlier_factor}")
-
-    outliers = defaultdict(list)
-    for word, phones in lex_dict.items():
-        ratio = len(word)/ len(phones)
-        if ratio < lower_bound or ratio > upper_bound:
-            outliers[word].extend(phones)
-
-    print(f"number of outliers outside bounds: {len(outliers)}")
-    for word, phone_list in outliers.items():
-        for phones in phone_list:
-            print(f"{word} {phones}")
-
-
-def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
-    """It seems the mfa aligner tool will only parallelize directory trees, so the audio being
-    all in a single dir does not run in parallel. Given this, this function converts that audio
-    paths from being in a single dir, `audio_dir`, to a single-level tree where each subdir of
-    `audio_dir` will have a most 1000 audio files. 
-    
-    The list of training jsons `spk_training_jsons` will be re-written to use the updated paths 
-    to the new subdirectories. 
-
-    Note: both .wav and .txt files will be moved. The .txt files are used by the mfa aligner
-
-    Args:
-        spk_training_jsons (List[str]): List of paths to relevent speak training jsons
-        audio_dir (str): path to directory that contains all speak training files. 
-            These files will be moved into subdirectories under `audio_dir`
-    """
-    # number of wav files in each subdirectory
-    SUB_DIR_SIZE = 1000
-    
-    # list and sort .wav files in audio_dir
-    audio_files = sorted(glob.glob(os.path.join(audio_dir, "*.wav")))
-    
-    # create a dict for each training_json whose values is a dict mapping audio paths to examples
-    json_dict = dict()
-    for json_path in spk_training_jsons:
-        json_dict[json_path] = {
-            xmpl['audio']: xmpl for xmpl in read_data_json(json_path)
-        }
-    
-    file_count = 0
-    subdir_count = 0
-    for audio_file in audio_files:
-        # if file_count has filled up the previous sub-dir, create a new one
-        if file_count % SUB_DIR_SIZE == 0:
-            subdir_count += 1
-            os.makedirs(os.path.join(audio_dir, str(subdir_count)), exist_ok=True)
-
-        # inserts the subdir_count into the audio_file path
-        audio_dir, basename = os.path.split(audio_file)
-        new_audio_file = os.path.join(audio_dir, str(subdir_count), basename)
-        
-        # update the path names in each training json
-        for xmpl_dict in json_dict.values():
-            if audio_file in xmpl_dict:
-                # update the audio path
-                xmpl_dict[audio_file]['audio'] = new_audio_file
-        
-        # move the .wav and .txt files to the new sub-dir
-        shutil.move(audio_file, new_audio_file)
-        if os.path.exists(audio_file.replace(".wav", ".txt")):
-            shutil.move(audio_file.replace(".wav", ".txt"), new_audio_file.replace(".wav", ".txt"))
-
-        file_count += 1
-
-    for json_path, xmpl_dict in json_dict.items():
-        # TODO (drz): remove renaming of `json_path` once verifying the script works as expected
-        json_path += "-new"
-        write_data_json(xmpl_dict.values(), json_path)
- 
-
-def create_spk_transcripts(spk_metadata_path:str, spk_audio_dir:str, lex_path:str):
-    """This function creates an uppercase transcript as an individual .txt file for each audio file
-    in `audio_dir` using the `spk_metadata_path`. It does not create a transcript for files with words
-    not included in the lexicon from `lex_path`. 
-    """
-    record_ids_map = get_record_ids_map(spk_metadata_path, has_url=True)
-    lex_dict = load_lex_dict(lex_path)
-    lex_words = set([word for word in lex_dict])
-    
-    examples = {
-        "total": 0,
-        "oov": 0
-    }
-    audio_files = glob.glob(os.path.join(spk_audio_dir, "*.wav"))
-    for audio_file in tqdm.tqdm(audio_files):
-        file_id = path_to_id(audio_file)
-        # trancript is already processed in `get_record_ids_map`
-        transcript = record_ids_map[file_id]['target_sentence']
-        transcript = transcript.upper().split()
-        # checks if the transcript has an out-of-vocab word
-        has_oov = any([(word not in lex_words) for word in transcript])
-        if has_oov:
-            examples['oov'] += 1
-            continue
-        examples['total'] += 1
-        # write the transcript to a txt file
-       # txt_file = audio_file.replace(".wav", ".txt")
-       # with open(txt_file, 'w') as fid:
-       #     fid.write(" ".join(transcript))
-    print(f"num oov_examples: {examples['oov']} out to total: {examples['total']}")    
-
-
+##########     LEXICON AUGMENTATION  FUNCTIONS   #############
 
 def insert_mispronunciations(lex_path:str, spk_word_path:str, save_path:str):
     """This function adds additional pronunciations created by replacing certain phonemes for words
@@ -206,23 +79,6 @@ def insert_mispronunciations(lex_path:str, spk_word_path:str, save_path:str):
     save_lex_dict(lex_dict, save_path, split_phones=True)
 
 
-def phoneme_occurance(lex_path:str, save_path:str)->None:
-    """This function computes an occurance count of the phonemes in the lexicon
-    """
-
-    lex_dict = load_lex_dict(lex_path)
-
-    phone_counter = Counter()
-    for word, phone_str_list in lex_dict.items():
-        for phone_str in phone_str_list:
-            phones = phone_str.strip().split(' ')
-            phone_counter.update(phones)
-
-    with open(save_path, 'w') as fid:
-        for phone, count in phone_counter.most_common():
-            fid.write(f"{phone} {count}\n")
-
-
 def manual_entry(lex_path:str, save_path:str):
     """This function will manually add a few mispronunciations to the input lexicon
     """
@@ -230,7 +86,6 @@ def manual_entry(lex_path:str, save_path:str):
     manual_entries = {
         "TRAVELING": "T R AE1 V ER0  L IH0 NG",        
     }
-
 
 
 def remove_suffix(lex_path:str, spk_words_path:str, save_path:str):
@@ -269,6 +124,115 @@ def remove_suffix(lex_path:str, spk_words_path:str, save_path:str):
     save_lex_dict(lex_dict, save_path)
 
 
+def expand_contractions(lex_path:str, contractions_path:str, save_path:str):
+    """This function adds entries to the output lexicon that expands contractions.
+    For example the pronunciation of "i'll" will now have a new entry for the phonemes of
+    the phrase "i will". The pronunciations of the expanded contraction will be added to the output
+    lexicon.
+    
+    Args:
+        lex_path (str): path to lexicon
+        contractions_path (str): path to file with contraction-to-expansion mapping
+        save_path (str): path to output lexicon
+    """
+    # create a lexicon dict where pronunciations are strings in a list
+    # words with multiple pronunciations have len(list) > 1
+    lex_dict = load_lex_dict(lex_path)
+    
+    # for each contraction-expansion pair, create a new entry in the lex_dict
+    with open(contractions_path, 'r') as fid:
+         for row in fid:
+            row = row.strip().upper().split(' ')
+            contraction, expansion = row[0], row[1:]
+            
+            # the combinations below only work for 2-word expansions
+            assert len(expansion) == 2, f"expansion: {expansion} is not size 2"
+            new_pronun = list()
+            for phones_1 in lex_dict[expansion[0]]:
+                for phones_2 in lex_dict[expansion[1]]:
+                    lex_dict[contraction].append(phones_1 + " " + phones_2)
+
+    save_lex_dict(lex_dict, save_path)      
+
+
+############   LEXICON & CORPUS ASSESSMENT  FUNCTIONS   #############
+
+def compute_lexicon_outliers(lexicon_path:str):
+    """This function computes the outliers in the lexicon by length of pronunciation. It is meant
+    to catch very short or long pronunciations.
+    
+    It does this by printing pronunciations that are more than 2 standard deviations away from the 
+    mean ratio of the word length to pronunciation length, where word length is the number of 
+    characters and pronunciation length is the number of phonemes. 
+    
+    Args:
+        lexicon_path (str): path to lexicon
+    """
+
+    # returns lexicon with pronunciations as list of phoneme strings
+    lex_dict = load_lex_dict(lexicon_path, split_phones=True)
+
+    pronun_ratios  = [len(word)/len(phones) for word, phones in lex_dict.items()]
+    mean_ratio = np.mean(pronun_ratios)
+    stddev_ratio = np.std(pronun_ratios)
+
+    outlier_factor = 4.0    # num std-deviations that define an outlier
+    lower_bound = mean_ratio - outlier_factor * stddev_ratio
+    upper_bound = mean_ratio + outlier_factor * stddev_ratio
+
+    print(f"mean: {mean_ratio}, std-dev: {stddev_ratio}, # of stddev for outlier: {outlier_factor}")
+
+    outliers = defaultdict(list)
+    for word, phones in lex_dict.items():
+        ratio = len(word)/ len(phones)
+        if ratio < lower_bound or ratio > upper_bound:
+            outliers[word].extend(phones)
+
+    print(f"number of outliers outside bounds: {len(outliers)}")
+    for word, phone_list in outliers.items():
+        for phones in phone_list:
+            print(f"{word} {phones}")
+
+
+def phoneme_occurance(lex_path:str, save_path:str)->None:
+    """This function computes an occurance count of the phonemes in the lexicon
+    """
+
+    lex_dict = load_lex_dict(lex_path)
+
+    phone_counter = Counter()
+    for word, phone_str_list in lex_dict.items():
+        for phone_str in phone_str_list:
+            phones = phone_str.strip().split(' ')
+            phone_counter.update(phones)
+
+    with open(save_path, 'w') as fid:
+        for phone, count in phone_counter.most_common():
+            fid.write(f"{phone} {count}\n")
+
+
+def spk_word_count(metadata_file:str, out_path:str):
+    """This funciton creates a count of all the words in the speak training set.
+    Args:
+        metadata_file (str): path to the metadata file with the word targets
+        out_path (str): file where the count will be saved
+    """
+
+    word_counter = Counter()
+    with open(metadata_file, 'r') as fid:
+        reader = csv.reader(fid, delimiter='\t')
+        header = next(reader)
+        for row in tqdm.tqdm(reader, total=3.165e7):
+            target = process_text(row[1])
+            word_counter.update(target.split(' '))
+            
+    with open(out_path, 'w') as fid:
+        for word, count in word_counter.most_common():
+            fid.write(f"{word} {count}\n")
+
+
+#############   IO  FUNCTIONS   #############
+
 def load_spk_upper_words(spk_words_path:str)->List[str]:
     """This funciton returns a list of the uppecase words in the speak training set
     """
@@ -289,27 +253,24 @@ def load_lex_dict(lex_path:str, split_phones=False)->Dict[str, List[str]]:
         lex_path (str): path to lexicon
         split_phones (bool): if true, the phonemes will be split into a list of strings, default False    
     """
-
-    
     lex_dict = defaultdict(list)
-    rows = []
    
     # ensure all entries are space-separated, rather than tab-separated 
     with open(lex_path, 'r') as fid:
         for row in fid:
-            rows.append(row.replace('\t', ' '))
-
-    for row in rows:
-        row = row.strip().split(' ', maxsplit=1)
-        # check of unexpected rows
-        if len(row) != 2:
-            print(f"short row: {row}")
-            continue
-        word, phones = row
-        phones = phones.strip()
-        if split_phones:
-            phones = phones.split(' ')
-        lex_dict[word].append(phones)
+            row = row.replace('\t', ' ')
+            row = row.strip().split(' ', maxsplit=1)
+            # check of unexpected rows
+            if len(row) != 2:
+                print(f"short row: {row}")
+                continue
+            word, phones = row
+            # remove (2) digit marker for alternative pronunciations
+            word = re.sub("\(\d\)", "", word).upper()
+            phones = phones.strip()
+            if split_phones:
+                phones = phones.split(' ')
+            lex_dict[word].append(phones)
 
     return lex_dict    
 
@@ -358,35 +319,6 @@ def load_aligner_phones_lower(aligner_phone_path:str)->Dict[str,List[str]]:
     return aligner_phones
 
 
-def expand_contractions(lex_path:str, contractions_path:str, save_path:str):
-    """This function adds entries to the output lexicon that expands contractions.
-    For example the pronunciation of "i'll" will now have a new entry for the phonemes of
-    the phrase "i will". The pronunciations of the expanded contraction will be added to the output
-    lexicon.
-    
-    Args:
-        lex_path (str): path to lexicon
-        contractions_path (str): path to file with contraction-to-expansion mapping
-        save_path (str): path to output lexicon
-    """
-    # create a lexicon dict where pronunciations are strings in a list
-    # words with multiple pronunciations have len(list) > 1
-    lex_dict = load_lex_dict(lex_path)
-    
-    # for each contraction-expansion pair, create a new entry in the lex_dict
-    with open(contractions_path, 'r') as fid:
-         for row in fid:
-            row = row.strip().upper().split(' ')
-            contraction, expansion = row[0], row[1:]
-            
-            # the combinations below only work for 2-word expansions
-            assert len(expansion) == 2, f"expansion: {expansion} is not size 2"
-            new_pronun = list()
-            for phones_1 in lex_dict[expansion[0]]:
-                for phones_2 in lex_dict[expansion[1]]:
-                    lex_dict[contraction].append(phones_1 + " " + phones_2)
-
-    save_lex_dict(lex_dict, save_path)      
 
 
 def combine_cmud_libsp_lexicons(cmu_path:str, libsp_path:str, save_path:str)->None:
@@ -434,24 +366,6 @@ def combine_cmud_libsp_lexicons(cmu_path:str, libsp_path:str, save_path:str)->No
             fid.write(f"{word} {phones}\n")
 
 
-def spk_word_count(metadata_file:str, out_path:str):
-    """This funciton creates a count of all the words in the speak training set.
-    Args:
-        metadata_file (str): path to the metadata file with the word targets
-        out_path (str): file where the count will be saved
-    """
-
-    word_counter = Counter()
-    with open(metadata_file, 'r') as fid:
-        reader = csv.reader(fid, delimiter='\t')
-        header = next(reader)
-        for row in tqdm.tqdm(reader, total=3.165e7):
-            target = process_text(row[1])
-            word_counter.update(target.split(' '))
-            
-    with open(out_path, 'w') as fid:
-        for word, count in word_counter.most_common():
-            fid.write(f"{word} {count}\n")
 
 
 def update_train_json(old_json_path:str, aligner_phones_path:str, new_json_path:str):
@@ -465,7 +379,7 @@ def update_train_json(old_json_path:str, aligner_phones_path:str, new_json_path:
         new_json_path (str): path where new training json will be saved
     
     """
-
+    # aligner_phones is a  mapping from example_id to aligner_phonemes
     aligner_phones = load_aligner_phones_lower(aligner_phones_path)
 
     # train_json is list of dicts with keys: 'audio', 'duration', 'text'
@@ -566,8 +480,12 @@ def extract_aligner_phonemes(data_dir:str, save_path:str):
             fid.write(f"{filename} {phones}\n")    
     
 
+################# TRANSCRIPT CREATION FUNCTIONS  ########################
 
-def prep_librispeech():
+
+##### LIBRISPEECH  ####
+
+def create_libsp_transcripts():
     libsp_glob = "/mnt/disks/data_disk/data/LibriSpeech/**/**/**/*trans.txt" 
     
     for trans_file in glob.glob(libsp_glob):
@@ -580,6 +498,214 @@ def prep_librispeech():
                 out_file = out_file + ".txt"
                 with open(out_file, 'w') as wfid:
                     wfid.write(transcript)
+
+
+######   TEDLIUM   ######
+
+def create_tedlium_transcripts(tedlium_dir:str, train_json_path:str):
+    """This function creates separate txt transcript files for each utterance for the mfa aligner.
+    The function uses the training_json file to check the duration of the utterance to ensure that
+    the transcript is matched with the correct audio file. This double-check is necessary because the
+    audio filenames do not reference the start and end times of each clip and this are not easy to match
+    with the transcript stm files. 
+
+    Args:
+        tedlium_dir (str): path to directory that contains `stm` and `converted/wav` subdirectories
+        train_json_path (str): path to training json file
+    """
+    # preprocessing constants
+    MIN_DURATION = 1.0
+    MAX_DURATION = 20.0
+    
+    tedlium_dir = Path(tedlium_dir)
+    
+    # create a dict mapping from audio_path to data example for later lookup
+    tedlium_data = {
+        xmpl['audio']: xmpl for xmpl in read_data_json(train_json_path)
+    }
+
+    excluded_utt_count = 0      # counts number of utterances not in training-json
+    for stm_file in tedlium_dir.joinpath("stm").glob("*.stm"):
+        utterance_dicts = get_utterances_from_stm(stm_file)
+        # filter the utterances by min and max duration
+        filtered_utterances = list()
+        for utt in utterance_dicts:
+            utt_duration = utt["end_time"] - utt["start_time"]
+            if MIN_DURATION < utt_duration < MAX_DURATION:
+                filtered_utterances.append(utt)
+        
+        for utt_idx, utt in enumerate(filtered_utterances):
+            wav_file = f"{utt['filename']}_{str(utt_idx)}.wv"
+            wav_file = tedlium_dir.joinpath(f"converted/wav/{wav_file}")
+            # unsure why this file didn't get converted, but it doesn't exist
+            if 'ThomasGoetz_2010P_118.wv' in str(wav_file):
+                continue
+            assert wav_file.exists(), f"audio file: {wav_file} doesn't exist"
+            # check that the training-json duration and utterance-duration match    
+            if str(wav_file) not in tedlium_data:
+                excluded_utt_count += 1
+                continue
+            train_duration = tedlium_data[str(wav_file)]['duration']
+            utt_duration = utt["end_time"] - utt["start_time"]
+            assert math.isclose(train_duration, utt_duration, rel_tol=1e-6), \
+                f"durations: {train_duration}, {utt_duration} not close for {wav_file}"
+            # write transcript in uppercase to new file
+            transcript = utt['transcript'].upper()
+            trans_path = wav_file.with_suffix(".txt")
+            trans_path.open('w').write(transcript)
+    
+    print(f"number of excluded utterances: {excluded_utt_count}")
+
+def get_utterances_from_stm(stm_file:str):
+    """parses and stm file to extract the transcript. The unk_token is removed from transcript
+
+    Note: below is a sample stm file:
+        911Mothers_2010W 1 911Mothers_2010W 14.95 16.19 <NA> <unk> because of
+        911Mothers_2010W 1 911Mothers_2010W 16.12 25.02 <NA> the fact that we have
+    """
+    unk_token = "<unk>"
+    utterances = []
+
+    with open(stm_file, "r", encoding='utf-8') as f:
+        for stm_line in f:
+            stm_line = stm_line.replace("\t", " ").split()      # remove tabs
+            start_time, end_time = float(stm_line[3]), float(stm_line[4])
+            filename = stm_line[0]
+            transcript = [word for word in stm_line[6:] if word != unk_token]
+            transcript = unicodedata.normalize(
+                "NFKD", " ".join(transcript).strip()
+            ).encode("utf-8", "ignore").decode("utf-8", "ignore")
+            if transcript != "ignore_time_segment_in_scoring":
+                utterances.append({
+                    "start_time": start_time, 
+                    "end_time": end_time,
+                    "filename": filename, 
+                    "transcript": transcript
+                })
+                                                                                              
+        return utterances
+
+def tedlium_oov_words(transcript_dir:str, lex_path:str, oov_path: str):
+    """This function determines the words in the transcripts in `transcript_dir` that are not
+    included in the lexicon in `lex_path`.
+
+    Args:
+        transcript_dir (str): path to the directory that contains the transcripts
+        lex_path (str): path to lexicon
+    """
+
+    transcript_dir = Path(transcript_dir)
+    lexicon = load_lex_dict(lex_path)
+    lex_words = set([word for word in lexicon])
+    words_set = set()
+
+    for trans_file in transcript_dir.glob("*.txt"):
+        words = trans_file.read_text()
+        words = words.replace("\t", " ")
+        words = words.split()
+        words_set.update(words_set)
+
+    oov_words = words_set.difference(lex_words)
+
+    with open(oov_path, 'w') as fid:
+        for word in oov_words:
+            fid.write(word+"\n")
+
+
+######   SPEAK DATASET   ######
+
+def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
+    """It seems the mfa aligner tool will only parallelize directory trees, so the audio being
+    all in a single dir does not run in parallel. Given this, this function converts that audio
+    paths from being in a single dir, `audio_dir`, to a single-level tree where each subdir of
+    `audio_dir` will have a most 1000 audio files. 
+    
+    The list of training jsons `spk_training_jsons` will be re-written to use the updated paths 
+    to the new subdirectories. 
+
+    Note: both .wav and .txt files will be moved. The .txt files are used by the mfa aligner
+
+    Args:
+        spk_training_jsons (List[str]): List of paths to relevent speak training jsons
+        audio_dir (str): path to directory that contains all speak training files. 
+            These files will be moved into subdirectories under `audio_dir`
+    """
+    # number of wav files in each subdirectory
+    SUB_DIR_SIZE = 1000
+    
+    # list and sort .wav files in audio_dir
+    audio_files = sorted(glob.glob(os.path.join(audio_dir, "*.wav")))
+    
+    # create a dict for each training_json whose values is a dict mapping audio paths to examples
+    json_dict = dict()
+    for json_path in spk_training_jsons:
+        json_dict[json_path] = {
+            xmpl['audio']: xmpl for xmpl in read_data_json(json_path)
+        }
+    
+    file_count = 0
+    subdir_count = 0
+    for audio_file in audio_files:
+        # if file_count has filled up the previous sub-dir, create a new one
+        if file_count % SUB_DIR_SIZE == 0:
+            subdir_count += 1
+            os.makedirs(os.path.join(audio_dir, str(subdir_count)), exist_ok=True)
+
+        # inserts the subdir_count into the audio_file path
+        audio_dir, basename = os.path.split(audio_file)
+        new_audio_file = os.path.join(audio_dir, str(subdir_count), basename)
+        
+        # update the path names in each training json
+        for xmpl_dict in json_dict.values():
+            if audio_file in xmpl_dict:
+                # update the audio path
+                xmpl_dict[audio_file]['audio'] = new_audio_file
+        
+        # move the .wav and .txt files to the new sub-dir
+        shutil.move(audio_file, new_audio_file)
+        if os.path.exists(audio_file.replace(".wav", ".txt")):
+            shutil.move(audio_file.replace(".wav", ".txt"), new_audio_file.replace(".wav", ".txt"))
+
+        file_count += 1
+
+    for json_path, xmpl_dict in json_dict.items():
+        # TODO (drz): remove renaming of `json_path` once verifying the script works as expected
+        json_path += "-new"
+        write_data_json(xmpl_dict.values(), json_path)
+ 
+
+def create_spk_transcripts(spk_metadata_path:str, spk_audio_dir:str, lex_path:str):
+    """This function creates an uppercase transcript as an individual .txt file for each audio file
+    in `audio_dir` using the `spk_metadata_path`. It does not create a transcript for files with words
+    not included in the lexicon from `lex_path`. 
+    """
+    record_ids_map = get_record_ids_map(spk_metadata_path, has_url=True)
+    lex_dict = load_lex_dict(lex_path)
+    lex_words = set([word for word in lex_dict])
+    
+    examples = {
+        "total": 0,
+        "oov": 0
+    }
+    audio_files = glob.glob(os.path.join(spk_audio_dir, "*.wav"))
+    for audio_file in tqdm.tqdm(audio_files):
+        file_id = path_to_id(audio_file)
+        # trancript is already processed in `get_record_ids_map`
+        transcript = record_ids_map[file_id]['target_sentence']
+        transcript = transcript.upper().split()
+        # checks if the transcript has an out-of-vocab word
+        has_oov = any([(word not in lex_words) for word in transcript])
+        if has_oov:
+            examples['oov'] += 1
+            continue
+        examples['total'] += 1
+        # write the transcript to a txt file
+       # txt_file = audio_file.replace(".wav", ".txt")
+       # with open(txt_file, 'w') as fid:
+       #     fid.write(" ".join(transcript))
+    print(f"num oov_examples: {examples['oov']} out to total: {examples['total']}")    
+
+
 
 
 if __name__ == "__main__":
@@ -618,6 +744,10 @@ if __name__ == "__main__":
         insert_mispronunciations(*args.data_paths, save_path=args.save_path)
     elif args.action == "create-spk-transcripts":
         create_spk_transcripts(*args.data_paths)
+    elif args.action == "create-tedlium-transcripts":
+        create_tedlium_transcripts(*args.data_paths)
+    elif args.action == "tedlium-oov-words":
+        tedlium_oov_words(*args.data_paths, args.save_path)    
     elif args.action == "compare-phonemes":
         compare_phonemes(*args.data_paths, save_path=args.save_path)
     elif args.action == "create-subdirs":

@@ -493,6 +493,8 @@ class TedliumPreprocessor(DataPreprocessor):
             all_utterances = self.get_utterances_from_stm(stm_file_full)
             all_utterances = filter(self.filter_utterances, all_utterances)
             
+            # TODO (drz): if re-running this again change the `utterance_id` from an enumeration
+            # to the start-end values to allow for more exact mapping from audio-to-text
             for utterance_id, utterance in enumerate(all_utterances):
                 target_fn = "{}_{}.wav".format(utterance["filename"], str(utterance_id))
                 target_wav_file = os.path.join(wav_dir, target_fn)
@@ -513,6 +515,7 @@ class TedliumPreprocessor(DataPreprocessor):
                 audio_path = target_wav_file
                 self.audio_trans.append((audio_path, transcript))
 
+
     def remove_unk_token(self, transcript:str):
         """
         removes the <unk> token from the transcript
@@ -522,10 +525,11 @@ class TedliumPreprocessor(DataPreprocessor):
 
 
     def get_utterances_from_stm(self, stm_file:str):
-        """
-        Return list of entries containing phrase and its start/end timings
-        :param stm_file:
-        :return:
+        """Return list of entries containing phrase and its start/end timings
+        
+        Note: below is a sample stm file:
+            911Mothers_2010W 1 911Mothers_2010W 14.95 16.19 <NA> <unk> because of
+            911Mothers_2010W 1 911Mothers_2010W 16.12 25.02 <NA> the fact that we have
         """
         res = []
         with io.open(stm_file, "r", encoding='utf-8') as f:
@@ -534,9 +538,9 @@ class TedliumPreprocessor(DataPreprocessor):
                 start_time = float(tokens[3])
                 end_time = float(tokens[4])
                 filename = tokens[0]
-                transcript = unicodedata.normalize("NFKD",
-                                                " ".join(t for t in tokens[6:]).strip()). \
-                    encode("utf-8", "ignore").decode("utf-8", "ignore")
+                transcript = unicodedata.normalize(
+                    "NFKD", " ".join(t for t in tokens[6:]).strip()
+                ).encode("utf-8", "ignore").decode("utf-8", "ignore")
                 if transcript != "ignore_time_segment_in_scoring":
                     res.append({
                         "start_time": start_time, "end_time": end_time,
