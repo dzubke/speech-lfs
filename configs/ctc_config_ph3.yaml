@@ -1,9 +1,9 @@
 seed: 2017
 save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json #lib-ted-cv-spk/train_lib-ted-cv-speak-500K-2020-11-24_dd.json
+    train_set: /mnt/disks/data_disk/data/tedlium/TEDLIUM_release-3/test-wav.json
     dev_sets:
-        speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
+        speak: /mnt/disks/data_disk/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json
 #        cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
 #        libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
 #        ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
@@ -30,7 +30,7 @@ preproc:
     gauss_noise_prob: 0.5
     gauss_snr_db_range: [15, 50]
     background_noise: True
-    background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
+    background_noise_dir: /mnt/disks/data_disk/data/noise/feed_to_model/
     background_noise_prob: 0.5
     background_noise_range: [0.0, 0.5]
     spec_augment: True
@@ -53,7 +53,7 @@ optimizer:
 model:
     class: this value is no longer used as train.py is hardcorded to use CTC_train
     dropout: 0.4
-    load_trained: True 
+    load_trained: False
     trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
@@ -67,12 +67,10 @@ model:
             bidirectional: False
             layers: 5
 training:
-    distributed: True
     loss_name: naren
-    apex: False
-    opt_level: 'O0'
+    amp: True
     OMP_NUM_THREADS: 7
 checkpoint:
     gcs_bucket: spk-models
-    gcs_dir: 2021-02-10
+    gcs_dir: "2021-02-12"
     checkpoints_per_epoch: 1    
