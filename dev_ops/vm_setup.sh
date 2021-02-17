@@ -3,8 +3,9 @@
 
 echo -e "\n=========  updating VM  =========\n"
 sudo apt-get update
-sudo apt-get update && sudo apt-get --only-upgrade install kubectl google-cloud-sdk google-cloud-sdk-app-engine-grpc google-cloud-sdk-pubsub-emulator google-cloud-sdk-app-engine-go google-cloud-sdk-firestore-emulator google-cloud-sdk-cloud-build-local google-cloud-sdk-datastore-emulator google-cloud-sdk-app-engine-python google-cloud-sdk-cbt google-cloud-sdk-bigtable-emulator google-cloud-sdk-app-engine-python-extras google-cloud-sdk-datalab google-cloud-sdk-app-engine-java
-
+sudo apt-get --only-upgrade install kubectl google-cloud-sdk 
+sudo apt install -y build-essential
+sudo apt-get install -y manpages-dev cmake make
 
 echo -e "\n=========  installing miniconda  =========\n"
 sudo apt-get -y install bzip2  # need to install bzip2 to install miniconda
@@ -18,24 +19,25 @@ echo '# adding conda path
 export PATH=$PATH:~/miniconda/bin/
 
 
-echo  -e "\n=========  creating conda env  =========\n"
-conda create -y -n awni_env36 python=3.6.5
-conda activate awni_env36
-pip install --upgrade pip
-
 
 echo  -e "\n=========  installed git  =========\n"
-sudo apt-get install python-software-properties software-properties-common
+sudo apt-get install -y1 python-software-properties software-properties-common
 sudo add-apt-repository ppa:git-core/ppa -y
 sudo apt-get update
 sudo apt-get install -y git
-
-
+# install git-lfs
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+sudo apt-get install git-lfs
 
 echo  -e "\n========= cloning repo  =========\n"
 mkdir awni_speech && cd ~/awni_speech
 git clone https://github.com/dzubke/speech-lfs.git
 
+
+echo  -e "\n=========  creating conda env  =========\n"
+conda create -y -n awni_env36 python=3.6.5
+conda activate awni_env36
+pip install --upgrade pip
 
 echo  -e "\n=========  installing python requirements  =========\n"
 cd ~/awni_speech/speech-lfs
@@ -97,8 +99,6 @@ conda install -y pytorch=0.4.1 cuda102 -c pytorch
 
 echo  -e "\n=========  making project libraries  =========\n"
 cd ~/awni_speech/speech-lfs/
-sudo apt-get -y install make
-sudo apt-get -y install cmake
 make
 
 # build naren's loss function
@@ -106,8 +106,8 @@ cd ~/awni_speech/speech-lfs/libs/
 git clone https://github.com/SeanNaren/warp-ctc.git warp-ctc-naren
 cd warp-ctc-naren
 mkdir build; cd build
-cmake ..
-
+cmake ..; make
+cd pytorch_binding; python setup.py install
 
 
 
