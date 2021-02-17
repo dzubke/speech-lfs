@@ -5,11 +5,11 @@ from google.cloud import storage
 
 class GCSCheckpointHandler():
     def __init__(self, cfg):
-        #self.client = storage.Client()
+        self.client = storage.Client()
         #self.local_save_file = hydra.utils.to_absolute_path(cfg.local_save_file)
         self.gcs_bucket = cfg['gcs_bucket']
         self.gcs_dir = cfg['gcs_dir']
-        #self.bucket = self.client.bucket(bucket_name=self.gcs_bucket)
+        self.bucket = self.client.bucket(bucket_name=self.gcs_bucket)
         self.chkpt_per_epoch = cfg['checkpoints_per_epoch']
 
 

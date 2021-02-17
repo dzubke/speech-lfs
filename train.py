@@ -87,8 +87,7 @@ def run_epoch(model,
         and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
             save(model.module, preproc, save_path, tag='ckpt')
-            print("~~~~~", save_path)
-            gcs_ckpt_handler.save_to_#gcs(save_path, "ckpt_model_state_dict.pth")
+            gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_model_state_dict.pth")
             gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_preproc.pyc")
             # save the run_sate
             ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
