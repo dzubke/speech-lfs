@@ -87,13 +87,12 @@ def run_epoch(model,
         and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
             save(model.module, preproc, save_path, tag='ckpt')
-            print("~~~~~", save_path)
-            #gcs_ckpt_handler.save_to_#gcs(save_path, "ckpt_model_state_dict.pth")
-            #gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_preproc.pyc")
+            gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_model_state_dict.pth")
+            gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_preproc.pyc")
             # save the run_sate
             ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
             write_pickle(ckpt_state_path, {'run_state': (iter_count, avg_loss)})
-            #gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_run_state.pickle")
+            gcs_ckpt_handler.save_to_gcs(save_path, "ckpt_run_state.pickle")
 
         batch_counter += 1
         ####################################################
@@ -447,8 +446,8 @@ def run(local_rank:int, config:dict)->None:
             # the logger needs to be removed to save the model
             if use_log: preproc.logger = None
             speech.save(model.module, preproc, config["save_path"])
-            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
-            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
 
             if use_log: 
                 logger.info(f"train: ====== model saved =======")
@@ -477,8 +476,8 @@ def run(local_rank:int, config:dict)->None:
                         if use_log: preproc.logger = None   # remove the logger to save the model
                         best_so_far = dev_per
                         speech.save(model.module, preproc, config["save_path"], tag="best")
-                        #gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_model_state_dict.pth")
-                        #gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_preproc.pyc")
+                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_model_state_dict.pth")
+                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_preproc.pyc")
 
                         if use_log: 
                             preproc.logger = logger
@@ -499,7 +498,7 @@ def run(local_rank:int, config:dict)->None:
                            "best_so_far": best_so_far,
                            "learning_rate": learning_rate}
             write_pickle(os.path.join(config["save_path"], "train_state.pickle"), train_state)
-            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "train_state.pickle")
+            gcs_ckpt_handler.save_to_gcs(config["save_path"], "train_state.pickle")
 
 def calc_per_difference(dev_per_dict:dict) -> dict:
     """
