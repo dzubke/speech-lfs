@@ -556,6 +556,7 @@ def create_tedlium_transcripts(tedlium_dir:str, train_json_path:str):
     
     print(f"number of excluded utterances: {excluded_utt_count}")
 
+
 def get_utterances_from_stm(stm_file:str):
     """parses and stm file to extract the transcript. The unk_token is removed from transcript
 
@@ -615,13 +616,13 @@ def tedlium_oov_words(transcript_dir:str, lex_path:str, oov_path: str):
 ######   SPEAK DATASET   ######
 
 def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
-    """It seems the mfa aligner tool will only parallelize directory trees, so the audio being
-    all in a single dir does not run in parallel. Given this, this function converts that audio
-    paths from being in a single dir, `audio_dir`, to a single-level tree where each subdir of
-    `audio_dir` will have a most 1000 audio files. 
+    """The mfa aligner uses features from the same speaker to perform alignments, which makes
+    having directories with the same speak potentially useful. This function takes an existing
+    directory structure where sequential subdirectories had at most 1000 audio samples and 
+    creates new directories sorted by speaker. If working from a different directory structure, 
+    change the pattern in the `rglob` function.
     
-    The list of training jsons `spk_training_jsons` will be re-written to use the updated paths 
-    to the new subdirectories. 
+    The function also rewrites the `spk_training_jsons` with the paths to the new subdirectories.
 
     Note: both .wav and .txt files will be moved. The .txt files are used by the mfa aligner
 
@@ -630,11 +631,10 @@ def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
         audio_dir (str): path to directory that contains all speak training files. 
             These files will be moved into subdirectories under `audio_dir`
     """
-    # number of wav files in each subdirectory
-    SUB_DIR_SIZE = 1000
     
-    # list and sort .wav files in audio_dir
-    audio_files = sorted(glob.glob(os.path.join(audio_dir, "*.wav")))
+    # create generator for '.wav' files in audio_dir
+    audio_dir = Path(audio_dir)
+    audio_files = audio_dir.rglob("*.wav")
     
     # create a dict for each training_json whose values is a dict mapping audio paths to examples
     json_dict = dict()
