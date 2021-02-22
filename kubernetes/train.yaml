@@ -1,0 +1,41 @@
+apiVersion: elastic.pytorch.org/v1alpha1
+kind: ElasticJob
+metadata:
+  name: deepspeech
+  namespace: elastic-job
+spec:
+  # Use "etcd-service:2379" if you already apply etcd.yaml
+  rdzvEndpoint: "etcd-service:2379"
+  minReplicas: 1
+  maxReplicas: 1
+  replicaSpecs:
+    Worker:
+      replicas: 1
+      restartPolicy: ExitCode
+      template:
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+            - name: deepspeech
+              image: seannaren/deepspeech.pytorch:latest # CHANGE THIS
+              imagePullPolicy: Always
+              command: ["python", "-m", "torchelastic.distributed.launch"]
+              args:
+                - "--nproc_per_node=1"
+                - "/workspace/deepspeech.pytorch/train.py" # CHANGE THIS
+                - "/workspace/deepspeech.pytorch/configs/ctc_config.yaml" # CHANGE THIS
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
+              volumeMounts:
+                - mountPath: /data/
+                  name: pv-data
+                  readOnly: true
+          volumes:
+            - name: pv-data
+              persistentVolumeClaim:
+                claimName: pv-claim-data
+                readOnly: true
+          nodeSelector:
+            cloud.google.com/gke-nodepool: gpu-pool
