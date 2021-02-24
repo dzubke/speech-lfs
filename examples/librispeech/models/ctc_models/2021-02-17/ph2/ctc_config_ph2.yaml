@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-12/ph5/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-17/ph2/
 data:
-    train_set: /mnt/disks/data_disk/data/librispeech/train-other-960_aligner.json
+    train_set: /mnt/disks/data_disk/data/lib-spk/train_lib-spk-250K-2021-01-05_aligner.json
     dev_sets:
         speak: /mnt/disks/data_disk/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json
         cv: /mnt/disks/data_disk/data/common-voice/v5.1_2020-06-22/dev.json
@@ -14,7 +14,7 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2021-02-12_lib-960_aligner.log
+    log_file: logs/2021-02-17_lib-spk-250-aligner.log
     level: error
     debug_mode: False
 preproc:
@@ -45,7 +45,7 @@ preproc:
 optimizer:
     batch_size: 18
     run_state: [0, 0]
-    best_so_far: 0.40
+    best_so_far: 1.0
     start_epoch: 0
     epochs: 10
     learning_rate: 0.0003
@@ -55,7 +55,7 @@ optimizer:
     sched_step: 1
 model:
     dropout: 0.4
-    load_trained: False
+    load_trained: True
     trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
@@ -71,8 +71,8 @@ model:
 training:
     loss_name: naren
     amp: True                 # turns on Pytorch's automatic mixed-precision
-    OMP_NUM_THREADS: 3        # this should be equal to:  #_CPU / #_GPU
+    OMP_NUM_THREADS: 4        # this should be equal to:  #_CPU / #_GPU
 checkpoint:
     gcs_bucket: "spk-models"
-    gcs_dir: "2021-02-12"
-    checkpoints_per_epoch: 4
+    gcs_dir: "2021-02-17"
+    checkpoints_per_epoch: 5

@@ -1,18 +1,20 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/20210106/ph7/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/null #2021-02-17/ph1/
 data:
-    train_set: /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-500K-2021-01-05_dd.json
+    train_set: /mnt/disks/data_disk/data/librispeech/dev-clean.json #lib-spk/train_lib-spk-250K-2021-01-05.json
     dev_sets:
-        speak: /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_test_data/2020-05-27/speak-test_2020-05-27_dd.json
-        cv: /mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/dev_dd.json
-        libsp: /mnt/disks/data_disk/home/dzubke/awni_speech/data/LibriSpeech/dev-clean_dd.json
-        ted: /mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/dev_dd.json
+        speak: /mnt/disks/data_disk/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json
+        cv: /mnt/disks/data_disk/data/common-voice/v5.1_2020-06-22/dev.json
+        libsp: /mnt/disks/data_disk/data/librispeech/dev-clean.json
+        libsp-align: /mnt/disks/data_disk/data/librispeech/dev-clean_aligner.json
+        ted: /mnt/disks/data_disk/data/tedlium/TEDLIUM_release-3/dev.json
+        swb: /mnt/disks/data_disk/data/swb/swb-dev.json
     dev_set_save_reference: speak
     start_and_end: False
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2021-01-06_large-mid-aug-no-fn-naren-amp_spk-500K-2021-01-05.log
+    log_file: logs/2021-02-17_lib-spk-250.log
     level: error
     debug_mode: False
 preproc:
@@ -31,7 +33,7 @@ preproc:
     gauss_noise_prob: 0.5
     gauss_snr_db_range: [15, 50]
     background_noise: True
-    background_noise_dir: /mnt/disks/data_disk/home/dzubke/awni_speech/data/noise/feed_to_model/
+    background_noise_dir: /mnt/disks/data_disk/data/noise/feed_to_model/
     background_noise_prob: 0.5
     background_noise_range: [0.0, 0.5]
     spec_augment: True
@@ -43,9 +45,9 @@ preproc:
 optimizer:
     batch_size: 18
     run_state: [0, 0]
-    best_so_far: 0.40
+    best_so_far: 1.0
     start_epoch: 0
-    epochs: 5
+    epochs: 10
     learning_rate: 0.0003
     momentum: 0.9
     dampening: 0.0
@@ -69,5 +71,8 @@ model:
 training:
     loss_name: naren
     amp: True                 # turns on Pytorch's automatic mixed-precision
+    OMP_NUM_THREADS: 4        # this should be equal to:  #_CPU / #_GPU
+checkpoint:
+    gcs_bucket: "spk-models"
+    gcs_dir: "2021-02-17/ph1"
     checkpoints_per_epoch: 5
-    OMP_NUM_THREADS: 5        # this should be equal to:  #_CPU / #_GPU

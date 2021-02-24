@@ -1,7 +1,7 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-22/ph2/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-22/ph1/
 data:
-    train_set: /mnt/disks/data_disk/data/lib-spk/train_lib-960-spk-250K_aligner-same-speaker-2021-02-19.json
+    train_set: /mnt/disks/data_disk/data/lib-spk/train_lib-spk-250K-2021-01-05.json
     dev_sets:
         speak: /mnt/disks/data_disk/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json
         cv: /mnt/disks/data_disk/data/common-voice/v5.1_2020-06-22/dev.json
@@ -14,12 +14,12 @@ data:
     num_workers: 4
 logger:
     use_log: False
-    log_file: logs/2021-02-22_from-scratch_lib-spk-250-aligner.log
+    log_file: logs/2021-02-22_from-scratch_lib-spk-250_no-aligner.log
     level: error
     debug_mode: False
 checkpoint:
     gcs_bucket: "spk-models"
-    gcs_dir: "2021-02-22/ph2"
+    gcs_dir: "2021-02-22/ph1"
     checkpoints_per_epoch: 5
 preproc:
     preprocessor: log_spectrogram
@@ -75,4 +75,4 @@ model:
 training:
     loss_name: naren
     amp: True                 # turns on Pytorch's automatic mixed-precision
-    OMP_NUM_THREADS: 3       # this should be equal to:  #_CPU / #_GPU
+    OMP_NUM_THREADS: 3        # this should be equal to:  #_CPU / #_GPU
