@@ -103,11 +103,12 @@ class TextGrid(object):
     own attributes.
     """
 
-    def __init__(self, read_file):
+    def __init__(self, read_file, config:dict=None):
         """
         Takes open read file as input, initializes attributes 
         of the TextGrid file.
         @type read_file: An open TextGrid file, mode "r".
+        @arg config (dict): dict configuration file to create a TextGrid object
         @param size:  Number of tiers.
         @param xmin: xmin.
         @param xmax: xmax.
@@ -115,14 +116,22 @@ class TextGrid(object):
         @param text_type:  TextGrid format.
         @type tiers:  A list of tier objects.
         """
-
-        self.read_file = read_file
-        self.size = 0
-        self.xmin = 0
-        self.xmax = 0
-        self.t_time = 0
-        self.text_type = self._check_type()
-        self.tiers = self._find_tiers()
+        # default creation of textgrid object
+        if config is None:
+            self.read_file = read_file
+            self.size = 0
+            self.xmin = 0
+            self.xmax = 0
+            self.t_time = 0
+            self.text_type = self._check_type()
+            self.tiers = self._find_tiers()
+        # creating a textgrid from a dict config
+        else:
+            self.read_file = None
+            self.size = config['size']
+            self.xmin = config['xmin']
+            self.xmax = config['xmax']
+            self.t_time = config['t_time']
 
     def __iter__(self):
         for tier in self.tiers:
@@ -275,7 +284,7 @@ class Tier(object):
     A container for each tier.
     """
 
-    def __init__(self, tier, text_type, t_time):
+    def __init__(self, tier, text_type, t_time, config=None):
         """
         Initializes attributes of the tier: class, name, xmin, xmax
         size, transcript, total time.  
@@ -289,26 +298,31 @@ class Tier(object):
         @param xmax:  xmax of the tier.
         @param size:  Number of entries in the tier
         @param transcript:  The raw transcript for the tier.
+        @arg config (dict): a dictionary configuration of a tier object
         """
 
-        self.tier = tier
-        self.text_type = text_type
-        self.t_time = t_time
-        self.classid = ""
-        self.nameid = ""
-        self.xmin = 0
-        self.xmax = 0
-        self.size = 0
-        self.transcript = ""
-        self.tier_info = ""
-        self._make_info()
-        self.simple_transcript = self.make_simple_transcript()
-        if self.classid != TEXTTIER:
-            self.mark_type = "intervals"
-        else:
-            self.mark_type = "points"
-            self.header = [("class", self.classid), ("name", self.nameid), \
-            ("xmin", self.xmin), ("xmax", self.xmax), ("size", self.size)]
+        if config is None:
+            self.tier = tier
+            self.text_type = text_type
+            self.t_time = t_time
+            self.classid = ""
+            self.nameid = ""
+            self.xmin = 0
+            self.xmax = 0
+            self.size = 0
+            self.transcript = ""
+            self.tier_info = ""
+            self._make_info()
+            self.simple_transcript = self.make_simple_transcript()
+            if self.classid != TEXTTIER:
+                self.mark_type = "intervals"
+            else:
+                self.mark_type = "points"
+                self.header = [("class", self.classid), ("name", self.nameid), \
+                ("xmin", self.xmin), ("xmax", self.xmax), ("size", self.size)]
+        else: 
+            pass
+
 
     def __iter__(self):
         return self
@@ -318,7 +332,7 @@ class Tier(object):
         Figures out most attributes of the tier object:
         class, name, xmin, xmax, transcript.
         """
-
+        
         trans = "([\S\s]*)"
         if self.text_type == "ChronTextFile":
             classid = "\"(.*)\" +"
@@ -623,6 +637,7 @@ demo_data3 = """"Praat chronological TextGrid text file"
 2 2.341428074708195 2.8
 ""
 """
+
 
 if __name__ == "__main__":
     demo()

@@ -1,5 +1,5 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-17/ph1/
+save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-22/ph1/
 data:
     train_set: /mnt/disks/data_disk/data/lib-spk/train_lib-spk-250K-2021-01-05.json
     dev_sets:
@@ -19,7 +19,7 @@ logger:
     debug_mode: False
 checkpoint:
     gcs_bucket: "spk-models"
-    gcs_dir: "2021-02-17/ph1"
+    gcs_dir: "2021-02-22/ph1"
     checkpoints_per_epoch: 5
 preproc:
     preprocessor: log_spectrogram
@@ -50,8 +50,8 @@ optimizer:
     batch_size: 20
     run_state: [0, 0]
     best_so_far: 1.0
-    start_epoch: 9
-    epochs: 10
+    start_epoch: 0
+    epochs: 5
     learning_rate: 0.0003
     momentum: 0.9
     dampening: 0.0
@@ -59,8 +59,8 @@ optimizer:
     sched_step: 1
 model:
     dropout: 0.4
-    load_trained: True
-    trained_path: examples/librispeech/models/ctc_models/2021-02-17/ph1/model_state_dict.pth
+    load_trained: False
+    trained_path: examples/librispeech/models/ctc_models/20200806/ph4/best_model_state_dict.pth
     remove_layers: []
     encoder: 
         conv:
