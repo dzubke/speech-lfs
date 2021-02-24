@@ -18,18 +18,18 @@ spec:
         spec:
           containers:
             - name: deepspeech
-              image: seannaren/deepspeech.pytorch:latest # CHANGE THIS
+              image: hotpotatoes12345/speak-train_2021-02-19
               imagePullPolicy: Always
               command: ["python", "-m", "torchelastic.distributed.launch"]
               args:
                 - "--nproc_per_node=1"
-                - "/workspace/deepspeech.pytorch/train.py" # CHANGE THIS
-                - "/workspace/deepspeech.pytorch/configs/ctc_config.yaml" # CHANGE THIS
+                - "/workspace/speech-lfs/train.py" # CHANGE THIS
+                - "/workspace/speech-lfs/configs/ctc_config_ph4.yaml" # CHANGE THIS
               resources:
                 limits:
                   nvidia.com/gpu: 1
               volumeMounts:
-                - mountPath: /data/
+                - mountPath: /mnt/disks/data_disk/
                   name: pv-data
                   readOnly: true
           volumes:

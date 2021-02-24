@@ -7,10 +7,10 @@ import argparse
 from collections import Counter, defaultdict
 import copy
 import csv
-import fnmatch
 import glob
 import json
 import math
+import multiprocessing as mp
 import os
 from pathlib import Path
 import re
@@ -26,7 +26,7 @@ import tqdm
 from speech.utils import textgrid
 from speech.utils.data_helpers import clean_phonemes, get_record_ids_map, path_to_id, process_text
 from speech.utils.io import read_data_json, write_data_json
-
+from speech.utils.wave import wav_duration
 
 ##########     LEXICON AUGMENTATION  FUNCTIONS   #############
 
@@ -338,11 +338,15 @@ def combine_cmud_libsp_lexicons(cmu_path:str, libsp_path:str, save_path:str)->No
         for row in cmuid:
             word_phones = row.strip().split(' ', maxsplit=1)
             if len(word_phones) != 2:
-                print(f"cmu: unexpected row size in row:  {word_phones}")
-                continue
+                # some entries are tab-delimited
+                word_phones = row.strip().split('\t', maxsplit=1)
+                if len(word_phones) != 2:
+                    print(f"cmu: unexpected row size in row:  {word_phones}")
+                    continue
             word, phones = word_phones
             # remove the "(1)" marker in alternate pronunciations
             word = re.sub("\(\d\)", '', word)
+            word = word.upper()
             word_phone_list.append((word, phones))
 
     with open(libsp_path, 'r') as libid:
@@ -355,6 +359,7 @@ def combine_cmud_libsp_lexicons(cmu_path:str, libsp_path:str, save_path:str)->No
                     print(f"libsp: unexpected row size in row:  {word_phones}")
                     continue
             word, phones = word_phones   
+            word = word.upper()
             word_phone_list.append((word, phones))
 
     # pass list through set to  de-duplicate
@@ -382,18 +387,21 @@ def update_train_json(old_json_path:str, aligner_phones_path:str, new_json_path:
     # aligner_phones is a  mapping from example_id to aligner_phonemes
     aligner_phones = load_aligner_phones_lower(aligner_phones_path)
 
-    # train_json is list of dicts with keys: 'audio', 'duration', 'text'
+    # train_json is list of dicts with keys in ['audio', 'duration', 'text']
     train_json = read_data_json(old_json_path)
     
-    # update train_json with new phonemes in place
+    # update train_json in-place with new phonemes
+    examples_not_updated = 0
     for idx, xmpl in enumerate(train_json):
         audio_id = path_to_id(xmpl['audio'])
         if audio_id in aligner_phones:
             xmpl['text'] = aligner_phones[audio_id]
         # remove examples not in the aligner_phones. edit this design choice, if desired. 
         else:
-          train_json.pop(idx)
+            #train_json.pop(idx)
+            examples_not_updated += 1
 
+    print(f"num examples not updated: {examples_not_updated}")
     write_data_json(train_json, new_json_path) 
 
 
@@ -457,33 +465,133 @@ def extract_aligner_phonemes(data_dir:str, save_path:str):
         the phonemes from each textgrid file, and writes only the phonemes to `save_path`
         as a space-separate format prefixed by the filename.
     """
-    
+   
     file_phones = dict()
     remove_markers = ["sil", "sp", "spn"]
-    for dirpath, dirnames, filenames in os.walk(data_dir):
-        for filename in fnmatch.filter(filenames, "*.TextGrid"):
-            tg_file = os.path.join(dirpath, filename)
-            # create a TextGrid object
-            tg_object = textgrid.TextGrid.load(tg_file)
-            for tier in tg_object:
-                if tier.nameid == "phones":
-                    start_end_phone = tier.make_simple_transcript()
-                    phones = [elem[2] for elem in start_end_phone]
-                    # remove the 'sil', 'sp', and 'spn', markers
-                    phones = [phone for phone in phones if phone not in remove_markers] 
-                    file_phones[filename] = " ".join(phones)
-    
-    
+    data_dir = Path(data_dir)
+    for tg_file in data_dir.rglob("*.TextGrid"):
+        # create a TextGrid object
+        tg_object = textgrid.TextGrid.load(str(tg_file))
+        for tier in tg_object:
+            if "phones" in tier.nameid:
+                start_end_phone = tier.make_simple_transcript()
+                phones = [elem[2] for elem in start_end_phone]
+                # remove the 'sil', 'sp', and 'spn', markers
+                phones = [phone for phone in phones if phone not in remove_markers] 
+                file_phones[tg_file.stem] = " ".join(phones)
+
     with open(save_path, 'w') as fid:
         for filename, phones in file_phones.items():
             filename = filename.replace(".TextGrid", "")
             fid.write(f"{filename} {phones}\n")    
     
 
+def extract_aligner_phonemes_mp(data_dir:str, save_path:str, num_processes:int=6):
+    """This function gathers all textgrid files whose parent dir is `data_dir`, extracts
+        the phonemes from each textgrid file, and writes only the phonemes to `save_path`
+        as a space-separate format prefixed by the filename.
+    """
+ 
+    file_phones = dict()
+    data_dir = Path(data_dir)
+    files = [str(file_path) for file_path in data_dir.rglob("*.TextGrid")]
+    with mp.Pool(processes=num_processes) as pool:
+        phones_list = pool.map(extract_textgrid, files)
+        pool.close()
+        pool.join()
+    
+    with open(save_path, 'w') as fid:
+        for filename, phones in phones_list:
+            filename = filename.replace(".TextGrid", "")
+            fid.write(f"{filename} {phones}\n")    
+    
+def extract_textgrid(tg_file:str)->str:
+    remove_markers = ["sil", "sp", "spn"]
+    # create a TextGrid object
+    tg_object = textgrid.TextGrid.load(str(tg_file))
+    tier = [tier for tier in tg_object if "phones" in tier.nameid][0]
+    start_end_phone = tier.make_simple_transcript()
+    phones = [elem[2] for elem in start_end_phone]
+    # remove the 'sil', 'sp', and 'spn', markers
+    phones = [phone for phone in phones if phone not in remove_markers] 
+    filename = os.path.splitext(os.path.split(tg_file)[1])[0]
+    return (filename, " ".join(phones))
+
 ################# TRANSCRIPT CREATION FUNCTIONS  ########################
 
+##### GENERAL FUNCTIONS  #####
 
-##### LIBRISPEECH  ####
+
+def write_textgrid_from_txt(data_dir:str):
+    """This function creates textgrid files from existing .txt files in the data_dir.
+    The newly created textgrid files will have the same filename as the original .txt files
+    but will use the .TextGrid extension. The existing .txt files will be renamed .txt-ignore so 
+    the MFA tool does not consider them in the alignment. 
+    """
+
+    data_dir = Path(data_dir)
+    # remove the .trans.txt files
+    txt_paths = [fn for fn in data_dir.rglob("*.txt") if "trans" not in str(fn)]   
+ 
+    # a backup clause in case this function as already been run 
+    # so that the .txt files are now .txt-ignore files
+    if len(txt_paths) == 0: 
+        print("no txt files found, using .txt-ignore extension")
+        txt_paths = data_dir.rglob("*.txt-ignore")
+    
+    # spacing (in seconds) between beginning and end of recording
+    tg_end_interval = 0.0  #0.5
+    for txt_path in txt_paths:
+        # taking the chapter name in librispeech, is this how the aligner seems to sort speaker
+        speaker_name = txt_path.parents[0].name
+        if "trans" in str(txt_path):
+            continue
+        audio_dur = wav_duration(txt_path.with_suffix(".wav"))
+        tg_begin = 0.0  # 0.2
+        tg_end = audio_dur - tg_end_interval
+        transcript = txt_path.read_text()
+        tg_str = gen_oo_textgrid_str(tg_begin, tg_end, audio_dur, transcript, speaker_name)    
+        txt_path.with_suffix(".TextGrid").write_text(tg_str)
+        txt_path.rename(txt_path.with_suffix(".txt-ignore"))
+
+
+def gen_oo_textgrid_str(begin_t, end_t, duration, transcript, speaker_name)->str:
+    """Creates a TextGrid file in oo-format with only one entry as the transcript
+    with begins and ends at begin_t and end_t, respectively.
+
+    Args:
+        begin_t (float): beginning time
+        end_t (float): end time
+        transcript (str): uppercase transcript
+    Returns:
+        (str): string format of textgrid
+    """
+    oo_file = ""
+    oo_file += "File type = \"ooTextFile\"\n"
+    oo_file += "Object class = \"TextGrid\"\n\n"
+    oo_file += "xmin = 0.0\n"
+    oo_file += f"xmax = {duration}\n"
+    oo_file += "tiers? <exists>\n"
+    oo_file += "size = 1\n"
+    oo_file += "item []:\n"
+    
+    oo_file += "%4s%s [%s]:\n" % ("", "item", 1)
+    
+    oo_file += "%8s%s = \"%s\"\n" % ("", "class", "IntervalTier")
+    oo_file += "%8s%s = \"%s\"\n" % ("", "name", speaker_name)
+    oo_file += "%8s%s = %s\n" % ("", "xmin", begin_t)
+    oo_file += "%8s%s = %s\n" % ("", "xmax", end_t)
+    oo_file += "%8s%s: %s\n" % ("", "interals", "size = 1")
+    
+    oo_file += "%12s%s\n" % ("", "intervals [1]:")
+    
+    oo_file += "%16s%s = %s\n" % ("", "xmin", begin_t)
+    oo_file += "%16s%s = %s\n" % ("", "xmax", end_t)
+    oo_file += "%16s%s = \"%s\"\n" % ("", "text", transcript)
+
+    return oo_file
+
+##### LIBRISPEECH  #####
 
 def create_libsp_transcripts():
     libsp_glob = "/mnt/disks/data_disk/data/LibriSpeech/**/**/**/*trans.txt" 
@@ -529,6 +637,14 @@ def create_tedlium_transcripts(tedlium_dir:str, train_json_path:str):
         utterance_dicts = get_utterances_from_stm(stm_file)
         # filter the utterances by min and max duration
         filtered_utterances = list()
+        for utt in utterance_dicts:
+            utt_duration = utt["end_time"] - utt["start_time"]
+            if MIN_DURATION < utt_duration < MAX_DURATION:
+                filtered_utterances.append(utt)
+        
+        for utt_idx, utt in enumerate(filtered_utterances):
+            wav_file = f"{utt['filename']}_{str(utt_idx)}.wv"
+            wav_file = tedlium_dir.joinpath(f"converted/wav/{wav_file}")
         for utt in utterance_dicts:
             utt_duration = utt["end_time"] - utt["start_time"]
             if MIN_DURATION < utt_duration < MAX_DURATION:
@@ -615,7 +731,7 @@ def tedlium_oov_words(transcript_dir:str, lex_path:str, oov_path: str):
 
 ######   SPEAK DATASET   ######
 
-def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
+def create_spk_dir_tree(audio_dir:str, spk_metadata_path:str, spk_training_jsons:List[str])->None:
     """The mfa aligner uses features from the same speaker to perform alignments, which makes
     having directories with the same speak potentially useful. This function takes an existing
     directory structure where sequential subdirectories had at most 1000 audio samples and 
@@ -630,12 +746,16 @@ def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
         spk_training_jsons (List[str]): List of paths to relevent speak training jsons
         audio_dir (str): path to directory that contains all speak training files. 
             These files will be moved into subdirectories under `audio_dir`
+        spk_metadata_path (str): path to metadata
     """
     
     # create generator for '.wav' files in audio_dir
     audio_dir = Path(audio_dir)
     audio_files = audio_dir.rglob("*.wav")
     
+    # dict maping record_id to file metadata
+    metadata = get_record_ids_map(spk_metadata_path, has_url=True)
+
     # create a dict for each training_json whose values is a dict mapping audio paths to examples
     json_dict = dict()
     for json_path in spk_training_jsons:
@@ -643,53 +763,99 @@ def create_spk_dir_tree(spk_training_jsons:List[str], audio_dir:str)->None:
             xmpl['audio']: xmpl for xmpl in read_data_json(json_path)
         }
     
-    file_count = 0
-    subdir_count = 0
+    # move the files to a new subdir and update the training jsons
     for audio_file in audio_files:
-        # if file_count has filled up the previous sub-dir, create a new one
-        if file_count % SUB_DIR_SIZE == 0:
-            subdir_count += 1
-            os.makedirs(os.path.join(audio_dir, str(subdir_count)), exist_ok=True)
+        # create a new sub-dir of the speaker-id if it doesn't already exist
+        speaker_id = metadata[path_to_id(audio_file)]['speaker']
+        speaker_sub_dir = audio_dir.joinpath(speaker_id)
+        os.makedirs(speaker_sub_dir, exist_ok=True)
 
-        # inserts the subdir_count into the audio_file path
-        audio_dir, basename = os.path.split(audio_file)
-        new_audio_file = os.path.join(audio_dir, str(subdir_count), basename)
-        
-        # update the path names in each training json
-        for xmpl_dict in json_dict.values():
-            if audio_file in xmpl_dict:
-                # update the audio path
-                xmpl_dict[audio_file]['audio'] = new_audio_file
+        # update the new file paths in each training json
+        new_audio_file = speaker_sub_dir.joinpath(audio_file.name)
+        for train_dict in json_dict.values():
+            if audio_file in train_dict:
+                train_dict[audio_file]['audio'] = str(new_audio_file)
         
         # move the .wav and .txt files to the new sub-dir
         shutil.move(audio_file, new_audio_file)
-        if os.path.exists(audio_file.replace(".wav", ".txt")):
-            shutil.move(audio_file.replace(".wav", ".txt"), new_audio_file.replace(".wav", ".txt"))
+        if audio_file.with_suffix(".txt").exists():
+            shutil.move(audio_file.with_suffix(".txt"), new_audio_file.with_suffix(".txt"))
 
-        file_count += 1
-
+    # save the updated training jsons to disk
     for json_path, xmpl_dict in json_dict.items():
         # TODO (drz): remove renaming of `json_path` once verifying the script works as expected
         json_path += "-new"
         write_data_json(xmpl_dict.values(), json_path)
+
+    prune_empty_dirs(audio_dir)
+    
+
+def prune_empty_dirs(audio_dir:str)->None:
+    """This function removes empty directories from the audio_dir.
+    It should be called after `create_spk_dir_tree`
+
+    Args:
+        audio_dir (str): path to audio directory
+    """
+    # find the newly empty directories, record them, and remove them
+    deleted_dirs = set()
+    for dir_entry in os.scandir(audio_dir):
+        if dir_entry.is_dir():
+            # checks if directory is empty. scandir is supposedly faster than listdir
+            if next(os.scandir(dir_entry), None) is None:
+                os.rmdir(dir_entry) # will only delete dir if empty
+                deleted_dirs.add(dir_entry.name)
  
+    # previous dirs ranged from 1 to 1135
+    expected_deleted_dirs = set(range(1, 1136))
+    print(f"num expected dirs not deleted: {len(expected_deleted_dirs.difference(deleted_dirs))}")
+    print(f"unexpected dirs: {sorted(list(expected_deleted_dirs.difference(deleted_dirs)))}")
+
+
+def correct_train_jsons(audio_dir:str, spk_training_jsons:List[str]):
+    """This functions corrects the training jsons files with the correct
+    audio paths for the .wav files in audio_dir
+    """
+    # create generator for '.wav' files in audio_dir
+    audio_dir = Path(audio_dir)
+    audio_files = audio_dir.rglob("*.wav")
+    # mapping from audio_id to actual audio_path
+    id_path_map = {path_to_id(str(audio_path)): str(audio_path) for audio_path in audio_files}
+
+    train_jsons = dict()
+    for json_path in spk_training_jsons:                                                                                         
+        train_jsons[json_path] = read_data_json(json_path)
+    
+    # move the files to a new subdir and update the training jsons
+    for json_path, data in train_jsons.items():
+        for xmpl in data:
+            xmpl['audio'] = id_path_map[path_to_id(xmpl['audio'])]
+
+
+    # save the updated training jsons to disk
+    for json_path, data in train_jsons.items():
+        # TODO (drz): remove renaming of `json_path` once verifying the script works as expected
+        json_path += "-corrected"
+        write_data_json(data, json_path)
+
 
 def create_spk_transcripts(spk_metadata_path:str, spk_audio_dir:str, lex_path:str):
     """This function creates an uppercase transcript as an individual .txt file for each audio file
     in `audio_dir` using the `spk_metadata_path`. It does not create a transcript for files with words
     not included in the lexicon from `lex_path`. 
     """
+    print(f"lex path: {lex_path}")
     record_ids_map = get_record_ids_map(spk_metadata_path, has_url=True)
     lex_dict = load_lex_dict(lex_path)
     lex_words = set([word for word in lex_dict])
-    
+    audio_files = Path(spk_audio_dir).rglob("*.wav") 
     examples = {
         "total": 0,
         "oov": 0
     }
-    audio_files = glob.glob(os.path.join(spk_audio_dir, "*.wav"))
+    
     for audio_file in tqdm.tqdm(audio_files):
-        file_id = path_to_id(audio_file)
+        file_id = audio_file.stem
         # trancript is already processed in `get_record_ids_map`
         transcript = record_ids_map[file_id]['target_sentence']
         transcript = transcript.upper().split()
@@ -700,9 +866,9 @@ def create_spk_transcripts(spk_metadata_path:str, spk_audio_dir:str, lex_path:st
             continue
         examples['total'] += 1
         # write the transcript to a txt file
-       # txt_file = audio_file.replace(".wav", ".txt")
-       # with open(txt_file, 'w') as fid:
-       #     fid.write(" ".join(transcript))
+        txt_file = audio_file.with_suffix(".txt")
+        with open(txt_file, 'w') as fid:
+            fid.write(" ".join(transcript))
     print(f"num oov_examples: {examples['oov']} out to total: {examples['total']}")    
 
 
@@ -717,44 +883,49 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--data-paths", nargs="+",
-        help="Paths to relevant function data. A single path can be used."
+        help="Overloaded arg with paths to relevant function data. A single path can be used."
     )
     parser.add_argument(
         "--audio-dir", help="Paths to directory that contains audio."
     )
     parser.add_argument(
+        "--metadata-path", help="Path to speak metadata."
+    )
+    parser.add_argument(
         "--save-path", help="path to output file"
+    )
+    parser.add_argument(
+        "--jobs", "-j", type=int, help="number of jobs. used by applicable functions"
     )
 
     args = parser.parse_args()
 
-    if args.action == "extract-phonemes":
-        extract_aligner_phonemes(*args.data_paths, args.save_path) 
-    elif args.action == "spk-word-count":
-        spk_word_count(*args.data_paths, args.save_path)
-    elif args.action == "combine-cmu-libsp":
-        combine_cmud_libsp_lexicons(*args.data_paths, save_path=args.save_path)
-    elif args.action == "expand-contractions":
-        expand_contractions(*args.data_paths, save_path=args.save_path)
-    elif args.action ==  "remove-suffix":
-        remove_suffix(*args.data_paths, save_path=args.save_path)
-    elif args.action ==  "phoneme-occurance":
-        phoneme_occurance(*args.data_paths, save_path=args.save_path)
-    elif args.action == "insert-mispronunciations":
-        insert_mispronunciations(*args.data_paths, save_path=args.save_path)
+    # sorted alphabetically, not by function or topic
+    if args.action == "correct-train-jsons":
+        correct_train_jsons(args.audio_dir, args.data_paths)
     elif args.action == "create-spk-transcripts":
         create_spk_transcripts(*args.data_paths)
+    elif args.action == "create-subdirs":
+        create_spk_dir_tree(args.audio_dir, args.metadata_path, args.data_paths)
     elif args.action == "create-tedlium-transcripts":
         create_tedlium_transcripts(*args.data_paths)
-    elif args.action == "tedlium-oov-words":
-        tedlium_oov_words(*args.data_paths, args.save_path)    
+    elif args.action == "combine-cmu-libsp":
+        combine_cmud_libsp_lexicons(*args.data_paths, save_path=args.save_path)
     elif args.action == "compare-phonemes":
         compare_phonemes(*args.data_paths, save_path=args.save_path)
-    elif args.action == "create-subdirs":
-        create_spk_dir_tree(args.data_paths, args.audio_dir)
     elif args.action == "compute-lex-outliers":
         compute_lexicon_outliers(*args.data_paths)
+    elif args.action == "expand-contractions":
+        expand_contractions(*args.data_paths, save_path=args.save_path)
+    elif args.action == "extract-phonemes":
+        extract_aligner_phonemes_mp(*args.data_paths, args.save_path, args.jobs) 
+    elif args.action == "insert-mispronunciations":
+        insert_mispronunciations(*args.data_paths, save_path=args.save_path)
+    elif args.action ==  "phoneme-occurance":
+        phoneme_occurance(*args.data_paths, save_path=args.save_path)
+    elif args.action ==  "remove-suffix":
+        remove_suffix(*args.data_paths, save_path=args.save_path)
     elif args.action == "update-train-json":
         update_train_json(*args.data_paths, args.save_path)
-    else:
-        raise ValueError(f"action: {args.action} not an accepted function action")
+    elif args.action ==  "write-textgrid-from-txt":
+        write_textgrid_from_txt(*args.data_paths)
