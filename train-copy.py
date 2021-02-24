@@ -265,7 +265,7 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             inputs = inputs.cuda(non_blocking=True)
             out, rnn_args = model(inputs, softmax=False)
 
-           if loss_name == "native":
+            if loss_name == "native":
                 loss = native_loss(out, labels, input_lens, label_lens, model.blank)
             elif loss_name == "awni":
                 loss = awni_loss(out, labels, input_lens, label_lens, model.blank)
@@ -416,10 +416,11 @@ def run(local_rank:int, config:dict)->None:
             if use_log: logger.info(f"train: learning rate: {group['lr']}")
         
         try:
-            run_state = run_epoch(
-                model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
-                train_cfg['loss_name'], config['save_path'], gcs_ckpt_handler, scaler
-            )
+            pass
+            #run_state = run_epoch(
+            #    model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
+            #    train_cfg['loss_name'], config['save_path'], gcs_ckpt_handler, scaler
+            #)
         except Exception as err:
             if use_log: 
                 logger.error(f"Exception raised: {err}")
@@ -441,13 +442,13 @@ def run(local_rank:int, config:dict)->None:
             epoch_time_hr = (time.time() - start)/60/60
             print(msg.format(epoch, epoch_time_hr))
             if use_log: logger.info(msg.format(epoch, epoch_time_hr))
-            tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
+            #tbX_writer.add_scalars('train/stats', {"epoch_time_hr": epoch_time_hr}, epoch)
     
             # the logger needs to be removed to save the model
             if use_log: preproc.logger = None
-            speech.save(model.module, preproc, config["save_path"])
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
+            #speech.save(model.module, preproc, config["save_path"])
+            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
+            #gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
 
             if use_log: 
                 logger.info(f"train: ====== model saved =======")
