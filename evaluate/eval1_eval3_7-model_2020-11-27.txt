@@ -1,0 +1,149 @@
+rec_id:			00F931A9-6EA9-4233-85B4-94015A257352-1
+labels:			f r ih t iy
+model_spk-100:	(0.4)	f r iy l iy
+model_spk-250:	(0.6)	f r iy l iy z
+model_spk-500:	(0.6)	dh p r ey t iy
+model_1118:	(0.2)	f r ih n iy
+model_0925:	(0.6)	th r iy n iy
+model_0902:	(0.6)	f iy
+
+
+rec_id:			012C1AC5-13E0-4337-B6CC-BFD58A12A8BC-1
+labels:			t eh r
+model_spk-100:	(0.33)	dh eh r
+model_spk-250:	(0.33)	dh eh r
+model_spk-500:	(0.0)	t eh r
+model_1118:	(0.33)	t eh
+model_0925:	(0.0)	t eh r
+model_0902:	(1.0)	
+
+
+rec_id:			054C13A4-9499-453F-90A0-950DA50C4576-1
+labels:			ay l iy d ah
+model_spk-100:	(0.8)	ay l ay v dh ah d
+model_spk-250:	(0.4)	ay l ay v ah
+model_spk-500:	(0.6)	ay l ay
+model_1118:	(0.2)	ay l ay d ah
+model_0925:	(0.2)	ay l iy v ah
+model_0902:	(0.4)	ay d iy dh ah
+
+
+rec_id:			16895C3F-1165-44CC-89B8-A812A200234D-1
+labels:			d ah z iy m
+model_spk-100:	(1.0)	ey ch uw
+model_spk-250:	(1.0)	ih ch
+model_spk-500:	(1.0)	ih ch
+model_1118:	(0.8)	iy ch
+model_0925:	(0.8)	iy ch
+model_0902:	(1.0)	
+
+
+rec_id:			1A416C3F-03C7-4D3D-9EDF-0431C09A1402-1
+labels:			s eh d iy n ow
+model_spk-100:	(0.0)	s eh d iy n ow
+model_spk-250:	(0.0)	s eh d iy n ow
+model_spk-500:	(0.0)	s eh d iy n ow
+model_1118:	(0.0)	s eh d iy n ow
+model_0925:	(0.83)	s ae n d iy l ao v
+model_0902:	(1.0)	
+
+
+rec_id:			1B9643B4-75FF-4E5C-8737-306551A36741-1
+labels:			k r ay
+model_spk-100:	(0.33)	k r ay t
+model_spk-250:	(0.0)	k r ay
+model_spk-500:	(0.33)	k r ay t
+model_1118:	(0.0)	k r ay
+model_0925:	(0.67)	ah k r ay t
+model_0902:	(0.0)	k r ay
+
+
+rec_id:			1CEB4E72-10DF-48FB-ACAC-CF3B7943ECD9-1
+labels:			r iy d ah
+model_spk-100:	(0.5)	n iy dh ah
+model_spk-250:	(0.5)	b iy dh ah
+model_spk-500:	(0.5)	r eh d dh ah
+model_1118:	(0.5)	r eh d dh
+model_0925:	(0.5)	dh r iy dh ah
+model_0902:	(1.0)	
+
+
+rec_id:			1CEB4E72-10DF-48FB-ACAC-CF3B7943ECD9-2
+labels:			n iy r
+model_spk-100:	(0.0)	n iy r
+model_spk-250:	(0.33)	n iy
+model_spk-500:	(1.0)	dh ah n iy
+model_1118:	(0.67)	n ih
+model_0925:	(1.33)	ae n dh ah ah
+model_0902:	(1.0)	
+
+
+rec_id:			1DC83F33-A033-49EC-B087-A04421E252B9-1
+labels:			ay ih t
+model_spk-100:	(0.33)	ay iy t
+model_spk-250:	(0.33)	ay iy t
+model_spk-500:	(0.33)	ay iy t
+model_1118:	(0.33)	ay iy t
+model_0925:	(0.67)	ay iy n
+model_0902:	(0.33)	ay ih n
+
+
+rec_id:			1F3FAE4A-DFA3-41A9-A50C-494944C9BEFA-1
+labels:			s uw f
+model_spk-100:	(0.0)	s uw f
+model_spk-250:	(0.0)	s uw f
+model_spk-500:	(0.0)	s uw f
+model_1118:	(0.67)	f uh f
+model_0925:	(0.67)	f
+model_0902:	(1.0)	
+
+
+rec_id:			29D6DE39-3207-4B37-9071-3DAB7EB262FA-1
+labels:			s iy n
+model_spk-100:	(0.33)	s iy
+model_spk-250:	(0.33)	s iy
+model_spk-500:	(0.33)	s iy
+model_1118:	(0.33)	s iy z
+model_0925:	(0.33)	s iy
+model_0902:	(0.33)	s iy
+
+
+rec_id:			2B411043-B9CD-4C24-B8F2-6E2D1870202F-1
+labels:			ae f ah s ah
+model_spk-100:	(0.6)	ae f er s er t
+model_spk-250:	(0.4)	eh f er s ah
+model_spk-500:	(0.2)	ae f er s ah
+model_1118:	(0.4)	ah f er s ah
+model_0925:	(0.4)	ae f ao s ah t
+model_0902:	(0.2)	ae f er s ah
+
+
+rec_id:			2F7CD1CA-1F1B-4CE6-94A6-6FB6D2D88515-1
+labels:			r eh l iy
+model_spk-100:	(0.25)	r eh l w iy
+model_spk-250:	(0.75)	hh w eh l l iy
+model_spk-500:	(0.5)	w eh l l iy
+model_1118:	(0.25)	r eh r l iy
+model_0925:	(0.25)	w eh l iy
+model_0902:	(0.5)	ow l iy
+
+
+rec_id:			34244070-1737-4DCE-94FA-76CC0543631E-1
+labels:			aa r d ih s
+model_spk-100:	(0.0)	aa r d ih s
+model_spk-250:	(0.0)	aa r d ih s
+model_spk-500:	(0.0)	aa r d ih s
+model_1118:	(0.0)	aa r d ih s
+model_0925:	(0.0)	aa r d ih s
+model_0902:	(1.0)	
+
+
+Dataset PER Values
+------------------
+model_spk-100	0.368
+model_spk-250	0.368
+model_spk-500	0.386
+model_1118	0.316
+model_0925	0.509
+model_0902	0.684
+------------------

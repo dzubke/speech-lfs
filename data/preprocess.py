@@ -170,8 +170,7 @@ class DataPreprocessor(object):
         """
         NUM_PROC = mp.cpu_count()
 
-        # clearing the data_json_path file contents so that values are appended
-        # to older values from previous runs
+        # erasing any existing data_json_path file contents
         with open(data_json_path, 'w') as fid:
             fid.write('')
 
@@ -228,21 +227,22 @@ class DataPreprocessor(object):
                         download_audio:bool=False) -> dict:
         """
         Unfortunately, there are four ways this function can exit and return the unk_word_dict.
-        (1) if the audio_path doesn't exists, (2) if the convert.to_wave call fails, 
+        (1) if the audio_path doesn't exists, 
+        (2) if the convert.to_wave call fails, 
         (3) if the unk_word_dict returned by self.process_text_mp is non-empty,
         (4) if the unk_word_dict is empty. 
         
         The (4) path represents a successful function call, and the other three are provisions
-        for undesirable outcomes. In the single-process version, the first three return statements
+        for failed outcomes. In the single-process version, the first three return statements
         were `continue` statements, which are now not applicable in a multi-process function.
         
         Args:
             audio_transcript: Tuple of audio file and transcript, positional arg in multi-processing 
-            save_path: see argsparse description,  fixed arg using functools.partial
-            force_convert: see argsparse description,  fixed arg using functools.partial
-            min_duration: see argsparse description,  fixed arg using functools.partial
-            max_duration: see argsparse description,  fixed arg using functools.partial
-            lex_dict: see argsparse description,  fixed arg using functools.partial
+            save_path: see argsparse description
+            force_convert: see argsparse description
+            min_duration: see argsparse description
+            max_duration: see argsparse description
+            lex_dict: see argsparse description
             download_audio (bool): if true, the function will download the audio
         Returns:
             unk_word_dict: a dictionary of unknown with words as keys and counts as values
@@ -273,7 +273,7 @@ class DataPreprocessor(object):
                 return unk_words_dict
             
             # replace the original extension with ".wav"
-            wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wav"
+            wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wv"
         
 
         # if the wave file doesn't exist, convert to wave
@@ -873,7 +873,13 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
 ################## Switchboard ###########################
 
 class SwitchboardPreprocessor(DataPreprocessor):
-    """
+    """Switchboard is a dataset of around 300 hours of telephone calls. The lexicon
+    is very rich, especially in partially pronounced words, which occur often during
+    the calls when a speaker is cut off by another speaker. 
+
+
+    The switchboard dataset must first be processed using the `data/swb/import_swb.py`
+    script. This is split the single, 2-channel audio into to two separate audio files.
     """
     def __init__(self, config:dict):
         """
@@ -938,11 +944,11 @@ class SwitchboardPreprocessor(DataPreprocessor):
 
     @staticmethod
     def update_lexicon(lexicon_path:str)->None:
-        """cleans the lexicon of comments and empty lines as well as maps three phonemes in the swb vocab 
-        into the cmu-dict phoneme vocab.
+        """cleans the lexicon of comments and empty lines as well as maps three phonemes in the swb
+        vocab into the cmu-dict phoneme vocab.
 
-        This function isn't use the in the class, but is included for reference as it is part of the 
-        preprocessing pipeline.
+        This function isn't use the in the class, but is included for reference as it should be run
+        as part of the preprocessing pipeline.
 
         Args:
             lexicon_path (str): path to the lexicon
@@ -974,6 +980,66 @@ class SwitchboardPreprocessor(DataPreprocessor):
 
                     wfid.write(" ".join(upd_row)+'\n')
 
+
+#################   People's Speech   #######################
+
+class PeoplesSpeechPreprocessor(DataPreprocessor):
+    """The People's Speech is a large dataset consisting of several different parts.
+    These parts include:
+     - librispeech
+     - librivox
+     - archive.org
+     - voicery: synthetic audio 
+     - common-voice
+    By unprocessed dataset size, 50% of the dataset is voicery and 40% is librivox. 
+
+    The dataset is assumed to contain a variety of accents. 
+
+    """
+    def __init__(self, config:dict):
+        """
+        """
+        super().__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration'], 
+            process_transcript = config['process_transcript']
+        )
+        self.subset_names = config['subset_names']
+        self.config = config
+
+
+    def process_datasets(self):
+        logging.info("Processing People's Speech dataset")
+        for set_name, label_fn in self.dataset_dict.items():
+            self.clear_audio_trans()    # clears the audio_transcript buffer
+            label_path = os.path.join(self.dataset_dir, label_fn)
+            self.collect_audio_transcripts(label_path)
+            root, ext = os.path.splitext(label_path)
+            json_path = root + os.path.extsep + "json"
+            self.write_json_mp(json_path)
+        unique_unknown_words(self.dataset_dir)
+
+    def collect_audio_transcripts(self, label_path:str):
+        # variables to limit the number of duplicated utterances
+        #target_constraint = 1e-3
+        #target_counter = dict()
+        #n_utterance_skipped = 0
+
+        with open(label_path) as fid: 
+            reader = csv.reader(fid, delimiter=',')
+            # header: audio_path, transcript, metadata
+
+            for row in reader:
+                filename, transcript = row[0], row[1]            
+                for subset_name in self.subset_names:
+                    if subset_name in filename:
+                        audio_path = os.path.join(self.dataset_dir, filename)
+                        self.audio_trans.append((audio_path, transcript))
 
 
 class UnknownWords():

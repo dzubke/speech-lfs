@@ -1,0 +1,47 @@
+rec_id:			00F931A9-6EA9-4233-85B4-94015A257352-1
+labels:			f r ih t iy
+mdl_pt_na:	(0.0)	f r ih t iy
+mdl_pt_al:	(0.0)	f r ih t iy
+mdl_fs_na:	(0.6)	f r iy z
+mdl_fs_al:	(0.6)	f iy t
+
+
+rec_id:			012C1AC5-13E0-4337-B6CC-BFD58A12A8BC-1
+labels:			t eh r
+mdl_pt_na:	(0.33)	dh eh r
+mdl_pt_al:	(0.33)	dh eh r
+mdl_fs_na:	(1.0)	
+mdl_fs_al:	(0.67)	t ae
+
+
+rec_id:			054C13A4-9499-453F-90A0-950DA50C4576-1
+labels:			ay l iy d ah
+mdl_pt_na:	(0.4)	ay l ay v ah
+mdl_pt_al:	(0.4)	ay l ih v ah
+mdl_fs_na:	(0.8)	ay l ih dh uw f
+mdl_fs_al:	(0.4)	ay l iy v ah v
+
+
+rec_id:			16895C3F-1165-44CC-89B8-A812A200234D-1
+labels:			d ah z iy m
+mdl_pt_na:	(0.4)	dh ah s iy m
+mdl_pt_al:	(0.6)	dh ow s iy m
+mdl_fs_na:	(0.8)	ah s iy ih n
+mdl_fs_al:	(0.8)	ah s ih ng
+
+
+rec_id:			1DC83F33-A033-49EC-B087-A04421E252B9-1
+labels:			ay ih t
+mdl_pt_na:	(0.33)	ay iy t
+mdl_pt_al:	(0.0)	ay ih t
+mdl_fs_na:	(0.0)	ay ih t
+mdl_fs_al:	(0.0)	ay ih t
+
+
+Dataset PER Values
+------------------
+mdl_pt_na	0.286
+mdl_pt_al	0.286
+mdl_fs_na	0.667
+mdl_fs_al	0.524
+------------------

@@ -33,7 +33,7 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     """
     accepted_corpora = [
         "librispeech", "tedlium", "cmudict", "commonvoice", "voxforge", "tatoeba", "speaktrain", None,
-        "speaktrainmetadata", "switchboard"
+        "speaktrainmetadata", "switchboard", "peoplesspeech"
     ]
     if corpus_name not in accepted_corpora:
         raise ValueError("corpus_name not accepted")
@@ -50,6 +50,7 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     lex_dict = clean_dict(lex_dict, corpus_name)
     #assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
     return lex_dict
+
 
 def process_lexicon(file_reader, corpus_name:str)->list:
     """Strips and splits the lexicon lines.

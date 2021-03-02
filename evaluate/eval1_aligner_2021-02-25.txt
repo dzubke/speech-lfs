@@ -1,0 +1,4407 @@
+rec_id:			008F3ACC-321C-4FA6-B9BF-5656B7823342
+target:			But it was fun.
+guess:			But it was fun
+tar_pn:			b ah t ih t w aa z f ah n
+ges_pn:			b ah t ih t w aa z f ah n
+mdl_pt_na:	(0.0)	b ah t ih t w aa z f ah n
+mdl_pt_al:	(0.0)	b ah t ih t w aa z f ah n
+mdl_fs_na:	(0.27)	b ae t ih r aa z f ah n
+mdl_fs_al:	(0.27)	b ah t ih r ah z f ah n
+
+
+rec_id:			00F931A9-6EA9-4233-85B4-94015A257352
+target:			He's pretty short.
+guess:			He's a pretty's short
+tar_pn:			hh iy z p r ih t iy sh ao r t
+ges_pn:			hh iy z ah p r ih t iy z sh ao r t
+mdl_pt_na:	(0.17)	hh ih z f r ih t iy sh ao r t
+mdl_pt_al:	(0.17)	hh ih z f r ih t iy sh ao r t
+mdl_fs_na:	(0.5)	hh ih z f r iy sh aa r k
+mdl_fs_al:	(0.58)	hh ih z s f r iy l sh aa r t
+
+
+rec_id:			012C1AC5-13E0-4337-B6CC-BFD58A12A8BC
+target:			Could you tell me where the bathroom is?
+guess:			Could you tell me where are the best
+tar_pn:			k uh d y uw t eh l m iy w eh r dh ah b ae th r uw m ih z
+ges_pn:			k uh d y uw t eh l m iy w eh r aa r dh ah b eh s t
+mdl_pt_na:	(0.3)	k uh d y uw t eh l m iy w eh r dh ah b eh s t s r uw
+mdl_pt_al:	(0.3)	k uh d y uw t eh l m iy w eh r dh ah b eh s t s r uw
+mdl_fs_na:	(0.26)	k uh d y uw t eh r m iy w eh r dh ah b ih s s uw m
+mdl_fs_al:	(0.3)	k uh d y uw t eh r m iy w eh r dh ah b eh s s ow m
+
+
+rec_id:			02F4CAF4-8E05-42A4-91F8-AE506F520A88
+target:			I wouldn't mind having Thai takeout.
+guess:			I wouldnt an mind a having a thai a takeout
+tar_pn:			ay w uh d ah n t m ay n d hh ae v ih ng t ay t ey k aw t
+ges_pn:			ay w uh d n t ae n m ay n d ah hh ae v ih ng ah t ay ah t ey k aw t
+mdl_pt_na:	(0.17)	ay w uh d n t ay n d hh ae v ih n t ay d t ey k aw t
+mdl_pt_al:	(0.26)	ay w uh d ah n t ay d hh ae v ih n t ay t ih g eh t
+mdl_fs_na:	(0.43)	ay w uh d z ay d ih ng t ay t ah g aw t
+mdl_fs_al:	(0.39)	ay w uh d ay d ae v ih ng t ay t ih k
+
+
+rec_id:			03222F72-79AC-4A09-B3DB-A5A279D61255
+target:			Can I try on this jacket?
+guess:			Can I try on this jacket
+tar_pn:			k ae n ay t r ay aa n dh ih s jh ae k ah t
+ges_pn:			k ae n ay t r ay aa n dh ih s jh ae k ah t
+mdl_pt_na:	(0.12)	k ae n ay d r ay aa n dh ih s jh ih k ah t
+mdl_pt_al:	(0.18)	k ae n ay d r ay aa n dh ih s jh ih k ih t
+mdl_fs_na:	(0.24)	k ae n ay t r ay w aa n d ih s t ih k ah t
+mdl_fs_al:	(0.35)	k ae n ay t r ay ao n d ih s ih t ih t
+
+
+rec_id:			04453D74-1CC1-4356-8F4B-620B7ADAB94C
+target:			I'm not well.
+guess:			I'm not well
+tar_pn:			ay m n aa t w eh l
+ges_pn:			ay m n aa t w eh l
+mdl_pt_na:	(0.0)	ay m n aa t w eh l
+mdl_pt_al:	(0.12)	ay m n aa t w ih l
+mdl_fs_na:	(0.5)	ay m n ah dh ih l
+mdl_fs_al:	(0.25)	ay m n aa t r ih l
+
+
+rec_id:			0468E3BE-52C3-4EEC-9EBE-326C19B57A07
+target:			It's fine.
+guess:			It's fine
+tar_pn:			ih t s f ay n
+ges_pn:			ih t s f ay n
+mdl_pt_na:	(0.0)	ih t s f ay n
+mdl_pt_al:	(0.0)	ih t s f ay n
+mdl_fs_na:	(0.17)	ih t s ay n
+mdl_fs_al:	(0.17)	ih t f ay n
+
+
+rec_id:			04AE0645-C734-455F-9CDB-231BEEFF6CB0
+target:			I'm having trouble deciding.
+guess:			I'm having trouble deciding
+tar_pn:			ay m hh ae v ih ng t r ah b ah l d ih s ay d ih ng
+ges_pn:			ay m hh ae v ih ng t r ah b ah l d ih s ay d ih ng
+mdl_pt_na:	(0.05)	ih m hh ae v ih ng t r ah b ah l d ih s ay d ih ng
+mdl_pt_al:	(0.05)	ah m hh ae v ih ng t r ah b ah l d ih s ay d ih ng
+mdl_fs_na:	(0.15)	ih m hh ae v ih ng t ah b ah l dh ih s ay d ih ng
+mdl_fs_al:	(0.05)	ay m hh ae v ih ng t ah b ah l d ih s ay d ih ng
+
+
+rec_id:			04B75339-5FB7-4EAB-8568-BAA1FAC5EA7D
+target:			If I were you, I'd travel in Asia.
+guess:			If I were you I travel in Asia
+tar_pn:			ih f ay w er y uw ay d t r ae v ah l ih n ey zh ah
+ges_pn:			ih f ay w er y uw ay t r ae v ah l ih n ey zh ah
+mdl_pt_na:	(0.2)	ih t f ay w er y uw ay t r ae v ah l ih n ae sh ah
+mdl_pt_al:	(0.2)	ih t f ay w er y uw ay t r ae v ah l ih n ae sh ah
+mdl_fs_na:	(0.35)	ih t f ay w er y uw ay ch r ae b ah l ih n ae sh er
+mdl_fs_al:	(0.4)	ih t f ay w er iy y uw ay ch ae b ah l ih n eh sh ah
+
+
+rec_id:			052FE9DF-59F5-46DD-92D6-D6194968C088
+target:			You should see a doctor.
+guess:			You should share a doctor
+tar_pn:			y uw sh uh d s iy ah d aa k t er
+ges_pn:			y uw sh uh d sh eh r ah d aa k t er
+mdl_pt_na:	(0.62)	y uw sh uh d y uw s sh uh d sh er r d aa k t er
+mdl_pt_al:	(0.38)	y uw y uw sh uh d sh uh r d aa k t er
+mdl_fs_na:	(0.77)	y uw zh iy y uw sh uh d ih sh uh r b ae k t er
+mdl_fs_al:	(0.54)	y uw y uw sh uh d sh uh r b ae k t er
+
+
+rec_id:			054C13A4-9499-453F-90A0-950DA50C4576
+target:			I read neither newspapers nor magazines.
+guess:			I need a read a neither a newspapers a nor a i
+tar_pn:			ay r eh d n iy dh er n uw z p ey p er z n ao r m ae g ah z iy n z
+ges_pn:			ay n iy d ah r eh d ah n iy dh er ah n uw z p ey p er z ah n ao r ah ay
+mdl_pt_na:	(0.78)	ih s ah ay l ay d ay r eh d dh iy dh ah n uw s ah p ey p er s uw p n ao r m eh
+mdl_pt_al:	(0.93)	dh ih s ah ay l ih d ah ay r iy d dh iy dh ah n uw s ah p ey p er s l uw p n ao r ah m eh t
+mdl_fs_na:	(1.0)	ih s ah ay l iy dh ah dh ih s ay r iy d ah m iy dh ah n uw s p ey b er s r uw l ow ah m
+mdl_fs_al:	(1.11)	ih s ah t ay l iy v ah p ih s ay r iy dh ah n iy dh ah y uw s p ey b er s uw n ow ah m
+
+
+rec_id:			0583BCBA-E1CB-4A0E-9BD6-A28BBCCC6A5C
+target:			Yes, could I get the check, please?
+guess:			Yes cry get a bill check please
+tar_pn:			y eh s k uh d ay g eh t dh ah ch eh k p l iy z
+ges_pn:			y eh s k r ay g eh t ah b ih l ch eh k p l iy z
+mdl_pt_na:	(0.37)	y eh s k r ay g eh t ah b ih l ch eh p l iy z
+mdl_pt_al:	(0.42)	y eh s k r ay g eh t ah p b ih l ch eh p l iy z
+mdl_fs_na:	(0.68)	k y eh s ih z k r ay g eh t ah p b ah l t ae p p l iy s
+mdl_fs_al:	(0.68)	y eh n s ih t k r ay g eh t ah p b ih l t ae p p l iy z
+
+
+rec_id:			058851C0-472D-4BED-AF35-A710DD6CF440
+target:			two
+guess:			Two
+tar_pn:			t uw
+ges_pn:			t uw
+mdl_pt_na:	(0.0)	t uw
+mdl_pt_al:	(0.0)	t uw
+mdl_fs_na:	(2.0)	k ae n w
+mdl_fs_al:	(1.0)	k ah
+
+
+rec_id:			05A89B53-421E-45F0-84B6-BC0AEF65FA8C
+target:			I loved sightseeing in San Francisco.
+guess:			I loved sightseeing in San Francisco
+tar_pn:			ay l ah v d s ay t s iy ih ng ih n s ae n f r ae n s ih s k ow
+ges_pn:			ay l ah v d s ay t s iy ih ng ih n s ae n f r ae n s ih s k ow
+mdl_pt_na:	(0.12)	ay l ah v s ay s ih ng ih n s ae n f r ae n s ih s k ow
+mdl_pt_al:	(0.15)	ay l ah v s ay s ih ng ih n s ae n f r ae n s ih s k ow l
+mdl_fs_na:	(0.46)	ay d uw l ah v s ay s ih ng ih s ae m r ah n t s ih z k ow l
+mdl_fs_al:	(0.35)	ay w l ah v s ay s ih ng ih s ae m f r ah n t ih s k ow l
+
+
+rec_id:			0631DF84-8BD3-4EF6-8965-C49CEFCB66DF
+target:			Are you coming?
+guess:			Are you call me
+tar_pn:			aa r y uw k ah m ih ng
+ges_pn:			aa r y uw k ao l m iy
+mdl_pt_na:	(0.11)	aa r y uw k ah m ih n
+mdl_pt_al:	(0.22)	er r y uw k ao m ih ng
+mdl_fs_na:	(0.33)	ay y uw k ah l ih ng
+mdl_fs_al:	(0.56)	ay y uw k ah l iy
+
+
+rec_id:			066B726F-5EA1-458B-A537-EE4F08653162
+target:			I absolutely loved Brazil.
+guess:			I absolutely an loved an brazil
+tar_pn:			ay ae b s ah l uw t l iy l ah v d b r ah z ih l
+ges_pn:			ay ae b s ah l uw t l iy ae n l ah v d ae n b r ah z ih l
+mdl_pt_na:	(0.05)	ay ae b s ah l uw t l iy l eh v d b r ah z ih l
+mdl_pt_al:	(0.1)	ay ae b s ah l l uw t l iy l ah v d b ah z ih l
+mdl_fs_na:	(0.35)	ay ae v s ah dh ah l iy l ah v t b er z ih l
+mdl_fs_al:	(0.4)	ay ae v s ah d uw l iy l ah f t b eh z ah l
+
+
+rec_id:			0681BFA9-865D-4F15-931A-8FB29B48DEAB
+target:			Things will get better.
+guess:			Thank you when you get that I'll send it to get better
+tar_pn:			th ih ng z w ih l g eh t b eh t er
+ges_pn:			th ae ng k y uw w eh n y uw g eh t dh ae t ay l s eh n d ih t t uw g eh t b eh t er
+mdl_pt_na:	(1.5)	th ae ng jh y uw w iy g eh t dh ae t ah p s ih ng d uw l iy g eh t dh ae t
+mdl_pt_al:	(1.36)	th ae ng k y uw er g eh t dh ae t er s ih ng d uw iy g eh t dh ae t
+mdl_fs_na:	(1.14)	dh ih ng g uw ih g ah t dh ah ah s ih ng jh er iy g eh t dh
+mdl_fs_al:	(1.36)	dh ih ng d uw ih g ah dh ah t ah s ih ng d uw r ih g ah t dh ah
+
+
+rec_id:			07FD16BA-D0E6-4BC2-9829-49BC6E4BC816
+target:			we
+guess:			we
+tar_pn:			w iy
+ges_pn:			w iy
+mdl_pt_na:	(0.0)	w iy
+mdl_pt_al:	(0.0)	w iy
+mdl_fs_na:	(0.0)	w iy
+mdl_fs_al:	(0.5)	r iy
+
+
+rec_id:			082ED3C2-8EEF-4C97-8590-52C0314EC9AD
+target:			move to Australia
+guess:			I move the australia
+tar_pn:			m uw v t uw ao s t r ey l y ah
+ges_pn:			ay m uw v dh ah ao s t r ey l y ah
+mdl_pt_na:	(0.38)	m uw v d ah s t er r eh l y ah
+mdl_pt_al:	(0.38)	m uw v d ah s t er ae l y ah
+mdl_fs_na:	(0.46)	m uh v t ao s t er d aw l iy ah
+mdl_fs_al:	(0.46)	m ow v d ao s t er eh l iy ah
+
+
+rec_id:			086AF0BA-04FD-4B2D-A7A6-266E1EA47ACE
+target:			Time's going slowly.
+guess:			times coins lonely
+tar_pn:			t ay m z g ow ih ng s l ow l iy
+ges_pn:			t ay m z k oy n z l ow n l iy
+mdl_pt_na:	(0.31)	t ay m z g ow ih ng t uw p l aw l iy
+mdl_pt_al:	(0.23)	t ay m z g ow ih ng t p l ao l iy
+mdl_fs_na:	(0.46)	dh ah m z k ow ih z l aw l iy
+mdl_fs_al:	(0.46)	dh ay m z k ow z l ow iy
+
+
+rec_id:			088702B3-6823-421D-B63B-2CF7CA628DB7
+target:			I'd rather do Speaking Practice.
+guess:			I do rather
+tar_pn:			ay d r ae dh er d uw s p iy k ih ng p r ae k t ih s
+ges_pn:			ay d uw r ae dh er
+mdl_pt_na:	(0.71)	ay d r ae dh er
+mdl_pt_al:	(0.76)	ay d r ah dh er
+mdl_fs_na:	(0.81)	ay d r ah t dh ah
+mdl_fs_al:	(0.81)	ay d r ah t dh er ah
+
+
+rec_id:			0CB37BA8-BB6E-4D5C-9C5B-E9FD9BF85216
+target:			I eat dinner.
+guess:			I eat an dinner
+tar_pn:			ay iy t d ih n er
+ges_pn:			ay iy t ae n d ih n er
+mdl_pt_na:	(0.0)	ay iy t d ih n er
+mdl_pt_al:	(0.0)	ay iy t d ih n er
+mdl_fs_na:	(0.14)	ay ih t d ih n er
+mdl_fs_al:	(0.0)	ay iy t d ih n er
+
+
+rec_id:			0CC9F2C6-21BD-4A3E-AEDD-01DEDAF4C73B
+target:			I'm on a strict diet of water and protein bars.
+guess:			I am on a strict diet of water and protein bars
+tar_pn:			ay m aa n ah s t r ih k t d ay ah t ah v w ao t er ah n d p r ow t iy n b aa r z
+ges_pn:			ay ae m aa n ah s t r ih k t d ay ah t ah v w ao t er ah n d p r ow t iy n b aa r z
+mdl_pt_na:	(0.18)	ay m aa n ah s t r iy t d ay ah t ah v w ao t er ih n p r ah t iy n m aa r z
+mdl_pt_al:	(0.32)	ay m aa n ah s k r iy t d ay ah t ah v w ao t er ih n p r aa t ih m m er z
+mdl_fs_na:	(0.38)	ay ae m m aa n ah s k ih v dh ay ah t ah v w ao t er ae n d p r ah t ih m m aa r s
+mdl_fs_al:	(0.53)	ay ae m m ah m ah k ih d dh ay ah t ah v w ao t ah n p r ah t ih m er s
+
+
+rec_id:			0D250C2E-77F8-4719-A5A9-C4CB206841BF
+target:			going traveling
+guess:			Going traveling
+tar_pn:			g ow ih ng t r ae v ah l ih ng
+ges_pn:			g ow ih ng t r ae v ah l ih ng
+mdl_pt_na:	(0.0)	g ow ih ng t r ae v ah l ih ng
+mdl_pt_al:	(0.0)	g ow ih ng t r ae v ah l ih ng
+mdl_fs_na:	(0.33)	k ow ih ng t r eh b ah l l ih ng
+mdl_fs_al:	(0.42)	k ao ih ng t eh b ah l ih ng
+
+
+rec_id:			0E180BF9-6523-4B53-88BC-01EE2AC41892
+target:			They are nurses.
+guess:			They are a nurses
+tar_pn:			dh ey aa r n er s ah z
+ges_pn:			dh ey aa r ah n er s ah z
+mdl_pt_na:	(0.56)	dh ey ay r n d aa r sh ah z
+mdl_pt_al:	(0.67)	dh ey ay ih n d aa sh ih z
+mdl_fs_na:	(0.78)	dh ey ay n d aa r sh ah s
+mdl_fs_al:	(0.78)	dh ey ay n dh aa sh ih s
+
+
+rec_id:			0E2CE5FF-908C-4C3F-AE46-CF9452B9B000
+target:			Does Sam like wine?
+guess:			Does Sam like wine
+tar_pn:			d ah z s ae m l ay k w ay n
+ges_pn:			d ah z s ae m l ay k w ay n
+mdl_pt_na:	(0.0)	d ah z s ae m l ay k w ay n
+mdl_pt_al:	(0.0)	d ah z s ae m l ay k w ay n
+mdl_fs_na:	(0.33)	dh ah s ae m l ay g m ay n
+mdl_fs_al:	(0.33)	dh ah s ae m l ay g m ay n
+
+
+rec_id:			0EEAEE53-5648-4574-80DA-4713679AF457
+target:			My friend gave a coffee to me.
+guess:			My friend gave a copy to me
+tar_pn:			m ay f r eh n d g ey v ah k aa f iy t uw m iy
+ges_pn:			m ay f r eh n d g ey v ah k aa p iy t uw m iy
+mdl_pt_na:	(0.42)	m ay f r eh n d g ey v ah k ah f iy t m iy m ay f eh n d
+mdl_pt_al:	(0.42)	m ay f r eh n d g ey v ah k ow f iy t uw m iy m ay f r eh n d
+mdl_fs_na:	(0.53)	m ay f eh n d ey b ah k ah f iy t n ey m ay f r eh
+mdl_fs_al:	(0.63)	m ay f eh n ih dh ey w er k ah t iy t n iy m ay f eh
+
+
+rec_id:			10A38072-AAEB-4F8F-9B37-1C8C8D37161B
+target:			Really? What changed?
+guess:			Really a changed
+tar_pn:			r ih l iy w ah t ch ey n jh d
+ges_pn:			r ih l iy ah ch ey n jh d
+mdl_pt_na:	(0.08)	r ih l iy w ah t ch ey n jh
+mdl_pt_al:	(0.33)	r iy l iy hh w ah t ch ae n jh
+mdl_fs_na:	(0.33)	w ih l iy w ah t ch ae n z
+mdl_fs_al:	(0.42)	w ih l ih w ah ch ey n z
+
+
+rec_id:			125577CF-D7A3-4E95-9AAC-1EA298239BE7
+target:			I'm not an actor.
+guess:			I am not a actor
+tar_pn:			ay m n aa t ae n ae k t er
+ges_pn:			ay ae m n aa t ah ae k t er
+mdl_pt_na:	(0.27)	ay ae m n aa t ah ae k t er
+mdl_pt_al:	(0.27)	ay eh m n aa t ah ae k t er
+mdl_fs_na:	(0.36)	ay eh m n aa t ah eh k t er
+mdl_fs_al:	(0.45)	ay eh m n aa t ah eh t er
+
+
+rec_id:			138E9CE3-9A3F-4FD7-A491-23E5FD737D23
+target:			I lent my friend five dollars.
+guess:			I had to fire Island my friend bye-bye
+tar_pn:			ay l eh n t m ay f r eh n d f ay v d aa l er z
+ges_pn:			ay hh ae d t uw f ay er ay l ah n d m ay f r eh n d <UNK>
+mdl_pt_na:	(0.6)	ay w ih n f ay v ay l ah n d m ay f r eh n d f ay d aw l z
+mdl_pt_al:	(0.7)	ay w eh n t f ay v ay l ah n m ay f r eh n d b ay dh ow z
+mdl_fs_na:	(0.7)	ay ae z f ay ay ae n m ay b r eh n f ay dh aw ay z
+mdl_fs_al:	(0.75)	ay w eh t f ay ay m ay b ae n b ay n ow z
+
+
+rec_id:			1446962C-7974-4982-BD66-30289F55652B
+target:			I ran into my former co-worker yesterday.
+guess:			I ran an into my former a co a worker a yesterday
+tar_pn:			ay r ae n ih n t uw m ay f ao r m er k ow w er k er y eh s t er d ey
+ges_pn:			ay r ae n ae n ih n t uw m ay f ao r m er ah k ow ah w er k er ah y eh s t er d ey
+mdl_pt_na:	(0.14)	ay r ae n ih n t uw m ay f r ah m er k ow w er k er ah g eh s t er d ey
+mdl_pt_al:	(0.21)	ay r ae n ih n t uw m ay f ao r m er r k ah l w er k er ah g eh s t er d
+mdl_fs_na:	(0.25)	ay r eh n ih n t uw m ay f ao r m aa r k ow l w er k aa g eh s t er d
+mdl_fs_al:	(0.21)	ay r ae n iy ih n t uw m ay f ao r m er r k ah l w er k er g eh s t er d
+
+
+rec_id:			16094DDD-E40F-47F0-A0ED-AE389B79B91E
+target:			I've always wanted to try skydiving.
+guess:			I've always wanted to try skydiving
+tar_pn:			ay v ao l w ey z w ao n t ih d t uw t r ay s k ay d ay v ih ng
+ges_pn:			ay v ao l w ey z w ao n t ih d t uw t r ay s k ay d ay v ih ng
+mdl_pt_na:	(0.31)	ay v ao l w ey z l ey t uw t r ay t r ay d ay v ih ng
+mdl_pt_al:	(0.35)	ay v ao l w ey z w ay t uw t r ay t ay d ay v iy
+mdl_fs_na:	(0.35)	ay v ao ey z w ay t t uw t r ay v t ay dh ay v ih ng
+mdl_fs_al:	(0.38)	ay v er ey z w ay n t uw t ay t ay d ay v ih ng
+
+
+rec_id:			16895C3F-1165-44CC-89B8-A812A200234D
+target:			It's over there across the street from the gym.
+guess:			It's over there across the street from the scene
+tar_pn:			ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah jh ih m
+ges_pn:			ih t s ow v er dh eh r ah k r ao s dh ah s t r iy t f r ah m dh ah s iy n
+mdl_pt_na:	(0.13)	ih t s ow v er dh eh r k r ao s dh ah s t r ey f r ah m dh ah s ih m
+mdl_pt_al:	(0.2)	ih t s ow v er dh eh r k r ao s dh ah s t r ey p r ah m dh ah s iy m
+mdl_fs_na:	(0.6)	ih t ch y uw ah v er g eh k r ow z d ah s t ey p r ah m d ah s iy
+mdl_fs_al:	(0.5)	ih ch uw ow v er g ah k ao z d ah s t uw ey p r ah m d ah s ih ng
+
+
+rec_id:			17EAB429-1663-48C2-9408-F2D9DDEE615C
+target:			The app is buggy.
+guess:			The app is buggy
+tar_pn:			dh ah ae p ih z b ah g iy
+ges_pn:			dh ah ae p ih z b ah g iy
+mdl_pt_na:	(0.0)	dh ah ae p ih z b ah g iy
+mdl_pt_al:	(0.2)	dh iy ae p ih z b ah g iy t
+mdl_fs_na:	(0.2)	dh uw ae p iy z b ah g iy
+mdl_fs_al:	(0.4)	d iy ae b iy z b ah g iy
+
+
+rec_id:			18A8580E-C711-4676-B16F-D0DAF44E520E
+target:			Could we pay separately?
+guess:			Could we pay separately
+tar_pn:			k uh d w iy p ey s eh p er ah t l iy
+ges_pn:			k uh d w iy p ey s eh p er ah t l iy
+mdl_pt_na:	(0.27)	k uh d w iy p ey s eh f r ey th l iy
+mdl_pt_al:	(0.2)	k uh d w iy p ey s eh f er ey t th l iy
+mdl_fs_na:	(0.4)	k ah w iy p ey s eh p r ay dh iy
+mdl_fs_al:	(0.2)	k uh w iy p ey s eh p ey t l iy
+
+
+rec_id:			18B81FC7-DA87-4FD5-AF7A-9B87352A84EC
+target:			His number's 336-8249.
+guess:			He's number 336-8249
+tar_pn:			hh ih z n ah m b er z <UNK>
+ges_pn:			hh iy z n ah m b er <UNK>
+mdl_pt_na:	(2.0)	hh iy z n ah m b er th r iy th r iy s ih k s ey t uw f ao r n ay n
+mdl_pt_al:	(2.0)	hh iy z n ah m b er d r iy th r iy s ih k s ey t uw f ao r n ay n
+mdl_fs_na:	(2.4)	hh iy s n aa b er d r iy d ah r iy s ih k s ah t uw f ao r n ay n
+mdl_fs_al:	(2.3)	iy z n aa b er d r iy dh r iy s ih k s ey t uw f ao r n ay n
+
+
+rec_id:			1951586C-1344-4952-9A97-65AF6FF683FA
+target:			I go on the rowing machine for twenty minutes.
+guess:			I go on the rowing a machine for 20 minutes
+tar_pn:			ay g ow aa n dh ah r ow ih ng m ah sh iy n f ao r t w eh n t iy m ih n ah t s
+ges_pn:			ay g ow aa n dh ah r ow ih ng ah m ah sh iy n f ao r <UNK> m ih n ah t s
+mdl_pt_na:	(0.35)	ay g ow n dh ah r oy m aa sh iy n f ao r r ih s t r eh n t ih m ih n ih t s
+mdl_pt_al:	(0.45)	ay g ow n dh ah r oy m aa sh iy n f er ih s t r ae n t ih m ah n ih t
+mdl_fs_na:	(0.35)	ay g ow n dh ah r oy m ah sh ah n f ao r z t r eh n ih m ih n iy s
+mdl_fs_al:	(0.35)	ay g ow n dh ah oy m ah sh ah n f ao r z t eh n t ih m ih n iy s
+
+
+rec_id:			1A416C3F-03C7-4D3D-9EDF-0431C09A1402
+target:			Would you have said no?
+guess:			Would you have said no
+tar_pn:			w uh d y uw hh ae v s eh d n ow
+ges_pn:			w uh d y uw hh ae v s eh d n ow
+mdl_pt_na:	(0.31)	w uh d y uw hh eh v s eh d ih n ao l
+mdl_pt_al:	(0.23)	w uh d y uw hh ae v s eh d ih n ao l
+mdl_fs_na:	(0.23)	uh d y uw hh ae d s eh d iy n ow
+mdl_fs_al:	(0.38)	w iy uw hh ae d s eh d ih n ow
+
+
+rec_id:			1B06858D-2595-4CE7-8D4F-C7E5A0BD38F9
+target:			Thank you for always looking out for me.
+guess:			Thank you thank you for always looking out for me
+tar_pn:			th ae ng k y uw f ao r ao l w ey z l uh k ih ng aw t f ao r m iy
+ges_pn:			th ae ng k y uw th ae ng k y uw f ao r ao l w ey z l uh k ih ng aw t f ao r m iy
+mdl_pt_na:	(0.27)	th ae ng k y uw th ae ng k uw f ao r ah w ey z l uh k ih ng aw t f ao r m iy
+mdl_pt_al:	(0.42)	th ae ng k y uw th ae ng k uw f er ah w ey z ao l uh k ih ng aw t f r er m iy
+mdl_fs_na:	(0.65)	dh ae ng g eh t d ae ng g eh f er ah l ey s l k ih ng aw f er r m iy
+mdl_fs_al:	(0.69)	dh ih ng k uw t dh ih ng g ih f er ah l ey z ow k ih ng aw f er m iy
+
+
+rec_id:			1B40FC5E-3626-4F19-8A6B-655962344D7F
+target:			For dessert, I'll have the cheesecake.
+guess:			For the third I will have the cheesecake
+tar_pn:			f ao r d ih z er t ay l hh ae v dh ah ch iy z k ey k
+ges_pn:			f ao r dh ah th er d ay w ih l hh ae v dh ah ch iy z k ey k
+mdl_pt_na:	(0.29)	f ao r d iy ch er t ah b ih l hh ae v dh ah ch iy f k ey k
+mdl_pt_al:	(0.33)	f ao r d iy ch er d ah b ih l hh ae v dh ah ch iy f k ey k
+mdl_fs_na:	(0.67)	aa r dh ih d er dh aw v ah n hh ae v dh ah t t ih th k ey t
+mdl_fs_al:	(0.57)	ao r dh ih t er dh aw v ih l hh ae v b ah t ih f k ey
+
+
+rec_id:			1B791F48-5746-417C-801B-99D1A84A3EF6
+target:			If I were you, I'd travel alone.
+guess:			If I were you I'd travel alone
+tar_pn:			ih f ay w er y uw ay d t r ae v ah l ah l ow n
+ges_pn:			ih f ay w er y uw ay d t r ae v ah l ah l ow n
+mdl_pt_na:	(0.16)	ay f ay w er y uw ay d t r ae v ah l aa n ah l ow n
+mdl_pt_al:	(0.16)	f ay w er y uw ay d ih t r ae v ah l ah l ao n
+mdl_fs_na:	(0.47)	ih f f ay r ey uw ay d ih d r ae b ah l ah n l ah n
+mdl_fs_al:	(0.42)	ih f ay r ey uw ay d ih ch r ae b ah l ah n l ah n
+
+
+rec_id:			1B9643B4-75FF-4E5C-8737-306551A36741
+target:			Could you give me a few more minutes, please?
+guess:			Can I have cry have a few more minutes please
+tar_pn:			k uh d y uw g ih v m iy ah f y uw m ao r m ih n ah t s p l iy z
+ges_pn:			k ae n ay hh ae v k r ay hh ae v ah f y uw m ao r m ih n ah t s p l iy z
+mdl_pt_na:	(0.56)	k r ay hh eh p k r ay hh ae b aw f y uw m ao r m iy n ah p l iy z
+mdl_pt_al:	(0.56)	k r ay hh eh p k r ay hh ae b aw t f y uw m ao r m ih n ah p l iy z
+mdl_fs_na:	(0.56)	d k r ay hh aw k r ay hh aw b ah v f y uw m ao r m ih n ah p l iy v
+mdl_fs_al:	(0.48)	k r ay hh eh l k r ay hh ae b ah f y uw m ao r m ih n ah p l iy z
+
+
+rec_id:			1CEB4E72-10DF-48FB-ACAC-CF3B7943ECD9
+target:			I read neither newspapers nor magazines.
+guess:			I read the neither a newspapers the neither a magazines
+tar_pn:			ay r eh d n iy dh er n uw z p ey p er z n ao r m ae g ah z iy n z
+ges_pn:			ay r eh d dh ah n iy dh er ah n uw z p ey p er z dh ah n iy dh er ah m ae g ah z iy n z
+mdl_pt_na:	(0.59)	ay r eh d n l iy d ah d uw s ah p eh p er s ah n ih r ah m eh g ah jh ih s
+mdl_pt_al:	(0.56)	ay r iy d n iy d ow d uw s ah p ey p er z ah n ih r ao b ae g er t ih s
+mdl_fs_na:	(0.78)	ay b r iy dh ah n iy dh ah n ih s ah p eh p er s ah n n aa n b eh v ah t ih s
+mdl_fs_al:	(0.81)	ay b iy dh ah n iy dh ah n ih s ah p er f er s ah n n iy ao m b eh dh er t ih s
+
+
+rec_id:			1D4600F5-802F-4C05-A315-BC4ABDE7A293
+target:			Do you like to
+guess:			Do you like to
+tar_pn:			d uw y uw l ay k t uw
+ges_pn:			d uw y uw l ay k t uw
+mdl_pt_na:	(0.0)	d uw y uw l ay k t uw
+mdl_pt_al:	(0.11)	d uw y uw l ay k t ah
+mdl_fs_na:	(0.44)	dh uw y ao r l ay k t uw d
+mdl_fs_al:	(0.33)	dh uw y uh r l ay k t uw
+
+
+rec_id:			1D8C4707-18E9-4A07-9836-E3DD29960C4E
+target:			I do both Speaking Practice and Real Conversation.
+guess:			I do DDDD speaking Potter and Lord
+tar_pn:			ay d uw b ow th s p iy k ih ng p r ae k t ih s ah n d r iy l k aa n v er s ey sh ah n
+ges_pn:			ay d uw <UNK> s p iy k ih ng p aa t er ah n d l ao r d
+mdl_pt_na:	(0.71)	ay d uw dh iy dh iy dh iy d s p iy k ih ng s uw p p aw r t er ah n d l ow d er
+mdl_pt_al:	(0.77)	ay d uw d iy dh iy d dh iy d s p iy k ih ng s uw p p aw er t uw ae n d l ow d er
+mdl_fs_na:	(0.77)	ay d uw d d iy dh iy dh iy dh t s p ih k ah n s p aw t uw ah n l ao r d er
+mdl_fs_al:	(0.8)	ay d uw t iy dh iy d d iy dh ah s b ey k ih n s p aw t ah ae n l ao d er
+
+
+rec_id:			1DC83F33-A033-49EC-B087-A04421E252B9
+target:			I eat out every other week.
+guess:			I eat a out a every a other a week
+tar_pn:			ay iy t aw t eh v er iy ah dh er w iy k
+ges_pn:			ay iy t ah aw t ah eh v er iy ah ah dh er ah w iy k
+mdl_pt_na:	(0.13)	ay iy t aw t eh v r iy ah dh er w iy
+mdl_pt_al:	(0.07)	ay iy t aw t eh v er iy ah dh er w iy
+mdl_fs_na:	(0.27)	ay ih t aw t eh v iy ah d dh er w iy
+mdl_fs_al:	(0.47)	ay ih t aw t eh r ey ao n d er w iy
+
+
+rec_id:			1E0E370A-EDE4-4961-BAD1-D7F6D4101A78
+target:			I might go
+guess:			I might I go
+tar_pn:			ay m ay t g ow
+ges_pn:			ay m ay t ay g ow
+mdl_pt_na:	(0.0)	ay m ay t g ow
+mdl_pt_al:	(0.0)	ay m ay t g ow
+mdl_fs_na:	(0.33)	ay m ay d ow
+mdl_fs_al:	(0.33)	ay m ay d ow
+
+
+rec_id:			1F3FAE4A-DFA3-41A9-A50C-494944C9BEFA
+target:			For appetizer, I'll have the soup.
+guess:			For a appetizer a the a have the soup
+tar_pn:			f ao r ae p ah t ay z er ay l hh ae v dh ah s uw p
+ges_pn:			f ao r ah ae p ah t ay z er ah dh ah ah hh ae v dh ah s uw p
+mdl_pt_na:	(0.3)	f ao r eh p ah t ay z er aw w ih l hh ae v dh ah f uw f
+mdl_pt_al:	(0.25)	f ao r ae p ah t ay z er aw b ih l hh ae v dh ah f uw f
+mdl_fs_na:	(0.25)	f ao r ae p ah t ay z er ay w aa z hh ae v dh ah f uw f
+mdl_fs_al:	(0.3)	f ao r eh p ah t ay d er ah er hh ae v dh ah f uw
+
+
+rec_id:			1F79F7F4-87B8-4771-A5DD-996D1DB585DF
+target:			I have a fever.
+guess:			I have a fever
+tar_pn:			ay hh ae v ah f iy v er
+ges_pn:			ay hh ae v ah f iy v er
+mdl_pt_na:	(0.0)	ay hh ae v ah f iy v er
+mdl_pt_al:	(0.0)	ay hh ae v ah f iy v er
+mdl_fs_na:	(0.22)	ay hh ae ah p iy v er
+mdl_fs_al:	(0.11)	ay hh ae v ah p iy v er
+
+
+rec_id:			1FC5A30C-3503-4440-AEFC-7FF3D614588A
+target:			I spoke to my friend.
+guess:			I spoke to my friend
+tar_pn:			ay s p ow k t uw m ay f r eh n d
+ges_pn:			ay s p ow k t uw m ay f r eh n d
+mdl_pt_na:	(0.0)	ay s p ow k t uw m ay f r eh n d
+mdl_pt_al:	(0.07)	ay s p ow k t ah m ay f r eh n d
+mdl_fs_na:	(0.14)	ay s p ow k t ah m ay f r ah n d
+mdl_fs_al:	(0.14)	ay s p ow k t ah m ay f r ah n d
+
+
+rec_id:			1FDCD134-800F-49D3-AA47-84B9ECF1DC69
+target:			I showed my phone to my friend.
+guess:			I showed my phone to my a friend
+tar_pn:			ay sh ow d m ay f ow n t uw m ay f r eh n d
+ges_pn:			ay sh ow d m ay f ow n t uw m ay ah f r eh n d
+mdl_pt_na:	(0.11)	ay sh ow m ay f ow n t ah m ay f r eh n d
+mdl_pt_al:	(0.06)	ay sh ow d m ay f ow n t ah m ay f r eh n d
+mdl_fs_na:	(0.33)	ay sh uh l m ay f ao n m ay f r eh n
+mdl_fs_al:	(0.28)	ay sh uh l m ay f ao n t m ay f r eh n
+
+
+rec_id:			1FF406EA-DEE0-40C9-8C55-09A77FD8544B
+target:			I do yoga.
+guess:			I do yoga
+tar_pn:			ay d uw y ow g ah
+ges_pn:			ay d uw y ow g ah
+mdl_pt_na:	(0.14)	ay d uw y ow g ah ay
+mdl_pt_al:	(0.14)	ay d uw y ow g ah ay
+mdl_fs_na:	(0.57)	ay d uw y uw b ah ae d
+mdl_fs_al:	(0.57)	ay d uw y uw b ay d
+
+
+rec_id:			225E7426-7485-41F0-864A-DA811DDF7B23
+target:			We might have to live with my mom at first.
+guess:			We might have to live with my mom and at first
+tar_pn:			w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ae t f er s t
+ges_pn:			w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ah n d ae t f er s t
+mdl_pt_na:	(0.22)	w iy m ay t hh ae v t uw l ay v ih t m ay m aa m ah n t ae t v er s t
+mdl_pt_al:	(0.3)	w iy m ay t hh ae v t ih l ih v ih t m ay m aa m ah t ae t v er s
+mdl_fs_na:	(0.56)	w iy m ay k ae p t ah l iy b ih t m ay b aa m ah n d ae t f r eh z t
+mdl_fs_al:	(0.48)	w iy m ay t ae t ah l ih b ih d m ay m aa r m ah n d ae t f r er z t
+
+
+rec_id:			23152E8F-C451-41C5-B7ED-29A614CAEB78
+target:			I'm an actor.
+guess:			Im an actor
+tar_pn:			ay m ae n ae k t er
+ges_pn:			ih m ae n ae k t er
+mdl_pt_na:	(0.25)	ay m ah n aa k t er
+mdl_pt_al:	(0.12)	ay m ah n ae k t er
+mdl_fs_na:	(0.62)	ay w ah n aa t d er
+mdl_fs_al:	(0.5)	ay m ah n aa t d er
+
+
+rec_id:			231BDE08-4D08-427D-84D1-97170FBA1975
+target:			Yes, she is.
+guess:			Yes she is
+tar_pn:			y eh s sh iy ih z
+ges_pn:			y eh s sh iy ih z
+mdl_pt_na:	(0.0)	y eh s sh iy ih z
+mdl_pt_al:	(0.0)	y eh s sh iy ih z
+mdl_fs_na:	(0.29)	y eh s jh ih z
+mdl_fs_al:	(0.29)	y eh s f ih z
+
+
+rec_id:			234DD0F7-62B2-4E64-B612-2226FFD59D5D
+target:			Could I have a glass of water, please?
+guess:			Can I have a glass of water please
+tar_pn:			k uh d ay hh ae v ah g l ae s ah v w ao t er p l iy z
+ges_pn:			k ae n ay hh ae v ah g l ae s ah v w ao t er p l iy z
+mdl_pt_na:	(0.18)	k r ay t hh ae v ah g l ae s t ah v w ao t er p l iy z
+mdl_pt_al:	(0.27)	k r ay t hh ae v ah g r eh s t ah v w ao t er p l iy z
+mdl_fs_na:	(0.45)	g r ay t hh ae v ah l d l eh s t ah b w ah t er p l iy z
+mdl_fs_al:	(0.36)	g r ay hh ae v ah l d l eh s t ah b w ao t er p l iy z
+
+
+rec_id:			2383C84F-938C-4CAA-9E0F-FD453BE4F69F
+target:			Rent is cheap.
+guess:			Rent it cheap
+tar_pn:			r eh n t ih z ch iy p
+ges_pn:			r eh n t ih t ch iy p
+mdl_pt_na:	(0.33)	w eh n t ih t ch ih p
+mdl_pt_al:	(0.22)	r eh n t ih t ch ih p
+mdl_fs_na:	(0.33)	r eh n ih t ch ih p
+mdl_fs_al:	(0.33)	r eh n t ih t ch ih
+
+
+rec_id:			23DC0CDE-FB7F-41B6-9278-D7B5E1ED0A95
+target:			I feel like going out for pizza.
+guess:			I feel like going out for pizza
+tar_pn:			ay f iy l l ay k g ow ih ng aw t f ao r p iy t s ah
+ges_pn:			ay f iy l l ay k g ow ih ng aw t f ao r p iy t s ah
+mdl_pt_na:	(0.1)	ay f iy l l ay k g ow ih ng aw t f ao r b ih t s ah
+mdl_pt_al:	(0.14)	ay f iy l l ay k g ow ih ng aw t f ao r b ih s ah
+mdl_fs_na:	(0.29)	ay f iy l ay k k ow ih ng ah t f ao b ih t s ah
+mdl_fs_al:	(0.24)	ay f iy l ay k ow ih ng ah t f ao r b iy t ah
+
+
+rec_id:			241FE4F8-15B1-46A6-AF71-BE76A9855B60
+target:			one
+guess:			One
+tar_pn:			w ah n
+ges_pn:			w ah n
+mdl_pt_na:	(0.0)	w ah n
+mdl_pt_al:	(0.0)	w ah n
+mdl_fs_na:	(0.0)	w ah n
+mdl_fs_al:	(0.0)	w ah n
+
+
+rec_id:			24750E52-AB80-4544-A94A-C15B33F2C881
+target:			How's the class?
+guess:			What's the class
+tar_pn:			hh aw z dh ah k l ae s
+ges_pn:			w ah t s dh ah k l ae s
+mdl_pt_na:	(0.44)	w ah t s dh ah k l ae s
+mdl_pt_al:	(0.56)	hh w ah t s dh ah k l ah s
+mdl_fs_na:	(0.56)	w ah ch dh ah k n ah s
+mdl_fs_al:	(0.33)	w ah ch dh ah k l ae s
+
+
+rec_id:			260E0E0E-24C5-415A-8F5D-33F45D3EA228
+target:			Go past the school.
+guess:			Call passed a school
+tar_pn:			g ow p ae s t dh ah s k uw l
+ges_pn:			k ao l p ae s t ah s k uw l
+mdl_pt_na:	(0.08)	g ow p ae s t ah s k uw l
+mdl_pt_al:	(0.08)	g ow p ae s t ah s k uw l
+mdl_fs_na:	(0.58)	k ao t p ae s t k ah l
+mdl_fs_al:	(0.25)	k ao p ae s t ah s k uw l
+
+
+rec_id:			26D1570B-35CC-43C6-90F8-AAE8841D712F
+target:			I've been thinking about going to Rio.
+guess:			I'm thinking about going to Rio Bravo
+tar_pn:			ay v b ih n th ih ng k ih ng ah b aw t g ow ih ng t uw r iy ow
+ges_pn:			ay m th ih ng k ih ng ah b aw t g ow ih ng t uw r iy ow b r aa v ow
+mdl_pt_na:	(0.46)	ih m th ih ng k ih ng ah b aw t g ow ih ng t uw r iy l b ah t ah b ah
+mdl_pt_al:	(0.46)	ay m th ih ng k ih ng ah b aw t g ow ih ng t ih r iy l ah b ah b er
+mdl_fs_na:	(0.54)	ih m f dh ih ng k ih ng ah b aw t g ow ih ng t uw r iy g ih t ah t l er
+mdl_fs_al:	(0.5)	ay m f dh ih ng k ih ng ah b aw t g ow ih ng t uw r iy b ah dh ah t l er
+
+
+rec_id:			26EAA1CE-73E5-4883-B6F0-F54AF639A810
+target:			I exercise about twice a week.
+guess:			I exercise a about a about a twice a week
+tar_pn:			ay eh k s er s ay z ah b aw t t w ay s ah w iy k
+ges_pn:			ay eh k s er s ay z ah ah b aw t ah ah b aw t ah t w ay s ah w iy k
+mdl_pt_na:	(0.15)	ay eh k s er s ay z ih t ah ah b aw t t w ay s ah w iy k
+mdl_pt_al:	(0.1)	ay eh k s er s ay z ih t ah b aw t t w ay s ah w iy k
+mdl_fs_na:	(0.4)	ay eh k s er s ay z ah t ow b aw t t ay z ow ey
+mdl_fs_al:	(0.35)	ay eh k s er z ay z ow b aw t ay z ah iy
+
+
+rec_id:			2717C973-0A5B-495C-A9FE-5C403B34C894
+target:			I have lots of homework.
+guess:			I have a lots health homework
+tar_pn:			ay hh ae v l aa t s ah v hh ow m w er k
+ges_pn:			ay hh ae v ah l aa t s hh eh l th hh ow m w er k
+mdl_pt_na:	(0.12)	ay hh ae v l aa t s ae hh ow m w er k
+mdl_pt_al:	(0.19)	ay hh ae v l ae t ch ah p hh ow m w er k
+mdl_fs_na:	(0.25)	ay hh ae v l l aa t s aa p p hh ow m w er k
+mdl_fs_al:	(0.25)	ay hh ae v l aa k s eh p ow m w er k
+
+
+rec_id:			27871F0E-A150-4458-AEE6-624E962556DF
+target:			Have you thought about traveling to South America?
+guess:			Have you thought about traveling to salsa America
+tar_pn:			hh ae v y uw th ao t ah b aw t t r ae v ah l ih ng t uw s aw th ah m eh r ih k ah
+ges_pn:			hh ae v y uw th ao t ah b aw t t r ae v ah l ih ng t uw s aa l s ah ah m eh r ih k ah
+mdl_pt_na:	(0.25)	hh ae v y uw th ao t ah b aw t ch ah b ah l ih ng t uw s aw th er m er k ah
+mdl_pt_al:	(0.25)	hh ae v y uw th ao t ah b aw t ch ah b ah l ih ng t uw s aw th er m er k ah
+mdl_fs_na:	(0.47)	hh ae b y uw s t ah t ah b aw t ae b ah l ih ng t ih s ah t er m ih p er
+mdl_fs_al:	(0.41)	hh ae b y uw s ah t ah b aw t ae b ah l ih ng t uw s ah s er r ey p r ah
+
+
+rec_id:			27BC49E6-FDF9-41F2-9658-30B3D2683E37
+target:			I need to watch my figure.
+guess:			I need to watch my figure
+tar_pn:			ay n iy d t uw w aa ch m ay f ih g y er
+ges_pn:			ay n iy d t uw w aa ch m ay f ih g y er
+mdl_pt_na:	(0.0)	ay n iy d t uw w aa ch m ay f ih g y er
+mdl_pt_al:	(0.06)	ay ay n iy d t uw w aa ch m ay f ih g y er
+mdl_fs_na:	(0.06)	ay n iy d t uw w aa ch m ay f ey g y er
+mdl_fs_al:	(0.31)	ay m ay n iy d t ah w aa ch m ay f ey g er
+
+
+rec_id:			27FA67AB-F1D2-4A03-8D41-82073858153B
+target:			I'm always in a hurry to eat breakfast.
+guess:			I'm always in a hurry to eat breakfast
+tar_pn:			ay m ao l w ey z ih n ah hh er iy t uw iy t b r eh k f ah s t
+ges_pn:			ay m ao l w ey z ih n ah hh er iy t uw iy t b r eh k f ah s t
+mdl_pt_na:	(0.12)	ih m ao l w ey z ih n ah hh er iy t uw iy t b ae k f ah s t
+mdl_pt_al:	(0.12)	ah m ao l w iy z ih n ah hh er iy t ih iy t b r eh k f ah s t
+mdl_fs_na:	(0.36)	ah m aw aa z ih n ah hh er iy t ah ih f b r eh k ah s t
+mdl_fs_al:	(0.32)	ah m ao l ay z ih n ah hh er iy t ey iy b r ae k ih s t
+
+
+rec_id:			29D6DE39-3207-4B37-9071-3DAB7EB262FA
+target:			She'll soon start telling me what to wear and what to eat.
+guess:			So I'll see you start telling me what to wear and want to eat
+tar_pn:			sh iy l s uw n s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w ah t t uw iy t
+ges_pn:			s ow ay l s iy y uw s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w aa n t t uw iy t
+mdl_pt_na:	(0.36)	s ow ah s iy n z t aa r t ae l ih m iy w ah t t uw w iy r ih t w ao t t uw iy t
+mdl_pt_al:	(0.5)	s ow ah l s iy z d aa r t ae l ih m iy w aa t t uw iy r ih t w ao t t ih iy t
+mdl_fs_na:	(0.5)	s ow ah z iy z d aa t eh l ih m iy w aa t t uw w ih r ih t w aa t t iy t
+mdl_fs_al:	(0.56)	s ow ah z iy z d aa t eh l ih m iy w aa t t uw ih r ih w aa t iy t
+
+
+rec_id:			29DD5282-5E25-474E-BE32-47086BF63B4D
+target:			I've been biking to work.
+guess:			I've been biking to work
+tar_pn:			ay v b ih n b ay k ih ng t uw w er k
+ges_pn:			ay v b ih n b ay k ih ng t uw w er k
+mdl_pt_na:	(0.2)	ay v b ih n b ay k ih ng t ao r k
+mdl_pt_al:	(0.2)	ay v b ih n b ay k ih ng t ao k
+mdl_fs_na:	(0.53)	k ay f ih n b ay t ih ng t ao r t
+mdl_fs_al:	(0.33)	ay f ih n b ay t ih ng t uw ao r k
+
+
+rec_id:			2B411043-B9CD-4C24-B8F2-6E2D1870202F
+target:			I eat either bananas or apples.
+guess:			I eat the eat the bananas the or a apples
+tar_pn:			ay iy t iy dh er b ah n ae n ah z ao r ae p ah l z
+ges_pn:			ay iy t dh ah iy t dh ah b ah n ae n ah z dh ah ao r ah ae p ah l z
+mdl_pt_na:	(0.6)	ay iy t t uw iy dh er b ah n ah l er s r eh f er s uw
+mdl_pt_al:	(0.6)	ay iy t t iy t er b ah n aa er s ao eh f er s
+mdl_fs_na:	(0.55)	ay iy t uw iy dh er b ah n aa aa s ah ae f er s er
+mdl_fs_al:	(0.55)	ay iy t ah iy dh er b ah n er er s ah ao eh f er s ih
+
+
+rec_id:			2D18E520-81E2-4B9D-8DE2-676C2D226EA3
+target:			I'm free this evening.
+guess:			I am free this evening
+tar_pn:			ay m f r iy dh ih s iy v n ih ng
+ges_pn:			ay ae m f r iy dh ih s iy v n ih ng
+mdl_pt_na:	(0.08)	ay f r iy dh ih s iy v n ih ng
+mdl_pt_al:	(0.08)	ay f r iy dh ih s iy v n ih ng
+mdl_fs_na:	(0.31)	ay f r ey dh ih s ih v ih ng
+mdl_fs_al:	(0.23)	ay ae f r ey dh ih s ih v n ih ng
+
+
+rec_id:			2D4CB692-139E-4B4C-8832-78672FE65C1C
+target:			I eat out about once a week.
+guess:			I eat out about once a week
+tar_pn:			ay iy t aw t ah b aw t w ah n s ah w iy k
+ges_pn:			ay iy t aw t ah b aw t w ah n s ah w iy k
+mdl_pt_na:	(0.18)	ay y eh t aw t ah b aw t w ah n s ao w iy k
+mdl_pt_al:	(0.06)	ay eh t aw t ah b aw t w ah n s ah w iy k
+mdl_fs_na:	(0.41)	ay eh t aw t ah b aw t b w aa z ow w ey k
+mdl_fs_al:	(0.41)	ay eh t aw t ah b aw t dh ao n z ow l iy
+
+
+rec_id:			2E92F06D-6AC8-4364-8D27-20349145DB5B
+target:			I could do with some fruit juice.
+guess:			I could to with a some for a juice
+tar_pn:			ay k uh d d uw w ih dh s ah m f r uw t jh uw s
+ges_pn:			ay k uh d t uw w ih dh ah s ah m f ao r ah jh uw s
+mdl_pt_na:	(0.21)	ay k uh d d uw w ih t s ah m f r ah jh uw z
+mdl_pt_al:	(0.26)	ay k uh d d uw w ih dh s ah f r ah d uw z
+mdl_fs_na:	(0.42)	ay k uh d d w ey d s ah n f r ah d ch uw z
+mdl_fs_al:	(0.42)	ay k uh d t uw w ey d ah m f r ah t ah z
+
+
+rec_id:			2EF666B8-9FFB-4775-AFBB-73D265B79BA4
+target:			Have you thought about working in New York?
+guess:			Have you thought about working in New York
+tar_pn:			hh ae v y uw th ao t ah b aw t w er k ih ng ih n n uw y ao r k
+ges_pn:			hh ae v y uw th ao t ah b aw t w er k ih ng ih n n uw y ao r k
+mdl_pt_na:	(0.04)	hh ae v y uw th ao t ah b aw t w er k ih ng ih n n uw r y ao r k
+mdl_pt_al:	(0.12)	hh ae v y uw th ao t ah b aw t w er k ih ng ih n y uh r y ao r k
+mdl_fs_na:	(0.44)	hh ae b y ih s t ah t er b aw r ow k ih ng ih n y uw y ao r t
+mdl_fs_al:	(0.44)	hh ae b y ih s ah t er b aw er k ih ih n y uw y uh r t
+
+
+rec_id:			2F38C855-6108-4B78-8AF9-601FE064D96D
+target:			he
+guess:			He
+tar_pn:			hh iy
+ges_pn:			hh iy
+mdl_pt_na:	(0.0)	hh iy
+mdl_pt_al:	(0.0)	hh iy
+mdl_fs_na:	(0.0)	hh iy
+mdl_fs_al:	(0.0)	hh iy
+
+
+rec_id:			2F7CD1CA-1F1B-4CE6-94A6-6FB6D2D88515
+target:			I rarely eat breakfast.
+guess:			I rarely it breakfast
+tar_pn:			ay r eh r l iy iy t b r eh k f ah s t
+ges_pn:			ay r eh r l iy ih t b r eh k f ah s t
+mdl_pt_na:	(0.0)	ay r eh r l iy iy t b r eh k f ah s t
+mdl_pt_al:	(0.12)	ay r eh l iy iy t b r ae k f ah s t
+mdl_fs_na:	(0.25)	ay r eh l iy ih t b r ae k f ih s t
+mdl_fs_al:	(0.38)	ay w ih l iy ih t p r ae k f ah s t
+
+
+rec_id:			305A3363-A913-419C-8CD6-DEFD6A34983A
+target:			I ended up staying overnight in New York.
+guess:			I ended up staying overnight in New York
+tar_pn:			ay eh n d ah d ah p s t ey ih ng ow v er n ay t ih n n uw y ao r k
+ges_pn:			ay eh n d ah d ah p s t ey ih ng ow v er n ay t ih n n uw y ao r k
+mdl_pt_na:	(0.19)	ay eh n d ah d ah p s t ey ih ng ow v er ah n ay n ih n iy y r k
+mdl_pt_al:	(0.19)	ay eh n d ih d ah p s t ey ow v er n ay t ih n y uw y r k
+mdl_fs_na:	(0.44)	ay ae n d ih d ae p s t ey ah eh n ay t ih n y iy er k
+mdl_fs_al:	(0.41)	ay eh n d ih d ah p s t ey ah ey n ay t ih n iy er k
+
+
+rec_id:			30A96FDF-4C43-4E41-A6F1-110B77FFB6FB
+target:			I usually grab takeout in the evening.
+guess:			I usually a grab a takeout for dinner
+tar_pn:			ay y uw zh ah w ah l iy g r ae b t ey k aw t ih n dh ah iy v n ih ng
+ges_pn:			ay y uw zh ah w ah l iy ah g r ae b ah t ey k aw t f ao r d ih n er
+mdl_pt_na:	(0.52)	ay y uw s ah l iy k r ae b t ey k aw t f ao r dh eh n er ih t ih n dh
+mdl_pt_al:	(0.44)	s ay y uw zh ah l iy g r ae b t ey k aw t f er dh eh n er ih v ih n dh
+mdl_fs_na:	(0.67)	s ay n d y uw s iy k r ae s t ey k aw t dh ih d s s ih t n dh ah
+mdl_fs_al:	(0.67)	s ay n d y uw s l iy k r ae s t ey k aw t er d ey s ih t dh
+
+
+rec_id:			311D3F80-FE18-4557-AE6E-92BCC323EB5C
+target:			I wanted to check out the Picasso Museum.
+guess:			I want to check out the pictures of the pickles
+tar_pn:			ay w ao n t ih d t uw ch eh k aw t dh ah p ih k aa s ow m y uw z iy ah m
+ges_pn:			ay w aa n t t uw ch eh k aw t dh ah p ih k ch er z ah v dh ah p ih k ah l z
+mdl_pt_na:	(0.62)	ah w aa n t t uw ch eh k aw t dh ah p ih k ah s ah v dh ah p ih k ah s b ah t m y uw
+mdl_pt_al:	(0.66)	w aa n t t ih ch eh k aw t dh ah p ih k ah s ah v dh iy p ih k ah s b ah t m y uw
+mdl_fs_na:	(0.72)	w ah n t ah t ih k aw t dh ah p iy k ah s ah p dh ah b ih g ah s b ah t m ih
+mdl_fs_al:	(0.69)	ay w ah n t ah t ih k aw t dh ah p iy k ah s ah v dh ah p ih k ah s b ah t m uw
+
+
+rec_id:			317F665F-4E89-4DE0-BF01-DAD1F534FECF
+target:			I think I told you about Chris.
+guess:			And from the college I think I told you about Chris
+tar_pn:			ay th ih ng k ay t ow l d y uw ah b aw t k r ih s
+ges_pn:			ah n d f r ah m dh ah k aa l ih jh ay th ih ng k ay t ow l d y uw ah b aw t k r ih s
+mdl_pt_na:	(0.7)	ah n d f r ah m dh ah k aa l ih jh ay th ih ng k ay t ow l d y uw ah b aw t k r ih s
+mdl_pt_al:	(0.7)	ae n d f r ah m dh ah k aa l ih jh ay th ih ng k ay t ow l d y uw ah b aw t k r ih s
+mdl_fs_na:	(0.9)	ih n f r ah m dh ah k aa l iy z ay f ih ng k ay t ow jh y uw ah b aw k r iy s
+mdl_fs_al:	(1.05)	ay n f r ah m d ah k aa l iy z ay f ih ng k ay t ow y ah r b aw k r iy t
+
+
+rec_id:			325715BB-B0B4-441B-A9C8-C11E53FDB28D
+target:			take a month off
+guess:			Take a month a off
+tar_pn:			t ey k ah m ah n th ao f
+ges_pn:			t ey k ah m ah n th ah ao f
+mdl_pt_na:	(0.4)	t ey k aw n m ay th ao f
+mdl_pt_al:	(0.4)	t ey k aw t m ay th ao f
+mdl_fs_na:	(0.2)	dh ey k ah m ah th ao f
+mdl_fs_al:	(0.2)	dh ey k ah m ah th ao f
+
+
+rec_id:			327B2B86-E46C-4944-866F-6A678C364CF9
+target:			traveling around the world
+guess:			Traveling a around a world
+tar_pn:			t r ae v ah l ih ng er aw n d dh ah w er l d
+ges_pn:			t r ae v ah l ih ng ah er aw n d ah w er l d
+mdl_pt_na:	(0.28)	t r ae v ah l ih ng ah v aa n dh ah w ao l d
+mdl_pt_al:	(0.28)	t r ae v ah l ih ng ah v ah n dh ah w ao l d
+mdl_fs_na:	(0.5)	t ae v ah l iy ng ah v ah n d ah w ow
+mdl_fs_al:	(0.44)	k ae v ah l ih ng ah v ah n dh ah w ao n d
+
+
+rec_id:			32874287-951B-421D-8389-61BA31622856
+target:			She's sad.
+guess:			She said
+tar_pn:			sh iy z s ae d
+ges_pn:			sh iy s eh d
+mdl_pt_na:	(0.17)	sh iy z s eh d
+mdl_pt_al:	(0.17)	sh iy z s eh d
+mdl_fs_na:	(0.33)	sh ih z ae d
+mdl_fs_al:	(0.17)	sh iy z ae d
+
+
+rec_id:			334FCA73-6B04-4FDC-9D79-5CB2CCD76C9E
+target:			I spent most of the weekend lying in bed.
+guess:			I spend most of the weekend what lying in bed
+tar_pn:			ay s p eh n t m ow s t ah v dh ah w iy k eh n d l ay ih ng ih n b eh d
+ges_pn:			ay s p eh n d m ow s t ah v dh ah w iy k eh n d w ah t l ay ih ng ih n b eh d
+mdl_pt_na:	(0.28)	ae s p eh n t m ow s t ah v dh ah v iy k eh n d w ah t l ay ih n b ae d
+mdl_pt_al:	(0.31)	ay s p eh n t m ow s t ah v dh ah v ey k ae n d w ah t l ay ng ih m b ae d
+mdl_fs_na:	(0.66)	ae z b ae n t m ow sh t ah p t ah v ih k k ae n w ah t l ay ae b ae d
+mdl_fs_al:	(0.62)	ae z p ae n d m ao sh t ah v t dh ah v ey k ae n w ah t ay m b ae d
+
+
+rec_id:			338DA2F0-697B-471B-840A-506A03A9C19C
+target:			How often do you eat out?
+guess:			How often do you eat out
+tar_pn:			hh aw ao f t ah n d uw y uw iy t aw t
+ges_pn:			hh aw ao f t ah n d uw y uw iy t aw t
+mdl_pt_na:	(0.07)	hh aw ao f t ah n dh uw y uw iy t aw t
+mdl_pt_al:	(0.07)	hh aw ao f ah n d uw y uw iy t aw t
+mdl_fs_na:	(0.33)	hh aw ah f ah n dh iy uw iy t aw t
+mdl_fs_al:	(0.4)	hh aw ah f w ah n dh uw iy t aw
+
+
+rec_id:			3396846A-3BED-4E41-B16F-85E201DAB81D
+target:			We'll need to save money.
+guess:			I money real need to save money
+tar_pn:			w iy l n iy d t uw s ey v m ah n iy
+ges_pn:			ay m ah n iy r iy l n iy d t uw s ey v m ah n iy
+mdl_pt_na:	(0.27)	m n f iy l n iy d t uw s ey m ah n iy
+mdl_pt_al:	(0.27)	v iy l l iy t uw s ey m ah n iy
+mdl_fs_na:	(0.47)	b y uw l n iy ah s ey m m ah n iy
+mdl_fs_al:	(0.33)	ay b iy l iy t uw s ey m m ah n iy
+
+
+rec_id:			34244070-1737-4DCE-94FA-76CC0543631E
+target:			I'm free all weekend.
+guess:			I free artist weekend
+tar_pn:			ay m f r iy ao l w iy k eh n d
+ges_pn:			ay f r iy aa r t ih s t w iy k eh n d
+mdl_pt_na:	(0.46)	ay f r iy ao r d ih s t w iy k eh n d
+mdl_pt_al:	(0.46)	ay f r iy aa r dh ih s w iy k eh n d
+mdl_fs_na:	(0.69)	ay f r iy aa r d ih s r ih k ae n d
+mdl_fs_al:	(0.62)	ay f r iy aa r d ih s w ih k ae n d
+
+
+rec_id:			3573BEF8-E7D7-445B-9869-B2D1222139C0
+target:			I eat out every other day.
+guess:			I eat a out a every a every a other a day
+tar_pn:			ay iy t aw t eh v er iy ah dh er d ey
+ges_pn:			ay iy t ah aw t ah eh v er iy ah eh v er iy ah ah dh er ah d ey
+mdl_pt_na:	(0.21)	ay iy t aw t eh f er eh v er iy ah dh er d ey
+mdl_pt_al:	(0.29)	ay iy t aw t ae v er eh v r iy ah dh er d ey
+mdl_fs_na:	(0.43)	ay ih t aw t ae f eh v er iy ah l dh er dh
+mdl_fs_al:	(0.71)	ay g ih t aw t ae f er eh v iy ah l d er dh
+
+
+rec_id:			359318BF-273F-4B9B-A917-01728165E82E
+target:			I got rejected from my dream college, and it’s getting me down.
+guess:			I got rejected from my dream college and it's getting me down
+tar_pn:			ay g aa t r ih jh eh k t ih d f r ah m m ay d r iy m k aa l ih jh ah n d ih t s g eh t ih ng m iy d aw n
+ges_pn:			ay g aa t r ih jh eh k t ih d f r ah m m ay d r iy m k aa l ih jh ah n d ih t s g eh t ih ng m iy d aw n
+mdl_pt_na:	(0.12)	ay g aa t r ih z eh k t ih d f r ah m m ay k d r iy m k aa l ih jh ah n d iy ch g eh t ih ng m iy d aw n
+mdl_pt_al:	(0.16)	ay g aa t r iy z eh k t ih d f r ah m m ay k d r iy m k aa l ih jh ae n d iy ch g eh t ih ng m iy d aw n
+mdl_fs_na:	(0.23)	ay g aa t r iy z eh k t ih d ah f r ah m m ay k d r iy m k aa l iy z ae d ih t g eh t ih ng m iy d ah n
+mdl_fs_al:	(0.33)	ay g aa t r iy z ae t t ih d ah f r ah m m ay k dh r ih m k aa l iy z ae d ih t g eh t ih ng m iy dh aw n
+
+
+rec_id:			35A4687C-DF66-4546-A393-868FABB4ECE7
+target:			it
+guess:			It
+tar_pn:			ih t
+ges_pn:			ih t
+mdl_pt_na:	(0.0)	ih t
+mdl_pt_al:	(0.0)	ih t
+mdl_fs_na:	(0.5)	ih t k
+mdl_fs_al:	(0.0)	ih t
+
+
+rec_id:			35BF5331-7E71-45EA-A393-0F33098FCA44
+target:			Let’s grab coffee some time.
+guess:			Let's grab coffee sometime
+tar_pn:			l eh t s g r ae b k aa f iy s ah m t ay m
+ges_pn:			l eh t s g r ae b k aa f iy s ah m t ay m
+mdl_pt_na:	(0.17)	ih t s g r ae b k aa f iy z ah m t ay m
+mdl_pt_al:	(0.22)	t s g r ae b k ao f iy z ah m t ay m
+mdl_fs_na:	(0.5)	s k r ae p k aa f iy z ah n th ay
+mdl_fs_al:	(0.44)	s k r ae k k aa f ih z ah n t ay m
+
+
+rec_id:			363A8274-A3F2-42F2-960E-61DA0925C55C
+target:			Hi. We have a reservation for two people under Mark.
+guess:			Hi we have a reservation for two people on the mark
+tar_pn:			hh ay w iy hh ae v ah r eh z er v ey sh ah n f ao r t uw p iy p ah l ah n d er m aa r k
+ges_pn:			hh ay w iy hh ae v ah r eh z er v ey sh ah n f ao r t uw p iy p ah l aa n dh ah m aa r k
+mdl_pt_na:	(0.0)	hh ay w iy hh ae v ah r eh z er v ey sh ah n f ao r t uw p iy p ah l ah n d er m aa r k
+mdl_pt_al:	(0.0)	hh ay w iy hh ae v ah r eh z er v ey sh ah n f ao r t uw p iy p ah l ah n d er m aa r k
+mdl_fs_na:	(0.23)	hh ay w iy hh ae b ah r eh jh er b ey jh ah n f ao r t uw p iy p p er ah n dh ah m aa r k
+mdl_fs_al:	(0.14)	hh ay w iy hh ae v ah r eh jh er b ey sh ah n f ao r t uw p iy p ao ah n dh er m aa r k
+
+
+rec_id:			3647515A-767E-47FA-A2D5-98598F8C994E
+target:			Oh my God!
+guess:			Oh my God
+tar_pn:			ow m ay g aa d
+ges_pn:			ow m ay g aa d
+mdl_pt_na:	(0.5)	ow ih g aa r d
+mdl_pt_al:	(0.33)	ow g aa d
+mdl_fs_na:	(0.5)	aw w ay d aa d
+mdl_fs_al:	(0.5)	ay w ay d aa d
+
+
+rec_id:			3693C53D-00E8-4610-AA6B-420C557760B2
+target:			How's your job?
+guess:			How's your job with her
+tar_pn:			hh aw z y ao r jh aa b
+ges_pn:			hh aw z y ao r jh aa b w ih dh hh er
+mdl_pt_na:	(0.78)	sh uh r jh aa b dh er
+mdl_pt_al:	(0.78)	sh uh r jh aa b dh er
+mdl_fs_na:	(0.78)	s uh r jh aa b d er
+mdl_fs_al:	(0.89)	uh r jh aa b ih d er
+
+
+rec_id:			37626D66-DEA0-4A8A-B143-690F85160B93
+target:			I usually grab a sandwich for lunch.
+guess:			I usually a sandwich a grab a sandwich a for a lunch
+tar_pn:			ay y uw zh ah w ah l iy g r ae b ah s ae n d w ih ch f ao r l ah n ch
+ges_pn:			ay y uw zh ah w ah l iy ah s ae n d w ih ch ah g r ae b ah s ae n d w ih ch ah f ao r ah l ah n ch
+mdl_pt_na:	(0.54)	ay y uw zh ah w ah l iy iy t s ae n w ah ch g r ae b s ae n d r ih jh f ah m m ah ch
+mdl_pt_al:	(0.54)	ay y uw zh ah l iy iy t s ae n w ih ch g r ae b s ae n d r ih ch f ah l ah ch
+mdl_fs_na:	(0.82)	hh iy uw z n ih t s ae n m ih ch k r ae p ah s ah n d er t f uw ch
+mdl_fs_al:	(0.82)	y ih sh iy ih t s ae m r iy ch k r ae v ah s ah n d er t ch
+
+
+rec_id:			37F1CC3C-6DE4-4C2B-AC1F-4740642F45ED
+target:			I love to watch Netflix with friends.
+guess:			I love to watch a netflix's with a friends
+tar_pn:			ay l ah v t uw w aa ch n eh t f l ih k s w ih dh f r eh n d z
+ges_pn:			ay l ah v t uw w aa ch ah <UNK> w ih dh ah f r eh n d z
+mdl_pt_na:	(0.04)	ay l ah v t uw w aa ch n eh f l ih k s w ih dh f r eh n d z
+mdl_pt_al:	(0.15)	ay l ah v t uw w aa ch n ae v l ih k s w ih dh f r eh n z
+mdl_fs_na:	(0.35)	ay l ah v t uw hh w ah t s l eh f er ih k s w ih dh ah f r eh n z
+mdl_fs_al:	(0.27)	ay l ah v t uw w ah ch l eh f ih k s w iy dh ah f r eh n z
+
+
+rec_id:			388F9518-0E77-4CC6-A743-A225FF20DA42
+target:			Yes. I'm still at Naver.
+guess:			Yes I'm still at neighbor
+tar_pn:			y eh s ay m s t ih l ae t n ey v er
+ges_pn:			y eh s ay m s t ih l ae t n ey b er
+mdl_pt_na:	(0.13)	y eh s ay m s t ih r ae t n ey b er
+mdl_pt_al:	(0.13)	y eh s ay m s t ih r ae t n ey b er
+mdl_fs_na:	(0.27)	hh eh s ay m sh t ih r ae t n ey b er
+mdl_fs_al:	(0.27)	hh eh s ay m sh t ih r ae t n ey b er
+
+
+rec_id:			397A600B-2753-4734-98AD-0FBBA7EB81A3
+target:			We might have to live with my mom at first.
+guess:			Remind have to live with my mom and post
+tar_pn:			w iy m ay t hh ae v t uw l ay v w ih dh m ay m aa m ae t f er s t
+ges_pn:			r iy m ay n d hh ae v t uw l ay v w ih dh m ay m aa m ah n d p ow s t
+mdl_pt_na:	(0.07)	w iy m ay t hh ae v t uw l iy v w ih dh m ay m aa m ae t p er s t
+mdl_pt_al:	(0.26)	w iy m ay t hh ae v t uw l iy ah p w ih dh m ay m aa m ih t p aa r s t
+mdl_fs_na:	(0.56)	m iy m ay n hh ae p t er n ah p r iy t m ay m ah m ah t p aa r s t
+mdl_fs_al:	(0.37)	w iy m ay hh ae p t ao l ah p r iy dh m ay m aa m ah t p aa s t
+
+
+rec_id:			3A208C99-4AE7-4FB3-B8D0-7646E1EC3F73
+target:			I have a lot of coffee.
+guess:			I have a lot a coffee
+tar_pn:			ay hh ae v ah l aa t ah v k aa f iy
+ges_pn:			ay hh ae v ah l aa t ah k aa f iy
+mdl_pt_na:	(0.0)	ay hh ae v ah l aa t ah v k aa f iy
+mdl_pt_al:	(0.0)	ay hh ae v ah l aa t ah v k aa f iy
+mdl_fs_na:	(0.29)	ay hh ae v ah l ae t ah v k ah p t iy
+mdl_fs_al:	(0.29)	ay hh ae v ah ah l ae t ah v k ah p iy
+
+
+rec_id:			3AEA1788-6D83-4EFC-864D-FB2A57008E6B
+target:			My favorite movie is The Notebook.
+guess:			Is the notebook my favorite
+tar_pn:			m ay f ey v er ih t m uw v iy ih z dh ah n ow t b uh k
+ges_pn:			ih z dh ah n ow t b uh k m ay f ey v er ih t
+mdl_pt_na:	(0.95)	w d ih n eh s dh ah n ow b uh k m ay f ey m ah l
+mdl_pt_al:	(0.86)	d ih ng ih z dh ah n ow b uh k m ay f ey m ah l
+mdl_fs_na:	(0.91)	dh ah n aa t b uh k m ay b ey r ah m m
+mdl_fs_al:	(0.95)	ih s dh ah n ow b uh k m ay f ey m ih m
+
+
+rec_id:			3AF0DAEC-F6A7-4CE9-9B13-031FF9BD2D50
+target:			It seems like the new program is buggy.
+guess:			It seems like the new a program is buggy
+tar_pn:			ih t s iy m z l ay k dh ah n uw p r ow g r ae m ih z b ah g iy
+ges_pn:			ih t s iy m z l ay k dh ah n uw ah p r ow g r ae m ih z b ah g iy
+mdl_pt_na:	(0.19)	ih t s iy m z l ay k dh ah n uw p r aa b l ah m ih z b ah g ih
+mdl_pt_al:	(0.27)	ih t s iy m z l ay k dh ah n y uw p r aa b l ah m ih z b ah t ih
+mdl_fs_na:	(0.38)	ih z s ih n s l ay v dh ah n uw p r ow v eh n ih z b ah iy
+mdl_fs_al:	(0.46)	ih z s ih n s l ay f dh ah n uw r p r ah v ah n ih z b ah iy
+
+
+rec_id:			3B0BE7CF-C763-42D0-B98B-F23211A7B52C
+target:			Really? That's a shame.
+guess:			Really a thats a shame
+tar_pn:			r ih l iy dh ae t s ah sh ey m
+ges_pn:			r ih l iy ah th ae t s ah sh ey m
+mdl_pt_na:	(0.08)	r ih l iy d ae t s ah sh ey m
+mdl_pt_al:	(0.17)	r ih l iy dh ae t s ah sh eh r m
+mdl_fs_na:	(0.25)	r ih l ih t dh ae t ah sh ey m
+mdl_fs_al:	(0.33)	r ih l ih t dh ah t ah sh ey m
+
+
+rec_id:			3B3E1111-49ED-4766-ABF5-CE3CB7D62346
+target:			Are you okay?
+guess:			I okay
+tar_pn:			aa r y uw ow k ey
+ges_pn:			ay ow k ey
+mdl_pt_na:	(0.43)	ay r y uh k ey
+mdl_pt_al:	(0.43)	ay y uw k ey
+mdl_fs_na:	(0.43)	ay y uw k ey
+mdl_fs_al:	(0.43)	ay y uw k ey
+
+
+rec_id:			3B3EF97D-A9E9-4072-BA7F-9B99789784E9
+target:			I missed my connecting flight.
+guess:			I missed my connecting an flight
+tar_pn:			ay m ih s t m ay k ah n eh k t ih ng f l ay t
+ges_pn:			ay m ih s t m ay k ah n eh k t ih ng ae n f l ay t
+mdl_pt_na:	(0.0)	ay m ih s t m ay k ah n eh k t ih ng f l ay t
+mdl_pt_al:	(0.0)	ay m ih s t m ay k ah n eh k t ih ng f l ay t
+mdl_fs_na:	(0.16)	ay m m ih s t uw m ay k ah n eh k t ih ng f ay t
+mdl_fs_al:	(0.11)	ay m m ih s t m ay k ah n eh k t ih ng f ay t
+
+
+rec_id:			3E822886-8893-4EFD-AB09-4058B47B6EB7
+target:			I'm married.
+guess:			I married
+tar_pn:			ay m m eh r iy d
+ges_pn:			ay m eh r iy d
+mdl_pt_na:	(0.29)	m ay m v eh r iy d
+mdl_pt_al:	(0.43)	m ay n dh eh r iy d
+mdl_fs_na:	(0.86)	th eh n d eh r ah d ih
+mdl_fs_al:	(0.57)	ay d eh r ih d t
+
+
+rec_id:			3F4A9961-45D3-4183-B81F-C6536D092267
+target:			Can I try on those pants?
+guess:			Can I try on those pants
+tar_pn:			k ae n ay t r ay aa n dh ow z p ae n t s
+ges_pn:			k ae n ay t r ay aa n dh ow z p ae n t s
+mdl_pt_na:	(0.18)	k ae n ay t r ay aa n dh ow z b eh n t z
+mdl_pt_al:	(0.24)	k ae n ay t r ay ao n dh ow z b eh n t z
+mdl_fs_na:	(0.29)	k ae n ay t r ay ow n d ow z b eh n s
+mdl_fs_al:	(0.29)	k ae n ay t r ay ao n d ow z b eh n s
+
+
+rec_id:			3F553895-5053-4508-B46B-ED0353C326F5
+target:			I wouldn’t have met my boyfriend.
+guess:			I wouldn't have met my boyfriend
+tar_pn:			ay w uh d ah n t hh ae v m eh t m ay b oy f r eh n d
+ges_pn:			ay w uh d ah n t hh ae v m eh t m ay b oy f r eh n d
+mdl_pt_na:	(0.14)	ay w uh d n t hh ae v m ey d m ay b oy f r eh n d
+mdl_pt_al:	(0.14)	ay w uh d ah n t hh ae v m ey d m ay b oy f eh n d
+mdl_fs_na:	(0.27)	ay w uh d ah n t hh ae v m ih d m ay b uh f ih n
+mdl_fs_al:	(0.27)	ay w uh d ah n hh ae v m ih th m ay b oy f ih n
+
+
+rec_id:			40070D09-C133-4D84-9399-C3F400D5FA06
+target:			I had a fun party.
+guess:			I had a fun a party
+tar_pn:			ay hh ae d ah f ah n p aa r t iy
+ges_pn:			ay hh ae d ah f ah n ah p aa r t iy
+mdl_pt_na:	(0.23)	ay d ae f ah n p aa r t iy
+mdl_pt_al:	(0.23)	ay d ae f ah n p aa r t iy
+mdl_fs_na:	(0.31)	ay d ae f f l ah n p aa r t iy
+mdl_fs_al:	(0.38)	ay ae d ae f f l ah n p aa r iy
+
+
+rec_id:			425C19EE-9138-4CFA-AD2F-C87C0CAFC0A1
+target:			I've been thinking about who to live with.
+guess:			I've been thinking about who to leave with it
+tar_pn:			ay v b ih n th ih ng k ih ng ah b aw t hh uw t uw l ay v w ih dh
+ges_pn:			ay v b ih n th ih ng k ih ng ah b aw t hh uw t uw l iy v w ih dh ih t
+mdl_pt_na:	(0.16)	ay b ih n th ih ng k ih ng ah b aw t hh uw t uw l ey v w ih dh ih t
+mdl_pt_al:	(0.2)	ay b ih n th ih ng k ih ng ah b aw t t hh uw t uw l ey v w ih dh ih t
+mdl_fs_na:	(0.48)	ay b ah f ih ng g ih ng ah b ay t f hh uw t uw l ey v r ih f ih t
+mdl_fs_al:	(0.36)	ay b ih f ih ng k ih ng ah b ay t iy uw t uw l ey v r ih f ih
+
+
+rec_id:			42820266-8CA0-41A9-B35D-BFC5EF78B678
+target:			eating ice cream
+guess:			Eating ice cream
+tar_pn:			iy t ih ng ay s k r iy m
+ges_pn:			iy t ih ng ay s k r iy m
+mdl_pt_na:	(0.0)	iy t ih ng ay s k r iy m
+mdl_pt_al:	(0.1)	iy t ih ng ay s k w iy m
+mdl_fs_na:	(0.2)	ih t ih ng ay s k w iy m
+mdl_fs_al:	(0.3)	ih t ih ng ay k k iy m
+
+
+rec_id:			42866DEA-83A4-4715-8DF8-2EB1B594FBC4
+target:			They sometimes watch a movie at night.
+guess:			They sometimes watch an movie an night
+tar_pn:			dh ey s ah m t ay m z w aa ch ah m uw v iy ae t n ay t
+ges_pn:			dh ey s ah m t ay m z w aa ch ae n m uw v iy ae n n ay t
+mdl_pt_na:	(0.23)	dh ey s ah m t ay m z w aa ch ih ng m iy v iy ah n ay t
+mdl_pt_al:	(0.18)	dh ey s ah m t ay m z w aa ch ih ng m uw v iy ih n n ay t
+mdl_fs_na:	(0.32)	ey s ah m t ay m s w ah ch ih m iy v iy ah n n ay t
+mdl_fs_al:	(0.41)	ey s ah m k ay m s w ah ih m uw v ih n ay t
+
+
+rec_id:			42D0DB09-6781-4E5A-AC01-AEFBBEFF3AD8
+target:			their father
+guess:			The father
+tar_pn:			dh eh r f aa dh er
+ges_pn:			dh ah f aa dh er
+mdl_pt_na:	(0.29)	dh eh r f r ah dh er
+mdl_pt_al:	(0.29)	dh eh r f r ah dh er
+mdl_fs_na:	(0.14)	dh eh r f r aa dh er
+mdl_fs_al:	(0.43)	dh eh f ah n dh er
+
+
+rec_id:			443674D9-E2A3-4A9C-9A56-AF66DFFF608B
+target:			Fine, what's your gamer ID?
+guess:			Fine why did your gamer ID
+tar_pn:			f ay n w ah t s y ao r g ey m er ih d
+ges_pn:			f ay n w ay d ih d y ao r g ey m er ih d
+mdl_pt_na:	(0.44)	f ay n w aa d ih d y ao r g ey m ay d iy
+mdl_pt_al:	(0.56)	f ay n hh w aa d ih d y uw r g ey m aa r d iy
+mdl_fs_na:	(0.62)	f ah ay w aa dh ih jh uh r g ey m ay d iy
+mdl_fs_al:	(0.5)	f ay w ah t ih d y uh r k ey m ay d iy
+
+
+rec_id:			4443AA23-B569-402E-AE5A-1DFDC8C4E172
+target:			It's cold.
+guess:			Is its
+tar_pn:			ih t s k ow l d
+ges_pn:			ih z ih t s
+mdl_pt_na:	(0.71)	ih s ih s t k
+mdl_pt_al:	(0.71)	ih t ih s t k
+mdl_fs_na:	(0.86)	ih z ih z t k
+mdl_fs_al:	(0.86)	ih z ih z t ao
+
+
+rec_id:			46F82565-F953-448C-B66A-83E657351367
+target:			How's the weather?
+guess:			How's the weather
+tar_pn:			hh aw z dh ah w eh dh er
+ges_pn:			hh aw z dh ah w eh dh er
+mdl_pt_na:	(0.11)	hh aw s dh ah w eh dh er
+mdl_pt_al:	(0.11)	hh aw s dh ah w eh dh er
+mdl_fs_na:	(0.33)	hh aw s t ah w eh t er
+mdl_fs_al:	(0.44)	hh aw s t ah l eh t er
+
+
+rec_id:			493AE963-5889-4D1D-8EBA-DFDD4D8CDE0D
+target:			How's the class?
+guess:			Hows the class
+tar_pn:			hh aw z dh ah k l ae s
+ges_pn:			hh aw z dh ah k l ae s
+mdl_pt_na:	(0.67)	ah v dh ah hh l ay
+mdl_pt_al:	(0.56)	ah v dh ah hh l ae
+mdl_fs_na:	(0.56)	aw s dh ah l ay n
+mdl_fs_al:	(0.56)	ao b ah k l ae
+
+
+rec_id:			496D952A-57EE-400E-90F8-99FAB5FC2D6D
+target:			I've always dreamed of traveling around the world.
+guess:			I've always dreamed of traveling around the world
+tar_pn:			ay v ao l w ey z d r iy m d ah v t r ae v ah l ih ng er aw n d dh ah w er l d
+ges_pn:			ay v ao l w ey z d r iy m d ah v t r ae v ah l ih ng er aw n d dh ah w er l d
+mdl_pt_na:	(0.25)	ay f ao l ey z d r iy m ah v t r ae v ah l er l ih ng er aw n d w ao l d
+mdl_pt_al:	(0.28)	ay f ao w ey s d r iy m ah v t r ae v ah l l ih ng ow aw n d w ao l d
+mdl_fs_na:	(0.56)	ay p er r ey s t r ey m m aw s t r aa v er l ey ng ah ah n d w ow l d
+mdl_fs_al:	(0.53)	ay p er r ey t t r iy m aw t t r aa v er l ih ng ah v ah n d w ao l d
+
+
+rec_id:			4A733594-1D44-4D12-A67B-378D058104C1
+target:			seven
+guess:			Seven
+tar_pn:			s eh v ah n
+ges_pn:			s eh v ah n
+mdl_pt_na:	(0.0)	s eh v ah n
+mdl_pt_al:	(0.0)	s eh v ah n
+mdl_fs_na:	(0.6)	s ae t ah m
+mdl_fs_al:	(0.4)	f eh v ah m
+
+
+rec_id:			4A962372-3625-4C9C-B3E1-BBAD8BD36CB3
+target:			But I left home early, so it was okay.
+guess:			OK but I left him only felt it was OK
+tar_pn:			b ah t ay l eh f t hh ow m er l iy s ow ih t w aa z ow k ey
+ges_pn:			ow k ey b ah t ay l eh f t hh ih m ow n l iy f eh l t ih t w aa z ow k ey
+mdl_pt_na:	(0.46)	n ow k ey b ah t ay l eh v t hh ow m ow n l iy f eh l ih t w aa z ow g ey
+mdl_pt_al:	(0.42)	ow k ey b ah t ay l eh v t hh ow m er l iy f eh l ih t w ao z ah g ey
+mdl_fs_na:	(0.46)	k ey f ah t ay l ah v t hh ah m ao l iy f aw t ih t w aa z aw k ey
+mdl_fs_al:	(0.54)	ah k ey f ah t ay l eh v t ah m ao iy s eh ih t ah z ah k ey
+
+
+rec_id:			4B15DCC7-02C4-4304-90F8-88E4B45F4E23
+target:			If I were you
+guess:			If I were you
+tar_pn:			ih f ay w er y uw
+ges_pn:			ih f ay w er y uw
+mdl_pt_na:	(0.14)	ah f ay w er y uw
+mdl_pt_al:	(0.14)	ey f ay w er y uw
+mdl_fs_na:	(0.43)	ih f ay r ay y iy
+mdl_fs_al:	(0.43)	ih f ay w ey iy
+
+
+rec_id:			4B168A3E-3C6A-4A22-B8A6-22B03EE6D493
+target:			We are doctors.
+guess:			We are a doctors
+tar_pn:			w iy aa r d aa k t er z
+ges_pn:			w iy aa r ah d aa k t er z
+mdl_pt_na:	(0.0)	w iy aa r d aa k t er z
+mdl_pt_al:	(0.0)	w iy aa r d aa k t er z
+mdl_fs_na:	(0.6)	m iy ay d ae t t er r z
+mdl_fs_al:	(0.4)	r iy ay r dh aa t er z
+
+
+rec_id:			4BC871F2-F15E-4731-988D-7BA73C406BBF
+target:			I do a lot of stretching.
+guess:			I do a lot a stretching
+tar_pn:			ay d uw ah l aa t ah v s t r eh ch ih ng
+ges_pn:			ay d uw ah l aa t ah s t r eh ch ih ng
+mdl_pt_na:	(0.19)	ay jh ow l aa t ah v s t r eh ch ih ng
+mdl_pt_al:	(0.25)	ay jh ow l aa t ah v s t r ay ch ih ng
+mdl_fs_na:	(0.38)	ay d ao r n aa t ah v ch r ay ch ih ng
+mdl_fs_al:	(0.38)	ay d uh l aa t ah s ch ay ch ih ng
+
+
+rec_id:			4C9D9AF1-BD94-4C71-8019-BF5D133012C7
+target:			Yes, I am.
+guess:			Yes I am
+tar_pn:			y eh s ay ae m
+ges_pn:			y eh s ay ae m
+mdl_pt_na:	(0.33)	y eh s ay y uw
+mdl_pt_al:	(0.33)	y eh s ay y uw
+mdl_fs_na:	(0.33)	y eh s ay y uw
+mdl_fs_al:	(0.5)	y uw s ay uw
+
+
+rec_id:			4D876F8D-2C0D-4D37-B7E2-EDADCD697995
+target:			But are you feeling okay?
+guess:			What are you feeling OK
+tar_pn:			b ah t aa r y uw f iy l ih ng ow k ey
+ges_pn:			w ah t aa r y uw f iy l ih ng ow k ey
+mdl_pt_na:	(0.13)	b ah t ay y uw f iy l ih ng ow k ey
+mdl_pt_al:	(0.13)	b ah t ay y uw f iy l ih ng ow k ey
+mdl_fs_na:	(0.67)	hh w ah t ay f ih r ih ng ah k ah
+mdl_fs_al:	(0.4)	b ah t ay uw f eh l ih ng ah k ey n
+
+
+rec_id:			4E68C725-2FF7-4748-A1BE-EA9ED9BCF31A
+target:			Could we pay separately?
+guess:			Could we pay the parlay
+tar_pn:			k uh d w iy p ey s eh p er ah t l iy
+ges_pn:			k uh d w iy p ey dh ah p aa r l ey
+mdl_pt_na:	(0.33)	k uh d w iy p ey dh ah p eh r ah l iy
+mdl_pt_al:	(0.33)	k uh d w iy p ey dh ah p eh r ah l iy
+mdl_fs_na:	(0.4)	k uh d ah l iy p ey s ah p ae n ah l iy
+mdl_fs_al:	(0.4)	k uh d ah w iy p ey t ah p eh n ah l iy
+
+
+rec_id:			4EBF9BEF-CDDE-42CC-9D00-B538848A31ED
+target:			I spent most of the weekend cleaning the house.
+guess:			I spend most of the weekend cleaning the house
+tar_pn:			ay s p eh n t m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
+ges_pn:			ay s p eh n d m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
+mdl_pt_na:	(0.03)	ay s p eh n d m ow s t ah v dh ah w iy k eh n d k l iy n ih ng dh ah hh aw s
+mdl_pt_al:	(0.03)	ay s p eh n t m ow s t ah v dh ah w iy k ih n d k l iy n ih ng dh ah hh aw s
+mdl_fs_na:	(0.29)	ay s p ae n d m aa s t ah f t ah r iy k ae n k l iy n ih ng d ah hh aw s
+mdl_fs_al:	(0.23)	ay s p ae n d m ao s t ah v t er iy k eh n k l iy n ih ng dh ah hh aw s
+
+
+rec_id:			4EE3C37A-C1CA-496E-96E3-647065F62DB2
+target:			They're hungry.
+guess:			Theyre a hungry
+tar_pn:			dh eh r hh ah ng g r iy
+ges_pn:			dh ey r ah hh ah ng g r iy
+mdl_pt_na:	(0.0)	dh eh r hh ah ng g r iy
+mdl_pt_al:	(0.0)	dh eh r hh ah ng g r iy
+mdl_fs_na:	(0.22)	dh eh r hh aw ng g er iy
+mdl_fs_al:	(0.22)	dh eh r hh aw ng g iy
+
+
+rec_id:			4F86424A-C74B-4250-97A0-79639F7882F0
+target:			Oh my God!
+guess:			Oh my God
+tar_pn:			ow m ay g aa d
+ges_pn:			ow m ay g aa d
+mdl_pt_na:	(0.0)	ow m ay g aa d
+mdl_pt_al:	(0.0)	ow m ay g aa d
+mdl_fs_na:	(0.17)	ow l m ay g aa d
+mdl_fs_al:	(0.0)	ow m ay g aa d
+
+
+rec_id:			503FF339-F1BF-41C1-B728-AB5A2A4D7AFA
+target:			Really? Why do you think that?
+guess:			Really why do you think that
+tar_pn:			r ih l iy w ay d uw y uw th ih ng k dh ae t
+ges_pn:			r ih l iy w ay d uw y uw th ih ng k dh ae t
+mdl_pt_na:	(0.0)	r ih l iy w ay d uw y uw th ih ng k dh ae t
+mdl_pt_al:	(0.12)	r iy l iy hh w ay d uw y uw th ih ng k dh ae t
+mdl_fs_na:	(0.47)	r iy l iy w ay n d uw f ih m d ae t
+mdl_fs_al:	(0.53)	w iy l iy w ay n d uw s ih m d ae t
+
+
+rec_id:			50587BFE-5F51-4982-AC1B-106C6EB3345A
+target:			I'm on a strict diet of eggs and fish.
+guess:			I want to trade tired of eggs and fish
+tar_pn:			ay m aa n ah s t r ih k t d ay ah t ah v eh g z ah n d f ih sh
+ges_pn:			ay w aa n t t uw t r ey d t ay er d ah v eh g z ah n d f ih sh
+mdl_pt_na:	(0.31)	ay w aa n t ah t r ey k d ay ah t ah v eh k s ah n f ih sh
+mdl_pt_al:	(0.35)	ay w aa n t ah s d r ey k d ay ah t ah v eh k s ae n f ih sh
+mdl_fs_na:	(0.42)	ay w aa n z t r ey k dh ay ah t ah v ae k s ah n f iy sh
+mdl_fs_al:	(0.5)	ay w ah n t t r ey t dh ay ah t ah v ae k s ah m f iy sh
+
+
+rec_id:			507B936A-835D-4434-B72A-240F37656567
+target:			I eat dinner.
+guess:			I eat a dinner
+tar_pn:			ay iy t d ih n er
+ges_pn:			ay iy t ah d ih n er
+mdl_pt_na:	(0.0)	ay iy t d ih n er
+mdl_pt_al:	(0.0)	ay iy t d ih n er
+mdl_fs_na:	(0.14)	ay eh t d ih n er
+mdl_fs_al:	(0.29)	ay ih t dh ih n er
+
+
+rec_id:			507BFD1F-274E-49AB-99D9-D1B340915940
+target:			You should see a doctor.
+guess:			You should see a doctor
+tar_pn:			y uw sh uh d s iy ah d aa k t er
+ges_pn:			y uw sh uh d s iy ah d aa k t er
+mdl_pt_na:	(0.08)	y uw sh uh d ah s iy ah d aa k t er
+mdl_pt_al:	(0.15)	y uw sh uh d ah s iy ah b aa k t er
+mdl_fs_na:	(0.46)	y uw sh uh d ah s ah dh ao p t
+mdl_fs_al:	(0.46)	y uw sh uh d z iy ae p ao t t er n
+
+
+rec_id:			52198938-965B-46A9-B157-CF136D1D3B57
+target:			We aren't tired.
+guess:			We aren't tired
+tar_pn:			w iy aa r ah n t t ay er d
+ges_pn:			w iy aa r ah n t t ay er d
+mdl_pt_na:	(0.0)	w iy aa r ah n t t ay er d
+mdl_pt_al:	(0.09)	w iy aa r n t t ay er d
+mdl_fs_na:	(0.18)	w iy aa r n d t ay er d
+mdl_fs_al:	(0.18)	w iy aa r n d t ay er d
+
+
+rec_id:			53646E61-CE54-41AB-A970-4D2AF1D4A535
+target:			look for a job abroad
+guess:			Look for a job a abroad
+tar_pn:			l uh k f ao r ah jh aa b ah b r ao d
+ges_pn:			l uh k f ao r ah jh aa b ah ah b r ao d
+mdl_pt_na:	(0.13)	l uh k f ao r ah jh aa b ah b aw r d
+mdl_pt_al:	(0.13)	l uh k f ao r ah jh aa b ah b er r d
+mdl_fs_na:	(0.27)	l uh k f ao r ah jh ah b ah v ao r d
+mdl_fs_al:	(0.4)	l uh k f ao r ah ch ah b ah v ao r t
+
+
+rec_id:			5439D0C1-70D4-442B-A27A-885F7BE49487
+target:			I don't like going out.
+guess:			I don't like going out
+tar_pn:			ay d ow n t l ay k g ow ih ng aw t
+ges_pn:			ay d ow n t l ay k g ow ih ng aw t
+mdl_pt_na:	(0.07)	ay d ow n t r ay k g ow ih ng aw t
+mdl_pt_al:	(0.07)	ay d ow n l ay k g ow ih ng aw t
+mdl_fs_na:	(0.29)	ay d ah n r ay k g ao ih ng aw t
+mdl_fs_al:	(0.57)	ay g ah n m ay k g oy aw
+
+
+rec_id:			54748997-5146-41E0-BDAF-FE55EC192C87
+target:			I have a sore throat.
+guess:			I had a sore a throat
+tar_pn:			ay hh ae v ah s ao r th r ow t
+ges_pn:			ay hh ae d ah s ao r ah th r ow t
+mdl_pt_na:	(0.33)	ay hh ae d ah s ow l s r ow t
+mdl_pt_al:	(0.33)	ay hh ae d ah s ow s r ow t
+mdl_fs_na:	(0.5)	ay hh ae d ah s ow l s r ah l t
+mdl_fs_al:	(0.33)	ay hh ae d ah s ow s t r ow t
+
+
+rec_id:			557FE30C-EC87-4379-872B-F30F6B8D30E0
+target:			I think there is a mistake with our order.
+guess:			I think there is a mistake with our order
+tar_pn:			ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw er ao r d er
+ges_pn:			ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw er ao r d er
+mdl_pt_na:	(0.0)	ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw er ao r d er
+mdl_pt_al:	(0.04)	ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw ao r d er
+mdl_fs_na:	(0.23)	ay th ih ng k dh eh r iy z ah m ih s t ih k dh ih d aw w er ao r dh er
+mdl_fs_al:	(0.31)	ay f ih ng k dh eh r iy z ah m m ih s t ey k dh iy d aw w er ao r dh er
+
+
+rec_id:			55A42749-B30E-4A89-B154-FFB91C468B13
+target:			I do a lot of weight training.
+guess:			I do a lot a weight an training
+tar_pn:			ay d uw ah l aa t ah v w ey t t r ey n ih ng
+ges_pn:			ay d uw ah l aa t ah w ey t ae n t r ey n ih ng
+mdl_pt_na:	(0.11)	ay d uw ah l aa t ah v w ey t r ey n ih ng z
+mdl_pt_al:	(0.17)	ay d uw ah l aa t ah w ey t r ey n ih ng z
+mdl_fs_na:	(0.28)	ay d uw aa t ah w ey t r ey n ih ng z
+mdl_fs_al:	(0.39)	ay d uw aa t ah l ey t ey n ih ng z
+
+
+rec_id:			566D960D-CD69-4635-9CA2-6226DAA9E962
+target:			I learn quickly.
+guess:			I am romantically I'll learn quickly
+tar_pn:			ay l er n k w ih k l iy
+ges_pn:			ay ae m r ow m ae n t ih k ah l iy ay l l er n k w ih k l iy
+mdl_pt_na:	(1.1)	ay l er n ch ih k l iy ay ae m l ae n p ih k l iy
+mdl_pt_al:	(1.1)	ay l er n t ih k l iy ay ae m l aa n p ih k l iy
+mdl_fs_na:	(1.3)	ay r aa n t iy k l iy ay m l ah ng p iy k l iy
+mdl_fs_al:	(1.3)	ay r ah n t ey k l iy ay m l ah n p iy k l iy
+
+
+rec_id:			569F47CB-859A-4EEE-A642-2C860EC5A6EC
+target:			going to Brazil
+guess:			Going to brazil
+tar_pn:			g ow ih ng t uw b r ah z ih l
+ges_pn:			g ow ih ng t uw b r ah z ih l
+mdl_pt_na:	(0.17)	g ow ih ng t uw b er z ih l
+mdl_pt_al:	(0.25)	g ow ih ng t uw b er s ih l
+mdl_fs_na:	(0.25)	g ow ih ng t uw b er s ih l
+mdl_fs_al:	(0.33)	g ow ih ng t ah b er z ah l
+
+
+rec_id:			56CD7BA6-A574-42CC-ACAF-8A84B6076813
+target:			I've always wanted to try skydiving.
+guess:			I've always wanted to try skydiving
+tar_pn:			ay v ao l w ey z w ao n t ih d t uw t r ay s k ay d ay v ih ng
+ges_pn:			ay v ao l w ey z w ao n t ih d t uw t r ay s k ay d ay v ih ng
+mdl_pt_na:	(0.15)	ay v ao l w ey z w eh n t t uw t r ay f k ay d ay v ih ng
+mdl_pt_al:	(0.23)	ay v ao l w ey z w aa n t t ih t r ay v k ay d ay v ih
+mdl_fs_na:	(0.5)	ay ao ey sh l eh t t r ay f t ay d ay v ih ng
+mdl_fs_al:	(0.5)	ay er ey sh l ay t t r ay f k ay d ay v ih ng
+
+
+rec_id:			57AABF81-2B3B-414A-817A-EED59F3593E9
+target:			We ended up sleeping at the airport.
+guess:			We ended up sleeping at the airport
+tar_pn:			w iy eh n d ah d ah p s l iy p ih ng ae t dh ah eh r p ao r t
+ges_pn:			w iy eh n d ah d ah p s l iy p ih ng ae t dh ah eh r p ao r t
+mdl_pt_na:	(0.08)	w iy eh n d ah d ah p s ow iy p ih ng ae t dh ah eh r f ao r t
+mdl_pt_al:	(0.2)	w iy eh n d ih d ah p s ow iy p iy ng ae t dh iy eh r f ao r t
+mdl_fs_na:	(0.4)	w ey ae n d ih d ah p s s ah p p ih ng ae t d ah eh r f er t
+mdl_fs_al:	(0.36)	w ey ae n d ih d ah p s s ow ay p ih ng ae t d iy eh r f ao r t
+
+
+rec_id:			58070A17-E25C-4B9C-B1A1-4F6EB401AB35
+target:			I exercise in the morning.
+guess:			I exercise in the morning
+tar_pn:			ay eh k s er s ay z ih n dh ah m ao r n ih ng
+ges_pn:			ay eh k s er s ay z ih n dh ah m ao r n ih ng
+mdl_pt_na:	(0.33)	ay ae k s ah s ay ih n dh ah m ao n ah
+mdl_pt_al:	(0.39)	ay ae k s ah l s ay ih n dh ah m ao n uw
+mdl_fs_na:	(0.5)	ay ae s er s f ay ih dh ah v m ah n ih
+mdl_fs_al:	(0.44)	ay ae s er z ay ih dh ah m ah n ih
+
+
+rec_id:			58BC9030-DD58-49C9-A468-258EFB19DA39
+target:			But I've been thinking about buying a food truck.
+guess:			I've been thinking about buying a food truck
+tar_pn:			b ah t ay v b ih n th ih ng k ih ng ah b aw t b ay ih ng ah f uw d t r ah k
+ges_pn:			ay v b ih n th ih ng k ih ng ah b aw t b ay ih ng ah f uw d t r ah k
+mdl_pt_na:	(0.2)	b ah t ay v b ih n th ih ng jh ih n ah b aw t m ay n ah f uw t r ah k
+mdl_pt_al:	(0.2)	b ah t ay v b ih n th ih ng jh ih n ah b aw t m ay n ah f uw t r ah k
+mdl_fs_na:	(0.4)	b ae t ay b ah n d ih ng k n ah b aw t ay n ah f ih k t r k
+mdl_fs_al:	(0.4)	b ah t ay b ah n d ih ng ch n ah b aw t ay y er f l uh t r ah k
+
+
+rec_id:			59EBD1DD-0D78-4C77-93CF-53CEA7D410D5
+target:			And I might go to a Maroon 5 concert on Sunday.
+guess:			I and I might an go to maroon five concert on son
+tar_pn:			ah n d ay m ay t g ow t uw ah m er uw n <UNK> k aa n s er t aa n s ah n d ey
+ges_pn:			ay ah n d ay m ay t ae n g ow t uw m er uw n f ay v k aa n s er t aa n s ah n
+mdl_pt_na:	(0.3)	ah n d ay m ay g ow t uw m eh r er n f ay k aa n s er t aa n s ah n
+mdl_pt_al:	(0.3)	ah n d ay m ay t g ow t ah m eh r er f ay k aa n s er t ao n s ah n
+mdl_fs_na:	(0.43)	ae n d ay m ay k g ow t er m eh r ow f ay k ah n s er t ah n s ah m d
+mdl_fs_al:	(0.5)	ae n d ay m ay k ow t er m eh r ah f ay k ah n s er z ao n s ah m d
+
+
+rec_id:			5A7332D2-E62C-4920-A811-8ED2947DF19B
+target:			I really wanna get toned.
+guess:			I really want to get it towed
+tar_pn:			ay r ih l iy w aa n ah g eh t t ow n d
+ges_pn:			ay r ih l iy w aa n t t uw g eh t ih t t ow d
+mdl_pt_na:	(0.19)	ay r ih l iy w aa n t ah g eh t t ao d
+mdl_pt_al:	(0.12)	ay r ih l iy w aa n ah g eh t t ao l d
+mdl_fs_na:	(0.44)	ay r uw l iy w ah t ay g eh t t aw l ah d
+mdl_fs_al:	(0.19)	ay r ih l iy w aa t ah g eh t t aa l d
+
+
+rec_id:			5AA91471-C134-460C-9A78-B943A5595789
+target:			No, I'm not.
+guess:			No I am not
+tar_pn:			n ow ay m n aa t
+ges_pn:			n ow ay ae m n aa t
+mdl_pt_na:	(0.43)	n oy n aa t
+mdl_pt_al:	(0.43)	n oy n aa t
+mdl_fs_na:	(0.43)	l ay m aa t
+mdl_fs_al:	(0.57)	n ay n ah
+
+
+rec_id:			5AF84B9D-213F-4D80-A26F-AFB85F7C6EEC
+target:			I have a water.
+guess:			I have a water
+tar_pn:			ay hh ae v ah w ao t er
+ges_pn:			ay hh ae v ah w ao t er
+mdl_pt_na:	(0.0)	ay hh ae v ah w ao t er
+mdl_pt_al:	(0.0)	ay hh ae v ah w ao t er
+mdl_fs_na:	(0.0)	ay hh ae v ah w ao t er
+mdl_fs_al:	(0.22)	ay hh ae v ah w uh d er
+
+
+rec_id:			5B796AFD-BAA7-4A6C-A931-D9A900B9FF71
+target:			Could we pay by credit card?
+guess:			Could we pay by credit card
+tar_pn:			k uh d w iy p ey b ay k r eh d ah t k aa r d
+ges_pn:			k uh d w iy p ey b ay k r eh d ah t k aa r d
+mdl_pt_na:	(0.0)	k uh d w iy p ey b ay k r eh d ah t k aa r d
+mdl_pt_al:	(0.16)	k uh d w iy p ey b ay k r eh d ah k ah l d
+mdl_fs_na:	(0.26)	k uh d w ih p p ey b ay k r eh d k aa r t
+mdl_fs_al:	(0.32)	k uh d w ih p ey b ay k r eh d ih k er t
+
+
+rec_id:			5C76D7AF-FF2B-4E12-A8FA-693BCBEACE66
+target:			Could we have the check, please?
+guess:			Could we have the check please
+tar_pn:			k uh d w iy hh ae v dh ah ch eh k p l iy z
+ges_pn:			k uh d w iy hh ae v dh ah ch eh k p l iy z
+mdl_pt_na:	(0.12)	k uh d w iy hh ae v dh ah ch eh k t l iy f
+mdl_pt_al:	(0.18)	k uh d w iy hh ae v dh ah ch eh k t l ah f
+mdl_fs_na:	(0.35)	k uh d ah dh iy hh ae p dh ah t ch eh t p l iy f
+mdl_fs_al:	(0.24)	k uh d ah dh iy hh ae v d ah ch eh k p l iy f
+
+
+rec_id:			5CE84F44-F401-4CD1-B1BD-28757F959BE4
+target:			living in another country
+guess:			Living a another a country
+tar_pn:			l ih v ih ng ih n ah n ah dh er k ah n t r iy
+ges_pn:			l ih v ih ng ah ah n ah dh er ah k ah n t r iy
+mdl_pt_na:	(0.22)	l eh t ih ng ah n ah dh er k ah n t r iy
+mdl_pt_al:	(0.22)	l eh t ih ng ah n ah dh er k ah n t r iy
+mdl_fs_na:	(0.28)	l eh v ih ng ah n dh aa dh er k ah n t r iy
+mdl_fs_al:	(0.33)	l eh t ih ng ah n dh aa dh er k ah n t r iy
+
+
+rec_id:			5D51E200-585E-4268-BF58-47DE8AABCEC0
+target:			I exercise every other week.
+guess:			I exercise a every a other
+tar_pn:			ay eh k s er s ay z eh v er iy ah dh er w iy k
+ges_pn:			ay eh k s er s ay z ah eh v er iy ah ah dh er
+mdl_pt_na:	(0.17)	ay eh k s er s ay z eh v er iy ah dh er
+mdl_pt_al:	(0.22)	ay eh k s er s ay z eh v r iy ah dh er
+mdl_fs_na:	(0.44)	ay ae s er s ay z eh v er ey ao l dh er
+mdl_fs_al:	(0.5)	ay ae s er s ay z eh v r ey ao l dh er
+
+
+rec_id:			5DE70D35-A5E4-4082-8D08-80DAE1868C93
+target:			That was really cool.
+guess:			That was really cool
+tar_pn:			dh ae t w aa z r ih l iy k uw l
+ges_pn:			dh ae t w aa z r ih l iy k uw l
+mdl_pt_na:	(0.23)	dh eh r aa z r ih l iy k uw l
+mdl_pt_al:	(0.31)	dh eh r w ah z r iy l iy k uw l
+mdl_fs_na:	(0.54)	eh r aa z ah r ih l ah k ow l
+mdl_fs_al:	(0.46)	eh r ah z ah r ih l iy k uw l
+
+
+rec_id:			5E62528A-849B-428D-B3E9-1468B64594B4
+target:			My return flight was delayed by two hours.
+guess:			My return flight delayed by two hours at work
+tar_pn:			m ay r ih t er n f l ay t w aa z d ih l ey d b ay t uw aw er z
+ges_pn:			m ay r ih t er n f l ay t d ih l ey d b ay t uw aw er z ae t w er k
+mdl_pt_na:	(0.27)	m ay r ih t er n f ah l ay d iy l ey t b ay t uw aw er z
+mdl_pt_al:	(0.35)	m ay r iy t er n f ao l ay d ih l ey t b ay t uw aw er z ah w
+mdl_fs_na:	(0.54)	m ay r ih t aa f ah l ay d ih l ay t b ay t aa r er ih z ah w
+mdl_fs_al:	(0.54)	m ay r iy t ah f ah l ay d ih l ey t b ay t uw aa r ih z ah w
+
+
+rec_id:			5F6D5D26-C88E-4C05-900F-DD7FEDADD689
+target:			I do taekwondo every day.
+guess:			I do a taekwondo every day
+tar_pn:			ay d uw t ae k w aa n d ow eh v er iy d ey
+ges_pn:			ay d uw ah t ae k w aa n d ow eh v er iy d ey
+mdl_pt_na:	(0.18)	ay d uw t ey k aa n dh ow eh v er iy d ey
+mdl_pt_al:	(0.29)	ay d iy t ey k aa n dh ow eh v r iy d ey
+mdl_fs_na:	(0.29)	ay d uw z p ae k ah n d ow eh v iy d ey
+mdl_fs_al:	(0.41)	ay d uw z p ey k ah n d ow eh v iy dh ey
+
+
+rec_id:			5F82FEF4-5E65-444C-9D60-D5D152EF62C3
+target:			What are you up to this weekend?
+guess:			What are you up to this weekend
+tar_pn:			w ah t aa r y uw ah p t uw dh ih s w iy k eh n d
+ges_pn:			w ah t aa r y uw ah p t uw dh ih s w iy k eh n d
+mdl_pt_na:	(0.0)	w ah t aa r y uw ah p t uw dh ih s w iy k eh n d
+mdl_pt_al:	(0.15)	w ah t er y uw ah p t ah dh ih s w iy k eh n d
+mdl_fs_na:	(0.25)	w eh t ay y ah p t uw dh ih s w iy k ae n d
+mdl_fs_al:	(0.45)	w eh dh ay ah p t ah d ih s w ey k eh n d
+
+
+rec_id:			614459EA-D662-409E-B04A-5A130EEAF65A
+target:			Who is the teacher?
+guess:			I is the teacher
+tar_pn:			hh uw ih z dh ah t iy ch er
+ges_pn:			ay ih z dh ah t iy ch er
+mdl_pt_na:	(0.3)	dh iy z dh ah t iy ch er
+mdl_pt_al:	(0.2)	ih z dh ah t iy ch er
+mdl_fs_na:	(0.6)	iy s t ah t t iy ch er
+mdl_fs_al:	(0.3)	ih z p ah t iy ch er
+
+
+rec_id:			614ACBEA-7EA1-4C09-96B9-0CA987DD6778
+target:			You are
+guess:			You are
+tar_pn:			y uw aa r
+ges_pn:			y uw aa r
+mdl_pt_na:	(0.0)	y uw aa r
+mdl_pt_al:	(0.0)	y uw aa r
+mdl_fs_na:	(0.5)	y uw ay
+mdl_fs_al:	(0.5)	y uw ay
+
+
+rec_id:			61F20D05-0B27-4C1B-8569-4911FFBA6F14
+target:			Okay. And I want to help you.
+guess:			OK and I want to help you
+tar_pn:			ow k ey ah n d ay w aa n t t uw hh eh l p y uw
+ges_pn:			ow k ey ah n d ay w aa n t t uw hh eh l p y uw
+mdl_pt_na:	(0.0)	ow k ey ah n d ay w aa n t t uw hh eh l p y uw
+mdl_pt_al:	(0.11)	ow k ey ae n d ay w ao n t t uw hh eh l p y uw
+mdl_fs_na:	(0.37)	ah k ey ae n d ay hh w ah n t uw hh aw p y uw
+mdl_fs_al:	(0.37)	ah k ey ae n d ay w ah n t uw hh ae p uw
+
+
+rec_id:			620093EE-3CB8-4368-BF68-8DCEFDEAAAB0
+target:			I get so eager sometimes.
+guess:			I get a so a eager a sometimes
+tar_pn:			ay g eh t s ow iy g er s ah m t ay m z
+ges_pn:			ay g eh t ah s ow ah iy g er ah s ah m t ay m z
+mdl_pt_na:	(0.0)	ay g eh t s ow iy g er s ah m t ay m z
+mdl_pt_al:	(0.06)	ay g ih t s ow iy g er s ah m t ay m z
+mdl_fs_na:	(0.38)	ay g ih z ow iy g er z ah m th ah m z
+mdl_fs_al:	(0.31)	ay g ih s ow b iy g er z ah m th ay m z
+
+
+rec_id:			63184BB1-9812-482F-B89A-D378187849F0
+target:			My number's 545-1937.
+guess:			My numbers 505-197-1937 my number is 5451971933737 my number is 55451937 by numbers 545-1937
+tar_pn:			m ay n ah m b er z <UNK>
+ges_pn:			m ay n ah m b er z <UNK> m ay n ah m b er ih z <UNK> m ay n ah m b er ih z <UNK> b ay n ah m b er z <UNK>
+mdl_pt_na:	(17.0)	m ay n ah m b er z f ay v ao l f ay w ah n t n ay s eh v ah n w ah n n ay s th r iy z eh v ah n m ay n ah m b er z f ay v p ao r f ay k w ah n n ay n s eh v ah n w ah n n ay n s t ao r iy d r iy k d eh v ah n d r ih ng s s eh v ah n f ay n ah m b er z f ay v f ay v f ao r f ay dh w ah n n ay n d r iy s eh v ah n ay n ah m b er z f ay f ao r f ay v w ah n n ay n d r iy s eh v ah n
+mdl_pt_al:	(16.78)	m ay n ah m b er z b ay t ao l f ay w ah n n ay s eh v ah n w ah n n ay z th r iy s eh v ah n m ay n ah m b er z f ay v b ao r f ay k w ah n n ay n s eh v ah n hh w ah n n ay n s th er r iy d r iy k d eh v ah n d r iy s eh v ah n m ay n ah m b er z f ay s b ay v f ao r f ay dh w ah n n ay n d r iy s eh v ah n ay n ah m b er z f ay f ao r f ay hh w ah n n ay n d r ih s eh v ah n
+mdl_fs_na:	(16.11)	m ay n ah m b er s ay ow b ay w ah n n ay s eh v ah n w ah n n ay z dh er iy z dh eh m ah n m ay n ah n b ow s b ay b ao r f ay g hh w ah n n ay n s dh eh v ah n hh w ah n n ay z dh eh r iy d ih k dh eh v ah n d r iy s dh ae t ah n s b ay n ah m b er s ay ay f f ow b ay dh w ah n n ay n f r iy z eh n ah n ay n aa t b er s sh ay ao l b ay hh w ah n n ay n g r iy s eh m ah n
+mdl_fs_al:	(14.89)	m ay n ah m b er s ay ao f ay w ah n n ay s eh v ah n ah n n ey t dh ah iy z dh eh b ah n m ay n ah n b er s b ay b ao r f ay k w ah n n ay n s eh v ah n w ah n n ay s eh r iy d r ih dh eh t ah n d r ey s eh b ah n b ay n ah b er s ay ay f ao b ay dh l ah n n ay n b r iy s eh v ah n t ay n aa t b er s sh ay ao r b ay w ah n n ay d ey s eh v ah n
+
+
+rec_id:			632455E9-CF46-4BE9-A3C1-D51E07C9796A
+target:			I run a cafe.
+guess:			I run a cafe
+tar_pn:			ay r ah n ah k ah f ey
+ges_pn:			ay r ah n ah k ah f ey
+mdl_pt_na:	(0.11)	ay r ah n ah k ah f iy
+mdl_pt_al:	(0.22)	ay r ah n ah k ae f iy
+mdl_fs_na:	(0.44)	ay r ao n ah k ae s iy
+mdl_fs_al:	(0.22)	ay r ah n ah k ae f iy
+
+
+rec_id:			636635B1-5179-44FD-933B-D3D52D61A850
+target:			We know them.
+guess:			I know them
+tar_pn:			w iy n ow dh eh m
+ges_pn:			ay n ow dh eh m
+mdl_pt_na:	(0.0)	w iy n ow dh eh m
+mdl_pt_al:	(0.14)	f iy n ow dh eh m
+mdl_fs_na:	(0.43)	f ih n ow t eh m
+mdl_fs_al:	(0.57)	f ih n er dh eh m s
+
+
+rec_id:			63EA7AB2-4ECF-4E71-824C-FF40BF8D9DF5
+target:			I'm so excited.
+guess:			I am so excited
+tar_pn:			ay m s ow ih k s ay t ah d
+ges_pn:			ay ae m s ow ih k s ay t ah d
+mdl_pt_na:	(0.09)	ih m s ow ih k s ay t ah d
+mdl_pt_al:	(0.18)	ay m s ow ih g s ay t ih d
+mdl_fs_na:	(0.27)	ay m t ow ih k s ay d ih d
+mdl_fs_al:	(0.27)	ay m s ow ih s ay d ih d
+
+
+rec_id:			64FCE509-D172-4923-AC7F-0F3F8C8C4551
+target:			Have you thought about going camping?
+guess:			Have you thought about going camping
+tar_pn:			hh ae v y uw th ao t ah b aw t g ow ih ng k ae m p ih ng
+ges_pn:			hh ae v y uw th ao t ah b aw t g ow ih ng k ae m p ih ng
+mdl_pt_na:	(0.0)	hh ae v y uw th ao t ah b aw t g ow ih ng k ae m p ih ng
+mdl_pt_al:	(0.05)	hh ey v y uw th ao t ah b aw t g ow ih ng k ae m p ih ng
+mdl_fs_na:	(0.32)	hh ae b ih s aa t ah b aa g ow ih ng k ae m p ih ng
+mdl_fs_al:	(0.45)	hh ey b ih s er r ah b aa k ow ih ng k ae m p ih ng
+
+
+rec_id:			66870487-E8AB-4E67-9969-50A8DD3E5A66
+target:			I let down my parents.
+guess:			I'll let my parents
+tar_pn:			ay l eh t d aw n m ay p eh r ah n t s
+ges_pn:			ay l l eh t m ay p eh r ah n t s
+mdl_pt_na:	(0.06)	ay l eh t d aw n m ay p eh r ah n t
+mdl_pt_al:	(0.06)	ay l eh t d aw n m ay p eh r ah n t
+mdl_fs_na:	(0.31)	ay w eh f d ah m m ay p eh r ah n t
+mdl_fs_al:	(0.25)	ay l eh t dh aa m m ay p eh r ah n t
+
+
+rec_id:			66942053-D970-4E49-B5E0-C225C803EA47
+target:			I do a lot of pull-ups.
+guess:			I do a lot a pull a ups
+tar_pn:			ay d uw ah l aa t ah v p uh l ah p s
+ges_pn:			ay d uw ah l aa t ah p uh l ah ah p s
+mdl_pt_na:	(0.27)	ay d uw ah l aa t ah v p r aa f s
+mdl_pt_al:	(0.13)	ay d uw ah l aa t ah v p r ah p s
+mdl_fs_na:	(0.53)	ay d uw aa r aw t ah p ao r ah v
+mdl_fs_al:	(0.6)	ay t uw aw t ah p ao r l s
+
+
+rec_id:			678C05BF-BDC3-4F1E-AFE1-D1E0A5A92C12
+target:			My favorite foods are fried chicken and sushi.
+guess:			My favorite foods are fried chicken and sushi
+tar_pn:			m ay f ey v er ih t f uw d z aa r f r ay d ch ih k ah n ah n d s uw sh iy
+ges_pn:			m ay f ey v er ih t f uw d z aa r f r ay d ch ih k ah n ah n d s uw sh iy
+mdl_pt_na:	(0.13)	ay f ey v er ih t f uw z aa r f ay d ch ih k ah n ah n s uw sh iy
+mdl_pt_al:	(0.13)	ay f ey v er ih t f uw z aa r f r ay v ch ih k ah n ae n d s uw sh iy
+mdl_fs_na:	(0.3)	ay f ey v r ih f f uw z aa r f ay ch ih k ih ng ae n d s uw sh iy
+mdl_fs_al:	(0.4)	ay f ey w ih f uw z aa r f ay ch iy k ih n ae n s ih sh iy
+
+
+rec_id:			69A965B4-37C0-417C-8BA5-99691FB99735
+target:			I go ice skating all the time.
+guess:			I go skateboarding all the time
+tar_pn:			ay g ow ay s s k ey t ih ng ao l dh ah t ay m
+ges_pn:			ay g ow s k ey t b ao r d ih ng ao l dh ah t ay m
+mdl_pt_na:	(0.39)	ay g ow s k ey p f ao r d ih ng ao l dh ah t ay m
+mdl_pt_al:	(0.39)	ay g ow s k ey p b ao r d ih ng ao l dh ah t ay m
+mdl_fs_na:	(0.44)	ay g ow s k ey f ao r z ih ng ao r d ah t ay m
+mdl_fs_al:	(0.39)	ay g ow s k ey f ao d ih ng ao r d ah t ay m
+
+
+rec_id:			69CDEC86-A209-49FF-A1C3-E2D5FA865F7D
+target:			traveling in Asia
+guess:			Traveling an in
+tar_pn:			t r ae v ah l ih ng ih n ey zh ah
+ges_pn:			t r ae v ah l ih ng ae n ih n
+mdl_pt_na:	(0.23)	t r ae v ah l ih ng ih n
+mdl_pt_al:	(0.23)	t r ae v ah l ih ng ih n
+mdl_fs_na:	(0.54)	t r eh v ah l l ey n uw n ae
+mdl_fs_al:	(0.46)	s eh v ah l iy ih ng ih n ey
+
+
+rec_id:			6A0D6FFE-86CB-4105-8759-07582E861A9E
+target:			I might visit my parents this Saturday.
+guess:			I am I bitching my parents this Saturday
+tar_pn:			ay m ay t v ih z ih t m ay p eh r ah n t s dh ih s s ae t er d iy
+ges_pn:			ay ae m ay b ih ch ih ng m ay p eh r ah n t s dh ih s s ae t er d iy
+mdl_pt_na:	(0.11)	ay m ay b ih z iy t m ay p eh r ah n t s dh ih s s ae t er d iy
+mdl_pt_al:	(0.19)	ay m ay b ih z iy m ay p eh r ah n t s dh ih s s ae t er d ey
+mdl_fs_na:	(0.44)	ay ae m ay b ih jh m m ay p eh r ah n s d ih s eh t er dh ey
+mdl_fs_al:	(0.48)	ay ae m m ay ah b ih t er m ay p eh r ah n s d ih s eh t er dh ey
+
+
+rec_id:			6A2D8DDD-002F-41B1-B0F0-9149742D875D
+target:			No, we're not.
+guess:			No I'm not I am not
+tar_pn:			n ow w iy r n aa t
+ges_pn:			n ow ay m n aa t ay ae m n aa t
+mdl_pt_na:	(1.0)	n ay v n aa t ay ae m n aa t
+mdl_pt_al:	(1.12)	n ay m n aa t ay ey eh m n aa t
+mdl_fs_na:	(1.0)	dh ay n aa t ay ae v n aa t t
+mdl_fs_al:	(0.88)	n ay n aa t ay ae v n aa t
+
+
+rec_id:			6A621DC6-E9AF-4898-9605-9A29B65F5255
+target:			I wanted to check out The Golden Gate Bridge.
+guess:			I wanted to I wanted to check out the Golden Gate bridge
+tar_pn:			ay w ao n t ih d t uw ch eh k aw t dh ah g ow l d ah n g ey t b r ih jh
+ges_pn:			ay w ao n t ih d t uw ay w ao n t ih d t uw ch eh k aw t dh ah g ow l d ah n g ey t b r ih jh
+mdl_pt_na:	(0.28)	ay w eh n t t uw ay w ao n t ih d t uw ch eh k aw t dh ah g ow l d ah n g ey b r ih jh
+mdl_pt_al:	(0.34)	ay w aa n t t uw ay w ao n t ih d t ih ch eh k aw t dh ah g ow l d ah n g ey b r ih ch
+mdl_fs_na:	(0.52)	ay w ay t t uw ay w ah n ih t t ah t eh k aw t dh ah g ow d ih n g ey v b r iy
+mdl_fs_al:	(0.62)	ay w ay t t uw ay w ah n ih t t ih t eh k aw z dh ah g ow d ih ng g ey p r iy ch
+
+
+rec_id:			6AE0C89F-9E6E-4672-9C7F-0F72137788E4
+target:			I wanted to check out the Picasso Museum.
+guess:			I wanted a check a out a picasso a museum
+tar_pn:			ay w ao n t ih d t uw ch eh k aw t dh ah p ih k aa s ow m y uw z iy ah m
+ges_pn:			ay w ao n t ih d ah ch eh k ah aw t ah p ih k aa s ow ah m y uw z iy ah m
+mdl_pt_na:	(0.1)	ay w ao n t ih d t uw ch eh k aw t dh ah b ih k aa z s ah m y uw z iy ah m
+mdl_pt_al:	(0.17)	ay w ao n t ih d t ah ch eh k aw t dh ah b ih k ah z s ah m y uw z iy ah m
+mdl_fs_na:	(0.38)	ay w aa n t ih t ah t uw k ah t dh ah b ih k k ae s ah m y uw z iy m
+mdl_fs_al:	(0.48)	ay w ah n ih t ah t ih k ah t ah b iy k ah s ah m y uw z uw m
+
+
+rec_id:			6B2AE9CC-7013-42AF-BCF8-BFA2CAA06984
+target:			What do you do?
+guess:			What do you do
+tar_pn:			w ah t d uw y uw d uw
+ges_pn:			w ah t d uw y uw d uw
+mdl_pt_na:	(0.0)	w ah t d uw y uw d uw
+mdl_pt_al:	(0.11)	hh w ah t d uw y uw d uw
+mdl_fs_na:	(0.11)	w ah t dh uw y uw d uw
+mdl_fs_al:	(0.11)	hh w ah t d uw y uw d uw
+
+
+rec_id:			6BE4092D-5A5E-4A7C-A7B5-2FA7898CA4BD
+target:			living with friends
+guess:			Living with friends
+tar_pn:			l ih v ih ng w ih dh f r eh n d z
+ges_pn:			l ih v ih ng w ih dh f r eh n d z
+mdl_pt_na:	(0.07)	l iy v ih ng w ih dh f r eh n d z
+mdl_pt_al:	(0.21)	l iy v ih ng w ih th f r eh n z
+mdl_fs_na:	(0.21)	l ay v ih ng r ih dh f r eh n z
+mdl_fs_al:	(0.21)	w ey v ih ng w ih dh f r eh n z
+
+
+rec_id:			6C0340A3-1BCF-452A-95FA-9D34BCB44ED1
+target:			I love spending time with family.
+guess:			I love spending time with family
+tar_pn:			ay l ah v s p eh n d ih ng t ay m w ih dh f ae m ah l iy
+ges_pn:			ay l ah v s p eh n d ih ng t ay m w ih dh f ae m ah l iy
+mdl_pt_na:	(0.17)	ay l ah v z p eh n d ih ng t ay m w ih dh f r ah m ah n l iy
+mdl_pt_al:	(0.13)	ay l ah v z p eh n d ih ng t ay m w ih dh f r ah m ah l iy
+mdl_fs_na:	(0.43)	ay l aa v p ae n d ih ng ay m m uw t f r aw m ah n iy
+mdl_fs_al:	(0.3)	ay l aw v s p ae n d ih ng t ay m b iy d f ah m ah n iy
+
+
+rec_id:			6C854032-63B7-4132-9230-7DC5F747B04F
+target:			And we need to sweep the kitchen floor.
+guess:			We need to sweep the floor I sweep the kitchen floor
+tar_pn:			ah n d w iy n iy d t uw s w iy p dh ah k ih ch ah n f l ao r
+ges_pn:			w iy n iy d t uw s w iy p dh ah f l ao r ay s w iy p dh ah k ih ch ah n f l ao r
+mdl_pt_na:	(0.36)	ah n d w iy n iy d t uw s w iy p dh ah f l ao r ah t s iy p k ih ch ah n f l ao r
+mdl_pt_al:	(0.52)	ae n d w ih n iy d t uw s w iy p dh ah f l ao r ae s iy p ah k ih t ah n f ah l ao r
+mdl_fs_na:	(0.76)	ae n d w ih n n ey uw z w ih p dh ah f l ao r ah t s uw p ah k ih t ah f l ao r
+mdl_fs_al:	(0.84)	ae t w ih n n iy ch uw z w iy dh ah f l ao r ah t s uw p ah k ih ch uw f l ao r
+
+
+rec_id:			6C86D071-E2C1-4073-A392-E26E5E6FF98C
+target:			Actually, I've been thinking about living with friends.
+guess:			Actually I've been thinking about living with my friends
+tar_pn:			ae k ch uw ah l iy ay v b ih n th ih ng k ih ng ah b aw t l ih v ih ng w ih dh f r eh n d z
+ges_pn:			ae k ch uw ah l iy ay v b ih n th ih ng k ih ng ah b aw t l ih v ih ng w ih dh m ay f r eh n d z
+mdl_pt_na:	(0.22)	ae k ch ah l iy ay v iy th ih ng k ih ng ah b aw t l ih v ih ng s m ay f f r eh n d z
+mdl_pt_al:	(0.22)	ae k ch ah l iy ay b ih th ih ng k ih ng ah b aw t l ih v ih ng s m ay f f r eh n z
+mdl_fs_na:	(0.42)	ay k s l iy ay b ih f ih ng k ih ng ah b aw l ih b ih ng aa z m ay f f r eh n z
+mdl_fs_al:	(0.44)	ay k s l iy ay b ih d ih ng t ah ng ah b aw l ih v ih ng ah s m ay f f r eh n z
+
+
+rec_id:			6E05DDBE-91AC-4C72-95E2-73099AEF65DF
+target:			Good to see you, too! Welcome to Shanghai!
+guess:			Good to see you too welcome to Shanghai
+tar_pn:			g uh d t uw s iy y uw t uw w eh l k ah m t uw sh ae ng hh ay
+ges_pn:			g uh d t uw s iy y uw t uw w eh l k ah m t uw sh ae ng hh ay
+mdl_pt_na:	(0.21)	k uh d t uw s iy y uw t uw m eh r k ah m t uw sh ae m ay
+mdl_pt_al:	(0.17)	k uh d t uw s iy y uw t uw m eh k ah m t uw sh ae m hh ay
+mdl_fs_na:	(0.46)	k uh d t ah s iy t uw b eh k ah n t ah sh ah n ay
+mdl_fs_al:	(0.5)	k uh d t ih s uw t uw ae k ah n t ah sh ah n ay
+
+
+rec_id:			6E7E34B2-2E78-4C45-B74E-3A9BBB6A9835
+target:			Is she a model?
+guess:			Is she a model mall
+tar_pn:			ih z sh iy ah m aa d ah l
+ges_pn:			ih z sh iy ah m aa d ah l m ao l
+mdl_pt_na:	(0.9)	ih f sh iy ah m ao r m ao r b ao r
+mdl_pt_al:	(0.8)	ih f hh iy ah m ao m ao b ao r
+mdl_fs_na:	(1.0)	ih f sh iy ah m m ao r m ao b ao r d
+mdl_fs_al:	(0.7)	ih z sh iy ah m ao r m ao b ao dh
+
+
+rec_id:			6E814FD9-0E39-4106-AE66-927CD04CBBD7
+target:			Also, could you tell me where the fitting room is?
+guess:			Where is the could could you tell me where are where are the fitting an is
+tar_pn:			ao l s ow k uh d y uw t eh l m iy w eh r dh ah f ih t ih ng r uw m ih z
+ges_pn:			w eh r ih z dh ah k uh d k uh d y uw t eh l m iy w eh r aa r w eh r aa r dh ah f ih t ih ng ae n ih z
+mdl_pt_na:	(0.45)	w ao l s ow k uh d k uh d y uw t eh l m iy w eh r w iy aa r dh ah f ih v y ah n r uw m iy z
+mdl_pt_al:	(0.41)	ao l s ow k uh d k uh d y uw t eh l m iy w eh r w iy aa r dh ah f ih v y uw n uw m iy z
+mdl_fs_na:	(0.55)	ao s ow k uh k k uh d y uw t eh r m iy w eh r r iy aa r dh ah v ih l uw n ah m iy z
+mdl_fs_al:	(0.59)	ao s ow k uh d k uh d y uw t eh r m iy w eh r w eh r dh eh v iy l uw n ah m iy s
+
+
+rec_id:			6EA569C1-8252-4E6D-B17A-DC648F95F4F2
+target:			We'll need to save money.
+guess:			Will need to save money
+tar_pn:			w iy l n iy d t uw s ey v m ah n iy
+ges_pn:			w ih l n iy d t uw s ey v m ah n iy
+mdl_pt_na:	(0.13)	w ih l n iy d t uw s ey m ah n iy
+mdl_pt_al:	(0.2)	w ih l n iy d t ih s ey m ah n iy
+mdl_fs_na:	(0.27)	w ih l l iy t uw s ey m m ah n iy
+mdl_fs_al:	(0.33)	w ih l iy t ih s ey m m ah n iy
+
+
+rec_id:			6F4F8BAB-A8D2-4FF8-89C5-807A0CADF593
+target:			Maybe I can just try it on here...
+guess:			Maybe
+tar_pn:			m ey b iy ay k ae n jh ah s t t r ay ih t aa n hh iy r
+ges_pn:			m ey b iy
+mdl_pt_na:	(0.82)	m ey b iy
+mdl_pt_al:	(0.82)	m ey b iy
+mdl_fs_na:	(0.77)	m ey b iy s
+mdl_fs_al:	(0.77)	m ey b iy s
+
+
+rec_id:			6FC06BA9-0EAF-444D-8530-30DCD3522658
+target:			It was different from Las Vegas.
+guess:			It was different from Las Vegas
+tar_pn:			ih t w aa z d ih f er ah n t f r ah m l aa s v ey g ah s
+ges_pn:			ih t w aa z d ih f er ah n t f r ah m l aa s v ey g ah s
+mdl_pt_na:	(0.25)	ih t r aa z ih f r ah n t f r ah m l ae s b ey d ah s
+mdl_pt_al:	(0.21)	ih t r ah z d ih f er ah n t f r ah m l ae s p ey d ah s
+mdl_fs_na:	(0.42)	ih t r aa z ih f r eh n f r ah ng dh ah s b ey dh ah s
+mdl_fs_al:	(0.46)	ih t r ah z uw f r ah m f r ah m dh ah s b ey d ah s
+
+
+rec_id:			702F81D9-20A0-4CE1-AA4B-385D6CAF851A
+target:			I'm coming.
+guess:			I'm coming
+tar_pn:			ay m k ah m ih ng
+ges_pn:			ay m k ah m ih ng
+mdl_pt_na:	(0.14)	ih m k ah m ih ng
+mdl_pt_al:	(0.0)	ay m k ah m ih ng
+mdl_fs_na:	(0.43)	ih m k ah l ih n
+mdl_fs_al:	(0.14)	ah m k ah m ih ng
+
+
+rec_id:			71041303-D3B2-4661-987B-CD41BDF93F23
+target:			Yes. I'm much better now.
+guess:			Yes I much a better a now
+tar_pn:			y eh s ay m m ah ch b eh t er n aw
+ges_pn:			y eh s ay m ah ch ah b eh t er ah n aw
+mdl_pt_na:	(0.36)	y eh s ay m er ch dh eh r n aw
+mdl_pt_al:	(0.43)	y eh s ay m ah ch dh eh r n ae t
+mdl_fs_na:	(0.5)	y eh f ay m aa r ch b eh r m ae
+mdl_fs_al:	(0.5)	y eh f ay m ao r ch b eh ah m ae
+
+
+rec_id:			7141809D-5AFF-474F-8714-BF89FDC0734C
+target:			I don't like going out.
+guess:			I dont an like a going a out
+tar_pn:			ay d ow n t l ay k g ow ih ng aw t
+ges_pn:			ay d ow n t ae n l ay k ah g ow ih ng ah aw t
+mdl_pt_na:	(0.0)	ay d ow n t l ay k g ow ih ng aw t
+mdl_pt_al:	(0.07)	ay d ow n l ay k g ow ih ng aw t
+mdl_fs_na:	(0.21)	ay d ah n t m ay k uh g ow ih ng aw t
+mdl_fs_al:	(0.36)	ay d ah n m ay k ah g ow ih ng ah t
+
+
+rec_id:			7297A4E6-806F-41EF-BC5F-BE84841EB0D3
+target:			How was your honeymoon?
+guess:			I was you're a honeymoon
+tar_pn:			hh aw w aa z y ao r hh ah n iy m uw n
+ges_pn:			ay w aa z y uh r ah hh ah n iy m uw n
+mdl_pt_na:	(0.2)	hh aw aa z y ao r hh ay n iy m ah n
+mdl_pt_al:	(0.27)	hh aw aa z y uh r hh ay n iy m ah n
+mdl_fs_na:	(0.4)	aw ah jh y ao r hh ay n iy m eh n
+mdl_fs_al:	(0.53)	aw ah ch y uh r hh ay n ih m ah n
+
+
+rec_id:			73341BC1-FCEC-4BEF-A894-CC92F9F47333
+target:			I have two sisters.
+guess:			I have to sisters
+tar_pn:			ay hh ae v t uw s ih s t er z
+ges_pn:			ay hh ae v t uw s ih s t er z
+mdl_pt_na:	(0.0)	ay hh ae v t uw s ih s t er z
+mdl_pt_al:	(0.0)	ay hh ae v t uw s ih s t er z
+mdl_fs_na:	(0.17)	ay hh ae v t uw s iy s t r z
+mdl_fs_al:	(0.08)	ay hh ae v t uw s iy s t er z
+
+
+rec_id:			74027C1A-A864-49DE-A0F1-DE04156FB507
+target:			Why is he here?
+guess:			Why is he here
+tar_pn:			w ay ih z hh iy hh iy r
+ges_pn:			w ay ih z hh iy hh iy r
+mdl_pt_na:	(0.0)	w ay ih z hh iy hh iy r
+mdl_pt_al:	(0.11)	hh w ay ih z hh iy hh iy r
+mdl_fs_na:	(0.33)	w ay ih n y uw z hh iy hh iy r
+mdl_fs_al:	(0.22)	w ay ih n uw hh iy hh iy r
+
+
+rec_id:			74386BD6-103B-4424-856A-E406C98196E6
+target:			I’ve been working out at the gym.
+guess:			I been an working an out an at the gym
+tar_pn:			ay v b ih n w er k ih ng aw t ae t dh ah jh ih m
+ges_pn:			ay b ih n ae n w er k ih ng ae n aw t ae n ae t dh ah jh ih m
+mdl_pt_na:	(0.32)	ay v er d ih ng aw t ae t dh ah jh uw m
+mdl_pt_al:	(0.26)	ay v ey l er th ih ng aw t ae t dh ah jh ih m
+mdl_fs_na:	(0.26)	ay v ih r er d ih ng aw t ae t dh ah jh iy m
+mdl_fs_al:	(0.32)	ay v eh r er t ih ng aw t ae t ah jh ih m
+
+
+rec_id:			745C6999-3715-4A22-B044-C60DC31D60C1
+target:			It seems like they broke up.
+guess:			It's like they broke up
+tar_pn:			ih t s iy m z l ay k dh ey b r ow k ah p
+ges_pn:			ih t s l ay k dh ey b r ow k ah p
+mdl_pt_na:	(0.47)	ih t s th eh r z l ay k d ey b r ah t ao f
+mdl_pt_al:	(0.53)	ih t s dh eh r z l ay k d ey b ah ao f
+mdl_fs_na:	(0.59)	ih z s dh eh r z t l ay k dh ey b ah ah f s
+mdl_fs_al:	(0.47)	ih s dh eh z ah l ay k dh ey b ah ah f
+
+
+rec_id:			756E5CC3-961F-42FF-A132-3EF555D47B82
+target:			I'm on a strict diet of eggs and fish.
+guess:			I am on a strict diet of eggs and fish
+tar_pn:			ay m aa n ah s t r ih k t d ay ah t ah v eh g z ah n d f ih sh
+ges_pn:			ay ae m aa n ah s t r ih k t d ay ah t ah v eh g z ah n d f ih sh
+mdl_pt_na:	(0.15)	ih m aa n ah s t r ih k t d ay ah t ah v eh k s ah n f ih sh
+mdl_pt_al:	(0.23)	ay m aa n ah s t r ih t d ay ah t t ah v eh k s eh n f ih sh
+mdl_fs_na:	(0.27)	ay m aa n ah s t r iy t d ay ah t ah v ae f ah n f r ih sh
+mdl_fs_al:	(0.35)	ay m ah n ah s p r iy t ay ah t ah eh k s ah n f ih sh
+
+
+rec_id:			76981CCC-B865-4093-86E9-8EDD7E20FF0D
+target:			No way! Bacon's greasy!
+guess:			No way bacon is Gracie
+tar_pn:			n ow w ey b ey k ah n z g r iy s iy
+ges_pn:			n ow w ey b ey k ah n ih z g r ey s iy
+mdl_pt_na:	(0.07)	n ow w ey b ey k aa n z g r iy s iy
+mdl_pt_al:	(0.0)	n ow w ey b ey k ah n z g r iy s iy
+mdl_fs_na:	(0.13)	n ow w ey b ey g ah n z g r ih s iy
+mdl_fs_al:	(0.07)	n ow w ey b ey k ah n z g r ih s iy
+
+
+rec_id:			76B557FC-39EA-43D5-85CA-771D81977A12
+target:			Nothing beats fried chicken.
+guess:			Nothing beats five chicken
+tar_pn:			n ah th ih ng b iy t s f r ay d ch ih k ah n
+ges_pn:			n ah th ih ng b iy t s f ay v ch ih k ah n
+mdl_pt_na:	(0.11)	n ah th ih ng b iy t s f ay z ch ih k ah n
+mdl_pt_al:	(0.11)	n ah th ih ng b iy t s f ay v ch ih k ah n
+mdl_fs_na:	(0.28)	n ah th ih ng b iy t f ay t ch iy k ih n
+mdl_fs_al:	(0.28)	n ah th ih ng b iy t f ay ch iy k ih n
+
+
+rec_id:			774BF31C-64E0-45FA-8242-9D20ADCDE391
+target:			No, that's it. Thank you.
+guess:			No that's it thank you
+tar_pn:			n ow dh ae t s ih t th ae ng k y uw
+ges_pn:			n ow dh ae t s ih t th ae ng k y uw
+mdl_pt_na:	(0.21)	n ow dh ae t s ih f r ih ng k y uw
+mdl_pt_al:	(0.21)	n ow dh ae t s ih t f w ih ng k y uw
+mdl_fs_na:	(0.36)	n ow dh ae t s ih f ih ng k iy
+mdl_fs_al:	(0.43)	n ow dh ah t s ih f ih ng k iy
+
+
+rec_id:			796612E9-EBDF-49B5-82A6-8F4388897FEE
+target:			Should we grab Mexican takeout?
+guess:			Should we grab Mexican takeout
+tar_pn:			sh uh d w iy g r ae b m eh k s ah k ah n t ey k aw t
+ges_pn:			sh uh d w iy g r ae b m eh k s ah k ah n t ey k aw t
+mdl_pt_na:	(0.23)	sh iy d w iy g r ae d eh k s k uw n t ey k aw t
+mdl_pt_al:	(0.18)	sh iy d w iy g r ae b eh k s k uw n t ey k aw t
+mdl_fs_na:	(0.5)	sh iy d b w iy k r ae d b ih t s k ae n d ey k aw n t
+mdl_fs_al:	(0.36)	sh iy d w iy k r ae d ay k s k ae n t ey k aw n t
+
+
+rec_id:			7B3D6868-B64C-40A6-9EDF-0FEB5631D8FA
+target:			She goes to college.
+guess:			She goes to college
+tar_pn:			sh iy g ow z t uw k aa l ih jh
+ges_pn:			sh iy g ow z t uw k aa l ih jh
+mdl_pt_na:	(0.0)	sh iy g ow z t uw k aa l ih jh
+mdl_pt_al:	(0.17)	sh iy g ow l z t ih k aa l ih jh
+mdl_fs_na:	(0.5)	sh iy g ao l z t ah k k ah l iy jh
+mdl_fs_al:	(0.33)	sh iy g ow z t ah k k ah l iy jh
+
+
+rec_id:			7B47E9AC-8EC3-44AC-A1D6-87D818303930
+target:			I saw a movie last night.
+guess:			I saw a movie a last night
+tar_pn:			ay s ao ah m uw v iy l ae s t n ay t
+ges_pn:			ay s ao ah m uw v iy ah l ae s t n ay t
+mdl_pt_na:	(0.07)	ay th ao ah m uw v iy l ae s t n ay t
+mdl_pt_al:	(0.0)	ay s ao ah m uw v iy l ae s t n ay t
+mdl_fs_na:	(0.33)	ay f ow ah m ow b iy l ae s n ay t
+mdl_fs_al:	(0.47)	ay f ow ah m ow b iy ah l ah s n ay t
+
+
+rec_id:			7C21C220-DFAF-4B36-8B4A-DEE0059611FA
+target:			We ended up catching a flight to somewhere else.
+guess:			We ended up catching a flight to somewhere else
+tar_pn:			w iy eh n d ah d ah p k ae ch ih ng ah f l ay t t uw s ah m w eh r eh l s
+ges_pn:			w iy eh n d ah d ah p k ae ch ih ng ah f l ay t t uw s ah m w eh r eh l s
+mdl_pt_na:	(0.27)	w iy ae n t ah d ah p k ae ch ih ng ae f ao l ay t uw s ah m w eh r ae z
+mdl_pt_al:	(0.27)	w iy ae n t ih d ah p k ae ch ih ng ae f ao l ay t uw s ah m w eh r eh z
+mdl_fs_na:	(0.33)	w iy ae n d ih d ah p k ae t ih ng eh t f ay t uw s ah m m eh r ae s
+mdl_fs_al:	(0.4)	w iy ae n t ih d ah p k ae t s ih ng ae f ay t uw s ah m m eh r ae z
+
+
+rec_id:			7E71099A-08D2-4B7B-8FB7-2E9E30CE084D
+target:			I had a busy weekend.
+guess:			I had a busy a weekend
+tar_pn:			ay hh ae d ah b ih z iy w iy k eh n d
+ges_pn:			ay hh ae d ah b ih z iy ah w iy k eh n d
+mdl_pt_na:	(0.2)	ay d ah v b ih z iy w iy k eh n d
+mdl_pt_al:	(0.27)	ay d ah v b ih z iy w ih k eh n d
+mdl_fs_na:	(0.53)	ay d ae v b iy z ah r ih k eh n
+mdl_fs_al:	(0.33)	ay v ae v b ih z iy r iy k eh n
+
+
+rec_id:			7E853F1D-A1C0-445F-8FAC-597B6621363D
+target:			It feels like she’s mad at me.
+guess:			It feels like she's made a me
+tar_pn:			ih t f iy l z l ay k sh iy z m ae d ae t m iy
+ges_pn:			ih t f iy l z l ay k sh iy z m ey d ah m iy
+mdl_pt_na:	(0.53)	ih t t r iy n s l ay k s ih s m eh n ih t m iy
+mdl_pt_al:	(0.63)	ih t f r iy n s t l ay k s ih s m eh n ih m iy k
+mdl_fs_na:	(1.05)	ih t k b ih t t ih s f r uw s t l ay k s ih s t m eh n ih m m iy k
+mdl_fs_al:	(0.79)	ih ih n t ih s f r uw s t l ay k s ih s k m eh d ih m iy
+
+
+rec_id:			7EC91B8F-EA9F-4504-9781-250662210530
+target:			Drivers really should be more careful.
+guess:			Wiebers Lily should be more careful
+tar_pn:			d r ay v er z r ih l iy sh uh d b iy m ao r k eh r f ah l
+ges_pn:			<UNK> l ih l iy sh uh d b iy m ao r k eh r f ah l
+mdl_pt_na:	(0.17)	m ay v er z l ih l ih sh uh d b iy m ao r k eh r f ah l
+mdl_pt_al:	(0.21)	m ay b er z l ih l ih sh uh d b iy m ao r k eh r f ah l
+mdl_fs_na:	(0.54)	sh m ay d er z n ih n ih sh uw d ah b iy m ow r k iy f uw
+mdl_fs_al:	(0.42)	m ay d er z l ih n ih sh uw d ah b iy m ao r k eh l f uw l
+
+
+rec_id:			7FFB8162-8D54-4DE6-9F5E-DDD0181DF525
+target:			She'll soon start telling me what to wear and what to eat.
+guess:			She will soon start telling me what to wear and what to eat
+tar_pn:			sh iy l s uw n s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w ah t t uw iy t
+ges_pn:			sh iy w ih l s uw n s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w ah t t uw iy t
+mdl_pt_na:	(0.22)	sh iy w ih s uw s t aa r t t eh l ih ng m iy w ah t t uw w eh l ih n l ah t uw iy t
+mdl_pt_al:	(0.33)	sh iy w ih s uw s t aa r t t eh l ih ng m iy hh w ah t t uw w eh l ih n l aa t iy
+mdl_fs_na:	(0.53)	sh iy w ih z ah z dh ah t dh eh l ih n m iy hh w ah t t uw m ih r ih n d l ah t ah ih n
+mdl_fs_al:	(0.42)	sh iy w ih z ow s t aa t t eh l ih ng m iy w ah t uw m iy l ae n ah t ah ih t
+
+
+rec_id:			8024165A-C533-4957-A3A0-88D032CDB28A
+target:			I'm visiting my parents this weekend.
+guess:			I'm visiting my parents this weekend
+tar_pn:			ay m v ih z ih t ih ng m ay p eh r ah n t s dh ih s w iy k eh n d
+ges_pn:			ay m v ih z ih t ih ng m ay p eh r ah n t s dh ih s w iy k eh n d
+mdl_pt_na:	(0.04)	ih m v ih z ih t ih ng m ay p eh r ah n t s dh ih s w iy k eh n d
+mdl_pt_al:	(0.0)	ay m v ih z ih t ih ng m ay p eh r ah n t s dh ih s w iy k eh n d
+mdl_fs_na:	(0.37)	ih m g ih z ah t ih ng m ay p ih r ah n s t ih s s w ih dh k ae n d
+mdl_fs_al:	(0.19)	ay m v ih z t ih ng m ay p eh r ah n s t ih s w er k ae n d
+
+
+rec_id:			806713AB-9BE3-4B75-9285-1CCFD4EADA82
+target:			But I always feel like doing speaking practice.
+guess:			But I always feel like doing speaking practice
+tar_pn:			b ah t ay ao l w ey z f iy l l ay k d uw ih ng s p iy k ih ng p r ae k t ih s
+ges_pn:			b ah t ay ao l w ey z f iy l l ay k d uw ih ng s p iy k ih ng p r ae k t ih s
+mdl_pt_na:	(0.03)	b ah t ay ao l w ey z f iy l l ay k t uw ih ng s p iy k ih ng p r ae k t ih s
+mdl_pt_al:	(0.06)	b ah t ay ao l w ey z f iy l l ay k t uw ih ng s p iy k ih ng p r ae k t ah s
+mdl_fs_na:	(0.28)	b ah t ay ao l w ey z f ih r t l ay k t uw w ih ng z p ih k ih ng f r ae k dh ih s
+mdl_fs_al:	(0.31)	b ah t ay ao l ey z b iy t l ay k t uw ih ng ih z p ih k ih ng f r ae dh ih s
+
+
+rec_id:			80C8AEF0-842D-4FE5-BFFB-956E906C9BC1
+target:			I could do with getting more sleep.
+guess:			I could the with a sleep in more a getting a sleep
+tar_pn:			ay k uh d d uw w ih dh g eh t ih ng m ao r s l iy p
+ges_pn:			ay k uh d dh ah w ih dh ah s l iy p ih n m ao r ah g eh t ih ng ah s l iy p
+mdl_pt_na:	(0.48)	ay k uh d d uw w ih dh ah s l iy p ih ng m ao r g eh t ih ng s l iy p
+mdl_pt_al:	(0.52)	ay k uh d d uw w ih dh ah s l iy p ih ng m ao r g eh t ih ng s l iy p m
+mdl_fs_na:	(0.52)	ay k l uh d d uw w ih d l iy p ih ng m ao r g eh t ih ng s l iy p m
+mdl_fs_al:	(0.67)	ay k uh d t uw m ih d ae l iy p ih ng m ao r g eh t ih ng z l iy p m
+
+
+rec_id:			812A7CB7-81CA-47B3-B6E3-867D5F8103D7
+target:			If it hadn’t been for your help
+guess:			If it hadnt the your help
+tar_pn:			ih f ih t hh ae d ah n t b ih n f ao r y ao r hh eh l p
+ges_pn:			ih f ih t hh ae d n t dh ah y ao r hh eh l p
+mdl_pt_na:	(0.26)	ih f ih t hh ae d n t b iy n n ao r hh eh l p
+mdl_pt_al:	(0.22)	ih f ih t hh ae d ah n b ih n n y uh r hh eh l p
+mdl_fs_na:	(0.43)	ih f ih d hh eh d n b n ao r hh eh l
+mdl_fs_al:	(0.43)	ih f ih d hh eh d n b ih n y uw hh eh l f
+
+
+rec_id:			8133D3F8-7264-4251-8BAA-A74B793D7567
+target:			She is
+guess:			She is
+tar_pn:			sh iy ih z
+ges_pn:			sh iy ih z
+mdl_pt_na:	(0.25)	dh iy ih z
+mdl_pt_al:	(0.25)	w iy ih z
+mdl_fs_na:	(0.25)	iy ih z
+mdl_fs_al:	(0.25)	iy ih z
+
+
+rec_id:			819C07B4-E189-4EC6-AD46-E1951B1D046F
+target:			I need to watch what I eat.
+guess:			I need to watch what I eat
+tar_pn:			ay n iy d t uw w aa ch w ah t ay iy t
+ges_pn:			ay n iy d t uw w aa ch w ah t ay iy t
+mdl_pt_na:	(0.0)	ay n iy d t uw w aa ch w ah t ay iy t
+mdl_pt_al:	(0.07)	ay n iy d t uw w aa ch w ah t ay ih t
+mdl_fs_na:	(0.33)	ih n iy t uw w ah ch w ah t ay ey
+mdl_fs_al:	(0.13)	ay n iy d t uw w ah ch w ah t ay ey t
+
+
+rec_id:			821C53A8-8EAB-4A87-93E9-3FB7A53E56D3
+target:			My husband sent me flowers.
+guess:			My husband says me a flower
+tar_pn:			m ay hh ah z b ah n d s eh n t m iy f l aw er z
+ges_pn:			m ay hh ah z b ah n d s eh z m iy ah f l aw er
+mdl_pt_na:	(0.25)	m ay hh ah z b ah n d s eh z m ih b l aw er
+mdl_pt_al:	(0.2)	m ay hh ah z b ah n d s eh d m iy b l aw er
+mdl_fs_na:	(0.35)	m ay hh ae z b ae n s ae n d m iy f l aw
+mdl_fs_al:	(0.6)	m ay hh er b ae s eh d n uw b l aw
+
+
+rec_id:			82AA1D4E-5784-431A-8EEC-C1DD3006CE9C
+target:			smile
+guess:			Smile
+tar_pn:			s m ay l
+ges_pn:			s m ay l
+mdl_pt_na:	(0.0)	s m ay l
+mdl_pt_al:	(0.0)	s m ay l
+mdl_fs_na:	(0.25)	s m ay ow l
+mdl_fs_al:	(0.25)	s m ay ah l
+
+
+rec_id:			8371D4DB-8125-4DCA-B342-09C105D1DD3A
+target:			You should see a doctor.
+guess:			You should see a doctor
+tar_pn:			y uw sh uh d s iy ah d aa k t er
+ges_pn:			y uw sh uh d s iy ah d aa k t er
+mdl_pt_na:	(0.0)	y uw sh uh d s iy ah d aa k t er
+mdl_pt_al:	(0.15)	d y uw sh uh d s iy ah t aa k t er
+mdl_fs_na:	(0.31)	y uw sh uh d s ih r g ae k t er
+mdl_fs_al:	(0.31)	y uw sh uh d s iy r k ah t er
+
+
+rec_id:			838D392A-2337-4C00-8436-D44002D3D130
+target:			I have enough money.
+guess:			I have enough money
+tar_pn:			ay hh ae v ih n ah f m ah n iy
+ges_pn:			ay hh ae v ih n ah f m ah n iy
+mdl_pt_na:	(0.0)	ay hh ae v ih n ah f m ah n iy
+mdl_pt_al:	(0.0)	ay hh ae v ih n ah f m ah n iy
+mdl_fs_na:	(0.08)	ay hh ae v ih n ah th m ah n iy
+mdl_fs_al:	(0.0)	ay hh ae v ih n ah f m ah n iy
+
+
+rec_id:			849976FC-C894-4D39-A9BF-117BF8637BEB
+target:			Can I try on these boots?
+guess:			Can I try on these boots
+tar_pn:			k ae n ay t r ay aa n dh iy z b uw t s
+ges_pn:			k ae n ay t r ay aa n dh iy z b uw t s
+mdl_pt_na:	(0.12)	w ih k ae n ay t r ay aa n dh iy z b uw t s
+mdl_pt_al:	(0.06)	k ae n ay t r ay ao n dh iy z b uw t s
+mdl_fs_na:	(1.06)	ow t ah t ah t ah n ih n w ah k ae n ay t r ay w aa n d iy z g uh d s
+mdl_fs_al:	(0.94)	ay ah t ih n ah k ae n ay t ay uw w ah n d ih z g uh d s
+
+
+rec_id:			84C1A512-728F-4BD6-BA2A-27AF19B9F0BD
+target:			He is happy.
+guess:			She eats a happy
+tar_pn:			hh iy ih z hh ae p iy
+ges_pn:			sh iy iy t s ah hh ae p iy
+mdl_pt_na:	(0.0)	hh iy ih z hh ae p iy
+mdl_pt_al:	(0.0)	hh iy ih z hh ae p iy
+mdl_fs_na:	(0.12)	iy ih z hh ae p iy
+mdl_fs_al:	(0.0)	hh iy ih z hh ae p iy
+
+
+rec_id:			852C286B-DB99-4375-AD6D-66ABB3630F7C
+target:			It works for me.
+guess:			It works for me
+tar_pn:			ih t w er k s f ao r m iy
+ges_pn:			ih t w er k s f ao r m iy
+mdl_pt_na:	(0.0)	ih t w er k s f ao r m iy
+mdl_pt_al:	(0.0)	ih t w er k s f ao r m iy
+mdl_fs_na:	(0.27)	dh ih t w er s f er r m iy
+mdl_fs_al:	(0.27)	ih n w er s f ao r m uw
+
+
+rec_id:			85EAB0B2-B5E3-42AC-8EAF-E40E261620FB
+target:			I don't have any brothers or sisters.
+guess:			I don't have any brothers or sisters
+tar_pn:			ay d ow n t hh ae v eh n iy b r ah dh er z ao r s ih s t er z
+ges_pn:			ay d ow n t hh ae v eh n iy b r ah dh er z ao r s ih s t er z
+mdl_pt_na:	(0.08)	k ay d ow n t hh ae v eh n iy b r ah dh z ao r s ih s t er z
+mdl_pt_al:	(0.24)	dh ae t k ay d ow n hh ae v eh n iy b r ah dh z ao r s ih s t er z
+mdl_fs_na:	(0.44)	ae ih sh ah n ay d ow n t hh ae v ae n iy b r aa dh ah s ao r s ah z t er z
+mdl_fs_al:	(0.44)	ay d ih sh ih ay d ow n hh ae v ah n iy b r aa dh ih s ao r s ih z t er z
+
+
+rec_id:			86AF9726-2433-4682-9F88-15F364E6D2A7
+target:			I go skiing all the time.
+guess:			Aiko Aiko ski all the time
+tar_pn:			ay g ow s k iy ih ng ao l dh ah t ay m
+ges_pn:			ey k ow ey k ow s k iy ao l dh ah t ay m
+mdl_pt_na:	(0.47)	ay g ow z ay g ow s k iy ao r dh ah t ay m
+mdl_pt_al:	(0.4)	ay g ow z ay g ow s k iy ao l dh ah t ay m
+mdl_fs_na:	(0.73)	ay g ow l z ay ow z k iy k er b ah t ay m d
+mdl_fs_al:	(0.73)	ay k ow l z ay w ow s k iy k ao r b ah t ay m d
+
+
+rec_id:			87C37154-04F3-4FAA-8001-45026CE4F0B7
+target:			It's cold.
+guess:			It's called
+tar_pn:			ih t s k ow l d
+ges_pn:			ih t s k ao l d
+mdl_pt_na:	(0.0)	ih t s k ow l d
+mdl_pt_al:	(0.14)	ih t s k ao l d
+mdl_fs_na:	(0.57)	ih z k ao r d
+mdl_fs_al:	(0.43)	ih s k ao r d
+
+
+rec_id:			8911F662-6A2B-4F12-B1F1-9FCCBD20F39D
+target:			Santa gave me nothing for Christmas.
+guess:			Santa a gave the me a nothing a christmas
+tar_pn:			s ae n t ah g ey v m iy n ah th ih ng f ao r k r ih s m ah s
+ges_pn:			s ae n t ah ah g ey v dh ah m iy ah n ah th ih ng ah k r ih s m ah s
+mdl_pt_na:	(0.36)	dh ah s ah g ey v m iy n ah t th ih ng b ah t k r ih s m ah
+mdl_pt_al:	(0.48)	dh ae k ah t g ey v m iy n aa t ih b er k r iy s m ah n
+mdl_fs_na:	(0.6)	s ah d ah y ey dh ah m iy n ah t ih ng b ah k iy ch n ah
+mdl_fs_al:	(0.56)	s ah dh ah y ey ah m iy n ah ih f ah k iy sh m aw n
+
+
+rec_id:			8B19CEBD-8AE2-4D8A-A530-2E41A27E8348
+target:			working abroad
+guess:			Working a abroad
+tar_pn:			w er k ih ng ah b r ao d
+ges_pn:			w er k ih ng ah ah b r ao d
+mdl_pt_na:	(0.1)	w er k ih ng ah b r ay d
+mdl_pt_al:	(0.1)	w er k ih ng ah b r ay d
+mdl_fs_na:	(0.5)	r eh k ih ng ah p ay d
+mdl_fs_al:	(0.4)	r er k ih ng ah p er ay d
+
+
+rec_id:			8B9885C9-0F6F-46D6-858C-B1243BB29591
+target:			Yes, they are.
+guess:			Yes they are
+tar_pn:			y eh s dh ey aa r
+ges_pn:			y eh s dh ey aa r
+mdl_pt_na:	(0.0)	y eh s dh ey aa r
+mdl_pt_al:	(0.0)	y eh s dh ey aa r
+mdl_fs_na:	(0.0)	y eh s dh ey aa r
+mdl_fs_al:	(0.14)	y uw s dh ey aa r
+
+
+rec_id:			8C1B9FD7-5933-4783-88CC-3B5108E2FE3F
+target:			her siblings
+guess:			I siblings
+tar_pn:			hh er s ih b l ih ng z
+ges_pn:			ay s ih b l ih ng z
+mdl_pt_na:	(0.56)	hh aw z ey v er ih ng z
+mdl_pt_al:	(0.33)	hh aw s ey b er ih ng z
+mdl_fs_na:	(0.67)	hh aw s ey v er iy ng s
+mdl_fs_al:	(0.56)	hh aw s iy p er ih ng s
+
+
+rec_id:			8D120511-296A-47EA-83F7-585C18F1D5E0
+target:			Your party last night was pretty wild.
+guess:			Your pre-Pearly party last night was pretty wild
+tar_pn:			y ao r p aa r t iy l ae s t n ay t w aa z p r ih t iy w ay l d
+ges_pn:			y ao r <UNK> p aa r t iy l ae s t n ay t w aa z p r ih t iy w ay l d
+mdl_pt_na:	(0.37)	y ao r p r ih p aa r l iy p aa r t iy l ae s t n ay t w aa z p r ih t iy v ay ah l d
+mdl_pt_al:	(0.37)	y uh r p r ih p aa r l iy p aa r t iy l ae s t n ay t w aa z p r ih d iy w ay l d
+mdl_fs_na:	(0.44)	eh r p r iy p aa r l iy p aa iy l eh s n ay t w aa z p r iy t uw w ay l d
+mdl_fs_al:	(0.56)	dh eh r p r iy p er l iy p er iy l eh s n ay t w ah z p r iy d iy w ay l d
+
+
+rec_id:			8DD1BD08-98CE-4F93-9044-DA7F9D18965B
+target:			No, it's not.
+guess:			No it's not
+tar_pn:			n ow ih t s n aa t
+ges_pn:			n ow ih t s n aa t
+mdl_pt_na:	(0.0)	n ow ih t s n aa t
+mdl_pt_al:	(0.0)	n ow ih t s n aa t
+mdl_fs_na:	(0.5)	n ow z l aa t
+mdl_fs_al:	(0.5)	n oy t l aa t
+
+
+rec_id:			8E9F7EEF-5E2A-4D07-90A3-DB20E88751C5
+target:			I think there is a mistake with our order.
+guess:			I think there is a mistake with our order
+tar_pn:			ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw er ao r d er
+ges_pn:			ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw er ao r d er
+mdl_pt_na:	(0.0)	ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw er ao r d er
+mdl_pt_al:	(0.04)	ay th ih ng k dh eh r ih z ah m ih s t ey k w ih dh aw r ao r d er
+mdl_fs_na:	(0.15)	ay f ih ng k dh eh r ih z ah m ih s t ih k w ih dh aw ao r dh er
+mdl_fs_al:	(0.23)	ay f ih ng k dh eh r ih z ah m ih s t ih k w ih dh ao ao dh er
+
+
+rec_id:			8F41EAB0-5F59-4F43-9509-645401FF6521
+target:			Most mornings, I have to rush to get ready.
+guess:			Most mornings I have to rush to get ready
+tar_pn:			m ow s t m ao r n ih ng z ay hh ae v t uw r ah sh t uw g eh t r eh d iy
+ges_pn:			m ow s t m ao r n ih ng z ay hh ae v t uw r ah sh t uw g eh t r eh d iy
+mdl_pt_na:	(0.03)	m ow s t m ao r n ih ng z ay hh ae v t uw r ay sh t uw g eh t r eh d iy
+mdl_pt_al:	(0.1)	m ow s m ao r n ih ng z ay hh ae v t ah r ah sh t ah g eh t r eh d iy
+mdl_fs_na:	(0.28)	m ah s m aa r n ih ng z ay hh ae v t er r eh s t ah g eh t r ey d iy
+mdl_fs_al:	(0.24)	m ow s m aa r n ih ng z ay hh ae v t er r eh s t ah g eh t r ey d iy
+
+
+rec_id:			8F4E6C51-C423-47C9-A09E-15581F5BEF0B
+target:			I would’ve been on time.
+guess:			I wouldve a been an time
+tar_pn:			ay w uh d ah v b ih n aa n t ay m
+ges_pn:			ay w uh d v iy ah b ih n ae n t ay m
+mdl_pt_na:	(0.43)	ay w uh d v w uh d n t b ih n aa n t ay m
+mdl_pt_al:	(0.43)	ay w uh d v w uh d ah n b ih n ah n t ay m
+mdl_fs_na:	(0.43)	ay uh d ah w uh d v ih n ah n t ay m
+mdl_fs_al:	(0.43)	ay uh d uw w uh d uw v ih n ah n t ay m
+
+
+rec_id:			8F73EA5B-7B21-4082-BAB9-2BB096FB9E04
+target:			Have you thought about traveling in South America?
+guess:			Have you thought about traveling in South America
+tar_pn:			hh ae v y uw th ao t ah b aw t t r ae v ah l ih ng ih n s aw th ah m eh r ih k ah
+ges_pn:			hh ae v y uw th ao t ah b aw t t r ae v ah l ih ng ih n s aw th ah m eh r ih k ah
+mdl_pt_na:	(0.12)	hh ae v y uw th ao t ah b aw t t r ae v ah l ih ng ih n s aw th aa m ey k ah
+mdl_pt_al:	(0.09)	hh ae v y uw th ao t ah b aw t t r ae v ah l ih ng ih n s aa s ah m eh r k ah
+mdl_fs_na:	(0.56)	hh ae b ih s er t b aa t t ae b ah l ih ih n z ae s eh m ey k ah r
+mdl_fs_al:	(0.44)	hh ae b y ih s er ah b aa t t er b ah l ih ng ih n s ae s ah m ey k ah
+
+
+rec_id:			90458273-002F-4A69-AAFC-BCC2EFBCF6D5
+target:			They are Lisa's parents.
+guess:			These are a are the lisas a parents
+tar_pn:			dh ey aa r l iy s ah z p eh r ah n t s
+ges_pn:			dh iy z aa r ah aa r dh ah <UNK> ah p eh r ah n t s
+mdl_pt_na:	(0.56)	d ih d y uw r aa r t r iy s ah s p eh r ah n t s
+mdl_pt_al:	(0.44)	d ih d y uw aa r t l iy s ah s p eh r ah n t s
+mdl_fs_na:	(0.5)	dh iy z y er aa r t l iy s ah s p ih r ah n s
+mdl_fs_al:	(0.44)	dh ih z y uh aw t iy s ah s p eh r ah n t s
+
+
+rec_id:			90829329-9F8B-4BE4-9B4A-3851CA720EF5
+target:			You should see a doctor.
+guess:			You should've guessed you should've
+tar_pn:			y uw sh uh d s iy ah d aa k t er
+ges_pn:			y uw sh uh d ah v g eh s t y uw sh uh d ah v
+mdl_pt_na:	(0.69)	y uw sh uh d g eh s y uw sh uh d s
+mdl_pt_al:	(0.69)	y uw sh uh d g eh s y uw sh uh d ah s
+mdl_fs_na:	(0.85)	y uw sh uh d ah g eh t y uw sh uh d ih sh
+mdl_fs_al:	(0.69)	y uw sh uh d ah g ah y uw sh uh d ah sh
+
+
+rec_id:			9092DEE4-B175-480B-B29E-C54B71368043
+target:			I've been thinking about working abroad.
+guess:			I've been thinking about working abroad
+tar_pn:			ay v b ih n th ih ng k ih ng ah b aw t w er k ih ng ah b r ao d
+ges_pn:			ay v b ih n th ih ng k ih ng ah b aw t w er k ih ng ah b r ao d
+mdl_pt_na:	(0.08)	ay v b ih n th ih ng k ih ng ah b aw t w er k ih ng ah b oy d
+mdl_pt_al:	(0.08)	ay v b ih n th ih ng k ih ng ah b aw t w er k ih ng ah b oy d
+mdl_fs_na:	(0.32)	ay b ih z dh ih ng k ih g ah b ay w er k ih ng ah b er d
+mdl_fs_al:	(0.36)	ay b ih d ih ng k ih k ah b ay r er k ih ng ah b er d
+
+
+rec_id:			90F92F1C-3D8B-441D-ACAC-69AC8071CD27
+target:			Let me return the favor.
+guess:			Let me return the favor
+tar_pn:			l eh t m iy r ih t er n dh ah f ey v er
+ges_pn:			l eh t m iy r ih t er n dh ah f ey v er
+mdl_pt_na:	(0.06)	l eh t m iy r ih ch er n dh ah f ey v er
+mdl_pt_al:	(0.06)	l eh t m iy r iy t er n dh ah f ey v er
+mdl_fs_na:	(0.38)	l eh m m ey w er ch er n d ah f ey v er
+mdl_fs_al:	(0.44)	l eh t m ey w er d ch er r n d ah f ey v er
+
+
+rec_id:			91F8863A-5BB1-4F05-A259-D1909065C158
+target:			It seems like the new software update is buggy.
+guess:			I seems like the new a software a update is buggy
+tar_pn:			ih t s iy m z l ay k dh ah n uw s ao f t w eh r ah p d ey t ih z b ah g iy
+ges_pn:			ay s iy m z l ay k dh ah n uw ah s ao f t w eh r ah ah p d ey t ih z b ah g iy
+mdl_pt_na:	(0.1)	ih t s iy m z l ay k dh ah n uw s ao f t eh r ah v d ey t iy z b ah g iy
+mdl_pt_al:	(0.16)	ih t s iy m z l ay k dh ah n y uw s ao f t eh r ah v d ey dh iy z b ah g iy
+mdl_fs_na:	(0.29)	ih z s iy m z l ay k dh ah n uw s ah v t eh r ah dh ey d ih z b ah iy ch
+mdl_fs_al:	(0.45)	ih s ih m z l ay t dh ah n uw s ah t er ah dh ey d iy z b ah iy d
+
+
+rec_id:			93260A32-64F2-4C14-9DAE-9DF644708C88
+target:			traveling around the world
+guess:			Traveling around the world
+tar_pn:			t r ae v ah l ih ng er aw n d dh ah w er l d
+ges_pn:			t r ae v ah l ih ng er aw n d dh ah w er l d
+mdl_pt_na:	(0.06)	t r ae v ah l ih ng er aw n d dh ah w er d
+mdl_pt_al:	(0.0)	t r ae v ah l ih ng er aw n d dh ah w er l d
+mdl_fs_na:	(0.28)	t r ae b ah l ih ng aa r aw n dh ah w er d
+mdl_fs_al:	(0.28)	t r ae v ah l iy ng ao r aw n dh ah w er d
+
+
+rec_id:			93262729-BF52-47FF-88D6-23958F38615E
+target:			I go on the treadmill for an hour.
+guess:			I go on the treadmill for an hour
+tar_pn:			ay g ow aa n dh ah t r eh d m ih l f ao r ae n aw er
+ges_pn:			ay g ow aa n dh ah t r eh d m ih l f ao r ae n aw er
+mdl_pt_na:	(0.33)	ay d ow n t dh ah t r eh n m ih t ah f ao r n aw er
+mdl_pt_al:	(0.33)	ay g ow n dh ah t r eh n ah m ih t ih f ao r m aw er
+mdl_fs_na:	(0.43)	ay g ow n dh ah t r eh n ah m ey n ah f ao r ah n aa
+mdl_fs_al:	(0.38)	ay g ow n dh ah t r eh n ah m ey n ah f ao r ah n aw
+
+
+rec_id:			93CA6094-0DFB-4401-80FE-F5FC2354928B
+target:			Can I try this on?
+guess:			I try on can I try a this a on
+tar_pn:			k ae n ay t r ay dh ih s aa n
+ges_pn:			ay t r ay aa n k ae n ay t r ay ah dh ih s ah aa n
+mdl_pt_na:	(0.67)	n ay t t r ay aa n k ae n ay t r ay dh ih s aa n
+mdl_pt_al:	(0.75)	n ay t t r ay ao n k ae n ay t r ay dh ih s ao n
+mdl_fs_na:	(0.67)	ay t r ay ow n k ae n ay t r ay d ih s ow n
+mdl_fs_al:	(0.67)	ay t r ay ow n k ae n ay t r ay d ih s ow n
+
+
+rec_id:			943E2BEA-818B-4BCD-9A5C-1ADA36969C23
+target:			I had a little trouble finding a parking spot.
+guess:			I had a little a trouble a finding a parking spot
+tar_pn:			ay hh ae d ah l ih t ah l t r ah b ah l f ay n d ih ng ah p aa r k ih ng s p aa t
+ges_pn:			ay hh ae d ah l ih t ah l ah t r ah b ah l ah f ay n d ih ng ah p aa r k ih ng s p aa t
+mdl_pt_na:	(0.09)	ay hh ae d ah l ih t ah l t ah b ah l f ay n d ih ng hh aa r k ih ng s p aa t
+mdl_pt_al:	(0.27)	ay hh ae d ah l ih t ah l t aw er f ay n d ih ng hh aa r t ih ng z p aa t
+mdl_fs_na:	(0.39)	ay hh ae d ah l ih t ih t ah v er b ay n d ih ng ay k ae ng p aa t
+mdl_fs_al:	(0.42)	ay hh ae d ah l ih t ih t er er p ay n d ih ng hh ay k ih n f p aa t
+
+
+rec_id:			944E3840-9F2C-4A25-970E-646F2347BB38
+target:			He reads a letter.
+guess:			He later later
+tar_pn:			hh iy r iy d z ah l eh t er
+ges_pn:			hh iy l ey t er l ey t er
+mdl_pt_na:	(0.36)	hh iy l iy d z aa r eh dh er
+mdl_pt_al:	(0.64)	hh iy l ih z er ih dh er
+mdl_fs_na:	(0.91)	hh iy d d iy t s ae t g ih d ah
+mdl_fs_al:	(0.55)	hh iy d iy z er g ih d er
+
+
+rec_id:			94DDE3BF-1E0C-4C8E-9403-111789324087
+target:			I have a lot of problems.
+guess:			I have a lot a problems
+tar_pn:			ay hh ae v ah l aa t ah v p r aa b l ah m z
+ges_pn:			ay hh ae v ah l aa t ah p r aa b l ah m z
+mdl_pt_na:	(0.17)	ay hh ae v ah l ae t ah v p aa l l ah m z
+mdl_pt_al:	(0.22)	ay hh ae v ah l ae t ah v p ah b d ah m z
+mdl_fs_na:	(0.5)	ay hh ae v l ae t ah b aa dh ah n s
+mdl_fs_al:	(0.39)	ay hh ae v l ae t ah p ah m l ah m s
+
+
+rec_id:			968FA84E-68E7-428A-9EB2-261E1D872A2A
+target:			We have a lot of coffee.
+guess:			Do we have a lot a coffee
+tar_pn:			w iy hh ae v ah l aa t ah v k aa f iy
+ges_pn:			d uw w iy hh ae v ah l aa t ah k aa f iy
+mdl_pt_na:	(0.0)	w iy hh ae v ah l aa t ah v k aa f iy
+mdl_pt_al:	(0.0)	w iy hh ae v ah l aa t ah v k aa f iy
+mdl_fs_na:	(0.2)	w iy hh ae v ah l ae t ah v k ah p iy
+mdl_fs_al:	(0.27)	w iy hh ae v ah l ae t ah k ah p iy
+
+
+rec_id:			96D77148-F588-46B3-A960-47422E5ECA0C
+target:			I eat out every other day.
+guess:			I eat out every other day
+tar_pn:			ay iy t aw t eh v er iy ah dh er d ey
+ges_pn:			ay iy t aw t eh v er iy ah dh er d ey
+mdl_pt_na:	(0.14)	ay g eh t aw t eh v er iy ah dh er d ey
+mdl_pt_al:	(0.14)	ay eh t aw t eh v r iy ah dh er d ey
+mdl_fs_na:	(0.21)	iy ay eh t aw t eh v er iy ah dh er dh ey
+mdl_fs_al:	(0.43)	ay g eh t aw t eh v r iy ao d er dh ey
+
+
+rec_id:			96F15AF2-6995-421C-ADD0-B475D4D5B3CE
+target:			I drink water.
+guess:			I drink a water
+tar_pn:			ay d r ih ng k w ao t er
+ges_pn:			ay d r ih ng k ah w ao t er
+mdl_pt_na:	(0.0)	ay d r ih ng k w ao t er
+mdl_pt_al:	(0.0)	ay d r ih ng k w ao t er
+mdl_fs_na:	(0.3)	ay g ih ng k w aa t er
+mdl_fs_al:	(0.4)	ay g ih ng k w er er
+
+
+rec_id:			97F83612-9B6D-44F7-B159-F7879278C606
+target:			I run a business.
+guess:			I run a business
+tar_pn:			ay r ah n ah b ih z n ah s
+ges_pn:			ay r ah n ah b ih z n ah s
+mdl_pt_na:	(0.09)	ay r ah n ah b eh z n ah s
+mdl_pt_al:	(0.09)	ay r ah n ah b eh z n ah s
+mdl_fs_na:	(0.45)	ay w eh n dh ah b eh z ah n ah s
+mdl_fs_al:	(0.55)	ay w er dh ah b eh z ah l ah s
+
+
+rec_id:			985B4959-296D-4B56-A598-58ACC3425E54
+target:			I grew up in Las Vegas.
+guess:			I could throw up in Las Vegas
+tar_pn:			ay g r uw ah p ih n l aa s v ey g ah s
+ges_pn:			ay k uh d th r ow ah p ih n l aa s v ey g ah s
+mdl_pt_na:	(0.44)	ay g uh d r ow ah p ih n l ae s t p ey k ah s
+mdl_pt_al:	(0.38)	ay g uh d d r uw ah p ih n l ae s p ey k ah s
+mdl_fs_na:	(0.5)	ay g uh d dh ao ah p ih n l ah s b ay k ah s
+mdl_fs_al:	(0.5)	ay k uh d dh r ow ah p ih n l ah s p ey k ah s
+
+
+rec_id:			99CC0ECF-3398-4A48-8261-E06337838E8E
+target:			But it's too loose around my torso.
+guess:			That is too loose around my torso
+tar_pn:			b ah t ih t s t uw l uw s er aw n d m ay t ao r s ow
+ges_pn:			dh ae t ih z t uw l uw s er aw n d m ay t ao r s ow
+mdl_pt_na:	(0.23)	b ah t ih t s t uw n uw s er aw n d m ay s t aa r s ah m
+mdl_pt_al:	(0.14)	b ah t ih t s t uw l uw s er aw n d m ay s t er r s ah
+mdl_fs_na:	(0.55)	b ah t ih z t uw n uw s ah r eh n m ay s t er s ah v
+mdl_fs_al:	(0.59)	b ah t ih z t ow n uw s ah r ae n m ay s t er s ah m
+
+
+rec_id:			9AD1F22D-0B93-4927-B1B5-520EC212B6B0
+target:			I'm on a strict diet of eggs and fish.
+guess:			I am on a strict diet of eggs and fish
+tar_pn:			ay m aa n ah s t r ih k t d ay ah t ah v eh g z ah n d f ih sh
+ges_pn:			ay ae m aa n ah s t r ih k t d ay ah t ah v eh g z ah n d f ih sh
+mdl_pt_na:	(0.31)	ay m ah n s t r ih t d ay ah t ah v eh k s ae n f ih
+mdl_pt_al:	(0.35)	ay ae m ah n s t r ih t d ay ah t ah v eh k s ae n f ih
+mdl_fs_na:	(0.35)	ay m ow n s g r iy t d ay ah ah v eh k s ah n f ih sh
+mdl_fs_al:	(0.5)	ay m ow n r iy t dh ay ah ah v eh k s ah m f ey sh
+
+
+rec_id:			9C998E4B-4A08-473A-86D8-CC2A7CAC6B65
+target:			I love to relax at cafes.
+guess:			I love the relax a cafes
+tar_pn:			ay l ah v t uw r ih l ae k s ae t k ae f ey z
+ges_pn:			ay l ah v dh ah r ih l ae k s ah k ae f ey z
+mdl_pt_na:	(0.37)	ay l ah v l ae s ae t k aa f ah z
+mdl_pt_al:	(0.53)	ay l ah v l aa s ae t k aa f ah z t d
+mdl_fs_na:	(0.74)	s ay l ah v g er r ah s ae p k aa p ae s t uw b
+mdl_fs_al:	(0.74)	s ay l ah v er r ah s eh p k aa p ae s t uw
+
+
+rec_id:			9CEB5B37-9007-46E5-98D5-D2766E48853B
+target:			But I've been thinking about buying a food truck.
+guess:			But I thinking about buying up a truck
+tar_pn:			b ah t ay v b ih n th ih ng k ih ng ah b aw t b ay ih ng ah f uw d t r ah k
+ges_pn:			b ah t ay th ih ng k ih ng ah b aw t b ay ih ng ah p ah t r ah k
+mdl_pt_na:	(0.37)	b ah t ay v th ih ng k hh iy ng ah b aw t m ay n ae f f ah t r ah k
+mdl_pt_al:	(0.27)	b eh t ay v th ih ng k ih ng ah b aw t b ay n ah f ah t r ah k
+mdl_fs_na:	(0.4)	b ah t ay v d ih ng k ah r aw t b ay n ah s ah t r ah k
+mdl_fs_al:	(0.43)	b ah t ay v d ih ng k ae r b aw t ay n ah t ah t r ah k
+
+
+rec_id:			9CF7B4D5-4D5F-4FF9-A906-2CE7798577C8
+target:			The company let down the customers.
+guess:			The company is the let the down a customers
+tar_pn:			dh ah k ah m p ah n iy l eh t d aw n dh ah k ah s t ah m er z
+ges_pn:			dh ah k ah m p ah n iy ih z dh ah l eh t dh ah d aw n ah k ah s t ah m er z
+mdl_pt_na:	(0.32)	dh ah k ah m p ah n iy aa r iy z ah l eh t d aw n k aa s t ah m er z
+mdl_pt_al:	(0.28)	dh ah k ah m p ah n iy aa iy z ah l eh t d aw n ih k aa s t ah m er z
+mdl_fs_na:	(0.44)	dh ah k ah m p ah n iy ah iy z ah l eh f dh ah n t k aa s t ah m er s
+mdl_fs_al:	(0.36)	dh ah k ah m p ah n iy aa iy z ah l eh t dh aw n k aa s t ah m er s
+
+
+rec_id:			9DB226CD-83F6-4B92-8BC0-E14DC25BA2B5
+target:			I don't feel well.
+guess:			I dont an feel Brier
+tar_pn:			ay d ow n t f iy l w eh l
+ges_pn:			ay d ow n t ae n f iy l b r ay er
+mdl_pt_na:	(0.09)	ay d ow n t f iy l w eh r
+mdl_pt_al:	(0.09)	ay d ow n t f iy l w eh r
+mdl_fs_na:	(0.64)	ay d ow f ih r r ae k
+mdl_fs_al:	(0.64)	ay d ow f ih r r ae k
+
+
+rec_id:			9DFC46CE-EE69-41DB-9EAF-F180C153668D
+target:			Here's my brother's number.
+guess:			Here is my father's numbers
+tar_pn:			hh ih r z m ay b r ah dh er z n ah m b er
+ges_pn:			hh iy r ih z m ay f aa dh er z n ah m b er z
+mdl_pt_na:	(0.35)	hh iy r ih z m ay f aa dh er z n ah m b er z
+mdl_pt_al:	(0.35)	hh iy r ih z m ay f aa dh er z n ah m b er z
+mdl_fs_na:	(0.47)	sh ay ih z m ay f aa dh er z n ah b er z
+mdl_fs_al:	(0.41)	iy r ih z m ay f ah dh er z n ah b er s
+
+
+rec_id:			9E29FA68-31A0-4119-BB44-41F9B133254C
+target:			I do a lot of cardio.
+guess:			I do a lot a cardio
+tar_pn:			ay d uw ah l aa t ah v k aa r d iy ow
+ges_pn:			ay d uw ah l aa t ah k aa r d iy ow
+mdl_pt_na:	(0.4)	ay jh ow l aa t ah v k aa r y uw m
+mdl_pt_al:	(0.27)	ay d ow l aa t ah v k aa r d y uw
+mdl_fs_na:	(0.53)	ay d ao n aa t ah p aa r t ih ng
+mdl_fs_al:	(0.47)	ay d uh l aa t ah p aa r t ah n
+
+
+rec_id:			9E4532A4-17D8-4AE1-9C00-38B8B4772D8C
+target:			It was different from Las Vegas.
+guess:			It was different from Las Vegas
+tar_pn:			ih t w aa z d ih f er ah n t f r ah m l aa s v ey g ah s
+ges_pn:			ih t w aa z d ih f er ah n t f r ah m l aa s v ey g ah s
+mdl_pt_na:	(0.21)	iy w aa z d ih f er ah n t f r ah m l eh s p ey t ah s
+mdl_pt_al:	(0.29)	y ih w ah z d ih f er ah n t f r ah m l eh s p ey d ah z
+mdl_fs_na:	(0.54)	ay r ah z d ih v p r ah ng f r ah l eh s b ey d ah s
+mdl_fs_al:	(0.54)	iy r ah s t ih p r ah n f r ah l eh s b ey d ah s
+
+
+rec_id:			9F21F3D3-B879-4B15-8DDA-3E44300DEC72
+target:			But I left home early, so it was okay.
+guess:			But I loved him only so it was OK
+tar_pn:			b ah t ay l eh f t hh ow m er l iy s ow ih t w aa z ow k ey
+ges_pn:			b ah t ay l ah v d hh ih m ow n l iy s ow ih t w aa z ow k ey
+mdl_pt_na:	(0.17)	w ah t ay l aa v t hh ow m er l iy s ow ih t w aa z ah k ey
+mdl_pt_al:	(0.33)	w ah t ay l ah v t hh ow m er l iy s ow ih t ah jh ah k iy
+mdl_fs_na:	(0.54)	w ah t ay l ah f t ah m b ah l iy s eh l ih n ow jh eh k ey
+mdl_fs_al:	(0.58)	ah n ay l ae v t ah m b aw l iy s eh ih n ow d ah k ey
+
+
+rec_id:			9F237EF7-917F-498E-854B-B608BA1E5501
+target:			I don't have any brothers or sisters.
+guess:			I don't have any brothers or sisters
+tar_pn:			ay d ow n t hh ae v eh n iy b r ah dh er z ao r s ih s t er z
+ges_pn:			ay d ow n t hh ae v eh n iy b r ah dh er z ao r s ih s t er z
+mdl_pt_na:	(0.2)	ay d ow n t hh ae v eh n iy p r ah dh er s er s eh s t er z
+mdl_pt_al:	(0.24)	ay d ow n hh ae v eh n iy p r ah dh er s er s eh s t er z
+mdl_fs_na:	(0.36)	ay d ow n t hh ae v ah n iy p r ao n er z er s ah s t
+mdl_fs_al:	(0.44)	ay d ow n hh ae v ah n iy p r aa n er z er s ah z t
+
+
+rec_id:			9F8E4AC0-E847-478D-9F82-68B47D5CF0CF
+target:			going out for a drink
+guess:			Going out for a drink
+tar_pn:			g ow ih ng aw t f ao r ah d r ih ng k
+ges_pn:			g ow ih ng aw t f ao r ah d r ih ng k
+mdl_pt_na:	(0.0)	g ow ih ng aw t f ao r ah d r ih ng k
+mdl_pt_al:	(0.0)	g ow ih ng aw t f ao r ah d r ih ng k
+mdl_fs_na:	(0.27)	g ow ih ng aw t f ao jh r ih ng
+mdl_fs_al:	(0.2)	g ow ih ng aw t ao r d r ih ng
+
+
+rec_id:			A0B97FFA-28D4-4F99-B685-F3886BDED688
+target:			Yes, but I sometimes miss my family in Korea.
+guess:			Yes but I miss my family in Korea sometimes
+tar_pn:			y eh s b ah t ay s ah m t ay m z m ih s m ay f ae m ah l iy ih n k ao r iy ah
+ges_pn:			y eh s b ah t ay m ih s m ay f ae m ah l iy ih n k ao r iy ah s ah m t ay m z
+mdl_pt_na:	(0.56)	y eh s b ah t ay m eh s m ay f r ae m r iy ih n k ao r iy ah s ah m t ay m z
+mdl_pt_al:	(0.56)	y eh s b ah t ay m eh s m ay f ae m r iy ih n k er r iy ah s ah m t ay m z
+mdl_fs_na:	(0.69)	y eh s b ah ay m ih s m ay f eh r iy n k er iy ah s ah m t ay m z
+mdl_fs_al:	(0.75)	y eh s b ae ay m ih s m ay f eh r ih ng k er iy ah f s ah m t ay m z
+
+
+rec_id:			A15EE02F-93A0-43F8-8B22-0C091EA21109
+target:			I ran into an old friend from college.
+guess:			I ran a into a an a old a friend from college
+tar_pn:			ay r ae n ih n t uw ae n ow l d f r eh n d f r ah m k aa l ih jh
+ges_pn:			ay r ae n ah ih n t uw ah ae n ah ow l d ah f r eh n d f r ah m k aa l ih jh
+mdl_pt_na:	(0.04)	ay r ae n ih n t uw ae n ow l d f r eh n d f r ah m k aa l ih
+mdl_pt_al:	(0.07)	ay r ae n ih n t uw ah n ow l d f r eh n d f r ah m k aa l ih
+mdl_fs_na:	(0.37)	ay r eh n ih n t uw ah n ao r d ah f r ae n d ah f r ah m k aw l iy
+mdl_fs_al:	(0.3)	ay r eh n ih n t uw aa n ao l d ah f r eh n d ah f r ah m k aw l iy
+
+
+rec_id:			A19AF80A-DC30-4A93-9FFE-2C0C32C069D0
+target:			I've been thinking about working abroad.
+guess:			I've been thinking about working abroad
+tar_pn:			ay v b ih n th ih ng k ih ng ah b aw t w er k ih ng ah b r ao d
+ges_pn:			ay v b ih n th ih ng k ih ng ah b aw t w er k ih ng ah b r ao d
+mdl_pt_na:	(0.12)	ay v b ih n th ih ng k ih ng ah b ay w er k ih ng ah b ao d
+mdl_pt_al:	(0.16)	ay v b ih n th ih ng k ih ng ah b ay w er k ih ng ah b oy d
+mdl_fs_na:	(0.24)	ay b ih n th ih ng k ih ng ah t b ay w er k ih ng ah b er d
+mdl_fs_al:	(0.2)	ay b ih n th ih ng k ih ng ah b ay w er k ih ng ah b er d
+
+
+rec_id:			A2354968-A5D8-42DB-A1EE-79A12F5A4AC6
+target:			Yes, you are.
+guess:			Yes see you are
+tar_pn:			y eh s y uw aa r
+ges_pn:			y eh s s iy y uw aa r
+mdl_pt_na:	(0.29)	y eh s y ao r
+mdl_pt_al:	(0.57)	y uw s uw y uw er
+mdl_fs_na:	(0.57)	y uw s iy y ao r
+mdl_fs_al:	(0.57)	y eh s ih n y uw er
+
+
+rec_id:			A27F14B1-8803-4D29-A939-20C0F216F668
+target:			I'm not the kind of person to lie to people.
+guess:			I'm not the kind of person to fight people
+tar_pn:			ay m n aa t dh ah k ay n d ah v p er s ah n t uw l ay t uw p iy p ah l
+ges_pn:			ay m n aa t dh ah k ay n d ah v p er s ah n t uw f ay t p iy p ah l
+mdl_pt_na:	(0.1)	ih m aa t dh ah k ay n d ah v p er s ah n t uw b ay t uw p iy p ah l
+mdl_pt_al:	(0.17)	ay m ah t dh ah k ay n d ah v p er s ah n t ah b ay t ih p iy p ah l
+mdl_fs_na:	(0.28)	ay m ow t dh ah k ay n ah v p er sh ah n t uw b ay t b ih p ah l
+mdl_fs_al:	(0.24)	ay m aa dh ah k ay n ah p er sh ah n t uw b ay t p iy p ah l
+
+
+rec_id:			A2C68232-3121-478F-9B47-D7D8CF678CD2
+target:			I'm very sick.
+guess:			I'm very sick
+tar_pn:			ay m v eh r iy s ih k
+ges_pn:			ay m v eh r iy s ih k
+mdl_pt_na:	(0.11)	ih m v eh r iy s ih k
+mdl_pt_al:	(0.0)	ay m v eh r iy s ih k
+mdl_fs_na:	(0.22)	ih m dh eh r iy s ih k
+mdl_fs_al:	(0.11)	ay m dh eh r iy s ih k
+
+
+rec_id:			A2C6E36D-9DE0-428A-A327-23D8353D396D
+target:			Let me return the favor.
+guess:			I me an return the favor
+tar_pn:			l eh t m iy r ih t er n dh ah f ey v er
+ges_pn:			ay m iy ae n r ih t er n dh ah f ey v er
+mdl_pt_na:	(0.25)	m ey r ih t er n dh ah f ey v er
+mdl_pt_al:	(0.38)	m ey w iy t er n dh ah f ey v er
+mdl_fs_na:	(0.44)	m ey w ih t er n d ah f ey b er
+mdl_fs_al:	(0.44)	ay m ey w iy t er n ah f ey v er
+
+
+rec_id:			A2C727B0-4A5B-43C4-957D-1D3C11D41451
+target:			My flight was delayed by two hours.
+guess:			My return flight was delayed by two hours
+tar_pn:			m ay f l ay t w aa z d ih l ey d b ay t uw aw er z
+ges_pn:			m ay r ih t er n f l ay t w aa z d ih l ey d b ay t uw aw er z
+mdl_pt_na:	(0.43)	m ay r ih t er n f ah l ay w aa z ih l ey d b ay t w aw er z
+mdl_pt_al:	(0.43)	m ay r iy t er n f ah l ay w aa z ih l ey d b ay t aw er z
+mdl_fs_na:	(0.62)	m ay r ih t ao f ah l ay w aa z ih t l ay t b ay t aa r iy z
+mdl_fs_al:	(0.67)	m ay r iy t ah m f ah l ay w eh z ih t l ay d b ay t ao r ih z
+
+
+rec_id:			A34EDD73-5885-4E9F-9D02-9DB87FD9E205
+target:			I feel like eating chocolate.
+guess:			I feel like eating chocolate
+tar_pn:			ay f iy l l ay k iy t ih ng ch ao k l ah t
+ges_pn:			ay f iy l l ay k iy t ih ng ch ao k l ah t
+mdl_pt_na:	(0.06)	ay f iy l l ay k iy t ih ng ch uw k l ah t
+mdl_pt_al:	(0.06)	ay f iy l l ay k iy t ih ng ch uw k l ah t
+mdl_fs_na:	(0.35)	ay f iy l ay k ih t ih ng ch uw k ah l iy
+mdl_fs_al:	(0.35)	ay f iy l ay k ih t ih ng ch uw k ah l iy
+
+
+rec_id:			A3EA0A60-D87C-472E-847D-CF3AC6CDCAAA
+target:			this weekend
+guess:			This weekend
+tar_pn:			dh ih s w iy k eh n d
+ges_pn:			dh ih s w iy k eh n d
+mdl_pt_na:	(0.0)	dh ih s w iy k eh n d
+mdl_pt_al:	(0.0)	dh ih s w iy k eh n d
+mdl_fs_na:	(0.22)	dh ih s l iy k ae n d
+mdl_fs_al:	(0.22)	dh ey s w iy k ae n d
+
+
+rec_id:			A40FFBEA-51BA-4CB8-B84E-69DF5F7A5B9B
+target:			Yes. I've had them for over ten years.
+guess:			Yes I've been had them over 10 years
+tar_pn:			y eh s ay v hh ae d dh eh m f ao r ow v er t eh n y ih r z
+ges_pn:			y eh s ay v b ih n hh ae d dh eh m ow v er <UNK> y ih r z
+mdl_pt_na:	(0.29)	y eh s ay v b ih n hh ae d dh eh m ow v er t eh n y er r z
+mdl_pt_al:	(0.29)	y eh s ay b ih n hh ae d dh eh m ow v er t eh n y er r z
+mdl_fs_na:	(0.33)	y eh s ay v ih n hh ae d d eh m ao v er t eh n y er z
+mdl_fs_al:	(0.42)	y eh s ay b ih n hh ae d d eh m ao v er t eh n y iy er s
+
+
+rec_id:			A4278E7C-14D5-4D7A-A0F9-471FC4297A16
+target:			Could we have the drinks menu, please?
+guess:			Could we have the drinks menu please
+tar_pn:			k uh d w iy hh ae v dh ah d r ih ng k s m eh n y uw p l iy z
+ges_pn:			k uh d w iy hh ae v dh ah d r ih ng k s m eh n y uw p l iy z
+mdl_pt_na:	(0.12)	k uh d w iy hh ae v dh ah d r ih ng s m ae n y ah p l iy z
+mdl_pt_al:	(0.24)	k uh d w iy hh ae v dh ah g r ih ng th m ae n y ah p l iy s
+mdl_fs_na:	(0.28)	k uh d w iy hh ae v dh ah p g r ey ng s m eh n ah p l iy f
+mdl_fs_al:	(0.24)	k uh d w iy hh ae v dh ah p g r ih ng s m eh n ah p l iy th
+
+
+rec_id:			A48E4894-55D9-49A4-98BD-72C35880AA31
+target:			I might go to the beach on Saturday.
+guess:			I might go to the beach on Saturday
+tar_pn:			ay m ay t g ow t uw dh ah b iy ch aa n s ae t er d iy
+ges_pn:			ay m ay t g ow t uw dh ah b iy ch aa n s ae t er d iy
+mdl_pt_na:	(0.05)	ay m ay t g ow t uw dh ah b iy ch aa n s s ae t er d iy
+mdl_pt_al:	(0.1)	ay m ay t g ow t ih dh ah b iy ch ao n s ae t er d iy
+mdl_fs_na:	(0.24)	ay m m ay t g ow t uw dh ah b ih t ch aa n z s eh t er d iy
+mdl_fs_al:	(0.24)	ay m ay t g ow t uw dh ah b iy t ch ah n z eh t er d ey
+
+
+rec_id:			A58010EE-085F-4901-BA37-1C4EDD9461EB
+target:			It seems like they are really getting along.
+guess:			Exercise per day are you really it's Gary I along
+tar_pn:			ih t s iy m z l ay k dh ey aa r r ih l iy g eh t ih ng ah l ao ng
+ges_pn:			eh k s er s ay z p er d ey aa r y uw r ih l iy ih t s g eh r iy ay ah l ao ng
+mdl_pt_na:	(0.42)	ih t s iy s ah l ay k ah d ey aa r y ao l iy ih t v eh r ih ah l ao ng
+mdl_pt_al:	(0.38)	ih t s iy s ah l ay k d ey aa r y uw l iy ih t g eh t iy er l ao ng
+mdl_fs_na:	(0.77)	dh ih t s ih z ah l ay t dh ey ay y ow l iy ih t s t g eh r iy z aa r l ow
+mdl_fs_al:	(0.62)	ih t s er z ah l ay ah dh ey ay y iy l iy ih t t eh t iy aa l ow
+
+
+rec_id:			A78DBB17-0869-4CC0-AC2A-A47CB9E6F069
+target:			I lent my friend five dollars.
+guess:			I lent my friend five dollars
+tar_pn:			ay l eh n t m ay f r eh n d f ay v d aa l er z
+ges_pn:			ay l eh n t m ay f r eh n d f ay v d aa l er z
+mdl_pt_na:	(0.45)	ay hh ae n m ay f r eh n d b ay dh ah l ih s
+mdl_pt_al:	(0.25)	ay l ae n t ah m ay f r eh n d f ay dh ah l er z
+mdl_fs_na:	(0.55)	ay ae v m ay f r eh d f ay ah t ay s
+mdl_fs_al:	(0.55)	ay ae n m ay f eh n d f er m ah t ae s
+
+
+rec_id:			A7A5BB7D-17EE-4206-A209-7590A95168AA
+target:			When is your party?
+guess:			When is your party
+tar_pn:			w eh n ih z y ao r p aa r t iy
+ges_pn:			w eh n ih z y ao r p aa r t iy
+mdl_pt_na:	(0.08)	w eh n ih d y ao r p aa r t iy
+mdl_pt_al:	(0.23)	hh w eh n ih d y uh r p aa r t iy
+mdl_fs_na:	(0.38)	w eh t iy jh y uh r p aa r iy
+mdl_fs_al:	(0.54)	hh w ah t iy d y uh r p aa r iy
+
+
+rec_id:			A8614EBA-2EB4-457C-B532-9A9EDFAEBB73
+target:			Bacon sounds great!
+guess:			Bacon an sounds great
+tar_pn:			b ey k ah n s aw n d z g r ey t
+ges_pn:			b ey k ah n ae n s aw n d z g r ey t
+mdl_pt_na:	(0.07)	b ey k aa n s aw n d z g r ey t
+mdl_pt_al:	(0.0)	b ey k ah n s aw n d z g r ey t
+mdl_fs_na:	(0.29)	b ay k ah n s aw s g r ey t
+mdl_fs_al:	(0.21)	b ey k ah n s aa n s g r ey t
+
+
+rec_id:			A9FF2CE5-6BEE-4716-99A6-D3DE886A5D9F
+target:			travel in Asia
+guess:			Travel an in an asia
+tar_pn:			t r ae v ah l ih n ey zh ah
+ges_pn:			t r ae v ah l ae n ih n ae n ey zh ah
+mdl_pt_na:	(0.27)	ch r ae v ah l ih n ae sh ah
+mdl_pt_al:	(0.09)	t r ae v ah l ih n ey sh ah
+mdl_fs_na:	(0.64)	ch ae b ao l iy n eh sh ah
+mdl_fs_al:	(0.45)	ch ae b ah l iy n ey sh ah
+
+
+rec_id:			AB99BA1C-17D6-426E-9DC3-FB5B41BE8A88
+target:			You should get some sleep.
+guess:			You should get some sleep
+tar_pn:			y uw sh uh d g eh t s ah m s l iy p
+ges_pn:			y uw sh uh d g eh t s ah m s l iy p
+mdl_pt_na:	(0.13)	y uw sh uh d g eh t s ah m ch l iy
+mdl_pt_al:	(0.2)	y uw sh uh d g eh t s ah m t uw l iy
+mdl_fs_na:	(0.47)	y uw t uh d d eh k t ah m t r iy
+mdl_fs_al:	(0.53)	uw s sh uh d d eh k ah m t r iy
+
+
+rec_id:			ACF6A539-1652-4F70-A208-41B414A4D346
+target:			I loved sightseeing in Paris.
+guess:			I loved a sightseeing in paris
+tar_pn:			ay l ah v d s ay t s iy ih ng ih n p eh r ih s
+ges_pn:			ay l ah v d ah s ay t s iy ih ng ih n p eh r ih s
+mdl_pt_na:	(0.26)	ay l ah v d s eh z th ih ng ih n p eh r ih
+mdl_pt_al:	(0.21)	ay l ah v d s eh s ih ng ih n p eh r ih
+mdl_fs_na:	(0.37)	ae l ah v dh ah s eh s ih ng ih n p eh r ah s
+mdl_fs_al:	(0.32)	ae l ah v s eh z ih ng ih n p eh r ih s
+
+
+rec_id:			AD550E14-C0E8-4DE5-81CF-C1222C17F697
+target:			I often eat leftover pasta from the day before.
+guess:			I often it leftover a pasta a from the day a before
+tar_pn:			ay ao f t ah n iy t l eh f t ow v er p aa s t ah f r ah m dh ah d ey b ih f ao r
+ges_pn:			ay ao f t ah n ih t l eh f t ow v er ah p aa s t ah ah f r ah m dh ah d ey ah b ih f ao r
+mdl_pt_na:	(0.06)	ay ao f t ah n iy t l eh f t ah v ah p aa s t ah f r ah m dh ah d ey b ih f ao r
+mdl_pt_al:	(0.06)	ay ao f t ah n iy t l eh f t ah v ah p aa s t ah f r ah m dh ah d ey b ih f ao r
+mdl_fs_na:	(0.45)	ay ao s t ih n iy t n ah t t ah v ah p aa s t er f ah m d ah d ey v
+mdl_fs_al:	(0.45)	ay k ao f t ih n iy t l ah v t ah v ah p aa s t er f er m d ah d ey v
+
+
+rec_id:			AD7103E2-AF39-41FF-963D-5B7E45165643
+target:			Then, where do you get ready?
+guess:			Then where do you get ready
+tar_pn:			dh eh n w eh r d uw y uw g eh t r eh d iy
+ges_pn:			dh eh n w eh r d uw y uw g eh t r eh d iy
+mdl_pt_na:	(0.0)	dh eh n w eh r d uw y uw g eh t r eh d iy
+mdl_pt_al:	(0.0)	dh eh n w eh r d uw y uw g eh t r eh d iy
+mdl_fs_na:	(0.24)	dh eh n w eh d ih ng y uw g eh t r eh dh iy
+mdl_fs_al:	(0.24)	dh eh n w eh d ih ng uw g eh t r eh dh iy
+
+
+rec_id:			AF1A2B03-74AD-4C89-AF0E-B91B9E4A20DD
+target:			I'm single.
+guess:			Im's single
+tar_pn:			ay m s ih ng g ah l
+ges_pn:			<UNK> s ih ng g ah l
+mdl_pt_na:	(0.12)	ih m s ih ng g ah l
+mdl_pt_al:	(0.0)	ay m s ih ng g ah l
+mdl_fs_na:	(0.25)	ay m s ih ng g ah dh ah
+mdl_fs_al:	(0.25)	ay m s ih ng k ah l d
+
+
+rec_id:			AF293C0C-739C-42FD-84E1-A4247CCF9363
+target:			He yelled angrily.
+guess:			He yelled a angrily
+tar_pn:			hh iy y eh l d ae ng g r ah l iy
+ges_pn:			hh iy y eh l d ah ae ng g r ah l iy
+mdl_pt_na:	(0.08)	hh iy y eh l d ae ng g ah l iy
+mdl_pt_al:	(0.0)	hh iy y eh l d ae ng g r ah l iy
+mdl_fs_na:	(0.46)	sh iy eh l t ae n g er l l iy
+mdl_fs_al:	(0.46)	sh iy sh eh l t ae n g er uw l iy
+
+
+rec_id:			AF3C9B8E-C06C-48F0-839F-242429E5C336
+target:			We have to scrub the carpet.
+guess:			We need we have to scrub the carpet
+tar_pn:			w iy hh ae v t uw s k r ah b dh ah k aa r p ah t
+ges_pn:			w iy n iy d w iy hh ae v t uw s k r ah b dh ah k aa r p ah t
+mdl_pt_na:	(0.35)	w iy n iy d w iy hh ae v t uw s k r ah b dh ah k ao r p ah t s
+mdl_pt_al:	(0.25)	w iy n iy d w iy hh ae v t uw s k r ah b dh ah k aa r p ah t
+mdl_fs_na:	(0.45)	w ey n n iy w iy hh ae p t uw s k r ah p dh ah k aa r f eh t
+mdl_fs_al:	(0.35)	w ey n n iy w iy hh ae v t uw s k r ah b dh ah k aa r f eh t
+
+
+rec_id:			B04D49FE-887E-4328-B948-2E4D39547AD8
+target:			I love to watch TV.
+guess:			I love the watch's tv
+tar_pn:			ay l ah v t uw w aa ch t iy v iy
+ges_pn:			ay l ah v dh ah w aa ch ih z t iy v iy
+mdl_pt_na:	(0.31)	ay l ah v t w eh t s t iy v iy
+mdl_pt_al:	(0.15)	ay l ah v t w eh ch t iy v iy
+mdl_fs_na:	(0.23)	ay l ah f t w eh ch t iy v iy
+mdl_fs_al:	(0.31)	ay l ah v t w eh t t iy b iy
+
+
+rec_id:			B05BCF01-7CF3-49CA-A334-479B04F8C1D5
+target:			My favorite movie is The Avengers.
+guess:			My favorite movie is the avengers
+tar_pn:			m ay f ey v er ih t m uw v iy ih z dh ah aa v eh n jh er z
+ges_pn:			m ay f ey v er ih t m uw v iy ih z dh ah aa v eh n jh er z
+mdl_pt_na:	(0.09)	m ay f ey v er ih t m uw v iy ih z dh ah ao f eh n jh er z
+mdl_pt_al:	(0.13)	m ay f ey v er ih t m uw v iy ih z dh ey ao f eh n jh er z
+mdl_fs_na:	(0.43)	m ay f ey v r eh ng k m ah b ih ih z dh ey ah f eh n jh er z
+mdl_fs_al:	(0.35)	m ay f ey v r ae n m ow b iy ih z dh ey ah f eh n jh er z
+
+
+rec_id:			B25D3E93-4DE6-40BC-91E5-51E16AB2FA8F
+target:			I'm free all weekend.
+guess:			I free a weekend
+tar_pn:			ay m f r iy ao l w iy k eh n d
+ges_pn:			ay f r iy ah w iy k eh n d
+mdl_pt_na:	(0.23)	ay m f r iy ao v ih k eh n d
+mdl_pt_al:	(0.15)	ay m f r iy er r w iy k eh n d
+mdl_fs_na:	(0.54)	ay f r iy aa r r ih k ae n t
+mdl_fs_al:	(0.31)	ay f r iy t aa w iy k ae n d
+
+
+rec_id:			B2F7DD70-E019-4C06-865F-802711C57329
+target:			The house is really messy.
+guess:			The house is really an messy
+tar_pn:			dh ah hh aw s ih z r ih l iy m eh s iy
+ges_pn:			dh ah hh aw s ih z r ih l iy ae n m eh s iy
+mdl_pt_na:	(0.0)	dh ah hh aw s ih z r ih l iy m eh s iy
+mdl_pt_al:	(0.07)	dh ah hh aw s ih z r ih l iy m ae s iy
+mdl_fs_na:	(0.47)	dh ah dh eh hh aw p s iy s r ih l ah m ae s iy
+mdl_fs_al:	(0.2)	dh ah hh aw s ih s r ih l ah m ae s iy
+
+
+rec_id:			B4816761-7F27-4E00-828E-B984E7571080
+target:			I don't feel like going home early.
+guess:			I don't feel like going home early
+tar_pn:			ay d ow n t f iy l l ay k g ow ih ng hh ow m er l iy
+ges_pn:			ay d ow n t f iy l l ay k g ow ih ng hh ow m er l iy
+mdl_pt_na:	(0.0)	ay d ow n t f iy l l ay k g ow ih ng hh ow m er l iy
+mdl_pt_al:	(0.0)	ay d ow n t f iy l l ay k g ow ih ng hh ow m er l iy
+mdl_fs_na:	(0.29)	ay d ow n f iy l ay k g ao r ih ng hh ah m aa l iy
+mdl_fs_al:	(0.24)	ay d ow n f iy n ay k k ow ih ng hh ow m ao l iy
+
+
+rec_id:			B4F04F7D-F18A-4D25-BD5A-0BC0791B9DCB
+target:			I'm free all weekend.
+guess:			I am free all weekend
+tar_pn:			ay m f r iy ao l w iy k eh n d
+ges_pn:			ay ae m f r iy ao l w iy k eh n d
+mdl_pt_na:	(0.08)	ay m f r iy ao w iy k eh n d
+mdl_pt_al:	(0.15)	ay m f r iy aa r w iy k eh n d
+mdl_fs_na:	(0.62)	ay m s r ey ah w ih k ae m
+mdl_fs_al:	(0.38)	ay m f r ey er r iy k ae n d
+
+
+rec_id:			B6B4CD83-64E7-4D3F-8715-22E53B853EFA
+target:			I've been thinking about going back to Korea.
+guess:			I think thinking about going to Kobe Korea
+tar_pn:			ay v b ih n th ih ng k ih ng ah b aw t g ow ih ng b ae k t uw k ao r iy ah
+ges_pn:			ay th ih ng k th ih ng k ih ng ah b aw t g ow ih ng t uw k ow b ey k ao r iy ah
+mdl_pt_na:	(0.34)	ay th ih ng k th ih ng k ih ng ah b aw t g ow ih ng t uw g ow b ae k ao r iy ah
+mdl_pt_al:	(0.28)	ay f ih n th ih ng k ih ng ah b aw t g ow ih ng t uw g ow b ae k ao r iy ah
+mdl_fs_na:	(0.52)	ay s iy ng t ih ng t uw ng ah b aw t k ow ih ng t uw g ow l b ae k ao r iy ah
+mdl_fs_al:	(0.59)	ay th ih ng t ih ng ch ah b aw k ey ih n t uw k ow b ae k er iy ah
+
+
+rec_id:			B7B46586-442C-41FF-B0D3-CA7AE2423532
+target:			three
+guess:			Free
+tar_pn:			th r iy
+ges_pn:			f r iy
+mdl_pt_na:	(0.33)	g r iy
+mdl_pt_al:	(0.33)	b r iy
+mdl_fs_na:	(1.0)	b ao r ey
+mdl_fs_al:	(0.33)	r iy
+
+
+rec_id:			B83F04D0-5D41-4E9C-A60D-217AEAF6EF41
+target:			It was good.
+guess:			It's so good
+tar_pn:			ih t w aa z g uh d
+ges_pn:			ih t s s ow g uh d
+mdl_pt_na:	(0.38)	ih t s ah g uh d
+mdl_pt_al:	(0.5)	aa ih t s ow g uh d
+mdl_fs_na:	(0.75)	aa ih s ah g uh t
+mdl_fs_al:	(0.62)	ay ih s ah g uh d
+
+
+rec_id:			B8EF3772-DA86-4E44-A004-044B5782EDD4
+target:			These are his sisters.
+guess:			Teacher his sisters
+tar_pn:			dh iy z aa r hh ih z s ih s t er z
+ges_pn:			t iy ch er hh ih z s ih s t er z
+mdl_pt_na:	(0.36)	d ih d y uw hh ih z s ih s t er z
+mdl_pt_al:	(0.29)	dh ih d y uw hh ih z s ih s t er z
+mdl_fs_na:	(0.29)	d ih jh er r hh ih z s ih s t er z
+mdl_fs_al:	(0.29)	dh uw ch uh r hh ih z ih s t er z
+
+
+rec_id:			B9230D7E-8D6D-415D-B20B-D9257F239328
+target:			I have a fever.
+guess:			I have a fever
+tar_pn:			ay hh ae v ah f iy v er
+ges_pn:			ay hh ae v ah f iy v er
+mdl_pt_na:	(0.22)	ay hh ae v ah f iy v ah l
+mdl_pt_al:	(0.33)	ay hh ae v ah f iy p ah l
+mdl_fs_na:	(0.11)	ay hh ae v ah f iy b er
+mdl_fs_al:	(0.22)	ay hh ae v ah f uw b er
+
+
+rec_id:			B960D7E1-4F46-4A57-A1AF-D45DC63BC2A0
+target:			She is
+guess:			She is
+tar_pn:			sh iy ih z
+ges_pn:			sh iy ih z
+mdl_pt_na:	(0.0)	sh iy ih z
+mdl_pt_al:	(0.0)	sh iy ih z
+mdl_fs_na:	(0.0)	sh iy ih z
+mdl_fs_al:	(0.0)	sh iy ih z
+
+
+rec_id:			BA3A0682-F102-42E6-B2AD-72F468621DBE
+target:			I read books.
+guess:			I'll lead books
+tar_pn:			ay r eh d b uh k s
+ges_pn:			ay l l eh d b uh k s
+mdl_pt_na:	(0.25)	ay n iy d b uh k s
+mdl_pt_al:	(0.25)	ay n iy d b uh k s
+mdl_fs_na:	(0.75)	ay l iy d ah t dh ow k s
+mdl_fs_al:	(0.62)	ay iy t ih ow k s
+
+
+rec_id:			BA3C3329-EA1A-42A4-8D27-2A79D0127532
+target:			So it was okay.
+guess:			Is it fine though it was fine so it
+tar_pn:			s ow ih t w aa z ow k ey
+ges_pn:			ih z ih t f ay n dh ow ih t w aa z f ay n s ow ih t
+mdl_pt_na:	(1.5)	iy t ih d t m ay n s ow ih t w aa z b ay ng dh ow ih t w
+mdl_pt_al:	(2.0)	hh iy t d ih d t b ay n dh ow ih t w ao z b ay ng s ow ih t w aa
+mdl_fs_na:	(1.5)	iy t dh ih d t m ay n s ow ih t w aa z b ay ng dh ow ih t
+mdl_fs_al:	(1.5)	ih dh iy t t m ay m f ow ih w ah z b ay ow ih t
+
+
+rec_id:			BB947217-F262-46FC-8ADE-B693F515E1A6
+target:			I often eat leftover pasta from the day before.
+guess:			I often it leftover's pasta
+tar_pn:			ay ao f t ah n iy t l eh f t ow v er p aa s t ah f r ah m dh ah d ey b ih f ao r
+ges_pn:			ay ao f t ah n ih t <UNK> p aa s t ah
+mdl_pt_na:	(0.58)	ay g aa t t ah n iy t l eh f t ow v er z ah v p aa s t ah
+mdl_pt_al:	(0.58)	ay g aa t dh ah n iy t l eh f t ow v er z ah v p aa s t ah
+mdl_fs_na:	(0.7)	ay k aa z t ih ng iy t l ah f t ah v er z k ah f p aa s t er
+mdl_fs_al:	(0.61)	ay k aa t t ih iy t l ah f t ah v er s k ah f p aa s t ah
+
+
+rec_id:			BBC186B7-A33D-48E3-9010-13BFF6DBCA4D
+target:			I'm not very well.
+guess:			I'm not very well
+tar_pn:			ay m n aa t v eh r iy w eh l
+ges_pn:			ay m n aa t v eh r iy w eh l
+mdl_pt_na:	(0.25)	ih m n aa t b eh t iy w eh l
+mdl_pt_al:	(0.17)	ay m n aa t b eh t iy w eh l
+mdl_fs_na:	(0.67)	ih m ah t ih t w ih l
+mdl_fs_al:	(0.58)	ay m aa p ih t iy r ih l
+
+
+rec_id:			BCEF5F6C-21CC-44F0-8D4F-726DB54954D6
+target:			Can I try on these shoes?
+guess:			Can I try on these shoes
+tar_pn:			k ae n ay t r ay aa n dh iy z sh uw z
+ges_pn:			k ae n ay t r ay aa n dh iy z sh uw z
+mdl_pt_na:	(0.0)	k ae n ay t r ay aa n dh iy z sh uw z
+mdl_pt_al:	(0.2)	k ae n ay t r ay ao n dh ih s sh uw z
+mdl_fs_na:	(0.2)	k ae n ay t ay ow n dh iy z uw z
+mdl_fs_al:	(0.33)	k ae t ay t r ay ow n d ih s sh uw z
+
+
+rec_id:			BD1E5FA3-3628-4D1E-A65B-E6546847E593
+target:			No, I'm not.
+guess:			No I am not
+tar_pn:			n ow ay m n aa t
+ges_pn:			n ow ay ae m n aa t
+mdl_pt_na:	(0.57)	l ao ih n aa t
+mdl_pt_al:	(0.71)	l ay m ah
+mdl_fs_na:	(0.71)	l ay m l ah
+mdl_fs_al:	(0.71)	n oy n ah
+
+
+rec_id:			BEE3AF80-270E-426D-A8BE-3E73BFF8AFD6
+target:			She's average height.
+guess:			She's a average a height
+tar_pn:			sh iy z ae v er ih jh hh ay t
+ges_pn:			sh iy z ah ae v er ih jh ah hh ay t
+mdl_pt_na:	(0.27)	sh iy z eh v er jh hh ay d
+mdl_pt_al:	(0.18)	sh iy z eh v er jh hh ay t
+mdl_fs_na:	(0.36)	sh iy s eh v er iy jh ah hh ay t
+mdl_fs_al:	(0.36)	sh iy s eh v er iy jh uw hh ay t
+
+
+rec_id:			BF3831AE-A1C7-4D52-B7AD-2B188305E0FC
+target:			If you like losing, then yes.
+guess:			If you're losing then yes
+tar_pn:			ih f y uw l ay k l uw z ih ng dh eh n y eh s
+ges_pn:			ih f y uh r l uw z ih ng dh eh n y eh s
+mdl_pt_na:	(0.33)	ih f y uw r uw z ih ng dh ae n y ah s
+mdl_pt_al:	(0.33)	ih f y uw r uw z ih ng dh ae n y ah s
+mdl_fs_na:	(0.56)	iy f y iy r r uw z ih ng dh eh r ao r
+mdl_fs_al:	(0.44)	iy f y uw r uw z ih ng b eh n ah s
+
+
+rec_id:			C05D17D3-B280-48A3-9232-2DBFFAEC69E8
+target:			I could do with more water.
+guess:			I could do with some water
+tar_pn:			ay k uh d d uw w ih dh m ao r w ao t er
+ges_pn:			ay k uh d d uw w ih dh s ah m w ao t er
+mdl_pt_na:	(0.38)	ay k uh d d uw w ih dh ah m ao r t er m ao r
+mdl_pt_al:	(0.5)	ay k uh d d uw w ih th th ah m ao t er m ao r
+mdl_fs_na:	(0.44)	ay k uh d d uw w ih z ah n m ao r er b ao r
+mdl_fs_al:	(0.44)	ay k uh d d uw w ih th ah m m ao r er m ao r
+
+
+rec_id:			C0FFA2AB-7C88-4BA2-98D5-F0A976B67327
+target:			I drink coffee.
+guess:			I drink a coffee
+tar_pn:			ay d r ih ng k k aa f iy
+ges_pn:			ay d r ih ng k ah k aa f iy
+mdl_pt_na:	(0.0)	ay d r ih ng k k aa f iy
+mdl_pt_al:	(0.0)	ay d r ih ng k k aa f iy
+mdl_fs_na:	(0.1)	ay d r ih ng k aa f iy
+mdl_fs_al:	(0.1)	ay d r ih ng k aa f iy
+
+
+rec_id:			C10CEDA7-3BCC-46C7-B1C1-75E9BDAFCBDD
+target:			Yes, I'm coming.
+guess:			Yes I'm coming
+tar_pn:			y eh s ay m k ah m ih ng
+ges_pn:			y eh s ay m k ah m ih ng
+mdl_pt_na:	(0.0)	y eh s ay m k ah m ih ng
+mdl_pt_al:	(0.0)	y eh s ay m k ah m ih ng
+mdl_fs_na:	(0.1)	y eh s ae m k ah m ih ng
+mdl_fs_al:	(0.0)	y eh s ay m k ah m ih ng
+
+
+rec_id:			C1C9769D-8E3B-4E33-9230-88CB7F399921
+target:			It's over there between the hotel and the gym.
+guess:			Each over there between the hotel a and a gym
+tar_pn:			ih t s ow v er dh eh r b ih t w iy n dh ah hh ow t eh l ah n d dh ah jh ih m
+ges_pn:			iy ch ow v er dh eh r b ih t w iy n dh ah hh ow t eh l ah ah n d ah jh ih m
+mdl_pt_na:	(0.03)	ih t s ow v er dh eh r b ih t w iy n dh ah hh ow t eh l ah n d dh ah z ih m
+mdl_pt_al:	(0.1)	ih t s ow v er dh eh r b iy t w iy n dh ah hh ow t eh l ae n d dh ah z ih m
+mdl_fs_na:	(0.43)	ih t y uw ao l er d eh r v ih t ih n d ah hh ow t t eh r ae n d dh ah f ih m
+mdl_fs_al:	(0.53)	ih t uw ow l w er d er b iy t ih n dh ow hh ow t er ae n dh ah f iy m
+
+
+rec_id:			C273E6D5-0D97-4072-8E7D-A0004A8785C1
+target:			I got rejected from my dream college, and it’s getting me down.
+guess:			I got rejected from my dream college and I each get
+tar_pn:			ay g aa t r ih jh eh k t ih d f r ah m m ay d r iy m k aa l ih jh ah n d ih t s g eh t ih ng m iy d aw n
+ges_pn:			ay g aa t r ih jh eh k t ih d f r ah m m ay d r iy m k aa l ih jh ah n d ay iy ch g eh t
+mdl_pt_na:	(0.21)	ay g aa t r ih z eh k t ih d f r ah m m ay d r iy m k aa l ih jh ah n d ay iy t g eh t ih ng
+mdl_pt_al:	(0.26)	ay g aa t r iy z eh k t ih d f r ah m m ay d r iy m k aa l ih jh ae n d ay iy t s g eh t ih
+mdl_fs_na:	(0.33)	ay g aa t r iy z eh k t ih d ah f r ah m m ay d r iy n k aa l iy z ae n d ay iy t s g eh t ih ng
+mdl_fs_al:	(0.42)	ay g aa t r iy z ah t ih d ah f r ah m m ay d r ih ng k aa l iy z ae n d ay iy t s g eh t ih
+
+
+rec_id:			C33BA822-229D-4898-A0A2-DD1D128E9CE2
+target:			We're usually busy.
+guess:			We are usually busy
+tar_pn:			w iy r y uw zh ah w ah l iy b ih z iy
+ges_pn:			w iy aa r y uw zh ah w ah l iy b ih z iy
+mdl_pt_na:	(0.13)	w iy aa r y uw zh w ah l iy b ih z iy
+mdl_pt_al:	(0.2)	w iy aa r y uw zh ah l iy b ih z iy
+mdl_fs_na:	(0.47)	l iy aa r g uw z ah l iy b iy z iy
+mdl_fs_al:	(0.47)	w iy er r g uw z ih l iy b ih z ih
+
+
+rec_id:			C461399C-4233-40D4-95E5-053EB8BE51A4
+target:			My legs ache.
+guess:			I my a legs ache
+tar_pn:			m ay l eh g z ey k
+ges_pn:			ay m ay ah l eh g z ey k
+mdl_pt_na:	(0.12)	ay m ay l eh g z ey k
+mdl_pt_al:	(0.12)	ay m ay l eh g z ey k
+mdl_fs_na:	(0.5)	ih m ay l ey d s ey k
+mdl_fs_al:	(0.5)	ay m ay l ey d s ey k
+
+
+rec_id:			C4F58110-3E11-45AC-9CFF-A5DEF47DEEB4
+target:			I have a lot of problems.
+guess:			I have a lot a problems
+tar_pn:			ay hh ae v ah l aa t ah v p r aa b l ah m z
+ges_pn:			ay hh ae v ah l aa t ah p r aa b l ah m z
+mdl_pt_na:	(0.33)	ay b l aa t ah p l aa b l ah m z
+mdl_pt_al:	(0.33)	ay b ih l aa t ah p l aa b l ah m z
+mdl_fs_na:	(0.5)	ay v ah l l aa t t l ah b ah m z
+mdl_fs_al:	(0.61)	ay b l l aw d ah t ah b ah m z
+
+
+rec_id:			C5BBC49D-075C-4EF9-BA7B-461CE6F26B19
+target:			Does Sam like Korean food?
+guess:			Does Sam like Korean food
+tar_pn:			d ah z s ae m l ay k k ao r iy ah n f uw d
+ges_pn:			d ah z s ae m l ay k k ao r iy ah n f uw d
+mdl_pt_na:	(0.0)	d ah z s ae m l ay k k ao r iy ah n f uw d
+mdl_pt_al:	(0.0)	d ah z s ae m l ay k k ao r iy ah n f uw d
+mdl_fs_na:	(0.22)	dh ah s ae m l ay k ao r iy ah n f uw t
+mdl_fs_al:	(0.22)	dh ah z ae m l ay k ao r iy ah n f uw t
+
+
+rec_id:			C602A73E-DEC8-49F2-99A2-33A3B312D47A
+target:			I need to up my game.
+guess:			I need to up my game
+tar_pn:			ay n iy d t uw ah p m ay g ey m
+ges_pn:			ay n iy d t uw ah p m ay g ey m
+mdl_pt_na:	(0.0)	ay n iy d t uw ah p m ay g ey m
+mdl_pt_al:	(0.0)	ay n iy d t uw ah p m ay g ey m
+mdl_fs_na:	(0.08)	ay n iy d t uw ah p m ay k ey m
+mdl_fs_al:	(0.08)	ay n iy d t uw ah p m ay k ey m
+
+
+rec_id:			C63E83D4-B1C8-4744-BB6A-77479B0D84A1
+target:			Buckingham Palace was cool, too.
+guess:			Buckingham a palace a was a cool
+tar_pn:			b ah k ih ng hh ae m p ae l ah s w aa z k uw l t uw
+ges_pn:			b ah k ih ng hh ae m ah p ae l ah s ah w aa z ah k uw l
+mdl_pt_na:	(0.29)	b ah k ih ng m p eh r ah s w aa z k uw l d
+mdl_pt_al:	(0.33)	b ah k ih ae m p eh r ah s w ao z k uw l
+mdl_fs_na:	(0.48)	b ah t ih m p ae s ah s k ow l t
+mdl_fs_al:	(0.48)	b ah t ih m p eh r ah s ah s k uw l t
+
+
+rec_id:			C6AEB764-52E5-49E3-BCA9-BC9E35E91EB1
+target:			She's
+guess:			Eat
+tar_pn:			sh iy z
+ges_pn:			iy t
+mdl_pt_na:	(0.67)	iy t
+mdl_pt_al:	(1.0)	ih t
+mdl_fs_na:	(0.67)	iy t
+mdl_fs_al:	(1.0)	ih t
+
+
+rec_id:			C71240B3-9715-4512-8BB1-8D15650F2EB1
+target:			How's the weather in Seoul?
+guess:			How's the weather in Seoul
+tar_pn:			hh aw z dh ah w eh dh er ih n s ow l
+ges_pn:			hh aw z dh ah w eh dh er ih n s ow l
+mdl_pt_na:	(0.21)	hh aw z dh ah w eh dh er ih z ow
+mdl_pt_al:	(0.21)	hh aw z dh ah w eh dh er ih z ow
+mdl_fs_na:	(0.29)	hh aw s dh ah w eh dh er ih z ow
+mdl_fs_al:	(0.43)	hh aw s dh ah r ih dh er ih z ow
+
+
+rec_id:			C7E703BD-21A6-4CE5-8461-1364B7E985CC
+target:			I don't feel very well.
+guess:			I'm not very well I don't feel good
+tar_pn:			ay d ow n t f iy l v eh r iy w eh l
+ges_pn:			ay m n aa t v eh r iy w eh l ay d ow n t f iy l g uh d
+mdl_pt_na:	(1.13)	ih m n aa t ih r ih ng eh l ay d ow n t f iy l w ih t er w
+mdl_pt_al:	(1.13)	ay m n aa t ih r iy w eh l ay d ow n f iy l ah w eh t er w
+mdl_fs_na:	(1.2)	ay m n aa t ih t n ow ay d ow n t y uw l b ih t ih m
+mdl_fs_al:	(1.13)	ay m l aa v ih d m ow ay d ow n t uw l b ih t iy b
+
+
+rec_id:			C86096E2-24AC-4F2F-9D16-BA00C7A39A5C
+target:			I loved sightseeing in Rome.
+guess:			I loved's sightseeing an rome
+tar_pn:			ay l ah v d s ay t s iy ih ng ih n r ow m
+ges_pn:			ay <UNK> s ay t s iy ih ng ae n r ow m
+mdl_pt_na:	(0.35)	ay l ah v s ay s ih ng r uw m
+mdl_pt_al:	(0.24)	ay l ah v s ay s ih ng ih n r uw m
+mdl_fs_na:	(0.35)	ay l ah v s eh s ih ng r ow m
+mdl_fs_al:	(0.47)	ay l ow v s ah s ih ng ih b ao m
+
+
+rec_id:			C8B58B49-A37C-4F09-988D-1F403D460199
+target:			I eat dinner.
+guess:			I eat an dinner
+tar_pn:			ay iy t d ih n er
+ges_pn:			ay iy t ae n d ih n er
+mdl_pt_na:	(0.0)	ay iy t d ih n er
+mdl_pt_al:	(0.0)	ay iy t d ih n er
+mdl_fs_na:	(0.29)	ay ih t dh ih n er
+mdl_fs_al:	(0.43)	ah ay ih t ih n er
+
+
+rec_id:			C9265039-6C1D-468F-89E4-8E4D3D1F7E5D
+target:			I gave my sister money for her birthday.
+guess:			I gave my sister money for her birthday
+tar_pn:			ay g ey v m ay s ih s t er m ah n iy f ao r hh er b er th d ey
+ges_pn:			ay g ey v m ay s ih s t er m ah n iy f ao r hh er b er th d ey
+mdl_pt_na:	(0.16)	ay g ey v m ah sh iy s t er m ah n iy f ah r hh er b er th d ey
+mdl_pt_al:	(0.24)	ay g ey v m ah n sh iy s t er m ah n iy f ao r hh er b ah th d ey m
+mdl_fs_na:	(0.56)	ay m g ey v m ay n sh iy z t er m ah n f ah t ah b ah ih
+mdl_fs_al:	(0.4)	ay g ey t m ay sh ih z t er m ah n iy f ah ah b er ey n
+
+
+rec_id:			CB16451A-5609-4323-A84F-443FF819F251
+target:			I'm not very well.
+guess:			I'm not very well
+tar_pn:			ay m n aa t v eh r iy w eh l
+ges_pn:			ay m n aa t v eh r iy w eh l
+mdl_pt_na:	(0.17)	ay m n aa t b ih r iy w eh l
+mdl_pt_al:	(0.25)	ay m n aa t b ih t iy w eh l
+mdl_fs_na:	(0.5)	ay m n aa t ae t ih v ih l
+mdl_fs_al:	(0.5)	ay m aa t ih t iy m ih l
+
+
+rec_id:			CBCAF32E-817F-4574-B638-A05920D9E7E4
+target:			I have a new car.
+guess:			I have a new car
+tar_pn:			ay hh ae v ah n uw k aa r
+ges_pn:			ay hh ae v ah n uw k aa r
+mdl_pt_na:	(0.0)	ay hh ae v ah n uw k aa r
+mdl_pt_al:	(0.1)	ay hh ae v ah n y uw k aa r
+mdl_fs_na:	(0.2)	ay hh ae v ah d y uw k aa r
+mdl_fs_al:	(0.1)	ay hh ae v ah n y uw k aa r
+
+
+rec_id:			CBF35810-53D7-402F-8F43-632CA80F21EB
+target:			How often do you drink?
+guess:			How often do you drink
+tar_pn:			hh aw ao f t ah n d uw y uw d r ih ng k
+ges_pn:			hh aw ao f t ah n d uw y uw d r ih ng k
+mdl_pt_na:	(0.44)	ah n t aw ao f ah n dh ah y uw d r ih ng k k
+mdl_pt_al:	(0.38)	ah t eh ao f ah n dh iy y uw d r ih ng k
+mdl_fs_na:	(0.56)	ay t aw l ah f ah n d iy uw d r ey ng
+mdl_fs_al:	(0.44)	ay t aw l ah f ah n d y uw d r ih ng
+
+
+rec_id:			CCC0839F-A5E6-4757-9A10-33FF160C7227
+target:			I have a pen.
+guess:			I have a pen
+tar_pn:			ay hh ae v ah p eh n
+ges_pn:			ay hh ae v ah p eh n
+mdl_pt_na:	(0.0)	ay hh ae v ah p eh n
+mdl_pt_al:	(0.12)	ay hh ae v ah p eh n t
+mdl_fs_na:	(0.12)	ay hh ae v ah p eh n d
+mdl_fs_al:	(0.12)	ay hh ae v ah p eh n d
+
+
+rec_id:			CDB862D2-4A33-434E-BBAE-470AB678C081
+target:			Yeah, it's really hot now.
+guess:			Yes it's really hot now
+tar_pn:			y ae ih t s r ih l iy hh aa t n aw
+ges_pn:			y eh s ih t s r ih l iy hh aa t n aw
+mdl_pt_na:	(0.29)	y eh s ih t s r ih l iy hh ah n t n aw
+mdl_pt_al:	(0.43)	y eh s ih t s v ih l iy hh ah n t l aw
+mdl_fs_na:	(0.71)	y eh s ih t s ah g y ao l hh ah n ow
+mdl_fs_al:	(0.57)	y eh s ih t ih y uw l iy hh ah n ow
+
+
+rec_id:			CE1FF1A5-ED57-4364-8C93-6B264C5B2F44
+target:			Santa gave me nothing for Christmas.
+guess:			Santa gave me nothing for Christmas
+tar_pn:			s ae n t ah g ey v m iy n ah th ih ng f ao r k r ih s m ah s
+ges_pn:			s ae n t ah g ey v m iy n ah th ih ng f ao r k r ih s m ah s
+mdl_pt_na:	(0.2)	s ae n t ae g ey l d w iy n ah s ih ng f ao r k r ih s m ah s
+mdl_pt_al:	(0.32)	s ae t eh l g ey v m iy l ah s ih ng f er k r iy s m ah s
+mdl_fs_na:	(0.48)	s eh n t jh ey dh uw n iy n ah s ih ng b ah t r ih s n ah s
+mdl_fs_al:	(0.6)	s eh t ae n dh ey w iy m iy n ah s ih ng ih ng f ah t ey s m aa s
+
+
+rec_id:			CE7E7D60-0A1D-44A8-A68E-5BC294A3610D
+target:			I'm sorry to hear that.
+guess:			I'm sorry to hear that
+tar_pn:			ay m s aa r iy t uw hh iy r dh ae t
+ges_pn:			ay m s aa r iy t uw hh iy r dh ae t
+mdl_pt_na:	(0.14)	ay m s aa r d t uw y iy r dh ae t
+mdl_pt_al:	(0.29)	ay m s ow r d t ih y iy r dh ae t
+mdl_fs_na:	(0.86)	ae n s ao t ah y uw t eh n
+mdl_fs_al:	(0.71)	ah m s ao t iy y uw t eh n
+
+
+rec_id:			D0453079-8256-4785-858E-FE63F3D3E3D2
+target:			No. I had two glasses of wine, but you only included one.
+guess:			No I had a two a glasses of wine but you only included one
+tar_pn:			n ow ay hh ae d t uw g l ae s ah z ah v w ay n b ah t y uw ow n l iy ih n k l uw d ah d w ah n
+ges_pn:			n ow ay hh ae d ah t uw ah g l ae s ah z ah v w ay n b ah t y uw ow n l iy ih n k l uw d ah d w ah n
+mdl_pt_na:	(0.13)	n ow ay hh ae d t uw g l ae s s ah z ah v w ay n b ah t y uw ao l l iy ih n k l uw d w ah n
+mdl_pt_al:	(0.15)	n ow ay hh ae d t uw g l ae s ih z ah v w ay n b ah t y uw ao l iy ih n k l er d w ah n
+mdl_fs_na:	(0.36)	n ow ay hh ae d ah t uw g ae s ih s ow v w ay n b ah t g y uw ao l l ih ng k l uh d w ah n d
+mdl_fs_al:	(0.36)	n ow ay hh ae d ah t uw g l ah s ih s ow v w ay n b ah t d y uw ao l l ih g l ah d w ah n d
+
+
+rec_id:			D0885CFE-FCF2-491F-B27E-0E09CCEE7FCB
+target:			Really? That's a shame.
+guess:			Really that's a shame
+tar_pn:			r ih l iy dh ae t s ah sh ey m
+ges_pn:			r ih l iy dh ae t s ah sh ey m
+mdl_pt_na:	(0.58)	r ih l iy b ae k t er sh eh ih ng
+mdl_pt_al:	(0.5)	w ih l iy dh ae k t er sh ey ih ng
+mdl_fs_na:	(0.42)	ay ow l iy dh ae t t er sh ey ng
+mdl_fs_al:	(0.42)	w iy l dh ae t ah sh ey ng
+
+
+rec_id:			D0D803F2-B0B8-4735-84FB-99D642CD3F13
+target:			I like both coffee and tea.
+guess:			I like a port a coffee an tea
+tar_pn:			ay l ay k b ow th k aa f iy ah n d t iy
+ges_pn:			ay l ay k ah p ao r t ah k aa f iy ae n t iy
+mdl_pt_na:	(0.44)	ay l ay k ah b ao l dh ah ah k aa f iy ah n t iy
+mdl_pt_al:	(0.5)	ay l ay k ah b ao l d ah ah k aa f iy ae n t iy
+mdl_fs_na:	(0.75)	ay l eh k t ah b ao l d er ah p ah p iy ae n d t iy
+mdl_fs_al:	(0.69)	ay l ay k ah b ao l d ah ah p ah p ah ae n t iy
+
+
+rec_id:			D15145CB-A7C2-4CE5-AD04-5BD677AEF45D
+target:			Could you tell me where the fitting room is?
+guess:			Could you tell me where the fitting room is
+tar_pn:			k uh d y uw t eh l m iy w eh r dh ah f ih t ih ng r uw m ih z
+ges_pn:			k uh d y uw t eh l m iy w eh r dh ah f ih t ih ng r uw m ih z
+mdl_pt_na:	(0.04)	k uh d y uw t eh l m iy w eh r dh ah f ih t ih ng n uw m ih z
+mdl_pt_al:	(0.08)	k uh d y uw t eh l m iy w eh r dh ah f iy t ih ng n uw m ih z
+mdl_fs_na:	(0.32)	k uh d y uw t eh r iy r ih r dh ah f ih t ih ng n ah m iy s
+mdl_fs_al:	(0.32)	k uh d y uw t eh r iy w ih r dh ah f ih d ih ng ah m iy s
+
+
+rec_id:			D361501D-1DD7-48B3-A1F0-2AD04E01C60C
+target:			How many dogs did you have?
+guess:			How many dogs did you have
+tar_pn:			hh aw m eh n iy d aa g z d ih d y uw hh ae v
+ges_pn:			hh aw m eh n iy d aa g z d ih d y uw hh ae v
+mdl_pt_na:	(0.11)	hh aw m eh n iy d aa s d ih d y uw hh ae v
+mdl_pt_al:	(0.11)	hh aw m eh n iy d aa s d ih d y uw hh ae v
+mdl_fs_na:	(0.44)	hh aw m ay n iy d ao s t ih jh y er hh ae p
+mdl_fs_al:	(0.39)	hh aw m ay n iy d ao s dh ih jh y er hh ae v
+
+
+rec_id:			D5856522-0A97-4728-AC1A-43D3143C7AB4
+target:			going to grad school
+guess:			Going to grab a school
+tar_pn:			g ow ih ng t uw g r ae d s k uw l
+ges_pn:			g ow ih ng t uw g r ae b ah s k uw l
+mdl_pt_na:	(0.07)	g ow ih ng t uw g r ae b s k uw l
+mdl_pt_al:	(0.07)	g ow ih ng t uw g r ae b s k uw l
+mdl_fs_na:	(0.36)	g ow ih ng t iy g r eh p s g ow l
+mdl_fs_al:	(0.29)	k ow ih ng t uw g r eh p s k ow l
+
+
+rec_id:			D5CF021C-CDDB-4D0E-A067-6C11311530EB
+target:			Yeah, but I'm having trouble deciding where to live after college.
+guess:			Yeah but I have I having trouble deciding where to leave after college
+tar_pn:			y ae b ah t ay m hh ae v ih ng t r ah b ah l d ih s ay d ih ng w eh r t uw l ay v ae f t er k aa l ih jh
+ges_pn:			y ae b ah t ay hh ae v ay hh ae v ih ng t r ah b ah l d ih s ay d ih ng w eh r t uw l iy v ae f t er k aa l ih jh
+mdl_pt_na:	(0.21)	y ae b ah ay hh ae v ay hh ae v eh n t r ah b ah l d ih s ay d ih ng w eh r t uw l ey v ah f t er k aa l ih jh
+mdl_pt_al:	(0.19)	y ae b ah t ay hh ae v ay hh ae v ih n t r ah b ah l d ih s ay d ih ng w eh r t uw l iy v ah f t er k ao l ih jh
+mdl_fs_na:	(0.43)	y aa r b ey ay hh ae v ay hh ae v ih n t r ah b ah d ih s ay d ih ng w ih r t ah l iy v ah f t ah k ao l iy z
+mdl_fs_al:	(0.38)	y ah b ey ay hh ae v ay hh ae v ih n t r ah b ah d ih s ay d ih ng w ih r t uw l ey v ah f t ah k ao l iy z
+
+
+rec_id:			D650F9DD-E958-4A68-A8C7-CFCCAC7CE64C
+target:			Someone copied my bikini video and it went viral!
+guess:			I someone just someone an copied my bikini an video an it an went five
+tar_pn:			s ah m w ah n k aa p iy d m ay b ih k iy n iy v ih d iy ow ah n d ih t w eh n t v ay r ah l
+ges_pn:			ay s ah m w ah n jh ah s t s ah m w ah n ae n k aa p iy d m ay b ih k iy n iy ae n v ih d iy ow ae n ih t ae n w eh n t f ay v
+mdl_pt_na:	(0.47)	s ah m w ah n jh ah s t ae s ah m w ah n k aa p iy d m ay p ih k iy n iy v ih d iy ow ih n ih t w eh n t f ay v
+mdl_pt_al:	(0.45)	s ah m w ah n jh ih s t ae s ah m ah n k aa p iy d m ay b ih k iy n ah v ih d iy ow ih n ih t w eh n t f ay v
+mdl_fs_na:	(0.55)	s ah m ah n jh ah s ae s ah m ah n k aa p ah t m ay b ih k ih ng iy v iy d y ow n ih t w eh n t f ay
+mdl_fs_al:	(0.66)	s ah m ah n jh ah s ae s ah m ah n k aa p ah t m ay p ih k ih ng iy v ih d y uw r ey n ih t w ih n t ih f ay w
+
+
+rec_id:			D6F8BBD0-B8D0-40F0-B33E-553CA90027C8
+target:			I have one brother.
+guess:			I have one brother
+tar_pn:			ay hh ae v w ah n b r ah dh er
+ges_pn:			ay hh ae v w ah n b r ah dh er
+mdl_pt_na:	(0.0)	ay hh ae v w ah n b r ah dh er
+mdl_pt_al:	(0.0)	ay hh ae v w ah n b r ah dh er
+mdl_fs_na:	(0.17)	ay hh ae v w ah n f r aa dh er
+mdl_fs_al:	(0.25)	ay hh ae v w ah n p aa dh er
+
+
+rec_id:			D70A0D7D-A842-4C17-8C23-D4CE8177E035
+target:			She's already trying to set me up on a date.
+guess:			She's already trying to set me up on date
+tar_pn:			sh iy z ao l r eh d iy t r ay ih ng t uw s eh t m iy ah p aa n ah d ey t
+ges_pn:			sh iy z ao l r eh d iy t r ay ih ng t uw s eh t m iy ah p aa n d ey t
+mdl_pt_na:	(0.1)	sh iy z ao l r eh d iy t r ay ih ng t uw s eh n d m iy ah p aa n d ey t
+mdl_pt_al:	(0.07)	sh iy z ao l r eh d iy t r ay ih ng t ih s eh t m iy ah p aa n d ey t
+mdl_fs_na:	(0.41)	s iy s ao r ey d iy t r ae ng t ah s eh m m iy ah p ah m dh ey t
+mdl_fs_al:	(0.45)	s iy s ow r ih d iy t r ay ng t ih s eh m m ah p ah m dh ey t
+
+
+rec_id:			D92D8AF2-8094-4507-A4E3-4B1C9C566FDE
+target:			I'm going away for the weekend.
+guess:			I am going away for the weekend
+tar_pn:			ay m g ow ih ng ah w ey f ao r dh ah w iy k eh n d
+ges_pn:			ay ae m g ow ih ng ah w ey f ao r dh ah w iy k eh n d
+mdl_pt_na:	(0.05)	ih m g ow ih ng ah w ey f ao r dh ah w iy k eh n d
+mdl_pt_al:	(0.1)	ay m g ow ih ng ah w ey f r er dh ah w iy k eh n d
+mdl_fs_na:	(0.25)	ay m g ow ih ng ah l ey f er r dh ah r ih k ae n d
+mdl_fs_al:	(0.3)	ay m g ow ih ng ah l ey f er dh ah r ih k ae n d
+
+
+rec_id:			DA00659F-234C-4831-BA18-806D9E679AD2
+target:			I could do with losing weight.
+guess:			I could the with a losing weight
+tar_pn:			ay k uh d d uw w ih dh l uw z ih ng w ey t
+ges_pn:			ay k uh d dh ah w ih dh ah l uw z ih ng w ey t
+mdl_pt_na:	(0.24)	ay k uh d d uw w ih dh l uw z ih ng w ey t ay k uh d
+mdl_pt_al:	(0.24)	ay k uh d d uw w ih dh l uw z ih ng w ey t ay k uh d
+mdl_fs_na:	(0.53)	ay k ae d d uw ih t dh l ih z ih ng w ey t eh g ah d d
+mdl_fs_al:	(0.35)	ay k uh d d uw ih t dh l uw z ih ng w ey t ae g uh d
+
+
+rec_id:			DB5F91D5-A4F0-46F1-ABB4-A141A701B5AD
+target:			I'd rather be safe than sorry.
+guess:			I'd rather be safe than sorry
+tar_pn:			ay d r ae dh er b iy s ey f dh ae n s aa r iy
+ges_pn:			ay d r ae dh er b iy s ey f dh ae n s aa r iy
+mdl_pt_na:	(1.06)	ay v r ih l iy b ih z iy k ih s aa ay d r eh d iy b ih z ey v dh ae n s aa r iy
+mdl_pt_al:	(1.22)	ay v r ih n iy b ih z ih k ih m s ay l t ay d r eh d er b ih z ey z dh ae n s aa r iy
+mdl_fs_na:	(1.11)	s ay d w ih n ih uw s ih t ih ng ay d r ih t ah iy s ey sh dh ih n s aa iy
+mdl_fs_al:	(1.28)	ih ay v r iy n iy t ih s ih t ih s ay t ay r iy d f ih s ey z dh ih n s ow iy
+
+
+rec_id:			DB952FFB-9A0F-4CBB-98C6-F54E5F1CE3E3
+target:			What did you do in San Francisco?
+guess:			Museum museum what did you do in San Francisco
+tar_pn:			w ah t d ih d y uw d uw ih n s ae n f r ae n s ih s k ow
+ges_pn:			m y uw z iy ah m m y uw z iy ah m w ah t d ih d y uw d uw ih n s ae n f r ae n s ih s k ow
+mdl_pt_na:	(1.0)	y uw m ay n ow m uw z iy ah m m y uw z iy ah m b ah t d ih z ih z uw ih n s ae n f r ae n s ih s k ow
+mdl_pt_al:	(0.92)	y uw m ay n ah m uw z iy ah m m y uw z iy ah m b ah t d ih d ih d uw ih n s ae n f r ae n s ih s k ow
+mdl_fs_na:	(1.17)	z uw m ah n ah ih n ah n ih z ih m m uw z ah m w ah t d ih z ih z uw iy s ae m f r eh s ih z k ow
+mdl_fs_al:	(1.12)	ah uw m ah n ah ih n ah dh ih z ih m b ih z ah l m w ah t d ih z ih z uw ih n s ae m f r eh n s ih z k ow
+
+
+rec_id:			DBDDFA80-93FA-482C-9B00-E28E1858AA16
+target:			Take the second left.
+guess:			Take a second a left
+tar_pn:			t ey k dh ah s eh k ah n d l eh f t
+ges_pn:			t ey k ah s eh k ah n d ah l eh f t
+mdl_pt_na:	(0.2)	p ey k dh ah s eh k ah n d d l eh f
+mdl_pt_al:	(0.47)	p ey dh ah s eh k aa n dh ah l ae f
+mdl_fs_na:	(0.47)	ay dh ah s eh k ah n dh ah l ae p t
+mdl_fs_al:	(0.4)	ey dh ah s eh k ah m dh ah l eh p t
+
+
+rec_id:			DD11BD32-35F5-4B5F-9088-36A2AEB46502
+target:			Yes. Could I get a bottle of beer?
+guess:			Yes cry get a bottle beer
+tar_pn:			y eh s k uh d ay g eh t ah b aa t ah l ah v b ih r
+ges_pn:			y eh s k r ay g eh t ah b aa t ah l b ih r
+mdl_pt_na:	(0.14)	y eh s k r ay g eh t ah b aa t ah l ah v ah b ih r
+mdl_pt_al:	(0.24)	y eh s k r ay g eh t ah p b aa t ah l ah b ah b ih r
+mdl_fs_na:	(0.19)	y eh s k r ay g eh t ah b aa t ah l ah b ah b ih r
+mdl_fs_al:	(0.38)	y eh s ih k r ay g ih t ah b aa t er t ah b ah b ih r
+
+
+rec_id:			DE56E9C8-4C89-4899-8252-DCDF700BE0B0
+target:			My mom is so controlling.
+guess:			My mom is so controlling
+tar_pn:			m ay m aa m ih z s ow k ah n t r ow l ih ng
+ges_pn:			m ay m aa m ih z s ow k ah n t r ow l ih ng
+mdl_pt_na:	(0.22)	m ay m aa m ih z s ow k aa n t r ah l iy n
+mdl_pt_al:	(0.22)	m ay m aa m ih z s ow k aa n t r eh l iy
+mdl_fs_na:	(0.22)	m ay m aa m iy z s ow k aa n t r ah l ih
+mdl_fs_al:	(0.17)	m ay m aa m ih z s ow k aa n sh r ah l ih ng
+
+
+rec_id:			DE5799E0-1D3D-4F7D-BC26-F7D695A72D71
+target:			I enjoy playing basketball.
+guess:			I enjoy a playing basketball
+tar_pn:			ay eh n jh oy p l ey ih ng b ae s k ah t b ao l
+ges_pn:			ay eh n jh oy ah p l ey ih ng b ae s k ah t b ao l
+mdl_pt_na:	(0.0)	ay eh n jh oy p l ey ih ng b ae s k ah t b ao l
+mdl_pt_al:	(0.16)	ay ih n jh oy p l ey ih ng b ae s k y ah t b ah l
+mdl_fs_na:	(0.47)	ay ih n jh oy t r ey b eh s k ah b er
+mdl_fs_al:	(0.42)	ay ih n jh oy t l ey b eh s k ah b er
+
+
+rec_id:			DE6CEFFB-BDE6-444F-B22A-A485AAE3688D
+target:			Yes, it's David. I spoke to Lisa yesterday.
+guess:			Yes I am David and I spoke to Lisa yesterday
+tar_pn:			y eh s ih t s d ey v ih d ay s p ow k t uw l iy s ah y eh s t er d ey
+ges_pn:			y eh s ay ae m d ey v ih d ah n d ay s p ow k t uw l iy s ah y eh s t er d ey
+mdl_pt_na:	(0.28)	y eh s ih m d ey v ih d ae n ay s p ow k t uw l iy s ah y er r z t ah d ey
+mdl_pt_al:	(0.28)	y eh s ay m d ey v ih d n ay s p ow t ah l iy s ah y er s t ah d ey
+mdl_fs_na:	(0.52)	n eh s ah m dh ey b ih dh ah ay z g ow t ah w iy z ah y eh s t ah d ey
+mdl_fs_al:	(0.52)	n eh s ay m dh ey b ih dh ah ay s p ow t ah w iy z ah y er r s t ah d ey
+
+
+rec_id:			DE7D6D0E-7D10-4F20-B72D-50F44A22BB29
+target:			My favorite is Iron Man.
+guess:			My favorite is Iron Man
+tar_pn:			m ay f ey v er ih t ih z ay er n m ae n
+ges_pn:			m ay f ey v er ih t ih z ay er n m ae n
+mdl_pt_na:	(0.19)	m ay f ey v er ih t ih z ay r ah n m ah n
+mdl_pt_al:	(0.12)	m ay f ey v er ih t ih z ay r ah m ae n
+mdl_fs_na:	(0.44)	m ay f ey b ay ey d ih z ay r ah m eh n
+mdl_fs_al:	(0.31)	m ay f ey v ay ey d ih z ay r ah m ae n
+
+
+rec_id:			DE9A109E-54FD-4BFB-A9F8-759FF5CCB59E
+target:			my parents
+guess:			My a parents
+tar_pn:			m ay p eh r ah n t s
+ges_pn:			m ay ah p eh r ah n t s
+mdl_pt_na:	(0.11)	m ay p eh r l ah n t s
+mdl_pt_al:	(0.11)	m ay p eh r l ah n t s
+mdl_fs_na:	(0.33)	m ay p eh r n ah n
+mdl_fs_al:	(0.22)	m ay p eh r n ah n t
+
+
+rec_id:			DF277CC0-7EAC-4D20-8795-DBCC8BE312E1
+target:			I can't get enough of social media.
+guess:			I can't I can't do it social media
+tar_pn:			ay k ae n t g eh t ih n ah f ah v s ow sh ah l m iy d iy ah
+ges_pn:			ay k ae n t ay k ae n t d uw ih t s ow sh ah l m iy d iy ah
+mdl_pt_na:	(0.46)	ay k ae n ay t uw k d uw w ih dh s ow sh ah l m ey d iy ah
+mdl_pt_al:	(0.46)	ay k ae n ay t uh k d uw w ih dh s ow sh ah l m ey d iy ah
+mdl_fs_na:	(0.58)	ay k ae t ay k uh d ow ih dh s ow sh ah l ey k ah
+mdl_fs_al:	(0.5)	ay k ae t ay k ah dh ow ih t s ow sh ah l m iy n d ah
+
+
+rec_id:			DFAE3C21-27CE-4884-8FA3-F10B3DB0105E
+target:			I sent some chocolate to my family.
+guess:			I sent an my a sent a some a chocolate to my a family
+tar_pn:			ay s eh n t s ah m ch ao k l ah t t uw m ay f ae m ah l iy
+ges_pn:			ay s eh n t ae n m ay ah s eh n t ah s ah m ah ch ao k l ah t t uw m ay ah f ae m ah l iy
+mdl_pt_na:	(0.33)	ay s eh dh m ay n ay s eh t d s ah m ch ao k l ah t uw m ay f ae m ah l iy
+mdl_pt_al:	(0.67)	ay s eh d dh ah m ay ay s eh l s ah m ch ao k l ah t uw m ay b eh l l ih ng
+mdl_fs_na:	(0.62)	ay s eh d m ay n ay s eh v s ah m ch ah k iy iy t uw m ay b eh l iy
+mdl_fs_al:	(0.62)	ay s eh d m ay n ay s ah s ah ch ah k iy iy t ah m ay b eh l iy
+
+
+rec_id:			DFB7454E-8D10-4D86-8772-1BD512DC47C4
+target:			I like to play it safe on vacation.
+guess:			I like to play a safe an vacation
+tar_pn:			ay l ay k t uw p l ey ih t s ey f aa n v ey k ey sh ah n
+ges_pn:			ay l ay k t uw p l ey ah s ey f ae n v ey k ey sh ah n
+mdl_pt_na:	(0.35)	ay l ay k t uw p l iy s iy f ah m b ih k ey sh ah n
+mdl_pt_al:	(0.43)	ay l ay k dh ah p l iy s ih f ao m b iy k ey sh ah n
+mdl_fs_na:	(0.52)	aw l ay k t uw p l iy s iy f er m dh ah k ih n sh ah ng
+mdl_fs_al:	(0.43)	ay l ay t ah p l iy s iy f ao m dh ah k ey sh ah n
+
+
+rec_id:			E02DB0C3-28AF-46B1-BD3A-38393F011599
+target:			He hurt his shoulders.
+guess:			Cheaha his shoulders
+tar_pn:			hh iy hh er t hh ih z sh ow l d er z
+ges_pn:			<UNK> hh ih z sh ow l d er z
+mdl_pt_na:	(0.36)	sh iy hh ow l hh ih z sh ao r d er z
+mdl_pt_al:	(0.5)	sh iy hh ao l hh iy s sh ao r d er z
+mdl_fs_na:	(0.57)	sh iy hh ow m hh iy s ah sh ao r d er z
+mdl_fs_al:	(0.57)	sh iy hh ow m hh iy s ih sh ao r d er z
+
+
+rec_id:			E0DAF7EB-B369-4714-91CD-650DF85D395C
+target:			She'll soon start telling me what to wear and what to eat.
+guess:			Sybil saying start telling me we are to want to wear in
+tar_pn:			sh iy l s uw n s t aa r t t eh l ih ng m iy w ah t t uw w eh r ah n d w ah t t uw iy t
+ges_pn:			s ih b ih l s ey ih ng s t aa r t t eh l ih ng m iy w iy aa r t uw w aa n t t uw w eh r ih n
+mdl_pt_na:	(0.64)	s iy v ah l s iy ng s t aa r t ae l ah m iy w eh r t uw t w aa t t uw w eh r ah n w
+mdl_pt_al:	(0.69)	s ih v er l s w ih ng s t aa r t ae l ah m iy w eh r t uw ah t w aa t t uw w eh r ih n w
+mdl_fs_na:	(0.64)	s iy v ah l s iy n z t aa t eh l ah m uw w eh r t ah ah t w ah t t uw w eh r ih n w
+mdl_fs_al:	(0.64)	s iy w ah l z iy n z t aa t eh l ih m uw w eh r t uw ah t w ah t uw w eh r ih n w
+
+
+rec_id:			E1C7E1B7-5999-4B6E-A073-7D84FAAEE634
+target:			Yes. It was magnificent.
+guess:			Yes a was a magnificent
+tar_pn:			y eh s ih t w aa z m ae g n ih f ah s ah n t
+ges_pn:			y eh s ah w aa z ah m ae g n ih f ah s ah n t
+mdl_pt_na:	(0.32)	y eh s hh ih w aa z m ae d ae n iy f s ah n t
+mdl_pt_al:	(0.37)	y eh s hh ih w ah z m ae d ah n iy f s ah n t
+mdl_fs_na:	(0.47)	y eh s iy r aa z m eh dh ah n iy p s ah n t
+mdl_fs_al:	(0.58)	y eh s iy r ah z ah m eh dh ah n iy p s ah n t
+
+
+rec_id:			E39DA0A4-D03F-4CFA-A332-07D00C039DBC
+target:			I often eat leftovers from the night before.
+guess:			I often it leftovers from the night before
+tar_pn:			ay ao f t ah n iy t l eh f t ow v er z f r ah m dh ah n ay t b ih f ao r
+ges_pn:			ay ao f t ah n ih t l eh f t ow v er z f r ah m dh ah n ay t b ih f ao r
+mdl_pt_na:	(0.23)	ay hh ae v t uw n iy t l eh f t ow v er z f ah m dh ah n ay b b ih f ao
+mdl_pt_al:	(0.33)	ay hh ae v t ih n iy t l eh f t ow v er z f er m dh ah n ay b f
+mdl_fs_na:	(0.57)	ay y uw ah s t uw n iy l eh f t ah er z n dh ah n ay t
+mdl_fs_al:	(0.4)	ay ah f t ih n iy t l eh f t ah v er z ah n dh ah n ay ah
+
+
+rec_id:			E3DE6BC2-81C9-4498-9B9F-9B5AC36CA78A
+target:			Yes, there was.
+guess:			Yes stereo ass
+tar_pn:			y eh s dh eh r w aa z
+ges_pn:			y eh s s t eh r iy ow ae s
+mdl_pt_na:	(0.22)	y eh s dh eh r iy ah w aa z
+mdl_pt_al:	(0.22)	y eh s dh eh r iy ah w aa z
+mdl_fs_na:	(0.33)	iy eh s t eh r ah aa z
+mdl_fs_al:	(0.33)	y eh s t eh r ah aa s
+
+
+rec_id:			E41B1988-6420-49B1-8E26-8BE636E2FE60
+target:			I've been working out at the gym.
+guess:			Ive an working an out it the a gym
+tar_pn:			ay v b ih n w er k ih ng aw t ae t dh ah jh ih m
+ges_pn:			ay v ae n w er k ih ng ae n aw t ih t dh ah ah jh ih m
+mdl_pt_na:	(0.05)	ay v ih n w er k ih ng aw t ae t dh ah jh ih m
+mdl_pt_al:	(0.05)	ay v ih n w er k ih ng aw t ae t dh ah jh ih m
+mdl_fs_na:	(0.21)	ay v ih n w er k ih n aw t ih t dh ah jh ey m
+mdl_fs_al:	(0.16)	ay v ih ng w er k ih ng aw t ih t dh ah jh ih m
+
+
+rec_id:			E42F9BDA-F31B-403A-856E-C167676E3690
+target:			It is
+guess:			Yes it is
+tar_pn:			ih t ih z
+ges_pn:			y eh s ih t ih z
+mdl_pt_na:	(0.5)	eh t ih t ih z
+mdl_pt_al:	(0.75)	ih t s ih t ih z
+mdl_fs_na:	(0.75)	ih z ih t ey z
+mdl_fs_al:	(0.75)	ih z ih t ey z
+
+
+rec_id:			E4F1FF5C-9746-4E16-B514-0549A731EA88
+target:			I went on a tour of Buckingham Palace.
+guess:			I went a tour a went a on a tour a buckingham a of a palace
+tar_pn:			ay w eh n t aa n ah t uh r ah v b ah k ih ng hh ae m p ae l ah s
+ges_pn:			ay w eh n t ah t uh r ah w eh n t ah aa n ah t uh r ah b ah k ih ng hh ae m ah ah v ah p ae l ah s
+mdl_pt_na:	(0.73)	ay w eh n t ae t uw ay w eh n t aa n ah t w ao r ah b aa k ih ng ae m p t er ah p ae b ae l ah s
+mdl_pt_al:	(0.69)	ay w eh n t aa t t uw ay w eh n t aa n ah t ao r ah b ah k ih ng ae f t er p ae b eh l ah z
+mdl_fs_na:	(0.65)	ay w eh n ah s t ah ah ay w eh n aa n ah t r ao r ah b ah k ih ng ah n t ae p ae b eh l ah s
+mdl_fs_al:	(0.65)	ay w eh n ah s t ah ay w eh n aa n ah t ao r ah b aw t ih ng ah m t eh p ae b eh l ah s
+
+
+rec_id:			E51E7F06-E4A7-4875-B444-99160CD22F2A
+target:			No, I can try it on here.
+guess:			No I can I can try on here
+tar_pn:			n ow ay k ae n t r ay ih t aa n hh iy r
+ges_pn:			n ow ay k ae n ay k ae n t r ay aa n hh iy r
+mdl_pt_na:	(0.38)	n ow ay k ae n ay k ae n t r ay aa n hh iy r
+mdl_pt_al:	(0.38)	n ow ay k ae n ay k ah n t r ay aa n hh iy r
+mdl_fs_na:	(0.38)	n ow ay k ae n ay g ae n t r ay aa n hh iy r
+mdl_fs_al:	(0.44)	n ow ay k ae n ay k ae n t r ay ao n hh iy r
+
+
+rec_id:			E525FEF3-B31E-4AC7-9D9E-766B5FCCB733
+target:			His girlfriend bought him a new coat.
+guess:			His girlfriend bought him a new coat
+tar_pn:			hh ih z g er l f r eh n d b aa t hh ih m ah n uw k ow t
+ges_pn:			hh ih z g er l f r eh n d b aa t hh ih m ah n uw k ow t
+mdl_pt_na:	(0.22)	ih z k er l f r eh n d b ow th hh ih m ah n uw k aw t
+mdl_pt_al:	(0.26)	ih z k er l f r eh n d b ow t ih m ah n y uw k aw t
+mdl_fs_na:	(0.48)	ih z k aa f eh n d b aw t iy m ah n y uw k aw l t
+mdl_fs_al:	(0.48)	ih z k er f eh n b aw t ih m ay y uw k ah l t
+
+
+rec_id:			E585E99F-6F43-4D3C-B934-BB079168F7B2
+target:			You should get some food.
+guess:			You should get some food
+tar_pn:			y uw sh uh d g eh t s ah m f uw d
+ges_pn:			y uw sh uh d g eh t s ah m f uw d
+mdl_pt_na:	(0.0)	y uw sh uh d g eh t s ah m f uw d
+mdl_pt_al:	(0.0)	y uw sh uh d g eh t s ah m f uw d
+mdl_fs_na:	(0.29)	uw sh uh d g eh t dh ah s uw d
+mdl_fs_al:	(0.43)	uw sh uh d ah k eh th ah f uw d
+
+
+rec_id:			E5FD6A67-818B-4CAB-9D7B-F4CC611F9C24
+target:			Are you married?
+guess:			Lightweight are you a married
+tar_pn:			aa r y uw m eh r iy d
+ges_pn:			l ay t w ey t aa r y uw ah m eh r iy d
+mdl_pt_na:	(0.78)	ay t w ey d t aa r y uw m eh r iy
+mdl_pt_al:	(0.78)	ay t w ey t er r y uw m eh r iy
+mdl_fs_na:	(0.89)	ay t w ey ae d s aa r y uw m eh r iy
+mdl_fs_al:	(1.0)	ay t w iy d t ay y uw m eh r
+
+
+rec_id:			E746CFD8-D218-4DDA-9773-6F707026D677
+target:			I like to relax at home.
+guess:			I like to relax a at home
+tar_pn:			ay l ay k t uw r ih l ae k s ae t hh ow m
+ges_pn:			ay l ay k t uw r ih l ae k s ah ae t hh ow m
+mdl_pt_na:	(0.0)	ay l ay k t uw r ih l ae k s ae t hh ow m
+mdl_pt_al:	(0.06)	ay l ay k t uw r iy l ae k s ae t hh ow m
+mdl_fs_na:	(0.29)	ay l ay t uw r uw l eh k s ae t ah m
+mdl_fs_al:	(0.35)	ay l l ay t uw r iy l eh k s eh t ow m
+
+
+rec_id:			E79950B3-4DD1-4561-85E2-6AA5C0DA5739
+target:			Even if it’s inconvenient, you should wear a mask.
+guess:			Even a if a its a inconvenient you're a should a wear a mask
+tar_pn:			iy v ih n ih f ih t s ih n k ah n v iy n y ah n t y uw sh uh d w eh r ah m ae s k
+ges_pn:			iy v ih n ah ih f ah ih t s ah ih n k ah n v iy n y ah n t y uh r ah sh uh d ah w eh r ah m ae s k
+mdl_pt_na:	(0.29)	iy v n ih ng f uw iy ch ah ih n k aa n v iy n y ah n t y uw ih sh uh d w eh r m ah s k
+mdl_pt_al:	(0.29)	iy v ih n ih f uw iy t ah ih n k aa n v ah n y ah n t y uw r iy sh uh d w eh r m ah ch k
+mdl_fs_na:	(0.5)	ih t w n iy p uw ih t er ih ng k aa m b ih n ah n t y uw r ih sh uh t w eh r ah m ah s k
+mdl_fs_al:	(0.47)	ih t er ih f uw ih ch er ih ng k ah m b ih n ah n t y uh r iy sh uh d w eh r ah m ah s k
+
+
+rec_id:			E7BCA30E-C8BC-4322-AE6D-7BFBD358CA48
+target:			Oh, that’s too bad. Don’t let it get you down.
+guess:			Oh that's too bad don't let it down you
+tar_pn:			ow dh ae t s t uw b ae d d ow n t l eh t ih t g eh t y uw d aw n
+ges_pn:			ow dh ae t s t uw b ae d d ow n t l eh t ih t d aw n y uw
+mdl_pt_na:	(0.22)	ow dh ae t s t uw b eh d d ow n t l eh t iy t d aw n n uw d aw n
+mdl_pt_al:	(0.22)	ow dh ae t s t uw b ae d z d ow n t uw l eh t ih t d aw n y uw d aw
+mdl_fs_na:	(0.48)	ay dh ae t s t uw w ae d z b aa n t uw l eh d ih t dh aw n y uw dh
+mdl_fs_al:	(0.44)	ow dh ae t t uw w ae d b ow n t ah l eh d ih dh aw n y uw dh
+
+
+rec_id:			E802F780-91C2-4967-B107-1F4798C3389D
+target:			I'm having trouble deciding who to live with after college.
+guess:			I am having trouble deciding who to leave with after college
+tar_pn:			ay m hh ae v ih ng t r ah b ah l d ih s ay d ih ng hh uw t uw l ay v w ih dh ae f t er k aa l ih jh
+ges_pn:			ay ae m hh ae v ih ng t r ah b ah l d ih s ay d ih ng hh uw t uw l iy v w ih dh ae f t er k aa l ih jh
+mdl_pt_na:	(0.15)	ay hh ae v eh n t r ah b ah l d ih s ay d ih ng hh uw t uw l iy v w ih th ao f t er k aa l ih jh
+mdl_pt_al:	(0.13)	ay hh ae v ih n t r ah b ah l d ih s ay d ih ng hh uw t uw l iy v w ih th ae f t er k aa l ih
+mdl_fs_na:	(0.23)	ay m hh ae v ah n t r ah b ah l t ih s ay d ih ng hh uw t uw l iy v r iy dh ae f t er k ao l iy z
+mdl_fs_al:	(0.28)	ay m hh ae v ih n t r ah b ah t ih s ay d ih ng p iy t uw l iy v iy dh ae f t er k ao l iy z
+
+
+rec_id:			E85012BB-6893-48BE-9B08-1A3629A76226
+target:			I really wanna get in shape.
+guess:			I really want to get in shape
+tar_pn:			ay r ih l iy w aa n ah g eh t ih n sh ey p
+ges_pn:			ay r ih l iy w aa n t t uw g eh t ih n sh ey p
+mdl_pt_na:	(0.12)	ay r ih l iy w aa n t uw g eh t ih n sh ey p
+mdl_pt_al:	(0.18)	ay r ih l iy w aa n t ah g eh t eh ng sh ey p
+mdl_fs_na:	(0.24)	ay r ih l iy aa t ah g eh t ih ng sh ey
+mdl_fs_al:	(0.24)	ay r ih l iy l ah n ah g eh t ih ng sh ey t
+
+
+rec_id:			E88976F9-0FFE-4CE9-865B-769F5B8E6A88
+target:			I could do with more water.
+guess:			I could to with a more a could a with a more water
+tar_pn:			ay k uh d d uw w ih dh m ao r w ao t er
+ges_pn:			ay k uh d t uw w ih dh ah m ao r ah k uh d ah w ih dh ah m ao r w ao t er
+mdl_pt_na:	(0.94)	ay p uh d d ow w ih dh s ah m m ao r ay k uh d d uw w ih dh m ao r w ao t er
+mdl_pt_al:	(0.94)	ay p uh d d uw w ih th s ah m m ao r ay k uh d d uw w ih dh m ao r w ao t er
+mdl_fs_na:	(1.0)	ae f ih d uw w ih s s ah m m ao r ae k uh d d uw w ih dh m ao r w aa t er
+mdl_fs_al:	(0.88)	ay f uh d uw w ih th ah m m ao r ae k uh d d uw w ih dh m ao r w aa t er
+
+
+rec_id:			E8FC240A-9EAC-49EC-96CD-62C60042B164
+target:			I'm an only child.
+guess:			I am an only child
+tar_pn:			ay m ae n ow n l iy ch ay l d
+ges_pn:			ay ae m ae n ow n l iy ch ay l d
+mdl_pt_na:	(0.25)	ay ae m ae n ow n l iy t ay er l d
+mdl_pt_al:	(0.42)	ay ae m ah n ow l iy t ay er d
+mdl_fs_na:	(0.67)	ay ae m iy t ay
+mdl_fs_al:	(0.67)	ay m er aw iy t ay ah
+
+
+rec_id:			E95FD963-DEF2-4FB9-A123-9636317660A1
+target:			I like to relax at home.
+guess:			I like to relax it home
+tar_pn:			ay l ay k t uw r ih l ae k s ae t hh ow m
+ges_pn:			ay l ay k t uw r ih l ae k s ih t hh ow m
+mdl_pt_na:	(0.0)	ay l ay k t uw r ih l ae k s ae t hh ow m
+mdl_pt_al:	(0.18)	ay l ay k t ih r iy l ae k s ah t hh ow m
+mdl_fs_na:	(0.35)	ay l ay k t ah r ih l eh s ah t m
+mdl_fs_al:	(0.29)	ay l ay k t uw r iy l eh k s ah t ah m
+
+
+rec_id:			EB0BC07B-3A18-403E-A6B6-4EB3EE1A4079
+target:			Yes, could I get the check, please?
+guess:			Yes could I get the check please
+tar_pn:			y eh s k uh d ay g eh t dh ah ch eh k p l iy z
+ges_pn:			y eh s k uh d ay g eh t dh ah ch eh k p l iy z
+mdl_pt_na:	(0.11)	y eh s k uh d ay g eh t dh ah ch ae p l iy z
+mdl_pt_al:	(0.16)	y eh s k d ay g eh t dh ah ch ae p l iy z
+mdl_fs_na:	(0.26)	y eh s k r ay g eh t dh ah ch ae p t l iy z
+mdl_fs_al:	(0.26)	y eh n s k l ay g eh t dh ah ch ae p l iy z
+
+
+rec_id:			EB8476AA-2484-44EC-B87F-1C7937C9D140
+target:			She isn't a friend.
+guess:			She isn't a friend
+tar_pn:			sh iy ih z ah n t ah f r eh n d
+ges_pn:			sh iy ih z ah n t ah f r eh n d
+mdl_pt_na:	(0.0)	sh iy ih z ah n t ah f r eh n d
+mdl_pt_al:	(0.08)	sh iy ih z ah n t ah p r eh n d
+mdl_fs_na:	(0.08)	sh iy ih z ah n t ah p r eh n d
+mdl_fs_al:	(0.08)	sh iy ih z ah n t ah p r eh n d
+
+
+rec_id:			EC283712-4B83-4E75-8373-174BEF734124
+target:			But not anymore.
+guess:			But not anymore
+tar_pn:			b ah t n aa t eh n iy m ao r
+ges_pn:			b ah t n aa t eh n iy m ao r
+mdl_pt_na:	(0.08)	w ah t n aa t eh n iy m ao r
+mdl_pt_al:	(0.08)	w ah t n aa t eh n iy m ao r
+mdl_fs_na:	(0.42)	m ah t n aa t th eh n iy n uw
+mdl_fs_al:	(0.58)	m ah n aa t th eh m ah
+
+
+rec_id:			ECAEC1F9-CB2A-4EE2-8201-26398C5C5FE8
+target:			I eat either bananas or apples.
+guess:			I eat to eat the bananas or apples
+tar_pn:			ay iy t iy dh er b ah n ae n ah z ao r ae p ah l z
+ges_pn:			ay iy t t uw iy t dh ah b ah n ae n ah z ao r ae p ah l z
+mdl_pt_na:	(0.6)	ay iy t iy dh er b aa n ah n er s uw p r eh f er s ah n
+mdl_pt_al:	(0.55)	ay iy t iy dh er b aa n aa er s uw p ao ae p er s ah n
+mdl_fs_na:	(0.85)	ay ih t dh ah ih d ah n aa t er s uw k aa r eh f er s
+mdl_fs_al:	(0.85)	ay ih t ah iy dh ah aa n ah t er sh r ih p aa ae eh f er s ah
+
+
+rec_id:			ECFBC852-A434-4547-98D3-32F39F548B6E
+target:			Yeah, it's really hot now.
+guess:			Yes it's really hard no
+tar_pn:			y ae ih t s r ih l iy hh aa t n aw
+ges_pn:			y eh s ih t s r ih l iy hh aa r d n ow
+mdl_pt_na:	(0.36)	y eh s ih t s r ih l iy hh ah aw
+mdl_pt_al:	(0.29)	y eh s ih t s r ih l iy hh ah n aw
+mdl_fs_na:	(0.5)	eh s ih t r iy r l iy hh ah n n aw
+mdl_fs_al:	(0.5)	y eh s ih t r iy l iy hh ah n n ow
+
+
+rec_id:			EE6C7660-6590-4FA9-9162-752E01ED2CA0
+target:			Would you have moved to Seoul?
+guess:			Would you have moved to Seoul
+tar_pn:			w uh d y uw hh ae v m uw v d t uw s ow l
+ges_pn:			w uh d y uw hh ae v m uw v d t uw s ow l
+mdl_pt_na:	(0.06)	w uh d y uw hh ae v m uw v d t uw s ao l
+mdl_pt_al:	(0.12)	w uh d y uw hh ae v m uw v d t ih s ao l
+mdl_fs_na:	(0.24)	uh d y uw hh ae v m uw v t ah f ow l
+mdl_fs_al:	(0.29)	iy y uw hh ae v m uw v t uw f ow l
+
+
+rec_id:			EF828C53-58E7-4546-B29F-634D23E3A5BB
+target:			How did you guys meet?
+guess:			How did you guys meet
+tar_pn:			hh aw d ih d y uw g ay z m iy t
+ges_pn:			hh aw d ih d y uw g ay z m iy t
+mdl_pt_na:	(0.15)	hh aw d ih d y uw g ay s m ih t
+mdl_pt_al:	(0.08)	hh aw d ih d y uw g ay z m ih t
+mdl_fs_na:	(0.0)	hh aw d ih d y uw g ay z m iy t
+mdl_fs_al:	(0.0)	hh aw d ih d y uw g ay z m iy t
+
+
+rec_id:			F0250ECE-EABE-4687-9DEE-57600B28868F
+target:			I don't like going out.
+guess:			I don't like going out
+tar_pn:			ay d ow n t l ay k g ow ih ng aw t
+ges_pn:			ay d ow n t l ay k g ow ih ng aw t
+mdl_pt_na:	(0.14)	hh iy d ow n t l ay k g ow ih ng aw t
+mdl_pt_al:	(0.14)	hh ay d ow n l ay k g ow ih ng aw t
+mdl_fs_na:	(0.43)	hh ah d ow n l ay k ow l w ih ng aw t
+mdl_fs_al:	(0.29)	hh ih d ow n l ay k ow ih ng aw t
+
+
+rec_id:			F02E768B-7775-4C58-A669-4C1A9329748E
+target:			Is she your cousin?
+guess:			It's a she a your a cousin
+tar_pn:			ih z sh iy y ao r k ah z ah n
+ges_pn:			ih t s ah sh iy ah y ao r ah k ah z ah n
+mdl_pt_na:	(0.25)	ih t s sh iy y ao k ah z ah n
+mdl_pt_al:	(0.42)	ih t s ah sh iy y uw r k ah t ah n
+mdl_fs_na:	(0.58)	ih t s ih sh iy iy uw k ah t ah n
+mdl_fs_al:	(0.5)	ih t s ih sh iy y uw k ah t ah n
+
+
+rec_id:			F082A452-D637-4976-B124-425EF748E84A
+target:			Should we grab fried chicken takeout?
+guess:			Should we grab a fried's chicken an takeout
+tar_pn:			sh uh d w iy g r ae b f r ay d ch ih k ah n t ey k aw t
+ges_pn:			sh uh d w iy g r ae b ah <UNK> ch ih k ah n ae n t ey k aw t
+mdl_pt_na:	(0.04)	sh iy d w iy g r ae b f r ay d ch ih k ah n t ey k aw t
+mdl_pt_al:	(0.04)	sh iy d w iy g r ae b f r ay d ch ih k ah n t ey k aw t
+mdl_fs_na:	(0.39)	sh iy w iy k r ae p f ay t uw k ah n t ey k aw t t
+mdl_fs_al:	(0.3)	sh iy w k r ae b f ay t ih k ah n t ey k aw t
+
+
+rec_id:			F088745B-7D74-4627-A43F-365555F711A3
+target:			Are you feeling okay?
+guess:			Are you feeling OK
+tar_pn:			aa r y uw f iy l ih ng ow k ey
+ges_pn:			aa r y uw f iy l ih ng ow k ey
+mdl_pt_na:	(0.08)	aa r y uw f iy l ih ng ah k ey
+mdl_pt_al:	(0.17)	er r y uw f iy l ih ng ah k ey
+mdl_fs_na:	(0.17)	aa r y uw f l ih ng ah k ey
+mdl_fs_al:	(0.08)	aa r y uw f iy l ih ng ah k ey
+
+
+rec_id:			F1E42910-7E69-4355-86CF-7E3D14BCF90C
+target:			I'm always in a rush to put on my make-up.
+guess:			I'm always in a rush to put on my make up
+tar_pn:			ay m ao l w ey z ih n ah r ah sh t uw p uh t aa n m ay m ey k ah p
+ges_pn:			ay m ao l w ey z ih n ah r ah sh t uw p uh t aa n m ay m ey k ah p
+mdl_pt_na:	(0.22)	ah m ao l w ey z ih n ah r eh sh t uw p r aa m ah m ey k ah p
+mdl_pt_al:	(0.3)	ah m ao l w iy z ih n ah hh r eh sh t ih p uh t ah m ah m ey k ah p
+mdl_fs_na:	(0.37)	ah m aw w ey z ih n ah r eh sh t ah p r ah m ah m ey k ah p
+mdl_fs_al:	(0.44)	ah m aw ey z ih n ah hh eh sh t ah p r ah m ah m ey k ah p
+
+
+rec_id:			F213C031-868F-432D-824A-91F4AF3E944F
+target:			Time's going slowly.
+guess:			Time is going slowly
+tar_pn:			t ay m z g ow ih ng s l ow l iy
+ges_pn:			t ay m ih z g ow ih ng s l ow l iy
+mdl_pt_na:	(0.92)	hh ay m ih t s g ow ih ng s l ow r iy hh iy w uh m ah n
+mdl_pt_al:	(0.92)	hh ay m ih t s g ow ih ng s l ao r iy hh iy w uh ah n
+mdl_fs_na:	(1.08)	ay t g ao r ih ng s r ao r iy w uh m ah n t
+mdl_fs_al:	(1.46)	hh ay n ih t k ao r ih s r ao r ih hh uw uh m ah n t
+
+
+rec_id:			F27131DA-34DB-4C67-B18E-118C5F80334D
+target:			I'm free on Saturday.
+guess:			I free a on's saturday
+tar_pn:			ay m f r iy aa n s ae t er d iy
+ges_pn:			ay f r iy ah aa n z s ae t er d iy
+mdl_pt_na:	(0.0)	ay m f r iy aa n s ae t er d iy
+mdl_pt_al:	(0.08)	ay m f r iy aa n s ae t ih d iy
+mdl_fs_na:	(0.15)	ay m f r iy aa n s eh t er d ey
+mdl_fs_al:	(0.38)	ay f iy n s eh t er d ey
+
+
+rec_id:			F3BF9014-A97F-46A8-B2E9-14FF0324A439
+target:			I go swimming all the time.
+guess:			I go an swimming or time a go a swimming
+tar_pn:			ay g ow s w ih m ih ng ao l dh ah t ay m
+ges_pn:			ay g ow ae n s w ih m ih ng ao r t ay m ah g ow ah s w ih m ih ng
+mdl_pt_na:	(0.88)	ay g ow s iy m ih ng ao l t ah t ay m ay w aa z iy m ih ng ao l dh
+mdl_pt_al:	(0.69)	ay g ow s ih m ih ng ao l dh ah t ay m ay w ao z iy m ih ng ao l
+mdl_fs_na:	(0.88)	ay g ow s iy m ih ng ao r t ah t ay m ay w aa z iy m iy ao r dh
+mdl_fs_al:	(1.06)	ay ow s iy m ih ng ao r t ah p ay m ay w ah z s iy m ih ao r d
+
+
+rec_id:			F3C72739-B5B6-4634-B055-B41A12DF2A17
+target:			I'm going to go swimming in my bikini tomorrow!
+guess:			I'm going to go swimming in my bikini tomorrow
+tar_pn:			ay m g ow ih ng t uw g ow s w ih m ih ng ih n m ay b ih k iy n iy t ah m aa r ow
+ges_pn:			ay m g ow ih ng t uw g ow s w ih m ih ng ih n m ay b ih k iy n iy t ah m aa r ow
+mdl_pt_na:	(0.09)	ih m g ow ih ng t uw g ow s w ih m ih ng ih n m ay b ih k ey n iy t ah m aa r
+mdl_pt_al:	(0.12)	ay m g ow ih ng t ih g ow s w ih m ih ng ih n m ay b iy k ih n iy t ah m aa r
+mdl_fs_na:	(0.34)	ih m k ow ih ng t ah g ow s ih m ih ih n m ay b ih k ih ng ih ng t ah m aa
+mdl_fs_al:	(0.44)	ah n k ow ih n t ah g ow s ih m ih ih n m ay b ih k ey n ih ng t uw m
+
+
+rec_id:			F3E363BA-F28E-45C5-9A50-DB1B8E825DE7
+target:			Actually, could we have the check please?
+guess:			Actually could we have the check please
+tar_pn:			ae k ch uw ah l iy k uh d w iy hh ae v dh ah ch eh k p l iy z
+ges_pn:			ae k ch uw ah l iy k uh d w iy hh ae v dh ah ch eh k p l iy z
+mdl_pt_na:	(0.0)	ae k ch uw ah l iy k uh d w iy hh ae v dh ah ch eh k p l iy z
+mdl_pt_al:	(0.04)	ae k ch ah l iy k uh d w iy hh ae v dh ah ch eh k p l iy z
+mdl_fs_na:	(0.21)	ae k uh r ah l iy k uh d ah b iy hh ae v dh ah ch eh t p l iy z
+mdl_fs_al:	(0.17)	ae k sh er ah l iy k uh d ah b iy hh ae v dh ah ch eh k p l iy z
+
+
+rec_id:			F543C543-EE32-488D-8635-DA0A1DAAD75E
+target:			I wanted to check out a soccer game.
+guess:			Wanted to check out a soccer game
+tar_pn:			ay w ao n t ih d t uw ch eh k aw t ah s aa k er g ey m
+ges_pn:			w ao n t ih d t uw ch eh k aw t ah s aa k er g ey m
+mdl_pt_na:	(0.18)	w ah n t ih d t uw ch eh k aw t ah s ae k ah g ey m
+mdl_pt_al:	(0.32)	hh w ah n ih t ah ch eh k aw t ah s ae k ah g ey m
+mdl_fs_na:	(0.41)	w ah n ih t ah t eh k k aw t ah s ae k ah g ey m
+mdl_fs_al:	(0.45)	w ah n ih t ah t ih k aw t ah s ae k ah g ih m
+
+
+rec_id:			F5657A3D-B365-4D19-9559-DB9FAF1D43B5
+target:			She walked happily.
+guess:			He blocked happily
+tar_pn:			sh iy w ao k t hh ae p ah l iy
+ges_pn:			hh iy b l aa k t hh ae p ah l iy
+mdl_pt_na:	(0.17)	hh iy w ao k t p hh ae p ah l iy
+mdl_pt_al:	(0.25)	hh iy w aa k t p hh ae p ah l iy
+mdl_fs_na:	(0.25)	sh iy l ae k t hh ae p ih l iy
+mdl_fs_al:	(0.25)	hh iy l ae k t hh ae p ah l iy
+
+
+rec_id:			F5684660-CE26-4090-8251-3FE2A8B731D8
+target:			living in another country
+guess:			Living a another a country
+tar_pn:			l ih v ih ng ih n ah n ah dh er k ah n t r iy
+ges_pn:			l ih v ih ng ah ah n ah dh er ah k ah n t r iy
+mdl_pt_na:	(0.11)	l ih v ih ng aa n n ah dh er k ah n t r iy
+mdl_pt_al:	(0.11)	l ih v ih ng ah n n ah dh er k ah n t r iy
+mdl_fs_na:	(0.22)	l ay v ih ng ah n n aa dh er k ah n t r iy
+mdl_fs_al:	(0.17)	l ih v ih ng ah n n aa dh er k ah n t r iy
+
+
+rec_id:			F6012FB6-4B58-4B1A-9CA3-9AD24C29978B
+target:			Could you tell me where the fitting room is?
+guess:			Could you tell me where the fitting room is
+tar_pn:			k uh d y uw t eh l m iy w eh r dh ah f ih t ih ng r uw m ih z
+ges_pn:			k uh d y uw t eh l m iy w eh r dh ah f ih t ih ng r uw m ih z
+mdl_pt_na:	(0.08)	k uh d y uw t eh l m iy w eh r dh ah p ih t ih ng n uw m ih z
+mdl_pt_al:	(0.16)	k uh d y uw t eh l m iy w eh r dh ah iy t ih n y uw m ih z
+mdl_fs_na:	(0.32)	k uh d y r uw t eh r m iy w eh r dh ah hh iy d ih ng y uw m iy s
+mdl_fs_al:	(0.32)	k uh d y uw t eh r m iy w eh r dh er hh iy t ih n y uw m iy s
+
+
+rec_id:			F67D213A-9A7E-4B67-BA1D-20D08B40FDA8
+target:			Yes, there is an internet cafe.
+guess:			Yes it is there is an Internet café
+tar_pn:			y eh s dh eh r ih z ae n ih n t er n eh t k ah f ey
+ges_pn:			y eh s ih t ih z dh eh r ih z ae n ih n t er n eh t k ae f
+mdl_pt_na:	(0.52)	y eh s ey ih z v eh r iy z ah n ih n t r ae k aa f ey
+mdl_pt_al:	(0.38)	y eh s ih ih s dh eh r ih z ah n ih n t er k aa f ey
+mdl_fs_na:	(0.57)	eh s ih ih s d eh r iy z ah n ih n t er k ah p ah
+mdl_fs_al:	(0.67)	eh s ih ih s t eh r iy s ah n ih n t ay k ah p ih
+
+
+rec_id:			F6BBF7E5-5714-4994-BFDA-064DDBD5BE73
+target:			Yes. I have a lot of coins.
+guess:			Yes I have a lot a coins
+tar_pn:			y eh s ay hh ae v ah l aa t ah v k oy n z
+ges_pn:			y eh s ay hh ae v ah l aa t ah k oy n z
+mdl_pt_na:	(0.06)	y eh s ay hh ae v ah l aa t ah v k ow n z
+mdl_pt_al:	(0.06)	y eh s ay hh ae v ah l aa t ah v k ow n z
+mdl_fs_na:	(0.12)	y eh s ay hh ae v ah l aa t ah k ay n z
+mdl_fs_al:	(0.06)	y eh s ay hh ae v ah l aa t ah v k ow n z
+
+
+rec_id:			F6F7E9BD-D81F-447F-8DB4-5F8F85CBBE09
+target:			I went on a tour of The Grand Canyon.
+guess:			I went a on a tour a grand an canyon
+tar_pn:			ay w eh n t aa n ah t uh r ah v dh ah g r ae n d k ae n y ah n
+ges_pn:			ay w eh n t ah aa n ah t uh r ah g r ae n d ae n k ae n y ah n
+mdl_pt_na:	(0.15)	ay w eh n t aa n ah t uh r ah v g r ae ng k ae n y ah n
+mdl_pt_al:	(0.12)	ay w eh n t aa n ah t uh r ah v g r ae n k ae n y ah n
+mdl_fs_na:	(0.27)	ay w eh n t aa n ah t ao r ah p g r ae ng k ae n ah n
+mdl_fs_al:	(0.42)	ay w eh n t ah n ah t ao r ah p r ih ng k eh n ah n
+
+
+rec_id:			F7D04503-0612-4A32-8333-2B57773BEC80
+target:			She doesn't like books.
+guess:			She doesn't like a books
+tar_pn:			sh iy d ah z ah n t l ay k b uh k s
+ges_pn:			sh iy d ah z ah n t l ay k ah b uh k s
+mdl_pt_na:	(0.13)	sh iy d ah z n t r ay k b uh k s
+mdl_pt_al:	(0.13)	sh iy d ah z ah n t r ay k p uh k s
+mdl_fs_na:	(0.4)	ih k ae z ah n t ay k l uh k s
+mdl_fs_al:	(0.33)	iy k ae z ah n t r ay k uh k s
+
+
+rec_id:			F8C745FD-1A5B-446C-85DB-7537050A8E26
+target:			I've been thinking about looking for a job.
+guess:			I've been thinking about looking for a job
+tar_pn:			ay v b ih n th ih ng k ih ng ah b aw t l uh k ih ng f ao r ah jh aa b
+ges_pn:			ay v b ih n th ih ng k ih ng ah b aw t l uh k ih ng f ao r ah jh aa b
+mdl_pt_na:	(0.07)	ay v b ih n th ih ng k ih ng ah b ay l uh k ih ng f ao r ah jh aa b
+mdl_pt_al:	(0.07)	ay b ih n th ih ng k ih ng ah b aw t l uh k ih ng f ao r jh aa b
+mdl_fs_na:	(0.41)	ay b iy n th ih ng g ae n ah b ay dh ah k ih ng f ao r jh aa p
+mdl_fs_al:	(0.37)	ay b ih n th ih ng k ah n ah b ay n l ah k ih ng f er jh aa p
+
+
+rec_id:			FB0F3769-A6E2-467C-9ECD-B2AB22267554
+target:			Are they your brothers?
+guess:			I are the your a brothers
+tar_pn:			aa r dh ey y ao r b r ah dh er z
+ges_pn:			ay aa r dh ah y ao r ah b r ah dh er z
+mdl_pt_na:	(0.08)	aa l dh ey y ao r b r ah dh er z
+mdl_pt_al:	(0.15)	aa l dh ey y uh r b r ah dh er z
+mdl_fs_na:	(0.31)	aa r dh ey y uw b ow dh er z
+mdl_fs_al:	(0.46)	er dh ey y uw b er dh er z
+
+
+rec_id:			FC3B44F5-5014-4E55-AB2A-8063D202D61E
+target:			go
+guess:			Girl
+tar_pn:			g ow
+ges_pn:			g er l
+mdl_pt_na:	(0.5)	dh ow
+mdl_pt_al:	(0.0)	g ow
+mdl_fs_na:	(0.0)	g ow
+mdl_fs_al:	(0.0)	g ow
+
+
+Dataset PER Values
+------------------
+mdl_pt_na	0.263
+mdl_pt_al	0.291
+mdl_fs_na	0.469
+mdl_fs_al	0.465
+------------------
