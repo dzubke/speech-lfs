@@ -352,8 +352,12 @@ def run(local_rank:int, config:dict)->None:
     
     # create the loaders
     batch_size = opt_cfg["batch_size"]
-    preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
-                  start_and_end=data_cfg["start_and_end"])
+    preproc = loader.Preprocessor(
+        data_cfg["train_set"], 
+        preproc_cfg, 
+        logger, 
+        start_and_end=data_cfg["start_and_end"]
+    )
     
     train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
 
@@ -366,23 +370,29 @@ def run(local_rank:int, config:dict)->None:
 
     # Model
     model_cfg.update({'blank_idx': preproc_cfg['blank_idx']})   # add the blank_idx to model_cfg
-    model = CTC_train(preproc.input_dim,
-                        preproc.vocab_size,
-                        model_cfg)
+    model = CTC_train(
+        preproc.input_dim,
+        preproc.vocab_size,
+        model_cfg
+    )
     if model_cfg["load_trained"]:
         model = load_from_trained(model, model_cfg)
         print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
     
     # Optimizer and learning rate scheduler
     learning_rate = opt_cfg['learning_rate']
-    optimizer = torch.optim.SGD(model.parameters(),
-                    lr=learning_rate,   # from train_state or opt_config
-                    momentum=opt_cfg["momentum"],
-                    dampening=opt_cfg["dampening"])
+    optimizer = torch.optim.SGD(
+        model.parameters(),
+        lr=learning_rate,   # from train_state or opt_config
+        momentum=opt_cfg["momentum"],
+        dampening=opt_cfg["dampening"]
+    )
 
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, 
         step_size=opt_cfg["sched_step"], 
-        gamma=opt_cfg["sched_gamma"])
+        gamma=opt_cfg["sched_gamma"]
+    )
 
     # gradient scaler, too large a value for init_scale produces NaN gradients
     scaler = GradScaler(enabled=train_cfg['amp'], init_scale=16)
