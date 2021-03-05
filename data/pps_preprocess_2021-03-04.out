@@ -1,0 +1,18 @@
+nohup: ignoring input
+INFO:root:Processing People's Speech dataset
+using 36 processes
+  0%|          | 0/9 [00:00<?, ?it/s] 11%|█         | 1/9 [08:33<1:08:25, 513.15s/it] 22%|██▏       | 2/9 [17:44<1:01:12, 524.60s/it] 33%|███▎      | 3/9 [26:56<53:16, 532.77s/it]   44%|████▍     | 4/9 [36:24<45:16, 543.39s/it] 56%|█████▌    | 5/9 [45:37<36:25, 546.43s/it] 67%|██████▋   | 6/9 [55:06<27:38, 552.93s/it] 78%|███████▊  | 7/9 [1:04:30<18:33, 556.51s/it] 89%|████████▉ | 8/9 [1:13:58<09:19, 559.71s/it]100%|██████████| 9/9 [1:22:37<00:00, 547.63s/it]100%|██████████| 9/9 [1:22:37<00:00, 550.84s/it]~~~ file /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-ca9c2e120fbcc2eec91ae0990495e7533470ab3ff4170a4b65fd14f2621919dc.wav does not exists
+~~~ file /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-806ee7b9c532af7d3132eaa132725131eb679d26a087563906572cb226cef2db.wav does not exists
+~~~ file /mnt/disks/data_disk/data/pps/train/archive_org/v0.2/data/audio-18d722d2d19119c073e710cda630ec1beca7884050eb87fb378bb4f431495441.wav does not exists
+~~~ file /mnt/disks/data_disk/data/pps/train/archive_org/v0.2/data/audio-4c83c8e5681754017bec76e9c11792550a380d2c8383efaeb42ef370f3ad45ca.wav does not exists
+~~~ file /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-03aff76071923e77471afb3856858667a7674b78104aa99e3330ae2c0e82d7ca.wav does not exists
+~~~ file /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-0ad3671a31befcb5d6e56dc561f6f3c6682ab4e77ff97e84c21b3ccd83f12632.wav does not exists
+~~~ file /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-df999a98dae7638ba4362235af59ec96f189098faf104c9b63e62282ae430957.wav does not exists
+
+INFO:root:number of filtered unknown words: 0
+finished worker pool
+1256508 utterances with code: success
+167986 utterances with code: outside_duration
+19552 utterances with code: unknown_word
+7 utterances with code: path_not_exist
+script took: 82.846 min

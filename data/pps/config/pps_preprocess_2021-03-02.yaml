@@ -1,5 +1,5 @@
 dataset_name: PeoplesSpeech # Capitalized first letter
-dataset_dir: /mnt/disks/data_disk/data/pps/train
+dataset_dir: /mnt/disks/data_disk/data/pps/train/
 dataset_files:           # dataset filenames to be processed, files should be in dataset_dir
     # key is dataset name, value is filename to be processed
     train: data.csv
@@ -7,7 +7,7 @@ subset_names:   # subsets of the total dataset to include
     - "archive"
     - "librivox"
     - "voicery"
-lexicon_path: /home/dzubke/awni_speech/speech-lfs/data/lexicon/master-lexicon_2020-08-05.txt
+lexicon_path: /home/dzubke/awni_speech/speech-lfs/data/lexicons/unstressed-lexicons/master-cmu-lib-ted-oov-lexicon_2021-03-03.txt
 force_convert: False    # Converts audio even if .wav file exists
 min_duration: 1         # second
 max_duration: 20        # seconds

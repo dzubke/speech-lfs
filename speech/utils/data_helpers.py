@@ -40,19 +40,19 @@ def lexicon_to_dict(lexicon_path:str, corpus_name:str=None)->dict:
     
     lex_dict = dict()
     with open(lexicon_path, 'r', encoding="ISO-8859-1") as fid:
-        lexicon = process_lexicon(fid, corpus_name)
+        lexicon = process_lines(fid, corpus_name)
         for line in lexicon: 
             word, phones = word_phone_split(line, corpus_name)
             phones = clean_phonemes(phones, corpus_name)
             # this if-statement will ignore the second pronunciation like in librispeech
-            if lex_dict.get(word, UNK_WORD_TOKEN)  == UNK_WORD_TOKEN:
+            if lex_dict.get(word, UNK_WORD_TOKEN) == UNK_WORD_TOKEN:
                 lex_dict[word] = phones
-    lex_dict = clean_dict(lex_dict, corpus_name)
+    lex_dict = remove_alt_pronun(lex_dict, corpus_name)
     #assert type(lex_dict)== defaultdict, "word_phoneme_dict is not defaultdict"
     return lex_dict
 
 
-def process_lexicon(file_reader, corpus_name:str)->list:
+def process_lines(file_reader, corpus_name:str)->list:
     """Strips and splits the lexicon lines.
     The case is kept intact for the 'switchboard' corpus, but is lowered for all others
 
@@ -80,13 +80,13 @@ def word_phone_split(line:list, corpus_name:str):
         try:
             word, phones = line[0], line[1:]
         except IndexError:
-            print(f"line: {line}")
+            print(f"index error in line: {line}")
             raise IndexError
     return word, phones
 
 
 def clean_phonemes(phonemes, corpus_name):
-    """Librispeech and cmudict have accent digits that need to be removed
+    """Librispeech and cmudict have stress digits that need to be removed
     """
 
     if corpus_name == "librispeech" or corpus_name == "cmudict":
@@ -95,11 +95,10 @@ def clean_phonemes(phonemes, corpus_name):
         return phonemes
 
 
-def clean_dict(lex_dict, corpus_name):
-    """honeslty, not sure what this is doing... sorry, lol
+def remove_alt_pronun(lex_dict, corpus_name):
+    """removes alternative pronunciations
     """
-    corpus_num_duplicates = ["tedlium", "cmudict", "voxforge"]
-    if corpus_name in corpus_num_duplicates:
+    if corpus_name in ["tedlium", "cmudict", "voxforge"]:
         return defaultdict(
             lambda: UNK_WORD_TOKEN, 
             {key: value for key, value in lex_dict.items() if not re.search("\(\d\)$", key)}
@@ -108,7 +107,7 @@ def clean_dict(lex_dict, corpus_name):
         return lex_dict
 
 
-def combine_lexicons(lex1_dict:dict, lex2_dict:dict)->(dict, dict):
+def combine_lexicon_helper(lex1_dict:dict, lex2_dict:dict)->(dict, dict):
     """
     this function takes as input a dictionary representation of the two
     lexicons and outputs a combined dictionary lexicon. it also outputs
@@ -119,7 +118,6 @@ def combine_lexicons(lex1_dict:dict, lex2_dict:dict)->(dict, dict):
     Returns:
         combo_dict - dict[str:list(str]
     """
-
     word_set = set(list(lex1_dict.keys()) + list(lex2_dict.keys()))
     combo_dict = defaultdict(lambda: list())
     diff_labels = dict()
@@ -132,19 +130,17 @@ def combine_lexicons(lex1_dict:dict, lex2_dict:dict)->(dict, dict):
             # word has to be in lex1_dict
             combo_dict.update({word:lex1_dict.get(word)})
         else:
-            # word is in both dicts, used lex2_dict
+            # word is in both dicts, used lex1_dict
             if lex1_dict.get(word) == lex2_dict.get(word):
-                combo_dict.update({word:lex2_dict.get(word)})
+                combo_dict.update({word:lex1_dict.get(word)})
             else:   # phoneme labels are not the same
-                combo_dict.update({word:lex2_dict.get(word)})
+                combo_dict.update({word:lex1_dict.get(word)})
                 diff_labels.update({word: {"lex1": lex1_dict.get(word), "lex2": lex2_dict.get(word)}})
-    # print(f"words with different phoneme labels are: \n {diff_labels}")
-    print(f"number of words with different labels: {len(diff_labels)}")
 
     return  combo_dict, diff_labels
 
 
-def create_lexicon(cmu_dict:dict, ted_dict:dict, lib_dict:dict, out_path:str='')->dict:
+def create_master_lexicon(cmu_dict:dict, ted_dict:dict, lib_dict:dict, out_path:str='')->dict:
     """
     Creates a master lexicon using pronuciations from first cmudict, then tedlium
     dictionary and finally librispeech. 
@@ -169,11 +165,10 @@ def create_lexicon(cmu_dict:dict, ted_dict:dict, lib_dict:dict, out_path:str='')
         elif word in lib_dict:
             master_dict.update({word:lib_dict.get(word)})
 
-    if out_path != '': 
-        sorted_keys = sorted(master_dict.keys())
+    if out_path:
         with open(out_path, 'w') as fid:
-            for key in sorted_keys:
-                fid.write(f"{key} {' '.join(master_dict.get(key))}\n")
+            for key in sorted(master_dict):
+                fid.write(f"{key} {' '.join(master_dict[key])}\n")
  
     return master_dict
 

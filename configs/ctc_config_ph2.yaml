@@ -1,5 +1,9 @@
 seed: 2017
-save_path: /home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-22/ph2/
+checkpoint:
+    local_save_path: "/home/dzubke/awni_speech/speech-lfs/examples/librispeech/models/ctc_models/2021-02-22/ph2/"
+    gcs_bucket: "spk-models"
+    gcs_dir: "2021-02-22/ph2"
+    checkpoints_per_epoch: 5
 data:
     train_set: /mnt/disks/data_disk/data/lib-spk/train_lib-960-spk-250K_aligner-same-speaker-2021-02-19.json
     dev_sets:
@@ -17,10 +21,6 @@ logger:
     log_file: logs/2021-02-22_from-scratch_lib-spk-250-aligner.log
     level: error
     debug_mode: False
-checkpoint:
-    gcs_bucket: "spk-models"
-    gcs_dir: "2021-02-22/ph2"
-    checkpoints_per_epoch: 5
 preproc:
     preprocessor: log_spectrogram
     blank_idx: last               # must be either 'first' for blank=0, or 'last' for blank=vocab_size
@@ -60,8 +60,7 @@ optimizer:
 model:
     dropout: 0.4
     load_trained: False
-    gcs_bucket: "spk-models"
-    gcs_path: "2020-08-06/ph4/best_model_state_dict.pth"
+    gcs_trained_path: "2020-08-06/ph4/best_model_state_dict.pth"  # path is in ckpt gcs bucket
     remove_layers: []
     encoder: 
         conv:

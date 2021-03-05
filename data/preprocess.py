@@ -169,7 +169,9 @@ class DataPreprocessor(object):
         transcript, and duration into a json file specified in the input save_path
         """
         NUM_PROC = mp.cpu_count()
+        print(f"using {NUM_PROC} processes")
 
+        data_json_path = Path(data_json_path)
         # erasing any existing data_json_path file contents
         with open(data_json_path, 'w') as fid:
             fid.write('')
@@ -189,14 +191,14 @@ class DataPreprocessor(object):
        
         chunk_size = mp.cpu_count() * 5000
         iterations = math.ceil(len(self.audio_trans) / chunk_size) 
-        list_unk_dict = list()
-        with mp. Pool(processes=NUM_PROC) as pool:
+        full_output = list()
+        with mp.Pool(processes=NUM_PROC) as pool:
             for chunk_idx in tqdm.tqdm(range(iterations)):
            
-                unk_word_dict = pool.map(
+                pool_output = pool.map(
                     pool_fn, self.audio_trans[chunk_idx * chunk_size: (chunk_idx + 1) * chunk_size]
                 )
-                list_unk_dict.extend(unk_word_dict)
+                full_output.extend(pool_output)
 
             pool.close()
             pool.join()
@@ -204,17 +206,41 @@ class DataPreprocessor(object):
         print("finished worker pool")
 
         # combine the unk_word_dicts
-        all_unk_dict = dict()
-        for unk_word_dict in list_unk_dict:
-            for word in unk_word_dict:
-                all_unk_dict[word] = all_unk_dict.get(word, 0) + unk_word_dict[word]
-        
-        # write the unk_word_dict
-        data_dir = os.path.split(data_json_path)[0]
+        unk_counter = dict()
+        exit_counter = dict()
+        for exit_code, unk_word_dict in full_output:
+            exit_counter[exit_code] = exit_counter.get(exit_code, 0) + 1
+            for word, value in unk_word_dict.items():
+                unk_counter[word] = unk_counter.get(word, 0) + value       
+
+        # print the number of exit codes states
+        inv_exit_codes = {
+            0: "success",
+            1: "download_failure", 
+            2: "path_not_exist",
+            3: "convert_failure",
+            4: "unknown_word",
+            5: "outside_duration"
+        }
+        for code, count in exit_counter.items():
+            print(f"{count} utterances with code: {inv_exit_codes[code]}")
+
+        # write to file various statistics of the unknown words
+        stats_dict = {
+            "count_unq_unk_words": len(unk_counter),
+            "count_tot_unk_words": sum(unk_counter.values()),
+            #"total_words": self.word_count,
+            "lines_unknown_words": exit_counter[4],
+            "total_lines": len(full_output),
+            "unknown_words_set": list(unk_counter),
+            "unknown_words_dict": unk_counter
+        }
+        data_dir = data_json_path.parent
         unk_words_filename = "unk-words-dict_{}.json".format(str(date.today()))
-        unk_words_filename = os.path.join(data_dir, unk_words_filename)
+        data_dir.joinpath("unk_word_stats").mkdir(exist_ok=True)
+        unk_words_filename = data_dir.joinpath("unk_word_stats").joinpath(unk_words_filename)
         with open(unk_words_filename, 'w') as fid:
-            json.dump(all_unk_dict, fid)
+            json.dump(stats_dict, fid)
 
 
     def _process_sample(self,
@@ -224,17 +250,10 @@ class DataPreprocessor(object):
                         min_duration:float, 
                         max_duration:float,
                         lex_dict:dict,
-                        download_audio:bool=False) -> dict:
+                        download_audio:bool=False) -> Tuple[int, dict]:
         """
-        Unfortunately, there are four ways this function can exit and return the unk_word_dict.
-        (1) if the audio_path doesn't exists, 
-        (2) if the convert.to_wave call fails, 
-        (3) if the unk_word_dict returned by self.process_text_mp is non-empty,
-        (4) if the unk_word_dict is empty. 
-        
-        The (4) path represents a successful function call, and the other three are provisions
-        for failed outcomes. In the single-process version, the first three return statements
-        were `continue` statements, which are now not applicable in a multi-process function.
+        There are five ways this function can exit. Each exit will return a unique exit code and 
+        and, possibily, a dict of unknown words. See the `exit_codes` dict for the exit modes.
         
         Args:
             audio_transcript: Tuple of audio file and transcript, positional arg in multi-processing 
@@ -245,9 +264,17 @@ class DataPreprocessor(object):
             lex_dict: see argsparse description
             download_audio (bool): if true, the function will download the audio
         Returns:
-            unk_word_dict: a dictionary of unknown with words as keys and counts as values
+            Tuple[(int, dict)]: a tuple of a unique exit code and an empty or populated dict
+                for unknown words.
         """
-        unk_words_dict = {}
+        exit_codes = {
+            "success": 0,
+            "download_failure": 1, 
+            "path_not_exist": 2,
+            "convert_failure": 3,
+            "unknown_word": 4,
+            "outside_duration": 5
+        }
 
         # unpack the transcript differently if audio will be downloaded
         if download_audio:
@@ -263,28 +290,28 @@ class DataPreprocessor(object):
             # and an empty unk_words_dict is returned
             except (ValueError, urllib.error.URLError) as e:
                 print(f"~~~ unable to download url: {download_url} due to exception: {e}")
-                return unk_words_dict
+                return (exit_codes['download_failure'], {})
 
         else:   # if not downloading, unpack and check if the path exists
             audio_path, transcript = audio_transcript
             # skip the audio file if it doesn't exist
             if not os.path.exists(audio_path):
                 print(f"~~~ file {audio_path} does not exists")
-                return unk_words_dict
+                return (exit_codes['path_not_exist'], {})
             
             # replace the original extension with ".wav"
             wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wv"
         
 
         # if the wave file doesn't exist, convert to wave
-        #if not os.path.exists(wav_path) or force_convert:
-        # above line is commented to reduce io bottleneck
+        #if not os.path.exists(wav_path) or force_convert: # line is commented to reduce io bottleneck
         try:
-            convert.to_wave(audio_path, wav_path)
+            #convert.to_wave(audio_path, wav_path)
+            pass 
         except subprocess.CalledProcessError:
             # if the file can't be converted, skip the file by continuing
             print(f"~~~ Process Error converting file: {audio_path}")
-            return unk_words_dict
+            return (exit_codes['convert_failure'], {})
         
         # close the tempfile that contains the downloaded audio
         if download_audio:
@@ -297,7 +324,7 @@ class DataPreprocessor(object):
             text, unk_words_dict = self.text_to_phonemes_mp(transcript, lex_dict)
             # if transcript has an unknown word, exit the function
             if unk_words_dict:
-                return unk_words_dict
+                return (exit_codes['unknown_word'], unk_words_dict)
             else: 
                 # write the datum and return an empty unk_word_dict
                 with open(data_json_path, 'a+') as fid:
@@ -309,9 +336,9 @@ class DataPreprocessor(object):
                     json.dump(datum, fid)
                     fid.write("\n")
 
-                return unk_words_dict
+                return (exit_codes['success'], {})
         else: 
-            return unk_words_dict
+            return (exit_codes['outside_duration'], {})
 
 
     def text_to_phonemes_mp(self, transcript:str, lex_dict:dict=None):
@@ -1109,8 +1136,7 @@ def unique_unknown_words(dataset_dir:str):
     Arguments:
         dataset_dir (str): pathname of dir continaing "unknown_word_stats" dir with unk-words-stats.json files
     """
-    pattern = os.path.join(dataset_dir, "unk_word_stats", "*unk-words-stats*.json")
-    dataset_list = glob.glob(pattern)
+    dataset_list = Path(dataset_dir).joinpath("unk_word_stats").glob("*unk-words-stats*.json")
     unknown_set = set()
     for data_fn in dataset_list: 
         with open(data_fn, 'r') as fid: 

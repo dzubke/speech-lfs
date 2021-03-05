@@ -157,7 +157,7 @@ def load_from_trained(model, model_cfg):
         model (torch model)
         model_cfg (dict): configuration for the model
     """
-    trained_model = torch.load(model_cfg["trained_path"], map_location=torch.device('cpu'))
+    trained_model = torch.load(model_cfg["local_trained_path"], map_location=torch.device('cpu'))
     if isinstance(trained_model, dict):
         trained_state_dict = trained_model
     else:
