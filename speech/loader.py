@@ -20,8 +20,9 @@ from torch.utils.data.distributed import DistributedSampler
 # project libraries
 from speech.utils.wave import array_from_wave
 from speech.utils.io import read_data_json
-from speech.utils.signal_augment import tempo_gain_pitch_perturb, inject_noise
-from speech.utils.signal_augment import synthetic_gaussian_noise_inject
+from speech.utils.signal_augment import (
+    inject_noise, synthetic_gaussian_noise_inject, tempo_gain_pitch_perturb
+)
 from speech.utils.feature_augment import apply_spec_augment
 
 
@@ -50,10 +51,8 @@ class Preprocessor():
         # if true, data augmentation will be applied
         self.train_status = True
         
-        assert preproc_cfg['preprocessor'] in ['mfcc', 'log_spectrogram'], 
-            f"preprocessor must be either 'mfcc' or 'log_spectrogram'. 
-            {preproc_cfg['preprocessor']} is unacceptable."
-
+        assert preproc_cfg['preprocessor'] in ['log_spectrogram', 'log_mel', 'mfcc'], \ 
+            f"preprocessor name: {preproc_cfg['preprocessor']} is unacceptable"
         self.preprocessor = preproc_cfg['preprocessor']
         self.window_size = preproc_cfg['window_size']
         self.step_size = preproc_cfg['step_size']
@@ -115,6 +114,7 @@ class Preprocessor():
         self.int_to_char = dict(enumerate(chars, start_idx))  # start at 1 so zero can be blank for native loss
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
     
+
     def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
         """Performs the feature-processing pipeline on the input wave file and text transcript.
         Args: 
@@ -132,9 +132,12 @@ class Preprocessor():
 
         audio_data, samp_rate = self.signal_augmentations(wave_file)
 
-        # instantiate and apply processing function
-        preprocessing_function = eval(self.preprocessor + "_from_data")
-        feature_data = preprocessing_function(audio_data, samp_rate, self.window_size, self.step_size)
+        # apply audio processing function
+        feature_data = process_audio(audio_data, 
+                                    samp_rate, 
+                                    self.window_size, 
+                                    self.step_size, 
+                                    self.preprocessor)
         
         # normalize
         feature_data = self.normalize(feature_data)
@@ -284,6 +287,7 @@ class Preprocessor():
         """
         self.train_status = True
 
+
     @property
     def input_dim(self):
         return self._input_dim
@@ -297,7 +301,6 @@ class Preprocessor():
         for name, value in vars(self).items():
             string += f"\n{name}: {value}"
         return string
-
 
 
 def feature_normalize(feature_array:np.ndarray, eps=1e-7)->np.ndarray:
@@ -554,84 +557,121 @@ def collate_fn(batch):
     return zip(*batch)
 
 
-def mfcc_from_data(audio: np.ndarray, samp_rate:int, window_size=20, step_size=10):
-    """Computes the Mel Frequency Cepstral Coefficients (MFCC) from an audio array by calling the
-    mfcc method. Output dims are: (time, mfcc_bins).
+#######    DATA PREPROCESSING    ########
 
-    Arguments:
-        audio - np.ndarray: an array of audio data in pcm16 format
+def process_audio(audio, samp_rate:int, window_size=32, step_size=16, processing='log_spectrogram'):
+    """Processes audio through the provided processing function.
+
+    Args:
+        audio (str or np.ndarray): path to audio or audio array
+        samp_rate (int): sample rate of audio
+        window_size (int): size of window in processing function
+        step_size (int): step in processing function
+        processing (str): name of processing function. 
+            'log_spectogram', 'mfcc', and 'log_mel' are acceptable.
+    Returns: 
+        np.ndarray: processed array of dimensions: time x processor_bins
+    """
+    assert isinstance(audio, (str, np.ndarray)), \
+        f"audio must be type str or np.ndarray, not {type(audio)}")
+
+    # process audio from audio path
+    if isinstance(audio, str):
+        audio, samp_rate = array_from_wave(audio_path)
+
+    audio = average_channels(audio)
+
+    if processing == 'log_spectrogram':
+        output = log_spectrogram(audio, samp_rate, window_size, step_size)
+    elif processing == 'mfcc':
+        output = mfcc(audio, samp_rate, window_size, step_size)
+    elif processing == 'log_mel':
+        output = log_mel_filterbank(audio, samp_rate, window_size, step_size)
+    else:
+        raise ValueError(f"processing value: {processing} is unacceptable")
+
+    return output
+
+
+def mfcc(audio, sample_rate: int, window_size, step_size):
+    """Returns the mfcc's as well as the first and second order deltas.
+    Hanning window used in mfccs for parity with log_spectrogram function.
+
+    Args:
+        audio (np.ndarray): audio signal array
+        sample_rate (int): sample_rate of signal
+        window_size (int): window size
+        step_size (int): step size
+
     Returns:
-        np.ndarray: the transposed log of the spectrogram as returned by mfcc
+        np.ndarray: log mel filterbank, delta, and delta-deltas
     """
-
-    if len(audio.shape)>1:     # there are multiple channels
-        if audio.shape[1] == 1:
-            audio = audio.squeeze()
-        else:
-            audio = audio.mean(axis=1, dtype='float32')  # multiple channels, average
-   
-    return create_mfcc(audio, samp_rate, window_size, step_size)
-
-
-def create_mfcc(audio, sample_rate: int, window_size, step_size, esp=1e-10):
-    """Calculates the mfcc using python_speech_features and can return the mfcc's and its derivatives, if desired. 
-    If num_mfcc is set to 13 or less: Output consists of 12 MFCC and 1 energy
-    if num_mfcc is set to 26 or less: ouput consists of 12 mfcc, 1 energy, as well as the first derivative of these
-    if num_mfcc is set to 39 or less: ouput consists of above as well as the second derivative of these
-    
-    TODO (dustin): this fuction violates DRY principle. Clean it up. 
-    """
-
-    num_mfcc = 39   # only use the first and second derivatives
-    mfcc = python_speech_features.mfcc(
-                                    audio, 
-                                    sample_rate, 
-                                    winlen=window_size/1000, 
-                                    winstep=step_size/1000, 
-                                    numcep=13, 
-                                    nfilt=26, 
-                                    preemph=0.97, 
-                                    appendEnergy=True
+    delta_window = 1
+    mfcc = python_speech_features.mfcc( audio, 
+                                        sample_rate, 
+                                        winlen=window_size/1000, 
+                                        winstep=step_size/1000,
+                                        winfunc=np.hanning
     )
-    out = mfcc
-    
-    # the if-statement waterfall appends the desired number of derivatives to the output value
-    if num_mfcc > 13:
-        derivative = np.zeros(mfcc.shape)
-        for i in range(1, mfcc.shape[0] - 1):
-            derivative[i, :] = mfcc[i + 1, :] - mfcc[i - 1, :] 
+    delta = python_speech_features.delta(mfcc, N=delta_window)
+    delta_delta = python_speech_features.delta(delta, N=delta_window) 
+    output = np.concatenate((mfcc, delta, delta_delta), axis=1)
 
-        mfcc_derivative = np.concatenate((mfcc, derivative), axis=1)
-        out = mfcc_derivative
-        if num_mfcc > 26:
-            derivative2 = np.zeros(derivative.shape)
-            for i in range(1, derivative.shape[0] - 1):
-                derivative2[i, :] = derivative[i + 1, :] - derivative[i - 1, :]
-
-            out = np.concatenate((mfcc, derivative, derivative2), axis=1)
-            if num_mfcc > 39:
-                derivative3 = np.zeros(derivative2.shape)
-                for i in range(1, derivative2.shape[0] - 1):
-                    derivative3[i, :] = derivative2[i + 1, :] - derivative2[i - 1, :]
-
-                out = np.concatenate((mfcc, derivative, derivative2, derivative3), axis=1)
-
-    return out.astype(np.float32)
+    return output.astype(np.float32)
 
 
-def log_spectrogram_from_file(audio_path:str, window_size=32, step_size=16):
-    
-    audio_data, samp_rate = array_from_wave(audio_path)
-    return log_spectrogram_from_data(audio_data, samp_rate, window_size=window_size, step_size=step_size)
-
-def log_spectrogram_from_data(audio: np.ndarray, samp_rate:int, window_size=32, step_size=16, plot=False):
+def log_spectrogram(audio, sample_rate, window_size, step_size, eps=1e-10):
     """
-    Computes the log of the spectrogram for input audio. Dimensions are time x freq
+    Computes the log of the spectrogram for input audio. Hanning window is used.
+    Dimensions are time x freq. The step size is converted into the overlap noverlap.
+    
     Arguments:
         audio_data (np.ndarray)
     Returns:
         np.ndarray: log of the spectrogram as returned by log_specgram
-            transposed so dimensions are time x frequency
+            transposed so dimensions are time x frequency    
+    """
+    nperseg = int(window_size * sample_rate / 1e3)
+    noverlap = int( (window_size - step_size) * sample_rate / 1e3)
+    f, t, spec = scipy.signal.spectrogram(  audio,
+                                            fs=sample_rate,
+                                            window='hann',
+                                            nperseg=nperseg,
+                                            noverlap=noverlap,
+                                            detrend=False
+    )
+    return np.log(spec.T.astype(np.float32) + eps)
+
+
+def log_mel_filterbank(audio, sample_rate, window_size, step_size):
+    """Returns the log of the mel filterbank energies as well as the first and second order deltas.
+    Hanning window used for parity with log_spectrogram function.
+
+    Args:
+        audio (np.ndarray): audio signal array
+        sample_rate (int): sample_rate of signal
+        window_size (int): window size
+        step_size (int): step size
+
+    Returns:
+        np.ndarray: log mel filterbank, delta, and delta-deltas
+    """
+    delta_window=1
+    log_mel = python_speech_features.base.logfbank(  audio,
+                                                    sample_rate,
+                                                    winlen=window_size/1000,
+                                                    winstep=step_size/1000,
+                                                    winfunc=np.hanning
+    )
+    delta = python_speech_features.delta(log_mel, N=delta_window)
+    delta_delta = python_speech_features.delta(delta, N=delta_window) 
+    output = np.concatenate((log_mel, delta, delta_delta), axis=1)
+
+    return output.astype(np.float32)
+
+
+def average_channels(audio):
+    """This function will return an audio file averaged across channels if multiple channels exist
     """
     
     if len(audio.shape)>1:     # there are multiple channels
@@ -639,29 +679,8 @@ def log_spectrogram_from_data(audio: np.ndarray, samp_rate:int, window_size=32, 
             audio = audio.squeeze()
         else:
             audio = audio.mean(axis=1, dtype='float32')  # multiple channels, average
-    return log_spectrogram(audio, samp_rate, window_size, step_size, plot=plot)
 
-def log_spectrogram(audio, 
-                    sample_rate, 
-                    window_size=20,
-                    step_size=10, 
-                    eps=1e-10, 
-                    plot=False):
-    """
-    Calculates the log spectrogram of an input numpy array.
-    The step size is converted into the overlap noverlap
-    """
-    nperseg = int(window_size * sample_rate / 1e3)
-    noverlap = int( (window_size - step_size) * sample_rate / 1e3)
-    f, t, spec = scipy.signal.spectrogram(audio,
-                    fs=sample_rate,
-                    window='hann',
-                    nperseg=nperseg,
-                    noverlap=noverlap,
-                    detrend=False)
-    if plot==True:
-        plot_spectrogram(f,t, spec)
-    return np.log(spec.T.astype(np.float32) + eps)
+    return audio
 
 
 def compare_log_spec_from_file(audio_file_1: str, audio_file_2: str, plot=False):
