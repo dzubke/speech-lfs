@@ -1,0 +1,19 @@
+nohup: ignoring input
+INFO:root:Processing People's Speech dataset
+  0%|          | 0/19 [00:00<?, ?it/s]  5%|▌         | 1/19 [17:08<5:08:35, 1028.65s/it] 11%|█         | 2/19 [34:09<4:50:47, 1026.30s/it] 16%|█▌        | 3/19 [51:05<4:32:50, 1023.15s/it] 21%|██        | 4/19 [1:07:40<4:13:42, 1014.85s/it] 26%|██▋       | 5/19 [1:24:23<3:55:57, 1011.25s/it] 32%|███▏      | 6/19 [1:43:24<3:47:30, 1050.07s/it] 37%|███▋      | 7/19 [2:02:39<3:36:21, 1081.77s/it] 42%|████▏     | 8/19 [2:20:22<3:17:17, 1076.13s/it] 47%|████▋     | 9/19 [2:38:05<2:58:40, 1072.05s/it] 53%|█████▎    | 10/19 [2:55:08<2:38:36, 1057.40s/it] 58%|█████▊    | 11/19 [3:13:15<2:22:08, 1066.08s/it] 63%|██████▎   | 12/19 [3:30:44<2:03:48, 1061.21s/it] 68%|██████▊   | 13/19 [3:47:53<1:45:08, 1051.42s/it] 74%|███████▎  | 14/19 [4:08:59<1:32:58, 1115.71s/it] 79%|███████▉  | 15/19 [4:26:37<1:13:13, 1098.42s/it] 84%|████████▍ | 16/19 [4:44:16<54:19, 1086.63s/it]   89%|████████▉ | 17/19 [5:03:21<36:48, 1104.17s/it] 95%|█████████▍| 18/19 [5:21:14<18:14, 1094.71s/it]100%|██████████| 19/19 [5:25:28<00:00, 842.58s/it] 100%|██████████| 19/19 [5:25:28<00:00, 1027.81s/it]~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/archive_org/v0.2/data/audio-4c83c8e5681754017bec76e9c11792550a380d2c8383efaeb42ef370f3ad45ca.wav
+~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-ca9c2e120fbcc2eec91ae0990495e7533470ab3ff4170a4b65fd14f2621919dc.wav
+~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-df999a98dae7638ba4362235af59ec96f189098faf104c9b63e62282ae430957.wav
+~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/archive_org/v0.2/data/audio-18d722d2d19119c073e710cda630ec1beca7884050eb87fb378bb4f431495441.wav
+~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-03aff76071923e77471afb3856858667a7674b78104aa99e3330ae2c0e82d7ca.wav
+~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-806ee7b9c532af7d3132eaa132725131eb679d26a087563906572cb226cef2db.wav
+~~~ Process Error converting file: /mnt/disks/data_disk/data/pps/train/librivox-v0.3-1M/data/audio-0ad3671a31befcb5d6e56dc561f6f3c6682ab4e77ff97e84c21b3ccd83f12632.wav
+
+finished worker pool
+Traceback (most recent call last):
+  File "preprocess.py", line 1156, in <module>
+    data_preprocessor.process_datasets()
+  File "preprocess.py", line 1025, in process_datasets
+    unique_unknown_words(self.dataset_dir)
+  File "preprocess.py", line 1125, in unique_unknown_words
+    with open(write_path, 'w') as fid:
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/disks/data_disk/data/pps/train/unk_word_stats/all_unk_words_2021-03-02.txt'

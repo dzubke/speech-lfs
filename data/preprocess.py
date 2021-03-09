@@ -11,6 +11,7 @@ import logging
 import math
 import multiprocessing as mp
 import os
+from pathlib import Path
 import re
 import subprocess
 from tempfile import NamedTemporaryFile
@@ -31,6 +32,8 @@ from speech.utils.data_helpers import (
 
 logging.basicConfig(filename=None, level=10)
 
+###################   BASE CLASS      #######################
+
 class DataPreprocessor(object):
     
     def __init__(self, 
@@ -47,7 +50,7 @@ class DataPreprocessor(object):
 
         self.dataset_dir = dataset_dir
         self.dataset_dict = dataset_files
-        self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower()) if lexicon_path!='' else None
+        self.lex_dict = lexicon_to_dict(lexicon_path, dataset_name.lower())
         self.audio_trans=list()     # list of tuples of audio_path and transcripts
         self.force_convert = force_convert  # if true, all wav files will be overwritten
         self.min_duration = min_duration
@@ -55,8 +58,6 @@ class DataPreprocessor(object):
         self.audio_ext = 'wav'
         self.download_audio = download_audio
         self.process_transcript = process_transcript
-
-
 
     def process_datasets(self):
         """
@@ -88,13 +89,14 @@ class DataPreprocessor(object):
         with open(save_path, 'w') as fid:
             logging.info("Writing files to label json")
             for audio_path, transcript in tqdm.tqdm(self.audio_trans):
+                
                 # skip the audio file if it doesn't exist
                 if not os.path.exists(audio_path):
                     logging.info(f"file {audio_path} does not exists")
                     continue
                 
                 base, raw_ext = os.path.splitext(audio_path)
-                # sometimes using the ".wv" extension so that original .wav files can be converted
+                # sometimes the ".wv" extension is used so that original .wav files can be converted
                 wav_path = base + os.path.extsep + self.audio_ext
                 # if the wave file doesn't exist or it should be re-converted, convert to wave
                 if not os.path.exists(wav_path) or self.force_convert:
@@ -167,9 +169,10 @@ class DataPreprocessor(object):
         transcript, and duration into a json file specified in the input save_path
         """
         NUM_PROC = mp.cpu_count()
+        print(f"using {NUM_PROC} processes")
 
-        # clearing the data_json_path file contents so that values are appended
-        # to older values from previous runs
+        data_json_path = Path(data_json_path)
+        # erasing any existing data_json_path file contents
         with open(data_json_path, 'w') as fid:
             fid.write('')
 
@@ -188,14 +191,14 @@ class DataPreprocessor(object):
        
         chunk_size = mp.cpu_count() * 5000
         iterations = math.ceil(len(self.audio_trans) / chunk_size) 
-        list_unk_dict = list()
-        with mp. Pool(processes=NUM_PROC) as pool:
+        full_output = list()
+        with mp.Pool(processes=NUM_PROC) as pool:
             for chunk_idx in tqdm.tqdm(range(iterations)):
            
-                unk_word_dict = pool.map(
+                pool_output = pool.map(
                     pool_fn, self.audio_trans[chunk_idx * chunk_size: (chunk_idx + 1) * chunk_size]
                 )
-                list_unk_dict.extend(unk_word_dict)
+                full_output.extend(pool_output)
 
             pool.close()
             pool.join()
@@ -203,17 +206,41 @@ class DataPreprocessor(object):
         print("finished worker pool")
 
         # combine the unk_word_dicts
-        all_unk_dict = dict()
-        for unk_word_dict in list_unk_dict:
-            for word in unk_word_dict:
-                all_unk_dict[word] = all_unk_dict.get(word, 0) + unk_word_dict[word]
-        
-        # write the unk_word_dict
-        data_dir = os.path.split(data_json_path)[0]
+        unk_counter = dict()
+        exit_counter = dict()
+        for exit_code, unk_word_dict in full_output:
+            exit_counter[exit_code] = exit_counter.get(exit_code, 0) + 1
+            for word, value in unk_word_dict.items():
+                unk_counter[word] = unk_counter.get(word, 0) + value       
+
+        # print the number of exit codes states
+        inv_exit_codes = {
+            0: "success",
+            1: "download_failure", 
+            2: "path_not_exist",
+            3: "convert_failure",
+            4: "unknown_word",
+            5: "outside_duration"
+        }
+        for code, count in exit_counter.items():
+            print(f"{count} utterances with code: {inv_exit_codes[code]}")
+
+        # write to file various statistics of the unknown words
+        stats_dict = {
+            "count_unq_unk_words": len(unk_counter),
+            "count_tot_unk_words": sum(unk_counter.values()),
+            #"total_words": self.word_count,
+            "lines_unknown_words": exit_counter[4],
+            "total_lines": len(full_output),
+            "unknown_words_set": list(unk_counter),
+            "unknown_words_dict": unk_counter
+        }
+        data_dir = data_json_path.parent
         unk_words_filename = "unk-words-dict_{}.json".format(str(date.today()))
-        unk_words_filename = os.path.join(data_dir, unk_words_filename)
+        data_dir.joinpath("unk_word_stats").mkdir(exist_ok=True)
+        unk_words_filename = data_dir.joinpath("unk_word_stats").joinpath(unk_words_filename)
         with open(unk_words_filename, 'w') as fid:
-            json.dump(all_unk_dict, fid)
+            json.dump(stats_dict, fid)
 
 
     def _process_sample(self,
@@ -223,29 +250,31 @@ class DataPreprocessor(object):
                         min_duration:float, 
                         max_duration:float,
                         lex_dict:dict,
-                        download_audio:bool=False) -> dict:
+                        download_audio:bool=False) -> Tuple[int, dict]:
         """
-        Unfortunately, there are four ways this function can exit and return the unk_word_dict.
-        (1) if the audio_path doesn't exists, (2) if the convert.to_wave call fails, 
-        (3) if the unk_word_dict returned by self.process_text_mp is non-empty,
-        (4) if the unk_word_dict is empty. 
-        
-        The (4) path represents a successful function call, and the other three are provisions
-        for undesirable outcomes. In the single-process version, the first three return statements
-        were `continue` statements, which are now not applicable in a multi-process function.
+        There are five ways this function can exit. Each exit will return a unique exit code and 
+        and, possibily, a dict of unknown words. See the `exit_codes` dict for the exit modes.
         
         Args:
             audio_transcript: Tuple of audio file and transcript, positional arg in multi-processing 
-            save_path: see argsparse description,  fixed arg using functools.partial
-            force_convert: see argsparse description,  fixed arg using functools.partial
-            min_duration: see argsparse description,  fixed arg using functools.partial
-            max_duration: see argsparse description,  fixed arg using functools.partial
-            lex_dict: see argsparse description,  fixed arg using functools.partial
+            save_path: see argsparse description
+            force_convert: see argsparse description
+            min_duration: see argsparse description
+            max_duration: see argsparse description
+            lex_dict: see argsparse description
             download_audio (bool): if true, the function will download the audio
         Returns:
-            unk_word_dict: a dictionary of unknown with words as keys and counts as values
+            Tuple[(int, dict)]: a tuple of a unique exit code and an empty or populated dict
+                for unknown words.
         """
-        unk_words_dict = {}
+        exit_codes = {
+            "success": 0,
+            "download_failure": 1, 
+            "path_not_exist": 2,
+            "convert_failure": 3,
+            "unknown_word": 4,
+            "outside_duration": 5
+        }
 
         # unpack the transcript differently if audio will be downloaded
         if download_audio:
@@ -261,28 +290,28 @@ class DataPreprocessor(object):
             # and an empty unk_words_dict is returned
             except (ValueError, urllib.error.URLError) as e:
                 print(f"~~~ unable to download url: {download_url} due to exception: {e}")
-                return unk_words_dict
+                return (exit_codes['download_failure'], {})
 
         else:   # if not downloading, unpack and check if the path exists
             audio_path, transcript = audio_transcript
             # skip the audio file if it doesn't exist
             if not os.path.exists(audio_path):
                 print(f"~~~ file {audio_path} does not exists")
-                return unk_words_dict
+                return (exit_codes['path_not_exist'], {})
             
             # replace the original extension with ".wav"
-            wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wav"
+            wav_path = os.path.splitext(audio_path)[0] + os.path.extsep + "wv"
         
 
         # if the wave file doesn't exist, convert to wave
-        #if not os.path.exists(wav_path) or force_convert:
-        # above line is commented to reduce io bottleneck
+        #if not os.path.exists(wav_path) or force_convert: # line is commented to reduce io bottleneck
         try:
-            convert.to_wave(audio_path, wav_path)
+            #convert.to_wave(audio_path, wav_path)
+            pass 
         except subprocess.CalledProcessError:
             # if the file can't be converted, skip the file by continuing
             print(f"~~~ Process Error converting file: {audio_path}")
-            return unk_words_dict
+            return (exit_codes['convert_failure'], {})
         
         # close the tempfile that contains the downloaded audio
         if download_audio:
@@ -295,7 +324,7 @@ class DataPreprocessor(object):
             text, unk_words_dict = self.text_to_phonemes_mp(transcript, lex_dict)
             # if transcript has an unknown word, exit the function
             if unk_words_dict:
-                return unk_words_dict
+                return (exit_codes['unknown_word'], unk_words_dict)
             else: 
                 # write the datum and return an empty unk_word_dict
                 with open(data_json_path, 'a+') as fid:
@@ -307,9 +336,9 @@ class DataPreprocessor(object):
                     json.dump(datum, fid)
                     fid.write("\n")
 
-                return unk_words_dict
+                return (exit_codes['success'], {})
         else: 
-            return unk_words_dict
+            return (exit_codes['outside_duration'], {})
 
 
     def text_to_phonemes_mp(self, transcript:str, lex_dict:dict=None):
@@ -350,7 +379,59 @@ class DataPreprocessor(object):
         return transcript, unk_word_dict
 
 
+###################   LIBRISPEECH      #######################
+
+
+class LibrispeechPreprocessor(DataPreprocessor):
+
+    def __init__(self, config:dict):
+        """
+        """
+        super().__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration'], 
+            process_transcript = config['process_transcript']
+        )
+        self.config = config
+        self.src_audio_ext = ".flac"
+        self.dst_audio_ext = ".wav"
+
+    def process_datasets(self):
+        for set_name, subset_names in self.dataset_dict.items():
+            for subset_name in subset_names:
+                self.clear_audio_trans()    # clears the audio_transcript buffer
+                subset_dir = Path(self.dataset_dir).joinpath(subset_name)
+                logging.info(f"subset_dir: {subset_dir}")
+                self.collect_audio_transcripts(subset_dir)
+                logging.info(f"len of auddio_trans: {len(self.audio_trans)}")
+                json_path =  subset_dir.with_suffix(".json")
+                logging.info(f"entering write_json for {subset_name}")
+                self.write_json(json_path)
+        unique_unknown_words(self.dataset_dir)
+
+    def collect_audio_transcripts(self, subset_dir:Path):
+
+        for trans_path in subset_dir.rglob("*.trans.txt"):
+            for example in trans_path.read_text().split('\n'):
+                if example == '':       # removes empty string at end of file
+                    continue
+                example = example.replace('\t', ' ')    # ensure line is space (not tab) separated
+                example = example.split(' ', maxsplit=1)
+                if len(example) != 2:
+                    print(f"unexpected row: {example}")
+                    continue
+                audio_id, transcript = example
+                audio_path = trans_path.parent.joinpath(audio_id + self.dst_audio_ext) # normally use .flac
+                self.audio_trans.append((str(audio_path), transcript))
+
+
 ###################   COMMON VOICE       #######################
+
 
 class CommonvoicePreprocessor(DataPreprocessor):
     def __init__(self, dataset_dir, dataset_files, dataset_name, lexicon_path,
@@ -439,6 +520,8 @@ class TedliumPreprocessor(DataPreprocessor):
             all_utterances = self.get_utterances_from_stm(stm_file_full)
             all_utterances = filter(self.filter_utterances, all_utterances)
             
+            # TODO (drz): if re-running this again change the `utterance_id` from an enumeration
+            # to the start-end values to allow for more exact mapping from audio-to-text
             for utterance_id, utterance in enumerate(all_utterances):
                 target_fn = "{}_{}.wav".format(utterance["filename"], str(utterance_id))
                 target_wav_file = os.path.join(wav_dir, target_fn)
@@ -459,6 +542,7 @@ class TedliumPreprocessor(DataPreprocessor):
                 audio_path = target_wav_file
                 self.audio_trans.append((audio_path, transcript))
 
+
     def remove_unk_token(self, transcript:str):
         """
         removes the <unk> token from the transcript
@@ -468,10 +552,11 @@ class TedliumPreprocessor(DataPreprocessor):
 
 
     def get_utterances_from_stm(self, stm_file:str):
-        """
-        Return list of entries containing phrase and its start/end timings
-        :param stm_file:
-        :return:
+        """Return list of entries containing phrase and its start/end timings
+        
+        Note: below is a sample stm file:
+            911Mothers_2010W 1 911Mothers_2010W 14.95 16.19 <NA> <unk> because of
+            911Mothers_2010W 1 911Mothers_2010W 16.12 25.02 <NA> the fact that we have
         """
         res = []
         with io.open(stm_file, "r", encoding='utf-8') as f:
@@ -480,9 +565,9 @@ class TedliumPreprocessor(DataPreprocessor):
                 start_time = float(tokens[3])
                 end_time = float(tokens[4])
                 filename = tokens[0]
-                transcript = unicodedata.normalize("NFKD",
-                                                " ".join(t for t in tokens[6:]).strip()). \
-                    encode("utf-8", "ignore").decode("utf-8", "ignore")
+                transcript = unicodedata.normalize(
+                    "NFKD", " ".join(t for t in tokens[6:]).strip()
+                ).encode("utf-8", "ignore").decode("utf-8", "ignore")
                 if transcript != "ignore_time_segment_in_scoring":
                     res.append({
                         "start_time": start_time, "end_time": end_time,
@@ -815,7 +900,13 @@ class SpeakTrainMetadataPreprocessor(DataPreprocessor):
 ################## Switchboard ###########################
 
 class SwitchboardPreprocessor(DataPreprocessor):
-    """
+    """Switchboard is a dataset of around 300 hours of telephone calls. The lexicon
+    is very rich, especially in partially pronounced words, which occur often during
+    the calls when a speaker is cut off by another speaker. 
+
+
+    The switchboard dataset must first be processed using the `data/swb/import_swb.py`
+    script. This is split the single, 2-channel audio into to two separate audio files.
     """
     def __init__(self, config:dict):
         """
@@ -880,11 +971,11 @@ class SwitchboardPreprocessor(DataPreprocessor):
 
     @staticmethod
     def update_lexicon(lexicon_path:str)->None:
-        """cleans the lexicon of comments and empty lines as well as maps three phonemes in the swb vocab 
-        into the cmu-dict phoneme vocab.
+        """cleans the lexicon of comments and empty lines as well as maps three phonemes in the swb
+        vocab into the cmu-dict phoneme vocab.
 
-        This function isn't use the in the class, but is included for reference as it is part of the 
-        preprocessing pipeline.
+        This function isn't use the in the class, but is included for reference as it should be run
+        as part of the preprocessing pipeline.
 
         Args:
             lexicon_path (str): path to the lexicon
@@ -917,6 +1008,66 @@ class SwitchboardPreprocessor(DataPreprocessor):
                     wfid.write(" ".join(upd_row)+'\n')
 
 
+#################   People's Speech   #######################
+
+class PeoplesSpeechPreprocessor(DataPreprocessor):
+    """The People's Speech is a large dataset consisting of several different parts.
+    These parts include:
+     - librispeech
+     - librivox
+     - archive.org
+     - voicery: synthetic audio 
+     - common-voice
+    By unprocessed dataset size, 50% of the dataset is voicery and 40% is librivox. 
+
+    The dataset is assumed to contain a variety of accents. 
+
+    """
+    def __init__(self, config:dict):
+        """
+        """
+        super().__init__(
+            dataset_dir = config['dataset_dir'], 
+            dataset_files = config['dataset_files'],
+            dataset_name = config['dataset_name'],
+            lexicon_path = config['lexicon_path'],
+            force_convert = config['force_convert'],
+            min_duration = config['min_duration'],
+            max_duration = config['max_duration'], 
+            process_transcript = config['process_transcript']
+        )
+        self.subset_names = config['subset_names']
+        self.config = config
+
+
+    def process_datasets(self):
+        logging.info("Processing People's Speech dataset")
+        for set_name, label_fn in self.dataset_dict.items():
+            self.clear_audio_trans()    # clears the audio_transcript buffer
+            label_path = os.path.join(self.dataset_dir, label_fn)
+            self.collect_audio_transcripts(label_path)
+            root, ext = os.path.splitext(label_path)
+            json_path = root + os.path.extsep + "json"
+            self.write_json_mp(json_path)
+        unique_unknown_words(self.dataset_dir)
+
+    def collect_audio_transcripts(self, label_path:str):
+        # variables to limit the number of duplicated utterances
+        #target_constraint = 1e-3
+        #target_counter = dict()
+        #n_utterance_skipped = 0
+
+        with open(label_path) as fid: 
+            reader = csv.reader(fid, delimiter=',')
+            # header: audio_path, transcript, metadata
+
+            for row in reader:
+                filename, transcript = row[0], row[1]            
+                for subset_name in self.subset_names:
+                    if subset_name in filename:
+                        audio_path = os.path.join(self.dataset_dir, filename)
+                        self.audio_trans.append((audio_path, transcript))
+
 
 class UnknownWords():
 
@@ -940,8 +1091,8 @@ class UnknownWords():
         # increment the line and word counts
         self.line_count += 1
         self.word_count += len(text) - 1
-        
-        # if the word_phoneme_dict doesn't have an entry for 'word', it is an unknown word
+    
+       # if the word_phoneme_dict doesn't have an entry for 'word', it is an unknown word
         line_unk = [
             word for word in text 
             if not word_phoneme_dict.get(word, data_helpers.UNK_WORD_TOKEN)
@@ -949,7 +1100,7 @@ class UnknownWords():
         
         #if line_unk is empty, has_unknown is False
         self.has_unknown = bool(line_unk)
-
+        
         # if unknown words exist, update the word_set and log the count per filename
         if self.has_unknown:
             self.word_set.update(line_unk)
@@ -985,8 +1136,7 @@ def unique_unknown_words(dataset_dir:str):
     Arguments:
         dataset_dir (str): pathname of dir continaing "unknown_word_stats" dir with unk-words-stats.json files
     """
-    pattern = os.path.join(dataset_dir, "unk_word_stats", "*unk-words-stats*.json")
-    dataset_list = glob.glob(pattern)
+    dataset_list = Path(dataset_dir).joinpath("unk_word_stats").glob("*unk-words-stats*.json")
     unknown_set = set()
     for data_fn in dataset_list: 
         with open(data_fn, 'r') as fid: 

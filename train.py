@@ -44,7 +44,6 @@ def run_epoch(model,
               local_rank:int, 
               loss_name:str, 
               save_path:str,
-              chkpt_per_epoch:int,
               gcs_ckpt_handler,
               scaler:GradScaler=None)->tuple:
     """
@@ -52,8 +51,6 @@ def run_epoch(model,
     Args:
         iter_count (int): count of iterations
         save_path (str): path to directory where model is saved
-        chkpt_per_epoch (int): # checkpoints for each epoch that will be saved
-            including at the end of the epoch (which is unnecessary).
         gcs_ckpt_handler: facilities saving files to google cloud storage
         scaler (GradScaler): gradient scaler to prevent gradient underflow when autocast
             uses float16 precision for forward pass
@@ -86,17 +83,19 @@ def run_epoch(model,
         
         ##############  Mid-epoch checkpoint ###############
         if is_rank_0 \
-        and batch_counter % (len(train_ldr) // chkpt_per_epoch) == 0 \
+        and batch_counter % (len(train_ldr) // gcs_ckpt_handler.chkpt_per_epoch) == 0 \
         and batch_counter != 0:
             preproc = train_ldr.dataset.preproc
             save(model.module, preproc, save_path, tag='ckpt')
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_model_state_dict.pth")
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_preproc.pyc")
+            gcs_ckpt_handler.upload_to_gcs("ckpt_model_state_dict.pth")
+            gcs_ckpt_handler.upload_to_gcs("ckpt_preproc.pyc")
             # save the run_sate
             ckpt_state_path = os.path.join(save_path, "ckpt_run_state.pickle")
             write_pickle(ckpt_state_path, {'run_state': (iter_count, avg_loss)})
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "ckpt_run_state.pickle")
-
+            gcs_ckpt_handler.upload_to_gcs("ckpt_run_state.pickle")
+            # checkpoint tensorboard
+            gcs_ckpt_handler.upload_tensorboard_ckpt()    
+        
         batch_counter += 1
         ####################################################
 
@@ -255,7 +254,7 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
     losses = []; all_preds = []; all_labels = []
         
     model.set_eval()
-    preproc.set_eval()  # this turns off dataset augmentation
+    preproc.set_eval()  # turns off dataset augmentation
     use_log = (logger is not None)
 
     # saves time by not computing and saving gradients as there is no backwards pass
@@ -268,7 +267,7 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             inputs = inputs.cuda(non_blocking=True)
             out, rnn_args = model(inputs, softmax=False)
 
-            if loss_name == "native":
+           if loss_name == "native":
                 loss = native_loss(out, labels, input_lens, label_lens, model.blank)
             elif loss_name == "awni":
                 loss = awni_loss(out, labels, input_lens, label_lens, model.blank)
@@ -318,6 +317,11 @@ def run(local_rank:int, config:dict)->None:
     train_cfg = config['training']  
     ckpt_cfg = config['checkpoint']  
 
+    # save the config to gcs
+    with open(os.path.join(ckpt_cfg['local_save_path'], "ctc_config.yaml"), 'w') as fid:
+        yaml.dump(config, fid)
+    gcs_ckpt_handler.upload_to_gcs("ctc_config.yaml")
+    
     # setting up the distributed training environment
     dist.init_process_group(backend='nccl')
     torch.cuda.set_device(local_rank)
@@ -333,14 +337,14 @@ def run(local_rank:int, config:dict)->None:
     logger = get_logger("train_log", log_cfg['log_file'], log_cfg['level']) if use_log else None
    
     # creates tensorboardX writer in rank_0 process 
-    tbX_writer = SummaryWriter(logdir=config["save_path"]) if is_rank_0 else None
+    tbX_writer = SummaryWriter(logdir=ckpt_cfg["local_save_path"]) if is_rank_0 else None
 
     gcs_ckpt_handler = GCSCheckpointHandler(ckpt_cfg)
     
     # Load previous train state: dict with contents:
         # {start_epoch: int, run_state: (int, float), best_so_far: float, learning_rate: float}
-    train_state_path = os.path.join(config["save_path"], "train_state.pickle")
-    if os.path.exists(train_state_path):
+    train_state_path = gcs_ckpt_handler.download_gcs_object("train_state.pickle")
+    if train_state_path:
         print(f"load train_state from: {train_state_path}")
         train_state = read_pickle(train_state_path)
     # if train_path doesn't exist, create empty dict to load from config 
@@ -355,8 +359,12 @@ def run(local_rank:int, config:dict)->None:
     
     # create the loaders
     batch_size = opt_cfg["batch_size"]
-    preproc = loader.Preprocessor(data_cfg["train_set"], preproc_cfg, logger, 
-                  start_and_end=data_cfg["start_and_end"])
+    preproc = loader.Preprocessor(
+        data_cfg["train_set"], 
+        preproc_cfg, 
+        logger, 
+        start_and_end=data_cfg["start_and_end"]
+    )
     
     train_ldr = loader.make_ddp_loader(data_cfg["train_set"], preproc, batch_size, num_workers=data_cfg["num_workers"])
 
@@ -369,23 +377,34 @@ def run(local_rank:int, config:dict)->None:
 
     # Model
     model_cfg.update({'blank_idx': preproc_cfg['blank_idx']})   # add the blank_idx to model_cfg
-    model = CTC_train(preproc.input_dim,
-                        preproc.vocab_size,
-                        model_cfg)
+    model = CTC_train(
+        preproc.input_dim,
+        preproc.vocab_size,
+        model_cfg
+    )
     if model_cfg["load_trained"]:
-        model = load_from_trained(model, model_cfg)
-        print(f"Succesfully loaded weights from trained model: {model_cfg['trained_path']}")
+        local_trained_path = gcs_ckpt_handler.download_gcs_object(model_cfg['gcs_trained_path'])
+        if local_trained_path:
+            print(f"no model found at gcs location: {model_cfg['gcs_trained_path']}")
+        else:
+            model_cfg['local_trained_path'] = local_trained_path
+            model = load_from_trained(model, model_cfg)
+            print(f"Succesfully loaded weights from trained model: {model_cfg['local_trained_path']}")
     
     # Optimizer and learning rate scheduler
     learning_rate = opt_cfg['learning_rate']
-    optimizer = torch.optim.SGD(model.parameters(),
-                    lr=learning_rate,   # from train_state or opt_config
-                    momentum=opt_cfg["momentum"],
-                    dampening=opt_cfg["dampening"])
+    optimizer = torch.optim.SGD(
+        model.parameters(),
+        lr=learning_rate,   # from train_state or opt_config
+        momentum=opt_cfg["momentum"],
+        dampening=opt_cfg["dampening"]
+    )
 
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, 
         step_size=opt_cfg["sched_step"], 
-        gamma=opt_cfg["sched_gamma"])
+        gamma=opt_cfg["sched_gamma"]
+    )
 
     # gradient scaler, too large a value for init_scale produces NaN gradients
     scaler = GradScaler(enabled=train_cfg['amp'], init_scale=16)
@@ -421,8 +440,7 @@ def run(local_rank:int, config:dict)->None:
         try:
             run_state = run_epoch(
                 model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
-                train_cfg['loss_name'], config['save_path'], train_cfg['checkpoints_per_epoch'], gcs_ckpt_handler,
-                scaler
+                train_cfg['loss_name'], config['save_path'], gcs_ckpt_handler, scaler
             )
         except Exception as err:
             if use_log: 
@@ -449,9 +467,9 @@ def run(local_rank:int, config:dict)->None:
     
             # the logger needs to be removed to save the model
             if use_log: preproc.logger = None
-            speech.save(model.module, preproc, config["save_path"])
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "model_state_dict.pth")
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "preproc.pyc")
+            speech.save(model.module, preproc, ckpt_cfg["local_save_path"])
+            gcs_ckpt_handler.upload_to_gcs("model_state_dict.pth")
+            gcs_ckpt_handler.upload_to_gcs("preproc.pyc")
 
             if use_log: 
                 logger.info(f"train: ====== model saved =======")
@@ -479,9 +497,9 @@ def run(local_rank:int, config:dict)->None:
                     if dev_per < best_so_far:
                         if use_log: preproc.logger = None   # remove the logger to save the model
                         best_so_far = dev_per
-                        speech.save(model.module, preproc, config["save_path"], tag="best")
-                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_model_state_dict.pth")
-                        gcs_ckpt_handler.save_to_gcs(config["save_path"], "best_preproc.pyc")
+                        speech.save(model.module, preproc, ckpt_cfg["local_save_path"], tag="best")
+                        gcs_ckpt_handler.upload_to_gcs("best_model_state_dict.pth")
+                        gcs_ckpt_handler.upload_to_gcs("best_preproc.pyc")
 
                         if use_log: 
                             preproc.logger = logger
@@ -494,6 +512,7 @@ def run(local_rank:int, config:dict)->None:
             tbX_writer.add_scalars('dev/loss', dev_loss_dict, epoch)
             tbX_writer.add_scalars('dev/per', dev_per_dict, epoch)
             tbX_writer.add_scalars('dev/per/diff', per_diff_dict, epoch)
+            gcs_ckpt_handler.upload_tensorboard_ckpt()  
 
             learning_rate = list(optimizer.param_groups)[0]["lr"]
             # save the current state of training
@@ -501,8 +520,9 @@ def run(local_rank:int, config:dict)->None:
                            "run_state": run_state, 
                            "best_so_far": best_so_far,
                            "learning_rate": learning_rate}
-            write_pickle(os.path.join(config["save_path"], "train_state.pickle"), train_state)
-            gcs_ckpt_handler.save_to_gcs(config["save_path"], "train_state.pickle")
+            write_pickle(os.path.join(ckpt_cfg["local_save_path"], "train_state.pickle"), train_state)
+            gcs_ckpt_handler.upload_to_gcs("train_state.pickle")
+
 
 def calc_per_difference(dev_per_dict:dict) -> dict:
     """
