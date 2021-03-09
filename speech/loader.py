@@ -50,7 +50,10 @@ class Preprocessor():
         # if true, data augmentation will be applied
         self.train_status = True
         
-        assert preproc_cfg['preprocessor'] in ['mfcc', 'log_spectrogram'], "preprocessor string not accepted"
+        assert preproc_cfg['preprocessor'] in ['mfcc', 'log_spectrogram'], 
+            f"preprocessor must be either 'mfcc' or 'log_spectrogram'. 
+            {preproc_cfg['preprocessor']} is unacceptable."
+
         self.preprocessor = preproc_cfg['preprocessor']
         self.window_size = preproc_cfg['window_size']
         self.step_size = preproc_cfg['step_size']
@@ -85,7 +88,8 @@ class Preprocessor():
                                                 preprocessor = self.preprocessor,
                                                 window_size = self.window_size, 
                                                 step_size = self.step_size,
-                                                use_feature_normalize =self.use_feature_normalize)
+                                                use_feature_normalize = self.use_feature_normalize
+        )
         self._input_dim = self.mean.shape[0]
         self.use_log = (logger is not None)
         self.logger = logger
@@ -112,20 +116,15 @@ class Preprocessor():
         self.char_to_int = {v : k for k, v in self.int_to_char.items()}
     
     def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
-        """
-        Arguments
-        ---------
-        wave_file: str
-            path to wav file
-        text: List[str]
-            a list of labels 
+        """Performs the feature-processing pipeline on the input wave file and text transcript.
+        Args: 
+            wave_file (str): path to wav file
+            text (List[str]): a list of labels 
         
-        Returns
-        --------
-        feature_data: numpy array
-            a feature array augmented and processed by a log-spec or mfcc transformation
-        targets: List[int]
-            a list of the integer-encoded labels
+        Returns:
+            feature_data (np.ndarray): a feature array augmented and processed by a log-spec 
+                or mfcc transformations
+        targets (List[int]): a list of the integer-encoded phoneme labels
         """
         if self.use_log: self.logger.info(f"preproc: ======= Entering preprocess =====")
         if self.use_log: self.logger.info(f"preproc: wave_file: {wave_file}")
@@ -199,6 +198,7 @@ class Preprocessor():
         
         return audio_data, samp_rate
 
+
     def feature_augmentations(self, feature_data:np.ndarray)->np.ndarray:
         """
         Performs feature augmentations to the 2d array of features
@@ -221,11 +221,13 @@ class Preprocessor():
         assert feature_array.dtype == np.float32, "feature_array is not float32"
         return feature_array
 
+
     def encode(self, text):
         text = list(text)
         if self.start_and_end:
             text = [self.START] + text + [self.END]
         return [self.char_to_int[t] for t in text]
+
 
     def decode(self, seq):
         try:
@@ -241,9 +243,10 @@ class Preprocessor():
             e = text.index(self.END)
         return text[s:e]
 
+
     def update(self):
         """
-        updates an instance with new attributes
+        Updates an old, saved instance with new attributes.
         """
         if not hasattr(self, 'tempo_gain_pitch_perturb'):
             if hasattr(self, 'speed_vol_perturb'):
@@ -317,12 +320,15 @@ def feature_normalize(feature_array:np.ndarray, eps=1e-7)->np.ndarray:
     return feature_array
 
 
-def compute_mean_std(audio_files:List[str], preprocessor:str, window_size:int, 
-                    step_size:int, use_feature_normalize:bool)->Tuple[np.ndarray, np.ndarray]:
+def compute_mean_std(audio_files: List[str], 
+                     preprocessor: str, 
+                     window_size: int, 
+                     step_size: int, 
+                     use_feature_normalize:bool)->Tuple[np.ndarray, np.ndarray]:
     """
     Compute the mean and std deviation of all of the feature bins (frequency bins if log_spec
     preprocessor). Will first normalize the audio samples if use_feature_normalize is true.
-    Arguments:
+    Args:
         audio_files - List[str]: a list of shuffled audio files. len = max_samples
         preprocessor - str: specifies the kind of preprocessor
         window_size - int: window_size of preprocessor
@@ -505,6 +511,8 @@ def make_ddp_loader(dataset_json,
                     preproc,
                     batch_size, 
                     num_workers=4):
+    """Creates a load compatibile with distributed data parallel (ddp).
+    """
     
     dataset = AudioDataset(dataset_json, preproc, batch_size)
     sampler = DistributedBatchRandomSampler(dataset, batch_size=batch_size)
@@ -521,7 +529,9 @@ def make_ddp_loader(dataset_json,
 
 class CustomBatch:
     """
-    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning
+    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning. 
+    It was used to implemented pinned memory to speed up training. I don't think it is 
+    currently in use. 
     """
     def __init__(self, data):
         transposed_data = list(zip(*data))
@@ -538,16 +548,16 @@ def collate_wrapper(batch):
     return SimpleCustomBatch(batch)
  
 def collate_fn(batch):  
-    """
-    this is an external function so that the loader can be serialized during multi-processing
+    """This needed to be named function instead of an anonymous lambda function so the loader can be
+    serialized during distributed data parallel training.
     """
     return zip(*batch)
 
 
 def mfcc_from_data(audio: np.ndarray, samp_rate:int, window_size=20, step_size=10):
-    """
-    Computes the Mel Frequency Cepstral Coefficients (MFCC) from an audio file path by calling the mfcc method
-    Dimensions of output are time x mfcc bin
+    """Computes the Mel Frequency Cepstral Coefficients (MFCC) from an audio array by calling the
+    mfcc method. Output dims are: (time, mfcc_bins).
+
     Arguments:
         audio - np.ndarray: an array of audio data in pcm16 format
     Returns:
@@ -572,8 +582,17 @@ def create_mfcc(audio, sample_rate: int, window_size, step_size, esp=1e-10):
     TODO (dustin): this fuction violates DRY principle. Clean it up. 
     """
 
-    num_mfcc = 39   # the number of mfcc's in the output
-    mfcc = python_speech_features.mfcc(audio, sample_rate, winlen=window_size/1000, winstep=step_size/1000, numcep=13, nfilt=26, preemph=0.97, appendEnergy=True)
+    num_mfcc = 39   # only use the first and second derivatives
+    mfcc = python_speech_features.mfcc(
+                                    audio, 
+                                    sample_rate, 
+                                    winlen=window_size/1000, 
+                                    winstep=step_size/1000, 
+                                    numcep=13, 
+                                    nfilt=26, 
+                                    preemph=0.97, 
+                                    appendEnergy=True
+    )
     out = mfcc
     
     # the if-statement waterfall appends the desired number of derivatives to the output value

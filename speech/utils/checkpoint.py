@@ -15,19 +15,19 @@ class GCSCheckpointHandler():
         self.bucket = self.client.bucket(bucket_name=self.gcs_bucket)
         self.chkpt_per_epoch = cfg['checkpoints_per_epoch']
 
-    def download_gcs_object(self, filename:str):
+    def download_from_gcs_bucket(self, filepath:str):
         """
-        Finds an object with `filename` in the gcs save directory. If it exists, the
-        object is downloaded to a local file, and returns the local file path.
-        If there are no checkpoints, returns None.
-        :return: the local path to object or None if no objects are found.
+        Finds an object with `filepath` in the gcs bucket. If it exists, the
+        object is downloaded to a local file in the tmp-directory, and returns the local file path.
+        If the filepath doesn't match the gcs bucket, returns None.
+        :return: the local path in tmp-dir to object, or None if no objects are found.
         """
-        prefix = self.gcs_dir + filename
-        paths = list(self.client.list_blobs(self.gcs_bucket, prefix=prefix))
+        paths = list(self.client.list_blobs(self.gcs_bucket, prefix=filepath))
         if paths:
             #paths.sort(key=lambda x: x.time_created)
             #latest_blob = paths[-1]
-            local_path = os.path.join(self.local_save_dir, filename)
+            local_path = os.path.join("/tmp/", filepath)
+            os.makedirs(local_path, exist_ok=True)
             paths[0].download_to_filename(local_path)
             return local_path
         else:
