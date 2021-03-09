@@ -64,7 +64,7 @@ ages/xenial/man8/mount.8.html
 
 # the first time you mount a disk to VM run this command: sudo mkdir -p /mnt/disks/data_disk
 
-sudo mount -o rw,discard,suid,dev,exec,auto,nouser,async,noload /dev/sdb1 /mnt/disks/data_disk
+sudo mount -o ro,discard,suid,dev,exec,auto,nouser,async,noload /dev/sdb1 /mnt/disks/data_disk
 
 # this command will unmount the data disk
 # Note: be sure to navigate out of the disk. If you currrent directory is on the disk, you can't unmount
