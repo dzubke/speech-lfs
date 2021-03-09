@@ -1,11 +1,11 @@
 seed: 2017
 checkpoint:
-    local_save_path: "/home/dzubke/awni_speech/speech-lfs/models/2021-03-08/ph2/"
+    local_save_path: "/home/dzubke/awni_speech/speech-lfs/models/null"
     gcs_bucket: "spk-models"
-    gcs_dir: "2021-03-08/ph2"
+    gcs_dir: "null"
     checkpoints_per_epoch: 5
 data:
-    train_set: /mnt/disks/data_disk/data/lib-ted-cv-spk/train_lib-ted-cv-speak-250K-2021-01-05.json
+    train_set: /mnt/disks/data_disk/data/common-voice/v5.1_2020-06-22/dev.json  #/mnt/disks/data_disk/data/lib-ted-cv-spk/train_lib-ted-cv-speak-250K-2021-01-05.json
     dev_sets:
         speak: /mnt/disks/data_disk/data/speak_test_data/2020-05-27/speak-test_2020-05-27.json
         cv: /mnt/disks/data_disk/data/common-voice/v5.1_2020-06-22/dev.json
@@ -22,7 +22,7 @@ logger:
     level: error
     debug_mode: False
 preproc:
-    preprocessor: mfcc
+    preprocessor: "mfcc"
     blank_idx: last               # must be either 'first' for blank=0, or 'last' for blank=vocab_size
     window_size: 32
     step_size: 16

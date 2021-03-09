@@ -51,7 +51,7 @@ class Preprocessor():
         # if true, data augmentation will be applied
         self.train_status = True
         
-        assert preproc_cfg['preprocessor'] in ['log_spectrogram', 'log_mel', 'mfcc'], \ 
+        assert preproc_cfg['preprocessor'] in ['log_spectrogram', 'log_mel', 'mfcc'], \
             f"preprocessor name: {preproc_cfg['preprocessor']} is unacceptable"
         self.preprocessor = preproc_cfg['preprocessor']
         self.window_size = preproc_cfg['window_size']
@@ -83,8 +83,8 @@ class Preprocessor():
         data = read_data_json(data_json)
         audio_files = [sample['audio'] for sample in data]
         random.shuffle(audio_files)
-        self.mean, self.std = compute_mean_std(audio_files[:max_samples], 
-                                                preprocessor = self.preprocessor,
+        self.mean, self.std = compute_mean_std(audio_files[:max_samples],
+                                                self.preprocessor, 
                                                 window_size = self.window_size, 
                                                 step_size = self.step_size,
                                                 use_feature_normalize = self.use_feature_normalize
@@ -323,7 +323,7 @@ def feature_normalize(feature_array:np.ndarray, eps=1e-7)->np.ndarray:
     return feature_array
 
 
-def compute_mean_std(audio_files: List[str], 
+def compute_mean_std(audio_files: List[str],
                      preprocessor: str, 
                      window_size: int, 
                      step_size: int, 
@@ -333,7 +333,7 @@ def compute_mean_std(audio_files: List[str],
     preprocessor). Will first normalize the audio samples if use_feature_normalize is true.
     Args:
         audio_files - List[str]: a list of shuffled audio files. len = max_samples
-        preprocessor - str: specifies the kind of preprocessor
+        preprocessor (str): name of preprocessor
         window_size - int: window_size of preprocessor
         step_size - int: step_size of preprocessor
         use_feature_normalize - bool: whether or not the features themselves are normalized
@@ -341,14 +341,12 @@ def compute_mean_std(audio_files: List[str],
         mean - np.ndarray: the mean of the feature bins - shape = (# feature bins,)
         std  - np.ndarray: the std deviation of the feature bins - shape = (# bins,)
     """
-    assert preprocessor in ['mfcc', 'log_spectrogram'], "preprocessor string not accepted"
     assert len(audio_files) > 0, "input list of audio_files is empty"
 
     samples = []
-    preprocessing_function  =  eval(preprocessor + "_from_data")
     for audio_file in audio_files: 
-        data, samp_rate = array_from_wave(audio_file)
-        feature_array = preprocessing_function(data, samp_rate, window_size, step_size)
+        audio_data, samp_rate = array_from_wave(audio_file)
+        feature_array = process_audio(audio_data, samp_rate, window_size, step_size, preprocessor)
         if use_feature_normalize:
             feature_array = feature_normalize(feature_array)   # normalize the feature
         samples.append(feature_array)
@@ -573,7 +571,7 @@ def process_audio(audio, samp_rate:int, window_size=32, step_size=16, processing
         np.ndarray: processed array of dimensions: time x processor_bins
     """
     assert isinstance(audio, (str, np.ndarray)), \
-        f"audio must be type str or np.ndarray, not {type(audio)}")
+        f"audio must be type str or np.ndarray, not {type(audio)}"
 
     # process audio from audio path
     if isinstance(audio, str):
