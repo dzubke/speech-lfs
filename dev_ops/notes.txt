@@ -103,8 +103,8 @@ logger = logging.getLogger("train_log")
 
 
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
-# connect to tensorboard on VM
-nohup tensorboard --logdir=examples/librispeech/models/ctc_models/20210106/ph5/   --port 6006 &> tb.out &
+# 1 connect to tensorboard on VM
+nohup tensorboard --logdir=models/2021-03-05/ph2/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -128,31 +128,14 @@ for i in $(sudo lsof /dev/nvidia0 | grep python  | awk '{print $2}' | sort -u); 
 less /var/log/syslog | grep -n 'Unmounting /mnt/disks/data_disk...'
 
 ##  DDP launch commands
-nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank 0 --local-rank 0 &> ddp-rank2-localrank0.out &
-startddp "nohup python train.py examples/librispeech/ctc_config_ph8.yaml --rank # --local-rank # &> 2020-09-24-09-28_ph7_large-model-no-aug_2P100_lib-ted-cv_r#lr#.out &" 4
-python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 --master_addr="10.128.0.10" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
-
-
-gsutil -m mv gs://phoneme-vm-backup/models/ctc_models/20200630 gs://phoneme-vm-backup/models/ctc_models/20200630-old
-
-{"text": ["ay", "w", "aa", "z", "dh", "ah", "ow", "n", "l", "iy", "p", "ey", "sh", "ah", "n", "t", "ih", "n", "dh", "ah", "w", "ey", "t", "ih", "ng", "r", "uw", "m"], "duration": 1.344, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/common-voice/v5.1_2020-06-22/clips/common_voice_en_17932046.wv"}
-
-{"text": ["s", "ow", "dh", "ey", "k", "ae", "n", "k", "ah", "n", "t", "r", "ow", "l", "dh", "eh", "m", "f", "ao", "r", "dh", "eh", "r", "ow", "n", "p", "er", "s", "ih", "n", "ih", "l", "g", "ey", "n", "w", "iy", "eh", "l", "eh", "l", "k", "ao", "l", "ih", "t", "ih", "n", "s", "eh", "p", "sh", "ah", "n", "s", "ow"], "duration": 1.33, "audio": "/mnt/disks/data_disk/home/dzubke/awni_speech/data/tedlium/TEDLIUM_release-3/legacy/train/converted/wav/SteveRamirez_2013X_94.wv"}
-
+python -m torch.distributed.launch --nproc_per_node=2 --nnodes=1 --node_rank=0 train.py examples/librispeech/ctc_config_ph4.yaml
 
 echo $GOOGLE_APPLICATION_CREDENTIALS 
 
 ffmpeg -y -i "$SRC_FILE" -ac 1 -ar 16000 -sample_fmt s16 -f wav "$DST_FILE"
 
-gsutil -m cp -r examples/librispeech/models/ctc_models/20200630/  gs://phoneme-vm-backup/models/ctc_models/20200630-copy
-
- cat /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak_2020-09-25_dd.json /mnt/disks/data_disk/home/dzubke/awni_speech/data/speak_train/train-data_1M-examples_2020-10-05_dd > /mnt/disks/data_disk/home/dzubke/awni_speech/data/lib-ted-cv-spk/train_lib-ted-cv-speak-2M-2020-09-25_dd.json
-
 # problems using python 3.7 in environment
   - numpy==1.13.3 -> python[version='>=2.7,<2.8.0a0|>=3.5,<3.6.0a0|>=3.6,<3.7.0a0|>=3.8,<3.9.0a0']
-
-
-~ 8800 after 3.4 M, seems very low
 
 ## upgrading to python 3.7, conflicting packages
 puffy
@@ -165,25 +148,10 @@ conda install ipython_genutils==0.2.0=py37_0
 # second attempt to upgrade python 
 conda install cffi=1.11.5
 
-
-python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 --master_addr="10.128.0.33" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
-
 sed 's/\r/\n/g'
-
-nohup python assess.py --dataset-name speak_overlap --config speak_train/config/assess-overlap_2021-01-11.yaml &> 2021-01-11_assess-overlap_spk-20201230.out &
-
-spk-100-na:   (1.47)  b ah t ih t r w aa z f ah n
-spk-100-1230:   (0.99)  b ah t ih t w aa z f ah n
 
 python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 --master_addr="10.128.0.32" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
 
-
-echo $LD_LIBRARY_PATH
-:/home/dzubke/speech-lfs/libs/warp-ctc/build:/home/dzubke/speech-lfs/libs/warp-ctc-naren/build
-
-
-
-cffi==1.11.2
 
 docker run --rm --gpus all \
   --mount type=bind,\
