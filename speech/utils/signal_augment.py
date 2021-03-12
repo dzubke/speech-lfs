@@ -11,7 +11,6 @@ import shutil
 from tempfile import NamedTemporaryFile
 from typing import Tuple
 # third-party libraries
-import librosa
 import numpy as np
 import scipy.stats      # need to include "stats" to aviod name-conflict
 import yaml

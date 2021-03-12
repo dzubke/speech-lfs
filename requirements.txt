@@ -17,7 +17,6 @@ editdistance==0.4
 firebase-admin
 future==0.18.2
 graphviz==0.14
-librosa==0.7.2
 matplotlib==3.1.1
 numba==0.48.0
 prettytable

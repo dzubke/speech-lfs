@@ -127,7 +127,6 @@ dependencies:
     - joblib==0.16.0
     - keras-applications==1.0.8
     - keras-preprocessing==1.1.2
-    - librosa==0.7.2
     - llvmlite==0.31.0
     - markdown==3.2.2
     - markupsafe==1.1.1
