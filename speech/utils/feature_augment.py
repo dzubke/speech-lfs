@@ -2,7 +2,6 @@
 from logging import Logger
 import random
 # third-party libraries
-import librosa
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -204,22 +203,22 @@ def spec_augment(mel_spectrogram:torch.Tensor,
     return warped_mel_spectrogram.squeeze()
 
 
-def visualize_spectrogram(mel_spectrogram, title, ax=None):
-    """visualizing result of SpecAugment
-    # Arguments:
-      spectrogram(ndarray): mel_spectrogram to visualize.
-      title(String): plot figure's title
-    """
-    #mel_spectrogram = mel_spectrogram.unsqueeze(0)
-    # Show mel-spectrogram using librosa's specshow.
-
-    #plt.figure(figsize=(10, 4))
-    librosa.display.specshow(
-            mel_spectrogram,
-            y_axis='log',x_axis='time', sr=32000, ax=ax
-            )
-    # plt.colorbar(format='%+2.0f dB')
-    
-    plt.title(title) if ax==None else ax.set_title(title) 
-    #plt.tight_layout()
-    #plt.show()
+#def visualize_spectrogram(mel_spectrogram, title, ax=None):
+#    """visualizing result of SpecAugment
+#    # Arguments:
+#      spectrogram(ndarray): mel_spectrogram to visualize.
+#      title(String): plot figure's title
+#    """
+#    #mel_spectrogram = mel_spectrogram.unsqueeze(0)
+#    # Show mel-spectrogram using librosa's specshow.
+#
+#    #plt.figure(figsize=(10, 4))
+#    librosa.display.specshow(
+#            mel_spectrogram,
+#            y_axis='log',x_axis='time', sr=32000, ax=ax
+#            )
+#    # plt.colorbar(format='%+2.0f dB')
+#    
+#    plt.title(title) if ax==None else ax.set_title(title) 
+#    #plt.tight_layout()
+#    #plt.show()
