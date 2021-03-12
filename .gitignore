@@ -129,6 +129,9 @@ nohup_files/*
 #alexnet is tooo big
 alexnet*
 
+# models are saved to gcs
+models/*
+
 #large models
 examples/librispeech/models/ctc_models/20200625/ph4/*model
 examples/librispeech/models/ctc_models/20200625/ph4/*/*model
