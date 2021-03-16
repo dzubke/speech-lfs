@@ -76,6 +76,8 @@ def load_state_dict(model_path:str, device:torch.device)->OrderedDict:
     return state_dict
 
 
+
+
 def save_dict(dct, path):
     with open(path, 'wb') as fid:
         pickle.dump(dct, fid)
@@ -89,9 +91,9 @@ def export_state_dict(model_in_path, params_out_path):
 def read_data_json(data_path):
     with open(data_path) as fid:
         dataset = [json.loads(l) for l in fid]
-        ulimit = float('inf') #256    # target lengths cannot be longer than 256 for pytorch native loss
-        filtered_dataset = [datum for datum in dataset if len(datum['text']) <= ulimit]
-        return filtered_dataset
+        #ulimit = float('inf') #256    # target lengths cannot be longer than 256 for pytorch native loss
+        #filtered_dataset = [datum for datum in dataset if len(datum['text']) <= ulimit]
+        return dataset
 
 
 def write_data_json(dataset:list, write_path:str):
