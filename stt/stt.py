@@ -7,10 +7,14 @@ Author: Dustin Zubke
 # standard libs
 import argparse
 from collections import OrderedDict
+from functools import partial
+import io
 import json
-import random
+import multiprocessing as mp
 import os
 from pathlib import Path
+import random
+import time
 from typing import Any, Dict, List
 # third-party libs
 import azure.cognitiveservices.speech as speechsdk
@@ -22,6 +26,9 @@ from tqdm import tqdm
 from speech.utils.data_helpers import get_record_ids_map, path_to_id, process_text
 from speech.utils.io import read_data_json, write_data_json
 
+# not sure if there is a better way to do this.
+# without this var-declaration, `set_global_client` throws NameError
+client = None
 
 def stt_on_datasets(
     data_paths:List[str], 
@@ -34,15 +41,15 @@ def stt_on_datasets(
     If the process is disrupted, it will be restarted from `resume_audio_path` and the current
     audio path will be saved.
 
-    Make sure to save to a new `save_path` if resuming the process otherwise, the original will be
-    overwritten.
-
     Args:
         data_paths: list of dataset paths
         resume_audio_path: audio path where the api calls will be resumed from
         stt_provider: name of company providing stt service
         save_path: path to output json file
     """
+    MULTI_PROCESS = False
+    CHUNK_SIZE = 5   # number of elements to feed into multiprocess pool
+    
     assert stt_provider in ["google", "ibm"], "stt_provider must be 'google' or 'ibm'."
 
     # combines all the datasets into a de-duplicated, sorted dict
@@ -57,24 +64,61 @@ def stt_on_datasets(
             print("exiting")
             return None
 
-    # call the STT API from `resume_audio_path` and write the formatted results to `save_path`
-    client = get_stt_client(stt_provider)
-    start_stt_call = False
-    count = {"dedup_xmpls": 0, "api_calls": 0}
-    with open(save_path, 'w') as fid:
-        for datum in tqdm(data_dict.values()):
-            count['dedup_xmpls'] += 1
-            if resume_audio_path in [datum['audio'], None]: 
-                start_stt_call = True
-            if start_stt_call:
-                count['api_calls'] += 1
-                response = get_stt_response(datum['audio'], client, stt_provider)
-                out_dict = format_response_dict(datum['audio'], response, stt_provider)
-                json.dump(out_dict, fid)
-                fid.write("\n")
+    # start from the `resume_audio_path`
+    resume_idx = -1
+    if resume_audio_path is not None:
+        for i, audio_path in enumerate(data_dict.keys()):
+            if audio_path == resume_audio_path:
+                resume_idx = i
+    # only use files after the `resume_idx`
+    audio_files = list(data_dict.keys())[resume_idx+1:]
+    print
     
-    print(f"number of de-duplicated examples: {count['dedup_xmpls']}")
-    print(f"number of api calls: {count['api_calls']}")
+    print(f"number of de-duplicated examples: {len(data_dict.values())}")
+    print(f"number of examples to process: {len(audio_files)}")   
+
+    # call the STT API from `resume_audio_path` and write the formatted results to `save_path`
+    
+    count = {"api_calls": 0}
+    # multi-process implementation
+    if MULTI_PROCESS:
+
+        manager = mp.Manager()
+        queue = manager.Queue() 
+        pool_fn = partial(
+            call_api_write_json,
+            #client = client,
+            stt_provider = stt_provider,
+        )
+        with mp.Pool(processes=mp.cpu_count(), initializer=set_global_client) as pool:
+            #out_dict_list = pool.map(pool_fn, audio_files, chunksize=CHUNK_SIZE)
+            
+            # start writer listener
+            watcher = pool.apply_async(listener, (queue,))
+            jobs = list()
+            for audio_file in audio_files:
+                job = pool.apply_async(pool_fn, (audio_file, queue))
+                jobs.append(job)
+            for job in jobs:
+                job.get() 
+            
+            queue.put('kill')
+            pool.close()
+            pool.join()
+                
+
+    # single-process implementation
+    else:
+        with open(save_path, 'w') as fid:
+            client = get_stt_client(stt_provider)
+            for audio_path in tqdm(audio_files):
+                count['api_calls'] += 1
+                response = get_stt_response(audio_path, client, stt_provider)
+                out_dict = format_response_dict(audio_path, response, stt_provider)
+                json.dump(out_dict, fid)
+                fid.write('\n')
+
+        print(f"number of api calls: {count['api_calls']}")
 
 
 def filter_datasets_by_stt(data_paths:List[str], metadata_path:str, stt_path:str, save_path:str)->None:
@@ -162,7 +206,6 @@ def stt_on_sample(
             fid.write("-"*10+'\n')
             for entry in entries:
                 fid.write(entry+'\n\n')
-            
 
 
 #######    HELPER FUNCTIONS    #######
@@ -189,7 +232,7 @@ def combine_sort_datasets(data_paths: List[str])->Dict[str, dict]:
     return OrderedDict((audio, xmpl) for audio, xmpl in sorted(data_dict.items()))
 
 
-def get_stt_client(stt_provider:str)->Any:
+def get_stt_client(stt_provider:str='ibm')->Any:
     """Returns the stt client based on the name of the `stt_provider`."""
     
     if stt_provider == "google":
@@ -201,7 +244,8 @@ def get_stt_client(stt_provider:str)->Any:
         client.set_service_url(
             "https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/970f9a72-c22f-4363-889f-8b538cc2a4a5"
         ) 
-    elif stt_provider = "azure":
+        client.set_default_headers({'x-watson-learning-opt-out': "true"})
+    elif stt_provider == "azure":
         speech_config = speechsdk.SpeechConfig(subscription=os.getenv("AZR_KEY"), region="eastus")
     else:
         raise ValueError(f"stt provider: {stt_provider} is unacceptable. Use 'google' or 'ibm'.") 
@@ -230,13 +274,15 @@ def get_stt_response(audio_path:str, client:Any, stt_provider:str)->Any:
         response = client.recognize(
             audio=content,
             content_type='audio/wav',
-            timestamps=True,
+            model="en-US_BroadbandModel",
             word_confidence=True
         ).get_result()
+    
     elif stt_provider == "azure":
         audio_input = speechsdk.AudioConfig(filename=audio_path)
         speech_recognizer = speechsdk.SpeechRecognizer(speech_config=client, audio_config=audio_input)
         result = speech_recognizer.recognize_once_async().get()
+
     else:
         raise ValueError(f"stt provider: {stt_provider} is unacceptable. Use 'google' or 'ibm'.")    
 
@@ -268,13 +314,16 @@ def format_response_dict(audio_path: str, response: Any, stt_provider:str)->dict
             words_confs.extend(
                 [(word, word_conf) for word, word_conf in alt['word_confidence']]
             )
-    
+    # filter out hesitation tag
+    transcript = " ".join(transcript).replace("%HESITATION ", "")
+
     return {
         "audio_path": audio_path,
-        "transcript": " ".join(transcript),
+        "transcript": transcript,
         "confidence": conf,
         "words_confidence": words_confs
     }
+
 
 def format_txt_from_dict(resp_dict, apl_trans:str, id_plus_dir:str)->str:
     """Formats the entry for each prediction"""
@@ -290,6 +339,40 @@ def format_txt_from_dict(resp_dict, apl_trans:str, id_plus_dir:str)->str:
     return '\n'.join(lines)
    
 
+def call_api_write_json(
+    audio_path:str, 
+    queue:mp.Queue,
+    stt_provider:str, 
+    #file_writer:io.TextIOWrapper
+    )->dict: 
+    """This function packages the STT API call, formatting of response, and writing to json."""
+
+    response = get_stt_response(audio_path, client, stt_provider)
+    out_dict = format_response_dict(audio_path, response, stt_provider)
+    queue.put(out_dict)   
+ 
+    return out_dict
+
+
+def listener(queue:mp.Queue, save_file:str):
+    '''listens for messages on the q, writes to file. '''
+
+    with open(save_file, 'w') as fid:
+        while True:
+            out_dict = queue.get()
+            if out_dict == 'kill':
+                break
+            json.dump(out_dict, fid)
+            fid.write('\n')
+            fid.flush()
+
+
+def set_global_client(stt_provider:str='ibm'):
+    """Creates a global variable client to initialize each process in multiprocess pool"""
+    global client
+    if not client:
+        client = get_stt_client(stt_provider)
+    
 
 
 if __name__ == "__main__":
@@ -318,8 +401,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--stt-provider", help="name of company providing speech-to-text service"
     )   
- 
+
     args = parser.parse_args()
+    
+    start_time = time.time()
 
     if args.action == "filter-by-stt":
         filter_datasets_by_stt(args.data_paths, args.metadata_path, args.stt_path, args.save_path)
@@ -327,3 +412,5 @@ if __name__ == "__main__":
         stt_on_datasets(args.data_paths, args.save_path, args.stt_provider, args.optional_arg)
     elif args.action == "stt-on-sample":
         stt_on_sample(args.data_paths[0], args.metadata_path, args.save_path, args.stt_provider)
+
+    print(f"processing time (min): {round((time.time() - start_time)/60, 2)}")
