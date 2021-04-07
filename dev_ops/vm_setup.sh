@@ -10,6 +10,7 @@ sudo apt-get install -y manpages-dev cmake make
 echo -e "\n=========  installing miniconda  =========\n"
 sudo apt-get -y install bzip2  # need to install bzip2 to install miniconda
 wget https://repo.continuum.io/miniconda/Miniconda3-4.5.4-Linux-x86_64.sh
+# new conda link (2021-03-19) 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh'
 bash Miniconda3-4.5.4-Linux-x86_64.sh -b -p $HOME/miniconda
 rm Miniconda3-4.5.4-Linux-x86_64.sh
 # enabling conda in future shells sessions
@@ -82,6 +83,9 @@ sudo apt-get install -y cuda=10.2.89-1
 # sudo apt-get update
 # sudo apt-get install -y cuda=10.0.130-1
 
+# cuda 11.2
+# wget https://developer.download.nvidia.com/compute/cuda/11.2.2/local_installers/cuda_11.2.2_460.32.03_linux.run
+# sudo sh cuda_11.2.2_460.32.03_linux.run
 
 echo  -e "\n=========  installing linux packages  =========\n"
 sudo apt-get -y install ffmpeg sox vim

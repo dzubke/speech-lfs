@@ -93,10 +93,10 @@ python preprocess.py --dataset-dir /home/dzubke/awni_speech/data/tedlium/TEDLIUM
             "rnn.bias_hh_l4", "fc.fc.weight", "fc.fc.bias"]
 
 
-
 # logging info
 logging.basicConfig(filename=None, filemode='w', level=10)
 logger = logging.getLogger("train_log")
+
 
 # data-disk prefix
 /mnt/disks/data_disk/
@@ -104,7 +104,7 @@ logger = logging.getLogger("train_log")
 
 # source: https://www.apoehlmann.com/blog/connecting-tensorboard-your-google-cloud-vm-port-forwarding/
 # 1 connect to tensorboard on VM
-nohup tensorboard --logdir=models/2021-03-05/ph2/   --port 6006 &> tb.out &
+nohup tensorboard --logdir=models/2021-03-09/ph4/   --port 6006 &> tb.out &
 
 # 2. on local run:
 gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev -- -NfL 6002:localhost:6002
@@ -113,16 +113,22 @@ gcloud compute ssh dzubke@phoneme-2 --zone=us-central1-c --project=speak-ml-dev 
 ps aux | grep tensorboard
 
 gsutil -m cp -r gs://phoneme-vm-backup/models/ctc_models/20201130/ph4/  examples/librispeech/models/ctc_models/20201029/
+
+# git
+G9!l2&YQCydRAkhr1f6%x
+
 # will cache password in memory for 10 days
 git config credential.helper 'cache --timeout 864000'
 
-# github password
-9!l2&YQCydRAkhr1f6%x
+# how to mount disk on boot
+echo UUID=`sudo blkid -s UUID -o value /dev/sdb1` /mnt/disks/data_disk ext4 ro,discard,suid,dev,exec,auto,nouser,async,nofail,noload 0 2 | sudo tee -a /etc/fstab
 
-nohup python -m torch.distributed.launch --nproc_per_node=4 --nnodes=1 --node_rank=0 --master_addr="10.128.0.10" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml &> 2020-10-19_large-model-mid-aug_lib-ted-cv-speak-5M-2020-09-25_2020-10-05-06.out &
+
+python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 train.py configs/ctc_config_ph4.yaml 
 
 # how to kill at GPU-related processes
 for i in $(sudo lsof /dev/nvidia0 | grep python  | awk '{print $2}' | sort -u); do kill -9 $i; done
+for i in $(sudo lsof /dev/nvidia0 | grep fairseq-hydra-train  | awk '{print $2}' | sort -u); do kill -9 $i; done
 
 # how to assess if linux reboot occured
 less /var/log/syslog | grep -n 'Unmounting /mnt/disks/data_disk...'
@@ -151,12 +157,11 @@ conda install cffi=1.11.5
 
 sed 's/\r/\n/g'
 
-python -m torch.distributed.launch --nproc_per_node=1 --nnodes=1 --node_rank=0 --master_addr="10.128.0.32" --master_port=8888 train.py examples/librispeech/ctc_config_ph4.yaml
-
 
 docker run --rm --gpus all \
   --mount type=bind,\
     source=/mnt/disks/data_disk/home/dzubke/awni_speech/data/,\
     target=/mnt/disks/data_disk/home/dzubke/awni_speech/data/ \
   -it speech bash
+
 

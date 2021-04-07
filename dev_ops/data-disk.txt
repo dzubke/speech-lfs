@@ -55,8 +55,9 @@ gcloud compute instances detach-disk phoneme-4 \
 
 # STEP 4 & 9: MOUNT AND UNMOUNT THE DISK TO THE FILESYSTEM
 # this command is used to mount the data disk for details on the mount command see here:
-# https://manpages.ubuntu.com/manp
-ages/xenial/man8/mount.8.html
+# https://manpages.ubuntu.com/manpages/xenial/man8/mount.8.html
+
+
 # the `ro` option is the most crtical is it means `read-only`. For `read-write` use the `rw` option.
 # the options `discard,suid,dev,exec,auto,nouser,async` are all part of the `defaults` on the manpage.
 # the `noload` option seems necessary. Not sure exaclty what that does. 
@@ -64,7 +65,7 @@ ages/xenial/man8/mount.8.html
 
 # the first time you mount a disk to VM run this command: sudo mkdir -p /mnt/disks/data_disk
 
-sudo mount -o ro,discard,suid,dev,exec,auto,nouser,async,noload /dev/sdb1 /mnt/disks/data_disk
+sudo mount -o ro,discard,suid,dev,exec,auto,nouser,async,noload /dev/sdb1 /mnt/disks/data_disk/
 
 # this command will unmount the data disk
 # Note: be sure to navigate out of the disk. If you currrent directory is on the disk, you can't unmount
@@ -108,3 +109,6 @@ echo UUID=`sudo blkid -s UUID -o value /dev/sdb1` /mnt/disks/data_disk ntfs nls-
 # verify the fstab entry is correct
 cat /etc/fstab
 
+from google.cloud import speech_v1p1beta1 as speech 
+client = speech.SpeechClient()
+path="/mnt/disks/data_disk/data/speak_train/2020-12-29/audio/ihKmiBZXhuM2vJDy7J6AzqXu8wA2/00000119-6A33-4EB0-8300-80978433791B.wav"
