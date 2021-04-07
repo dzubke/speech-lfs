@@ -51,7 +51,7 @@ class Preprocessor():
         # if true, data augmentation will be applied
         self.train_status = True
         
-        assert preproc_cfg['preprocessor'] in ['mfcc', 'log_spectrogram'], \ 
+        assert preproc_cfg['preprocessor'] in ['log_spectrogram', 'log_mel', 'mfcc'], \
             f"preprocessor name: {preproc_cfg['preprocessor']} is unacceptable"
         self.preprocessor = preproc_cfg['preprocessor']
         self.window_size = preproc_cfg['window_size']
@@ -83,11 +83,12 @@ class Preprocessor():
         data = read_data_json(data_json)
         audio_files = [sample['audio'] for sample in data]
         random.shuffle(audio_files)
-        self.mean, self.std = compute_mean_std(audio_files[:max_samples], 
-                                                preprocessor = self.preprocessor,
+        self.mean, self.std = compute_mean_std(audio_files[:max_samples],
+                                                self.preprocessor, 
                                                 window_size = self.window_size, 
                                                 step_size = self.step_size,
-                                                use_feature_normalize =self.use_feature_normalize)
+                                                use_feature_normalize = self.use_feature_normalize
+        )
         self._input_dim = self.mean.shape[0]
         self.use_log = (logger is not None)
         self.logger = logger
@@ -115,20 +116,15 @@ class Preprocessor():
     
 
     def preprocess(self, wave_file:str, text:List[str])->Tuple[np.ndarray, List[int]]:
-        """
-        Arguments
-        ---------
-        wave_file: str
-            path to wav file
-        text: List[str]
-            a list of labels 
+        """Performs the feature-processing pipeline on the input wave file and text transcript.
+        Args: 
+            wave_file (str): path to wav file
+            text (List[str]): a list of labels 
         
-        Returns
-        --------
-        feature_data: numpy array
-            a feature array augmented and processed by a log-spec or mfcc transformation
-        targets: List[int]
-            a list of the integer-encoded labels
+        Returns:
+            feature_data (np.ndarray): a feature array augmented and processed by a log-spec 
+                or mfcc transformations
+        targets (List[int]): a list of the integer-encoded phoneme labels
         """
         if self.use_log: self.logger.info(f"preproc: ======= Entering preprocess =====")
         if self.use_log: self.logger.info(f"preproc: wave_file: {wave_file}")
@@ -253,7 +249,7 @@ class Preprocessor():
 
     def update(self):
         """
-        updates an instance with new attributes
+        Updates an old, saved instance with new attributes.
         """
         if not hasattr(self, 'tempo_gain_pitch_perturb'):
             if hasattr(self, 'speed_vol_perturb'):
@@ -327,14 +323,17 @@ def feature_normalize(feature_array:np.ndarray, eps=1e-7)->np.ndarray:
     return feature_array
 
 
-def compute_mean_std(audio_files:List[str], preprocessor:str, window_size:int, 
-                    step_size:int, use_feature_normalize:bool)->Tuple[np.ndarray, np.ndarray]:
+def compute_mean_std(audio_files: List[str],
+                     preprocessor: str, 
+                     window_size: int, 
+                     step_size: int, 
+                     use_feature_normalize:bool)->Tuple[np.ndarray, np.ndarray]:
     """
     Compute the mean and std deviation of all of the feature bins (frequency bins if log_spec
     preprocessor). Will first normalize the audio samples if use_feature_normalize is true.
-    Arguments:
+    Args:
         audio_files - List[str]: a list of shuffled audio files. len = max_samples
-        preprocessor - str: specifies the kind of preprocessor
+        preprocessor (str): name of preprocessor
         window_size - int: window_size of preprocessor
         step_size - int: step_size of preprocessor
         use_feature_normalize - bool: whether or not the features themselves are normalized
@@ -342,14 +341,12 @@ def compute_mean_std(audio_files:List[str], preprocessor:str, window_size:int,
         mean - np.ndarray: the mean of the feature bins - shape = (# feature bins,)
         std  - np.ndarray: the std deviation of the feature bins - shape = (# bins,)
     """
-    assert preprocessor in ['mfcc', 'log_spectrogram'], "preprocessor string not accepted"
     assert len(audio_files) > 0, "input list of audio_files is empty"
 
     samples = []
-    preprocessing_function  =  eval(preprocessor + "_from_data")
     for audio_file in audio_files: 
-        data, samp_rate = array_from_wave(audio_file)
-        feature_array = preprocessing_function(data, samp_rate, window_size, step_size)
+        audio_data, samp_rate = array_from_wave(audio_file)
+        feature_array = process_audio(audio_data, samp_rate, window_size, step_size, preprocessor)
         if use_feature_normalize:
             feature_array = feature_normalize(feature_array)   # normalize the feature
         samples.append(feature_array)
@@ -515,6 +512,8 @@ def make_ddp_loader(dataset_json,
                     preproc,
                     batch_size, 
                     num_workers=4):
+    """Creates a load compatibile with distributed data parallel (ddp).
+    """
     
     dataset = AudioDataset(dataset_json, preproc, batch_size)
     sampler = DistributedBatchRandomSampler(dataset, batch_size=batch_size)
@@ -531,7 +530,9 @@ def make_ddp_loader(dataset_json,
 
 class CustomBatch:
     """
-    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning
+    This class is based on: https://pytorch.org/docs/stable/data.html#memory-pinning. 
+    It was used to implemented pinned memory to speed up training. I don't think it is 
+    currently in use. 
     """
     def __init__(self, data):
         transposed_data = list(zip(*data))
@@ -548,8 +549,8 @@ def collate_wrapper(batch):
     return SimpleCustomBatch(batch)
  
 def collate_fn(batch):  
-    """
-    this is an external function so that the loader can be serialized during multi-processing
+    """This needed to be named function instead of an anonymous lambda function so the loader can be
+    serialized during distributed data parallel training.
     """
     return zip(*batch)
 
@@ -569,9 +570,8 @@ def process_audio(audio, samp_rate:int, window_size=32, step_size=16, processing
     Returns: 
         np.ndarray: processed array of dimensions: time x processor_bins
     """
-
     assert isinstance(audio, (str, np.ndarray)), \
-        f"audio must be type str or np.ndarray, not {type(audio)}")
+        f"audio must be type str or np.ndarray, not {type(audio)}"
 
     # process audio from audio path
     if isinstance(audio, str):

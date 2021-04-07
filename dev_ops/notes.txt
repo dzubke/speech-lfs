@@ -142,7 +142,6 @@ ffmpeg -y -i "$SRC_FILE" -ac 1 -ar 16000 -sample_fmt s16 -f wav "$DST_FILE"
 
 # problems using python 3.7 in environment
   - numpy==1.13.3 -> python[version='>=2.7,<2.8.0a0|>=3.5,<3.6.0a0|>=3.6,<3.7.0a0|>=3.8,<3.9.0a0']
-  librosa==0.7.2
 
 ## upgrading to python 3.7, conflicting packages
 puffy
@@ -163,5 +162,4 @@ docker run --rm --gpus all \
     source=/mnt/disks/data_disk/home/dzubke/awni_speech/data/,\
     target=/mnt/disks/data_disk/home/dzubke/awni_speech/data/ \
   -it speech bash
-
 

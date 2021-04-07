@@ -267,7 +267,7 @@ def eval_dev(model, ldr, preproc,  logger, loss_name):
             inputs = inputs.cuda(non_blocking=True)
             out, rnn_args = model(inputs, softmax=False)
 
-           if loss_name == "native":
+            if loss_name == "native":
                 loss = native_loss(out, labels, input_lens, label_lens, model.blank)
             elif loss_name == "awni":
                 loss = awni_loss(out, labels, input_lens, label_lens, model.blank)
@@ -317,7 +317,10 @@ def run(local_rank:int, config:dict)->None:
     train_cfg = config['training']  
     ckpt_cfg = config['checkpoint']  
 
+    gcs_ckpt_handler = GCSCheckpointHandler(ckpt_cfg)
+    
     # save the config to gcs
+    os.make_dirs(ckpt_cfg['local_save_path'], exist_ok=True)
     with open(os.path.join(ckpt_cfg['local_save_path'], "ctc_config.yaml"), 'w') as fid:
         yaml.dump(config, fid)
     gcs_ckpt_handler.upload_to_gcs("ctc_config.yaml")
@@ -339,11 +342,12 @@ def run(local_rank:int, config:dict)->None:
     # creates tensorboardX writer in rank_0 process 
     tbX_writer = SummaryWriter(logdir=ckpt_cfg["local_save_path"]) if is_rank_0 else None
 
-    gcs_ckpt_handler = GCSCheckpointHandler(ckpt_cfg)
     
     # Load previous train state: dict with contents:
         # {start_epoch: int, run_state: (int, float), best_so_far: float, learning_rate: float}
-    train_state_path = gcs_ckpt_handler.download_gcs_object("train_state.pickle")
+    train_state_path = gcs_ckpt_handler.download_from_gcs_bucket(
+        os.path.join(ckpt_cfg['gcs_dir'], "train_state.pickle")
+    )
     if train_state_path:
         print(f"load train_state from: {train_state_path}")
         train_state = read_pickle(train_state_path)
@@ -383,8 +387,8 @@ def run(local_rank:int, config:dict)->None:
         model_cfg
     )
     if model_cfg["load_trained"]:
-        local_trained_path = gcs_ckpt_handler.download_gcs_object(model_cfg['gcs_trained_path'])
-        if local_trained_path:
+        local_trained_path = gcs_ckpt_handler.download_from_gcs_bucket(model_cfg['gcs_trained_path'])
+        if not local_trained_path:
             print(f"no model found at gcs location: {model_cfg['gcs_trained_path']}")
         else:
             model_cfg['local_trained_path'] = local_trained_path
@@ -440,7 +444,7 @@ def run(local_rank:int, config:dict)->None:
         try:
             run_state = run_epoch(
                 model, optimizer, train_ldr, logger, debug_mode, tbX_writer, *run_state, local_rank,
-                train_cfg['loss_name'], config['save_path'], gcs_ckpt_handler, scaler
+                train_cfg['loss_name'], ckpt_cfg['local_save_path'], gcs_ckpt_handler, scaler
             )
         except Exception as err:
             if use_log: 
